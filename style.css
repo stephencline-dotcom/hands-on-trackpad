@@ -1,0 +1,296 @@
+:root {
+  --scene-width: 640px;
+  --scene-height: 447px;
+  --hand-width: 360px;
+  --trackpad-scale: 0.84;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: block;
+  background: radial-gradient(circle at 20% 10%, #27313b 0, #121922 55%, #0a0f14 100%);
+  color: #ecf2f8;
+  font: 500 16px/1.4 "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+.page {
+  width: min(100%, 980px);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 14px 20px 24px;
+  display: grid;
+  grid-template-rows: minmax(120px, 1fr) auto;
+  gap: 12px;
+}
+
+.top-row {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.playfield {
+  border: 1px dashed rgba(210, 228, 246, 0.4);
+  border-radius: 12px;
+  min-height: clamp(120px, 24vh, 260px);
+  background:
+    linear-gradient(135deg, rgba(49, 70, 86, 0.34), rgba(31, 44, 56, 0.18)),
+    radial-gradient(circle at 20% 20%, rgba(132, 171, 196, 0.15), transparent 50%);
+  display: grid;
+  place-items: center;
+}
+
+.maze-ui {
+  width: min(100%, 760px);
+  padding: 10px;
+}
+
+.maze-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.maze-title {
+  color: #d8e7f4;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+}
+
+.maze-level-badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(157, 216, 255, 0.4);
+  background: rgba(96, 156, 201, 0.22);
+  color: #d9ecff;
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+}
+
+.maze-status {
+  color: #bcd2e6;
+  font-size: 0.82rem;
+}
+
+.maze-board {
+  position: relative;
+  height: clamp(140px, 18vh, 190px);
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(10, 16, 24, 0.93), rgba(16, 23, 34, 0.93));
+  border: 1px solid rgba(210, 227, 245, 0.24);
+  overflow: hidden;
+}
+
+.maze-wall {
+  position: absolute;
+  background: linear-gradient(180deg, #597287, #3e5466);
+  border: 1px solid rgba(222, 238, 255, 0.35);
+  box-shadow: 0 0 6px rgba(117, 166, 204, 0.35);
+  border-radius: 4px;
+}
+
+.maze-block {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border-radius: 6px;
+  z-index: 2;
+}
+
+.maze-start {
+  left: 2%;
+  top: 76%;
+  width: 11%;
+  height: 20%;
+  color: #092417;
+  background: linear-gradient(180deg, #78e5b1, #4ac28e);
+  border: 1px solid #2b9a6b;
+  cursor: pointer;
+  box-shadow: 0 0 0 0 rgba(120, 229, 177, 0);
+}
+
+.maze-finish {
+  left: 87%;
+  top: 4%;
+  width: 11%;
+  height: 20%;
+  color: #2f1308;
+  background: linear-gradient(180deg, #ffd08f, #f2a84d);
+  border: 1px solid #cc7f29;
+  box-shadow: 0 0 0 0 rgba(255, 208, 143, 0);
+}
+
+.maze-start.is-lit {
+  box-shadow: 0 0 22px 5px rgba(120, 229, 177, 0.85);
+}
+
+.maze-finish.is-lit {
+  box-shadow: 0 0 22px 5px rgba(255, 208, 143, 0.86);
+}
+
+.maze-board.hit-flash {
+  box-shadow: inset 0 0 0 2px rgba(255, 118, 118, 0.65);
+}
+
+.maze-token {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  font-size: 19px;
+  line-height: 1;
+  color: #9fe2ff;
+  text-shadow: 0 0 8px rgba(159, 226, 255, 0.6);
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  opacity: 0;
+}
+
+.maze-token.active {
+  opacity: 1;
+}
+
+.side-note {
+  border: 1px solid rgba(192, 216, 238, 0.3);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(16, 24, 34, 0.88), rgba(13, 19, 28, 0.92));
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: #bbcfdf;
+}
+
+.side-note p {
+  margin: 0;
+}
+
+.side-note p + p {
+  margin-top: 8px;
+}
+
+.pad-dock {
+  display: grid;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(204, 226, 246, 0.38);
+  background: linear-gradient(180deg, rgba(17, 24, 34, 0.92), rgba(13, 19, 28, 0.96));
+}
+
+.pad-label {
+  margin: 0 0 8px;
+  text-align: center;
+  color: #c8d9ea;
+  font-size: 0.95rem;
+}
+
+.pad-dock > .scene {
+  background: linear-gradient(160deg, rgba(16, 21, 29, 0.92), rgba(23, 30, 40, 0.92));
+}
+
+.scene {
+  position: relative;
+  width: min(100%, var(--scene-width));
+  aspect-ratio: 626 / 437;
+  border-radius: 10px;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.42);
+  border: 1px solid rgba(235, 245, 255, 0.14);
+}
+
+.trackpad {
+  position: absolute;
+  left: calc((1 - var(--trackpad-scale)) * 50%);
+  top: calc((1 - var(--trackpad-scale)) * 50%);
+  width: calc(var(--trackpad-scale) * 100%);
+  height: calc(var(--trackpad-scale) * 100%);
+  object-fit: cover;
+  border-radius: 8px;
+  z-index: 1;
+}
+
+.hand {
+  position: absolute;
+  width: 51.2%;
+  max-width: var(--hand-width);
+  pointer-events: none;
+  transform-origin: center;
+  transition: transform 120ms ease;
+  z-index: 2;
+}
+
+.left-hand {
+  z-index: 2;
+}
+
+.right-hand {
+  left: calc(300 / var(--scene-width) * 100%);
+  top: calc(158 / var(--scene-height) * 100%);
+}
+
+.left-hand.pressed {
+  transform: translateY(3px) scale(0.985);
+}
+
+.press-indicator {
+  position: absolute;
+  left: 18.9%;
+  top: 53.2%;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 2px solid rgba(156, 222, 255, 0.9);
+  background: rgba(156, 222, 255, 0.24);
+  box-shadow: 0 0 0 0 rgba(156, 222, 255, 0.5);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.8);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.scene.is-pressed .press-indicator {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  animation: pressPulse 0.95s ease-out infinite;
+}
+
+@keyframes pressPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(156, 222, 255, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 0 20px rgba(156, 222, 255, 0);
+  }
+}
+
+@media (max-width: 680px) {
+  .page {
+    padding: 14px;
+  }
+
+  .top-row {
+    grid-template-columns: 1fr;
+  }
+
+  .side-note {
+    font-size: 0.78rem;
+  }
+
+  :root {
+    --scene-width: min(94vw, 640px);
+  }
+}
