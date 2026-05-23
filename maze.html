@@ -17,11 +17,18 @@
         <section class="playfield" aria-label="Mini game area">
           <div class="maze-ui">
             <div class="maze-header">
-              <span class="maze-title">Activity 1: Slide Through The Maze</span>
-              <span id="mazeLevelBadge" class="maze-level-badge">Level 1/6</span>
-              <span id="mazeStatus" class="maze-status">Hit START to begin.</span>
+              <span class="maze-title">Maze Mission</span>
+              <span id="mazeLevelBadge" class="maze-level-badge">Level 1 of 6</span>
+              <span id="mazeHitsBadge" class="maze-hits-badge">Hits 0/3</span>
+              <div id="mazeToast" class="maze-toast" role="status" aria-live="polite" hidden></div>
             </div>
-
+            <p class="maze-directions">
+              Click
+              <span class="maze-inline-badge maze-inline-start" aria-hidden="true">START</span>
+              and get to
+              <span class="maze-inline-badge maze-inline-finish" aria-hidden="true">FINISH</span>
+              without hitting the walls or ghosts.
+            </p>
             <div class="maze-nav">
               <a class="home-btn" href="index.html" aria-label="Return to home page">
                 <img class="home-btn-icon" src="images/home-icon.svg" alt="" aria-hidden="true" />
@@ -32,15 +39,11 @@
             <div id="mazeBoard" class="maze-board" aria-label="Maze board">
               <div id="mazeStart" class="maze-block maze-start" role="button" tabindex="0">START</div>
               <div id="mazeFinish" class="maze-block maze-finish">FINISH</div>
-              <div id="mazeToken" class="maze-token" aria-hidden="true">➤</div>
+              <img id="mazeToken" class="maze-token" src="images/child running.png" alt="" aria-hidden="true" draggable="false" />
             </div>
           </div>
         </section>
 
-        <aside class="side-note" aria-label="Instructions">
-          <p>Move cursor anywhere on the page to move the right hand.</p>
-          <p>Press and hold to show left-finger press feedback.</p>
-        </aside>
       </section>
 
       <section class="pad-dock" aria-label="Trackpad practice box">

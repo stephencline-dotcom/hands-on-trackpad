@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-labelledby="title desc">
+  <title id="title">Car Road Game Thumbnail</title>
+  <desc id="desc">A road leading toward mountains with a small car.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#7ec7ff"/>
+      <stop offset="1" stop-color="#d9f0ff"/>
+    </linearGradient>
+    <linearGradient id="road" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#4d5560"/>
+      <stop offset="1" stop-color="#21262b"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="320" fill="url(#sky)"/>
+  <circle cx="260" cy="62" r="26" fill="#ffe18c"/>
+  <polygon points="40,140 120,72 190,140" fill="#7fa39d"/>
+  <polygon points="120,140 210,64 292,140" fill="#5f7f88"/>
+  <rect y="140" width="320" height="180" fill="#6fa06a"/>
+  <polygon points="160,112 36,320 284,320" fill="url(#road)"/>
+  <rect x="156" y="156" width="8" height="22" fill="#f6f0df"/>
+  <rect x="156" y="202" width="8" height="24" fill="#f6f0df"/>
+  <rect x="156" y="254" width="8" height="28" fill="#f6f0df"/>
+  <g transform="translate(160 255)">
+    <rect x="-20" y="-24" width="40" height="54" rx="9" fill="#ff6e5f"/>
+    <rect x="-14" y="-14" width="28" height="16" rx="5" fill="#dff5ff"/>
+    <circle cx="-13" cy="24" r="7" fill="#11161b"/>
+    <circle cx="13" cy="24" r="7" fill="#11161b"/>
+  </g>
+</svg>

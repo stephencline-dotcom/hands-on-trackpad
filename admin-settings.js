@@ -12,6 +12,9 @@ const mazeGhostLevelToggles = [1, 2, 3, 4, 5, 6].map((level) =>
 const mazeGhostLevelCountInputs = [1, 2, 3, 4, 5, 6].map((level) =>
   document.getElementById(`mazeGhostLevel${level}Count`)
 );
+const carGameLevelToggles = [1, 2, 3, 4, 5, 6].map((level) =>
+  document.getElementById(`carGameLevel${level}Toggle`)
+);
 const saveTask1Btn = document.getElementById("saveTask1Btn");
 const task1SavedMessage = document.getElementById("task1SavedMessage");
 
@@ -38,6 +41,14 @@ const MAZE_GHOST_LEVEL_COUNT_KEYS = [
   "mazeGhostLevel4Count",
   "mazeGhostLevel5Count",
   "mazeGhostLevel6Count",
+];
+const CAR_GAME_LEVEL_ENABLED_KEYS = [
+  "carGameLevel1Enabled",
+  "carGameLevel2Enabled",
+  "carGameLevel3Enabled",
+  "carGameLevel4Enabled",
+  "carGameLevel5Enabled",
+  "carGameLevel6Enabled",
 ];
 const DEFAULT_TASK1_SECONDS = 8;
 const DEFAULT_TASK2_CLICKS = 10;
@@ -133,6 +144,22 @@ function parseGhostLevelCounts(value, fallback = DEFAULT_GHOST_LEVEL_COUNT) {
   return [fallback, fallback, fallback, fallback, fallback, fallback];
 }
 
+function parseCarGameLevelsEnabled(value, fallback = true) {
+  if (Array.isArray(value)) {
+    const normalized = value.slice(0, 6).map((item) => parseTaskEnabled(item, fallback));
+    while (normalized.length < 6) {
+      normalized.push(fallback);
+    }
+    return normalized;
+  }
+
+  if (value && typeof value === "object") {
+    return [1, 2, 3, 4, 5, 6].map((level) => parseTaskEnabled(value[`level${level}`], fallback));
+  }
+
+  return [fallback, fallback, fallback, fallback, fallback, fallback];
+}
+
 function showSavedMessage(text) {
   task1SavedMessage.textContent = text;
   task1SavedMessage.hidden = false;
@@ -158,6 +185,9 @@ async function loadTask1Settings() {
   let mazeGhostLevelCounts = MAZE_GHOST_LEVEL_COUNT_KEYS.map((key) =>
     parseGhostCount(localStorage.getItem(key))
   );
+  let carGameLevelsEnabled = CAR_GAME_LEVEL_ENABLED_KEYS.map((key) =>
+    parseTaskEnabled(localStorage.getItem(key), true)
+  );
 
   try {
     const response = await fetch(SETTINGS_API_PATH, { cache: "no-store" });
@@ -173,6 +203,7 @@ async function loadTask1Settings() {
       trainingPaused = parseTrainingPaused(data.trainingPaused);
       mazeGhostLevelsEnabled = parseGhostLevelEnabled(data.mazeGhostLevelsEnabled, true);
       mazeGhostLevelCounts = parseGhostLevelCounts(data.mazeGhostLevelsPerLevelCounts, DEFAULT_GHOST_LEVEL_COUNT);
+      carGameLevelsEnabled = parseCarGameLevelsEnabled(data.carGameLevelsEnabled, true);
       localStorage.setItem(TASK1_STORAGE_KEY, String(task1Seconds));
       localStorage.setItem(TASK1_ENABLED_KEY, String(task1Enabled));
       localStorage.setItem(TASK2_STORAGE_KEY, String(task2Clicks));
@@ -186,6 +217,9 @@ async function loadTask1Settings() {
       });
       MAZE_GHOST_LEVEL_COUNT_KEYS.forEach((key, index) => {
         localStorage.setItem(key, String(mazeGhostLevelCounts[index]));
+      });
+      CAR_GAME_LEVEL_ENABLED_KEYS.forEach((key, index) => {
+        localStorage.setItem(key, String(carGameLevelsEnabled[index]));
       });
     }
   } catch {
@@ -210,6 +244,11 @@ async function loadTask1Settings() {
       inputEl.value = String(mazeGhostLevelCounts[index]);
     }
   });
+  carGameLevelToggles.forEach((toggle, index) => {
+    if (toggle) {
+      toggle.checked = carGameLevelsEnabled[index];
+    }
+  });
 }
 
 async function saveTask1Settings() {
@@ -225,6 +264,7 @@ async function saveTask1Settings() {
   const mazeGhostLevelsPerLevelCounts = mazeGhostLevelCountInputs.map((inputEl) =>
     parseGhostCount(inputEl ? inputEl.value : DEFAULT_GHOST_LEVEL_COUNT)
   );
+  const carGameLevelsEnabled = carGameLevelToggles.map((toggle) => Boolean(toggle && toggle.checked));
   task1DurationInput.value = String(safeTask1Seconds);
   task2ClicksInput.value = String(safeTask2Clicks);
   task3DragSecondsInput.value = String(safeTask3Seconds);
@@ -247,6 +287,9 @@ async function saveTask1Settings() {
   MAZE_GHOST_LEVEL_COUNT_KEYS.forEach((key, index) => {
     localStorage.setItem(key, String(mazeGhostLevelsPerLevelCounts[index]));
   });
+  CAR_GAME_LEVEL_ENABLED_KEYS.forEach((key, index) => {
+    localStorage.setItem(key, String(carGameLevelsEnabled[index]));
+  });
 
   try {
     const response = await fetch(SETTINGS_API_PATH, {
@@ -265,6 +308,7 @@ async function saveTask1Settings() {
         trainingPaused,
         mazeGhostLevelsEnabled,
         mazeGhostLevelsPerLevelCounts,
+        carGameLevelsEnabled,
       }),
     });
 

@@ -22,5 +22,13 @@
     1,
     1,
     1
+  ],
+  "carGameLevelsEnabled": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
   ]
 }

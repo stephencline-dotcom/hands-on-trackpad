@@ -5,8 +5,9 @@ const mazeBoard = document.getElementById("mazeBoard");
 const mazeStart = document.getElementById("mazeStart");
 const mazeFinish = document.getElementById("mazeFinish");
 const mazeToken = document.getElementById("mazeToken");
-const mazeStatus = document.getElementById("mazeStatus");
 const mazeLevelBadge = document.getElementById("mazeLevelBadge");
+const mazeHitsBadge = document.getElementById("mazeHitsBadge");
+const mazeToast = document.getElementById("mazeToast");
 const mazeStartAudio = document.getElementById("mazeStartAudio");
 const mazeHitAudio = document.getElementById("mazeHitAudio");
 const mazeFinishAudio = document.getElementById("mazeFinishAudio");
@@ -33,6 +34,10 @@ let mazeGhosts = [];
 let tokenX = 0;
 let tokenY = 0;
 let cursorWasOutsideBoard = false;
+let ghostAudioFadeTimer = null;
+let ghostAudioTargetVolume = 0;
+let mazeToastTimer = null;
+let mazeTokenRunTimer = null;
 
 const GHOST_LEVEL_ENABLED_KEYS = [
   "mazeGhostLevel1Enabled",
@@ -53,6 +58,8 @@ const GHOST_LEVEL_COUNT_KEYS = [
 const GHOST_COLLISION_RADIUS = 16;
 const GHOST_IMAGE_PATH = "images/ghost.png";
 const SETTINGS_API_PATH = "/api/settings";
+const GHOST_AUDIO_FADE_STEP = 0.08;
+const GHOST_AUDIO_FADE_INTERVAL_MS = 40;
 
 const MAZE_LEVELS = [
   {
@@ -150,8 +157,72 @@ function getCurrentLevelWalls() {
 
 function updateLevelBadge() {
   if (mazeLevelBadge) {
-    mazeLevelBadge.textContent = `Level ${currentLevelIndex + 1}/${MAZE_LEVELS.length}`;
+    mazeLevelBadge.textContent = `Level ${currentLevelIndex + 1} of ${MAZE_LEVELS.length}`;
+    mazeLevelBadge.classList.remove("maze-badge-flash");
+    void mazeLevelBadge.offsetWidth;
+    mazeLevelBadge.classList.add("maze-badge-flash");
   }
+}
+
+function updateHitsBadge() {
+  if (mazeHitsBadge) {
+    mazeHitsBadge.textContent = `Hits ${hitCount}/3`;
+    mazeHitsBadge.classList.remove("maze-badge-flash");
+    void mazeHitsBadge.offsetWidth;
+    mazeHitsBadge.classList.add("maze-badge-flash");
+  }
+}
+
+function clearBadgeFlashClasses() {
+  if (mazeLevelBadge) {
+    mazeLevelBadge.classList.remove("maze-badge-flash");
+  }
+
+  if (mazeHitsBadge) {
+    mazeHitsBadge.classList.remove("maze-badge-flash");
+  }
+}
+
+function hideMazeToast() {
+  if (mazeToastTimer) {
+    window.clearTimeout(mazeToastTimer);
+    mazeToastTimer = null;
+  }
+
+  if (!mazeToast) {
+    return;
+  }
+
+  mazeToast.hidden = true;
+  mazeToast.textContent = "";
+}
+
+function showMazeToast(message, durationMs = 5000) {
+  if (!mazeToast) {
+    return;
+  }
+
+  if (mazeToastTimer) {
+    window.clearTimeout(mazeToastTimer);
+    mazeToastTimer = null;
+  }
+
+  mazeToast.textContent = message;
+  mazeToast.hidden = false;
+
+  if (durationMs > 0) {
+    mazeToastTimer = window.setTimeout(() => {
+      hideMazeToast();
+    }, durationMs);
+  }
+}
+
+function updateStartPulseCue() {
+  if (!mazeStart) {
+    return;
+  }
+
+  mazeStart.classList.toggle("pulse-cue", !mazeActive);
 }
 
 function parseGhostCount(value) {
@@ -290,12 +361,46 @@ function startGhostLoopAudio() {
   }
 
   try {
-    mazeGhostAudio.currentTime = 0;
-    const result = mazeGhostAudio.play();
-    if (result && typeof result.catch === "function") {
-      result.catch(() => {
-        // Ignore autoplay-related rejections.
-      });
+    mazeGhostAudio.loop = true;
+
+    if (mazeGhostAudio.paused) {
+      const result = mazeGhostAudio.play();
+      if (result && typeof result.catch === "function") {
+        result.catch(() => {
+          // Ignore autoplay-related rejections.
+        });
+      }
+    }
+
+    ghostAudioTargetVolume = 1;
+    if (!ghostAudioFadeTimer) {
+      ghostAudioFadeTimer = window.setInterval(() => {
+        if (!mazeGhostAudio) {
+          return;
+        }
+
+        const currentVolume = clamp(mazeGhostAudio.volume, 0, 1);
+        const delta = ghostAudioTargetVolume - currentVolume;
+
+        if (Math.abs(delta) <= GHOST_AUDIO_FADE_STEP) {
+          mazeGhostAudio.volume = ghostAudioTargetVolume;
+
+          if (ghostAudioTargetVolume <= 0) {
+            mazeGhostAudio.pause();
+            mazeGhostAudio.currentTime = 0;
+          }
+
+          window.clearInterval(ghostAudioFadeTimer);
+          ghostAudioFadeTimer = null;
+          return;
+        }
+
+        mazeGhostAudio.volume = clamp(
+          currentVolume + Math.sign(delta) * GHOST_AUDIO_FADE_STEP,
+          0,
+          1
+        );
+      }, GHOST_AUDIO_FADE_INTERVAL_MS);
     }
   } catch {
     // Ignore playback errors and keep interaction running.
@@ -308,16 +413,47 @@ function stopGhostLoopAudio() {
   }
 
   try {
-    mazeGhostAudio.pause();
-    mazeGhostAudio.currentTime = 0;
+    ghostAudioTargetVolume = 0;
+
+    if (!ghostAudioFadeTimer) {
+      ghostAudioFadeTimer = window.setInterval(() => {
+        if (!mazeGhostAudio) {
+          return;
+        }
+
+        const currentVolume = clamp(mazeGhostAudio.volume, 0, 1);
+        const delta = ghostAudioTargetVolume - currentVolume;
+
+        if (Math.abs(delta) <= GHOST_AUDIO_FADE_STEP) {
+          mazeGhostAudio.volume = ghostAudioTargetVolume;
+
+          if (ghostAudioTargetVolume <= 0) {
+            mazeGhostAudio.pause();
+            mazeGhostAudio.currentTime = 0;
+          }
+
+          window.clearInterval(ghostAudioFadeTimer);
+          ghostAudioFadeTimer = null;
+          return;
+        }
+
+        mazeGhostAudio.volume = clamp(
+          currentVolume + Math.sign(delta) * GHOST_AUDIO_FADE_STEP,
+          0,
+          1
+        );
+      }, GHOST_AUDIO_FADE_INTERVAL_MS);
+    }
   } catch {
     // Ignore playback errors and keep interaction running.
   }
 }
 
 function updateGhostAudioState() {
-  const hasActiveGhost = mazeGhosts.some((ghost) => ghost.active);
-  const shouldPlay = mazeActive && isGhostEnabledForCurrentLevel() && hasActiveGhost;
+  const hasVisibleGhost = mazeGhosts.some(
+    (ghost) => ghost.active && ghost.node.classList.contains("active")
+  );
+  const shouldPlay = mazeActive && isGhostEnabledForCurrentLevel() && hasVisibleGhost;
 
   if (shouldPlay) {
     startGhostLoopAudio();
@@ -361,6 +497,10 @@ function primeAudio() {
       audioEl.muted = false;
     }
   });
+}
+
+if (mazeGhostAudio) {
+  mazeGhostAudio.volume = 0;
 }
 
 function percentRectToPx(rect, bounds) {
@@ -565,6 +705,46 @@ function setMazeTokenPosition(x, y) {
   mazeToken.style.top = `${y}px`;
 }
 
+function setMazeTokenDirection(dx) {
+  if (!mazeToken || !Number.isFinite(dx) || Math.abs(dx) < 0.2) {
+    return;
+  }
+
+  mazeToken.style.setProperty("--runner-flip", dx < 0 ? "-1" : "1");
+}
+
+function pulseMazeTokenRun(dx) {
+  if (!mazeToken) {
+    return;
+  }
+
+  setMazeTokenDirection(dx);
+  mazeToken.classList.add("running");
+
+  if (mazeTokenRunTimer) {
+    window.clearTimeout(mazeTokenRunTimer);
+    mazeTokenRunTimer = null;
+  }
+
+  mazeTokenRunTimer = window.setTimeout(() => {
+    mazeToken.classList.remove("running");
+    mazeTokenRunTimer = null;
+  }, 120);
+}
+
+function resetMazeTokenRunState() {
+  if (!mazeToken) {
+    return;
+  }
+
+  if (mazeTokenRunTimer) {
+    window.clearTimeout(mazeTokenRunTimer);
+    mazeTokenRunTimer = null;
+  }
+
+  mazeToken.classList.remove("running");
+}
+
 function moveTokenToward(targetX, targetY, boardRect, preferCollisionLock = false) {
   const startX = tokenX;
   const startY = tokenY;
@@ -575,6 +755,8 @@ function moveTokenToward(targetX, targetY, boardRect, preferCollisionLock = fals
   if (distance <= 0.001) {
     return { x: tokenX, y: tokenY, blockedByWall: false };
   }
+
+  pulseMazeTokenRun(dx);
 
   const stepSize = 3;
   const steps = Math.max(1, Math.ceil(distance / stepSize));
@@ -600,11 +782,8 @@ function moveTokenToward(targetX, targetY, boardRect, preferCollisionLock = fals
   return { x: tokenX, y: tokenY, blockedByWall: false };
 }
 
-function setMazeStatus(text) {
-  mazeStatus.textContent = text;
-}
-
 function startMaze() {
+  hideMazeToast();
   const startRect = getBlockRectPx(mazeStart);
   const x = startRect.x + startRect.w / 2;
   const y = startRect.y + startRect.h / 2;
@@ -616,21 +795,29 @@ function startMaze() {
   mazeStart.classList.add("is-lit");
   mazeFinish.classList.remove("is-lit");
   mazeToken.classList.add("active");
+  resetMazeTokenRunState();
+  mazeToken.style.setProperty("--runner-flip", "1");
   setMazeTokenPosition(x, y);
   mazeGhosts.forEach((ghost) => {
     ghost.active = true;
   });
   setGhostsVisible(true);
   updateGhostAudioState();
-  setMazeStatus(`${getCurrentLevel().name} started. Hits: 0/3. Reach FINISH.`);
+  updateHitsBadge();
+  clearBadgeFlashClasses();
+  updateStartPulseCue();
   playSound(mazeStartAudio);
 }
 
 function stopMaze(message) {
   mazeActive = false;
   mazeToken.classList.remove("active");
+  resetMazeTokenRunState();
   updateGhostAudioState();
-  setMazeStatus(message);
+  updateStartPulseCue();
+  if (message) {
+    showMazeToast(message);
+  }
 }
 
 function resetMazeAfterThreeHits() {
@@ -642,9 +829,12 @@ function resetMazeAfterThreeHits() {
   mazeStart.classList.remove("is-lit");
   mazeFinish.classList.remove("is-lit");
   mazeToken.classList.remove("active");
+  resetMazeTokenRunState();
   setGhostsVisible(false);
   updateGhostAudioState();
-  setMazeStatus(`${getCurrentLevel().name}: 3 hits. Click START to retry level.`);
+  updateHitsBadge();
+  updateStartPulseCue();
+  showMazeToast(`3 hits! Click START to try ${getCurrentLevel().name} again.`);
 }
 
 function finishMaze() {
@@ -653,27 +843,32 @@ function finishMaze() {
   mazeActive = false;
   mazeStart.classList.remove("is-lit");
   mazeFinish.classList.add("is-lit");
+  resetMazeTokenRunState();
   playSound(mazeFinishAudio);
   updateGhostAudioState();
 
   if (currentLevelIndex < MAZE_LEVELS.length - 1) {
     currentLevelIndex += 1;
     updateLevelBadge();
+    hitCount = 0;
+    updateHitsBadge();
     buildMazeWalls();
     buildMazeGhosts();
     mazeCompleted = false;
-    setMazeStatus(`${finishedLevel} complete (${finishedHits} hit${finishedHits === 1 ? "" : "s"}). Click START for ${getCurrentLevel().name}.`);
+    showMazeToast("Way to go! Click START for the next level.", 5000);
     mazeFinish.classList.remove("is-lit");
     mazeToken.classList.remove("active");
     setGhostsVisible(false);
     updateGhostAudioState();
+    updateStartPulseCue();
     return;
   }
 
   mazeCompleted = true;
   updateLevelBadge();
   updateGhostAudioState();
-  setMazeStatus(`All 6 levels complete. Final level hits: ${finishedHits}.`);
+  showMazeToast(`Way to go! You beat all 6 levels with ${finishedHits} hit${finishedHits === 1 ? "" : "s"}!`, 5000);
+  updateStartPulseCue();
 }
 
 function circleHitsRect(cx, cy, radius, rect) {
@@ -723,6 +918,7 @@ function checkGhostCollision(x, y) {
 
 function registerMazeHit(message) {
   hitCount += 1;
+  updateHitsBadge();
   playSound(mazeHitAudio);
   mazeBoard.classList.add("hit-flash");
   setTimeout(() => mazeBoard.classList.remove("hit-flash"), 140);
@@ -732,7 +928,7 @@ function registerMazeHit(message) {
     return true;
   }
 
-  setMazeStatus(`${getCurrentLevel().name} ${message} ${hitCount}/3. Keep going.`);
+  showMazeToast(`${message === "ghost hit" ? "Ghost bump" : "Wall bump"}! Hits ${hitCount}/3.`, 1800);
   return false;
 }
 
@@ -854,10 +1050,12 @@ function setPressedState(pressed) {
 applyLeftPosition(LAYOUT.leftStart.x, LAYOUT.leftStart.y);
 applyRightPosition(LAYOUT.rightStart.x, LAYOUT.rightStart.y);
 updateLevelBadge();
+updateHitsBadge();
 buildMazeWalls();
 loadGhostSettingsFromLocalStorage();
 buildMazeGhosts();
 loadGhostSettingsShared();
+updateStartPulseCue();
 window.requestAnimationFrame(updateGhostAnimation);
 window.setInterval(() => {
   refreshGhostSettingsLive();

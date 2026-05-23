@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trackpad Hand Trainer - Car Game</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="car-page">
+    <main class="page">
+      <section class="top-row">
+        <section class="playfield" aria-label="Car game area">
+          <div class="car-ui">
+            <div class="car-header">
+              <span class="car-title">Road Dash</span>
+              <span id="carLevelBadge" class="car-level-badge">Level 1 of 6</span>
+              <span id="carHitsBadge" class="car-hits-badge">Hits 0/3</span>
+              <span id="carDodgedBadge" class="car-dodged-badge">Dodged 0</span>
+              <div id="carToast" class="car-toast" role="status" aria-live="polite" hidden></div>
+            </div>
+            <p class="car-directions">Use Left and Right Arrow keys to slide the car and dodge obstacles.</p>
+
+            <div class="maze-nav">
+              <a class="home-btn" href="index.html" aria-label="Return to home page">
+                <img class="home-btn-icon" src="images/home-icon.svg" alt="" aria-hidden="true" />
+                <span>Home</span>
+              </a>
+            </div>
+
+            <div id="carBoard" class="car-board" aria-label="Road board" tabindex="0">
+              <div class="car-road" aria-hidden="true">
+                <div class="car-center-line"></div>
+              </div>
+              <div id="carObstacles" class="car-obstacles" aria-hidden="true"></div>
+              <div id="playerCar" class="car-player" aria-hidden="true"></div>
+              <button id="carStart" class="car-start" type="button">START</button>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="pad-dock" aria-label="Trackpad practice box">
+        <p class="pad-label">Trackpad practice box</p>
+        <section id="scene" class="scene" aria-label="Interactive trackpad trainer">
+          <img class="trackpad" src="images/trackpad.png" alt="Trackpad" draggable="false" />
+          <img id="leftHand" class="hand left-hand" src="images/left-hand-transparent.png" alt="Left hand" draggable="false" />
+          <img id="rightHand" class="hand right-hand" src="images/right-hand-transparent.png" alt="Right hand" draggable="false" />
+          <div id="pressIndicator" class="press-indicator" aria-hidden="true"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="car-game.js"></script>
+  </body>
+</html>

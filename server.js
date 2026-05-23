@@ -19,6 +19,7 @@ const DEFAULT_SETTINGS = {
   trainingPaused: false,
   mazeGhostLevelsEnabled: [true, true, true, true, true, true],
   mazeGhostLevelsPerLevelCounts: [1, 1, 1, 1, 1, 1],
+  carGameLevelsEnabled: [true, true, true, true, true, true],
 };
 
 const MIME_TYPES = {
@@ -134,6 +135,22 @@ function parseGhostLevelsEnabled(value, fallback = true) {
   return [...DEFAULT_SETTINGS.mazeGhostLevelsEnabled];
 }
 
+function parseCarGameLevelsEnabled(value, fallback = true) {
+  if (Array.isArray(value)) {
+    const normalized = value.slice(0, 6).map((item) => parseTaskEnabled(item, fallback));
+    while (normalized.length < 6) {
+      normalized.push(fallback);
+    }
+    return normalized;
+  }
+
+  if (value && typeof value === "object") {
+    return [1, 2, 3, 4, 5, 6].map((level) => parseTaskEnabled(value[`level${level}`], fallback));
+  }
+
+  return [...DEFAULT_SETTINGS.carGameLevelsEnabled];
+}
+
 function loadSettings() {
   ensureSettingsFile();
 
@@ -155,6 +172,7 @@ function loadSettings() {
         data.mazeGhostLevelsPerLevelCounts,
         fallbackGhostCount
       ),
+      carGameLevelsEnabled: parseCarGameLevelsEnabled(data.carGameLevelsEnabled, true),
     };
   } catch {
     return { ...DEFAULT_SETTINGS };
@@ -177,6 +195,10 @@ function saveSettings(settings) {
     mazeGhostLevelsPerLevelCounts: parseGhostLevelCounts(
       settings.mazeGhostLevelsPerLevelCounts ?? existing.mazeGhostLevelsPerLevelCounts,
       1
+    ),
+    carGameLevelsEnabled: parseCarGameLevelsEnabled(
+      settings.carGameLevelsEnabled ?? existing.carGameLevelsEnabled,
+      true
     ),
   };
   fs.writeFileSync(SETTINGS_FILE, JSON.stringify(normalized, null, 2));
