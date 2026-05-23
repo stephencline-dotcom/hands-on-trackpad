@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trackpad Hand Trainer - Fullscreen Trackpad</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="trackpad-full-page">
+    <audio id="clickHoldAudio" src="sounds/click and hold.mp3" preload="auto" loop></audio>
+    <audio id="slideAndClickAudio" src="sounds/clickandslide.mp3" preload="auto" loop></audio>
+    <audio id="justSlideAudio" src="sounds/justslide.mp3" preload="auto" loop></audio>
+    <audio id="bunnyEarsAudio" src="sounds/bunny-ears.mp3" preload="auto" loop></audio>
+
+    <div id="audioUnlockZone" class="audio-unlock-zone" role="button" tabindex="0" aria-label="Enable sound">
+      <span class="audio-unlock-dot" aria-hidden="true"></span>
+      <span class="audio-unlock-label">Tap to Enable Sound</span>
+    </div>
+
+    <div id="bunnyRain" class="bunny-rain" aria-hidden="true"></div>
+
+    <aside id="task1Timer" class="task1-timer" aria-label="Task 1 timer" hidden>
+      <div class="task1-timer-label">TASK 1</div>
+      <div class="task1-timer-track">
+        <div id="task1TimerFill" class="task1-timer-fill"></div>
+      </div>
+      <div id="task1TimerTime" class="task1-timer-time">0.0s</div>
+    </aside>
+
+    <aside id="task2Counter" class="task2-counter" aria-label="Task 2 click counter" hidden>
+      <div class="task2-counter-label">TASK 2 CLICKS</div>
+      <div id="task2CounterValue" class="task2-counter-value">0 / 0</div>
+      <div class="task2-counter-track">
+        <div id="task2CounterFill" class="task2-counter-fill"></div>
+      </div>
+    </aside>
+
+    <aside id="task3Timer" class="task3-timer" aria-label="Task 3 drag timer" hidden>
+      <div class="task3-timer-label">TASK 3 DRAG</div>
+      <div class="task3-timer-track">
+        <div id="task3TimerFill" class="task3-timer-fill"></div>
+      </div>
+      <div id="task3TimerTime" class="task3-timer-time">0.0s</div>
+    </aside>
+
+    <div id="task1SuccessPopup" class="task1-success-popup" role="status" aria-live="polite">Way to go!</div>
+    <div id="task1BalloonLayer" class="task1-balloon-layer" aria-hidden="true"></div>
+    <div id="trainingPausedOverlay" class="training-paused-overlay" role="status" aria-live="polite" hidden>
+      <div class="training-paused-card">Training is paused by admin.</div>
+    </div>
+
+    <main class="trackpad-full-shell">
+      <header class="trackpad-full-header">
+        <a class="trackpad-home-link" href="index.html" aria-label="Return to home page">Home</a>
+      </header>
+
+      <section class="trackpad-stage" aria-label="Fullscreen trackpad interaction area">
+        <section id="scene" class="scene scene-fullscreen" aria-label="Interactive trackpad trainer">
+          <img class="trackpad" src="images/trackpad.png" alt="Trackpad" draggable="false" />
+          <img id="task3Present" class="task3-present" src="images/present.svg" alt="Present" draggable="false" />
+          <img id="leftHand" class="hand left-hand" src="images/left-hand-transparent.png" alt="Left hand" draggable="false" />
+          <img id="rightHand" class="hand right-hand" src="images/right-hand-transparent.png" alt="Right hand" draggable="false" />
+          <img id="bunnyEars" class="bunny-ears" src="images/bunny-ears.png" alt="Bunny ears" draggable="false" />
+          <div id="pressIndicator" class="press-indicator" aria-hidden="true"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="trackpad-fullscreen.js"></script>
+  </body>
+</html>

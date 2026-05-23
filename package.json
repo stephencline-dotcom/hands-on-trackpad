@@ -1,0 +1,9 @@
+{
+  "name": "hands-on-trackpad",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Trackpad training app with shared admin settings",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trackpad Hand Trainer - Maze</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="maze-page">
+    <audio id="mazeStartAudio" src="sounds/Maze start.mp3" preload="auto"></audio>
+    <audio id="mazeHitAudio" src="sounds/wall-hit.mp3" preload="auto"></audio>
+    <audio id="mazeFinishAudio" src="sounds/Maze finish.mp3" preload="auto"></audio>
+
+    <main class="page">
+      <section class="top-row">
+        <section class="playfield" aria-label="Mini game area">
+          <div class="maze-ui">
+            <div class="maze-header">
+              <span class="maze-title">Activity 1: Slide Through The Maze</span>
+              <span id="mazeLevelBadge" class="maze-level-badge">Level 1/6</span>
+              <span id="mazeStatus" class="maze-status">Hit START to begin.</span>
+            </div>
+
+            <div class="maze-nav">
+              <a class="home-btn" href="index.html" aria-label="Return to home page">
+                <img class="home-btn-icon" src="images/home-icon.svg" alt="" aria-hidden="true" />
+                <span>Home</span>
+              </a>
+            </div>
+
+            <div id="mazeBoard" class="maze-board" aria-label="Maze board">
+              <div id="mazeStart" class="maze-block maze-start" role="button" tabindex="0">START</div>
+              <div id="mazeFinish" class="maze-block maze-finish">FINISH</div>
+              <div id="mazeToken" class="maze-token" aria-hidden="true">➤</div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="side-note" aria-label="Instructions">
+          <p>Move cursor anywhere on the page to move the right hand.</p>
+          <p>Press and hold to show left-finger press feedback.</p>
+        </aside>
+      </section>
+
+      <section class="pad-dock" aria-label="Trackpad practice box">
+        <p class="pad-label">Trackpad practice box</p>
+        <section id="scene" class="scene" aria-label="Interactive trackpad trainer">
+          <img class="trackpad" src="images/trackpad.png" alt="Trackpad" draggable="false" />
+          <img id="leftHand" class="hand left-hand" src="images/left-hand-transparent.png" alt="Left hand" draggable="false" />
+          <img id="rightHand" class="hand right-hand" src="images/right-hand-transparent.png" alt="Right hand" draggable="false" />
+          <div id="pressIndicator" class="press-indicator" aria-hidden="true"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

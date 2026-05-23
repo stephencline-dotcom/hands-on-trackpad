@@ -3,49 +3,64 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trackpad Hand Trainer</title>
+    <title>Trackpad Hand Trainer - Home</title>
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body>
-    <audio id="mazeStartAudio" src="sounds/Maze start.mp3" preload="auto"></audio>
-    <audio id="mazeHitAudio" src="sounds/wall-hit.mp3" preload="auto"></audio>
-    <audio id="mazeFinishAudio" src="sounds/Maze finish.mp3" preload="auto"></audio>
+  <body class="home-page">
+    <button id="adminLoginBtn" class="admin-login-btn" type="button" aria-haspopup="dialog" aria-controls="adminLoginModal">
+      Admin Login
+    </button>
 
-    <main class="page">
-      <section class="top-row">
-        <section class="playfield" aria-label="Mini game area">
-          <div class="maze-ui">
-            <div class="maze-header">
-              <span class="maze-title">Activity 1: Slide Through The Maze</span>
-              <span id="mazeLevelBadge" class="maze-level-badge">Level 1/6</span>
-              <span id="mazeStatus" class="maze-status">Hit START to begin.</span>
+    <div id="adminLoginModal" class="admin-login-modal" role="dialog" aria-modal="true" aria-labelledby="adminLoginTitle" hidden>
+      <div class="admin-login-panel">
+        <h2 id="adminLoginTitle">Admin Login</h2>
+        <label class="admin-login-label" for="adminPasswordInput">Password</label>
+        <input id="adminPasswordInput" class="admin-login-input" type="password" autocomplete="current-password" />
+        <p id="adminLoginError" class="admin-login-error" hidden>Incorrect password.</p>
+        <div class="admin-login-actions">
+          <button id="adminCancelBtn" class="admin-login-cancel" type="button">Cancel</button>
+          <button id="adminSubmitBtn" class="admin-login-submit" type="button">Login</button>
+        </div>
+      </div>
+    </div>
+
+    <main class="home-shell">
+      <section class="home-hero" aria-label="Game selection">
+        <p class="home-eyebrow">Hands-On Trackpad</p>
+        <h1>Choose a Practice Game</h1>
+        <p class="home-copy">Start with the maze challenge to practice precision cursor movement and hand positioning.</p>
+
+        <div class="game-grid">
+          <a class="game-card" href="maze.html" aria-label="Open Maze Game page">
+            <img
+              class="game-card-thumb"
+              src="images/trackpad-hands-composite.png"
+              alt="Maze game thumbnail"
+              loading="lazy"
+            />
+            <div class="game-card-body">
+              <span class="game-card-title">Maze Game</span>
+              <span class="game-card-subtitle">Slide through six levels and reach FINISH.</span>
+              <span class="game-card-cta">Play Maze</span>
             </div>
+          </a>
 
-            <div id="mazeBoard" class="maze-board" aria-label="Maze board">
-              <div id="mazeStart" class="maze-block maze-start" role="button" tabindex="0">START</div>
-              <div id="mazeFinish" class="maze-block maze-finish">FINISH</div>
-              <div id="mazeToken" class="maze-token" aria-hidden="true">➤</div>
+          <a class="game-card" href="trackpad-fullscreen.html" aria-label="Open fullscreen trackpad interaction">
+            <img
+              class="game-card-thumb"
+              src="images/trackpad.png"
+              alt="Fullscreen trackpad thumbnail"
+              loading="lazy"
+            />
+            <div class="game-card-body">
+              <span class="game-card-title">Fullscreen Trackpad</span>
+              <span class="game-card-subtitle">Use the full screen to practice smooth cursor and click movement.</span>
+              <span class="game-card-cta">Open Fullscreen</span>
             </div>
-          </div>
-        </section>
-
-        <aside class="side-note" aria-label="Instructions">
-          <p>Move cursor anywhere on the page to move the right hand.</p>
-          <p>Press and hold to show left-finger press feedback.</p>
-        </aside>
-      </section>
-
-      <section class="pad-dock" aria-label="Trackpad practice box">
-        <p class="pad-label">Trackpad practice box</p>
-        <section id="scene" class="scene" aria-label="Interactive trackpad trainer">
-          <img class="trackpad" src="images/trackpad.png" alt="Trackpad" draggable="false" />
-          <img id="leftHand" class="hand left-hand" src="images/left-hand-transparent.png" alt="Left hand" draggable="false" />
-          <img id="rightHand" class="hand right-hand" src="images/right-hand-transparent.png" alt="Right hand" draggable="false" />
-          <div id="pressIndicator" class="press-indicator" aria-hidden="true"></div>
-        </section>
+          </a>
+        </div>
       </section>
     </main>
-
-    <script src="script.js"></script>
+    <script src="home-admin.js"></script>
   </body>
 </html>

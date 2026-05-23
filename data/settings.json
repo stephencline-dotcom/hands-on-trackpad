@@ -1,0 +1,6 @@
+{
+  "task1RequiredSeconds": 8,
+  "task2RequiredClicks": 10,
+  "task3RequiredDragSeconds": 6,
+  "trainingPaused": false
+}

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trackpad Admin Settings</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="home-page">
+    <main class="home-shell">
+      <section class="home-hero" aria-label="Admin settings">
+        <p class="home-eyebrow">Admin</p>
+        <h1>Settings</h1>
+        <p class="home-copy">Configure Full Trackpad Tasks.</p>
+
+        <section class="admin-task-card" aria-label="Trackpad task settings">
+          <h2>Task 1: Slide Finger</h2>
+          <p>Set how long a learner must continuously slide to complete Task 1.</p>
+
+          <label class="admin-task-label" for="task1Duration">Required slide time (seconds)</label>
+          <input id="task1Duration" class="admin-task-input" type="number" min="1" max="120" step="1" />
+
+          <h2 class="admin-task-subhead">Task 2: Clicking</h2>
+          <p>Set how many valid clicks are needed to complete Task 2.</p>
+
+          <label class="admin-task-label" for="task2Clicks">Required clicks (count)</label>
+          <input id="task2Clicks" class="admin-task-input" type="number" min="1" max="200" step="1" />
+
+          <h2 class="admin-task-subhead">Task 3: Click And Drag</h2>
+          <p>Set how long learners must continuously drag the present while it is moving.</p>
+
+          <label class="admin-task-label" for="task3DragSeconds">Required drag time (seconds)</label>
+          <input id="task3DragSeconds" class="admin-task-input" type="number" min="1" max="120" step="1" />
+
+          <label class="admin-toggle-row" for="trainingPausedToggle">
+            <input id="trainingPausedToggle" type="checkbox" />
+            <span>Disable fullscreen movement and sounds (pause training)</span>
+          </label>
+
+          <div class="admin-task-actions">
+            <button id="saveTask1Btn" class="admin-task-save" type="button">Save Settings</button>
+            <a class="admin-task-open" href="trackpad-fullscreen.html">Open Fullscreen Trackpad</a>
+          </div>
+
+          <p id="task1SavedMessage" class="admin-task-message" hidden>Settings saved.</p>
+        </section>
+
+        <a class="admin-back-home" href="index.html" aria-label="Back to home">Back To Home</a>
+      </section>
+    </main>
+    <script src="admin-settings.js"></script>
+  </body>
+</html>
