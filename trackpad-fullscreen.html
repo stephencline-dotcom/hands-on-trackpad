@@ -55,9 +55,10 @@
       </header>
 
       <section class="trackpad-stage" aria-label="Fullscreen trackpad interaction area">
+        <div id="activeTaskPrompt" class="active-task-prompt" role="status" aria-live="polite">Task: Slide</div>
         <section id="scene" class="scene scene-fullscreen" aria-label="Interactive trackpad trainer">
           <img class="trackpad" src="images/trackpad.png" alt="Trackpad" draggable="false" />
-          <img id="task3Present" class="task3-present" src="images/present.svg" alt="Present" draggable="false" />
+          <img id="task3Present" class="task3-present" src="images/present.svg" alt="Present" draggable="false" hidden />
           <img id="leftHand" class="hand left-hand" src="images/left-hand-transparent.png" alt="Left hand" draggable="false" />
           <img id="rightHand" class="hand right-hand" src="images/right-hand-transparent.png" alt="Right hand" draggable="false" />
           <img id="bunnyEars" class="bunny-ears" src="images/bunny-ears.png" alt="Bunny ears" draggable="false" />

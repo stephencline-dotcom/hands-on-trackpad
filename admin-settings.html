@@ -19,23 +19,85 @@
 
           <label class="admin-task-label" for="task1Duration">Required slide time (seconds)</label>
           <input id="task1Duration" class="admin-task-input" type="number" min="1" max="120" step="1" />
+          <label class="admin-toggle-row" for="task1EnabledToggle">
+            <input id="task1EnabledToggle" type="checkbox" checked />
+            <span>Enable Task 1</span>
+          </label>
 
           <h2 class="admin-task-subhead">Task 2: Clicking</h2>
           <p>Set how many valid clicks are needed to complete Task 2.</p>
 
           <label class="admin-task-label" for="task2Clicks">Required clicks (count)</label>
           <input id="task2Clicks" class="admin-task-input" type="number" min="1" max="200" step="1" />
+          <label class="admin-toggle-row" for="task2EnabledToggle">
+            <input id="task2EnabledToggle" type="checkbox" checked />
+            <span>Enable Task 2</span>
+          </label>
 
           <h2 class="admin-task-subhead">Task 3: Click And Drag</h2>
           <p>Set how long learners must continuously drag the present while it is moving.</p>
 
           <label class="admin-task-label" for="task3DragSeconds">Required drag time (seconds)</label>
           <input id="task3DragSeconds" class="admin-task-input" type="number" min="1" max="120" step="1" />
+          <label class="admin-toggle-row" for="task3EnabledToggle">
+            <input id="task3EnabledToggle" type="checkbox" checked />
+            <span>Enable Task 3</span>
+          </label>
+
+          <label class="admin-toggle-row" for="soundEnabledToggle">
+            <input id="soundEnabledToggle" type="checkbox" checked />
+            <span>Enable fullscreen sounds</span>
+          </label>
 
           <label class="admin-toggle-row" for="trainingPausedToggle">
             <input id="trainingPausedToggle" type="checkbox" />
             <span>Disable fullscreen movement and sounds (pause training)</span>
           </label>
+
+          <h2 class="admin-task-subhead">Maze Ghost Settings</h2>
+          <p>Configure ghost enable and ghost count for each maze level.</p>
+
+          <label class="admin-toggle-row" for="mazeGhostLevel1Toggle">
+            <input id="mazeGhostLevel1Toggle" type="checkbox" checked />
+            <span>Enable ghosts on Maze Level 1</span>
+          </label>
+          <label class="admin-task-label" for="mazeGhostLevel1Count">Ghost count on Level 1</label>
+          <input id="mazeGhostLevel1Count" class="admin-task-input" type="number" min="0" max="6" step="1" />
+
+          <label class="admin-toggle-row" for="mazeGhostLevel2Toggle">
+            <input id="mazeGhostLevel2Toggle" type="checkbox" checked />
+            <span>Enable ghosts on Maze Level 2</span>
+          </label>
+          <label class="admin-task-label" for="mazeGhostLevel2Count">Ghost count on Level 2</label>
+          <input id="mazeGhostLevel2Count" class="admin-task-input" type="number" min="0" max="6" step="1" />
+
+          <label class="admin-toggle-row" for="mazeGhostLevel3Toggle">
+            <input id="mazeGhostLevel3Toggle" type="checkbox" checked />
+            <span>Enable ghosts on Maze Level 3</span>
+          </label>
+          <label class="admin-task-label" for="mazeGhostLevel3Count">Ghost count on Level 3</label>
+          <input id="mazeGhostLevel3Count" class="admin-task-input" type="number" min="0" max="6" step="1" />
+
+          <label class="admin-toggle-row" for="mazeGhostLevel4Toggle">
+            <input id="mazeGhostLevel4Toggle" type="checkbox" checked />
+            <span>Enable ghosts on Maze Level 4</span>
+          </label>
+          <label class="admin-task-label" for="mazeGhostLevel4Count">Ghost count on Level 4</label>
+          <input id="mazeGhostLevel4Count" class="admin-task-input" type="number" min="0" max="6" step="1" />
+
+          <label class="admin-toggle-row" for="mazeGhostLevel5Toggle">
+            <input id="mazeGhostLevel5Toggle" type="checkbox" checked />
+            <span>Enable ghosts on Maze Level 5</span>
+          </label>
+          <label class="admin-task-label" for="mazeGhostLevel5Count">Ghost count on Level 5</label>
+          <input id="mazeGhostLevel5Count" class="admin-task-input" type="number" min="0" max="6" step="1" />
+
+          <label class="admin-toggle-row" for="mazeGhostLevel6Toggle">
+            <input id="mazeGhostLevel6Toggle" type="checkbox" checked />
+            <span>Enable ghosts on Maze Level 6</span>
+          </label>
+          <label class="admin-task-label" for="mazeGhostLevel6Count">Ghost count on Level 6</label>
+          <input id="mazeGhostLevel6Count" class="admin-task-input" type="number" min="0" max="6" step="1" />
 
           <div class="admin-task-actions">
             <button id="saveTask1Btn" class="admin-task-save" type="button">Save Settings</button>

@@ -1,17 +1,48 @@
 const task1DurationInput = document.getElementById("task1Duration");
+const task1EnabledToggle = document.getElementById("task1EnabledToggle");
 const task2ClicksInput = document.getElementById("task2Clicks");
+const task2EnabledToggle = document.getElementById("task2EnabledToggle");
 const task3DragSecondsInput = document.getElementById("task3DragSeconds");
+const task3EnabledToggle = document.getElementById("task3EnabledToggle");
+const soundEnabledToggle = document.getElementById("soundEnabledToggle");
 const trainingPausedToggle = document.getElementById("trainingPausedToggle");
+const mazeGhostLevelToggles = [1, 2, 3, 4, 5, 6].map((level) =>
+  document.getElementById(`mazeGhostLevel${level}Toggle`)
+);
+const mazeGhostLevelCountInputs = [1, 2, 3, 4, 5, 6].map((level) =>
+  document.getElementById(`mazeGhostLevel${level}Count`)
+);
 const saveTask1Btn = document.getElementById("saveTask1Btn");
 const task1SavedMessage = document.getElementById("task1SavedMessage");
 
 const TASK1_STORAGE_KEY = "trackpadTask1RequiredSeconds";
 const TASK2_STORAGE_KEY = "trackpadTask2RequiredClicks";
 const TASK3_STORAGE_KEY = "trackpadTask3RequiredDragSeconds";
+const TASK1_ENABLED_KEY = "trackpadTask1Enabled";
+const TASK2_ENABLED_KEY = "trackpadTask2Enabled";
+const TASK3_ENABLED_KEY = "trackpadTask3Enabled";
+const SOUND_ENABLED_KEY = "trackpadSoundEnabled";
 const TRAINING_PAUSED_KEY = "trackpadTrainingPaused";
+const MAZE_GHOST_LEVEL_ENABLED_KEYS = [
+  "mazeGhostLevel1Enabled",
+  "mazeGhostLevel2Enabled",
+  "mazeGhostLevel3Enabled",
+  "mazeGhostLevel4Enabled",
+  "mazeGhostLevel5Enabled",
+  "mazeGhostLevel6Enabled",
+];
+const MAZE_GHOST_LEVEL_COUNT_KEYS = [
+  "mazeGhostLevel1Count",
+  "mazeGhostLevel2Count",
+  "mazeGhostLevel3Count",
+  "mazeGhostLevel4Count",
+  "mazeGhostLevel5Count",
+  "mazeGhostLevel6Count",
+];
 const DEFAULT_TASK1_SECONDS = 8;
 const DEFAULT_TASK2_CLICKS = 10;
 const DEFAULT_TASK3_DRAG_SECONDS = 6;
+const DEFAULT_GHOST_LEVEL_COUNT = 1;
 const SETTINGS_API_PATH = "/api/settings";
 
 function parseTask1Seconds(value) {
@@ -49,6 +80,59 @@ function parseTrainingPaused(value) {
   return String(value) === "true";
 }
 
+function parseTaskEnabled(value, fallback = true) {
+  if (value === null || typeof value === "undefined") {
+    return fallback;
+  }
+
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  return String(value) !== "false";
+}
+
+function parseGhostCount(value) {
+  const parsed = Number.parseInt(String(value || ""), 10);
+  if (!Number.isFinite(parsed)) {
+    return DEFAULT_GHOST_LEVEL_COUNT;
+  }
+
+  return Math.min(6, Math.max(0, parsed));
+}
+
+function parseGhostLevelEnabled(value, fallback = true) {
+  if (Array.isArray(value)) {
+    const normalized = value.slice(0, 6).map((item) => parseTaskEnabled(item, fallback));
+    while (normalized.length < 6) {
+      normalized.push(fallback);
+    }
+    return normalized;
+  }
+
+  if (value && typeof value === "object") {
+    return [1, 2, 3, 4, 5, 6].map((level) => parseTaskEnabled(value[`level${level}`], fallback));
+  }
+
+  return [fallback, fallback, fallback, fallback, fallback, fallback];
+}
+
+function parseGhostLevelCounts(value, fallback = DEFAULT_GHOST_LEVEL_COUNT) {
+  if (Array.isArray(value)) {
+    const normalized = value.slice(0, 6).map((item) => parseGhostCount(item));
+    while (normalized.length < 6) {
+      normalized.push(fallback);
+    }
+    return normalized;
+  }
+
+  if (value && typeof value === "object") {
+    return [1, 2, 3, 4, 5, 6].map((level) => parseGhostCount(value[`level${level}`]));
+  }
+
+  return [fallback, fallback, fallback, fallback, fallback, fallback];
+}
+
 function showSavedMessage(text) {
   task1SavedMessage.textContent = text;
   task1SavedMessage.hidden = false;
@@ -61,45 +145,108 @@ function showSavedMessage(text) {
 
 async function loadTask1Settings() {
   let task1Seconds = parseTask1Seconds(localStorage.getItem(TASK1_STORAGE_KEY));
+  let task1Enabled = parseTaskEnabled(localStorage.getItem(TASK1_ENABLED_KEY), true);
   let task2Clicks = parseTask2Clicks(localStorage.getItem(TASK2_STORAGE_KEY));
+  let task2Enabled = parseTaskEnabled(localStorage.getItem(TASK2_ENABLED_KEY), true);
   let task3Seconds = parseTask3Seconds(localStorage.getItem(TASK3_STORAGE_KEY));
+  let task3Enabled = parseTaskEnabled(localStorage.getItem(TASK3_ENABLED_KEY), true);
+  let soundEnabled = parseTaskEnabled(localStorage.getItem(SOUND_ENABLED_KEY), true);
   let trainingPaused = parseTrainingPaused(localStorage.getItem(TRAINING_PAUSED_KEY));
+  let mazeGhostLevelsEnabled = MAZE_GHOST_LEVEL_ENABLED_KEYS.map((key) =>
+    parseTaskEnabled(localStorage.getItem(key), true)
+  );
+  let mazeGhostLevelCounts = MAZE_GHOST_LEVEL_COUNT_KEYS.map((key) =>
+    parseGhostCount(localStorage.getItem(key))
+  );
 
   try {
     const response = await fetch(SETTINGS_API_PATH, { cache: "no-store" });
     if (response.ok) {
       const data = await response.json();
       task1Seconds = parseTask1Seconds(data.task1RequiredSeconds);
+      task1Enabled = parseTaskEnabled(data.task1Enabled, true);
       task2Clicks = parseTask2Clicks(data.task2RequiredClicks);
+      task2Enabled = parseTaskEnabled(data.task2Enabled, true);
       task3Seconds = parseTask3Seconds(data.task3RequiredDragSeconds);
+      task3Enabled = parseTaskEnabled(data.task3Enabled, true);
+      soundEnabled = parseTaskEnabled(data.soundEnabled, true);
       trainingPaused = parseTrainingPaused(data.trainingPaused);
+      mazeGhostLevelsEnabled = parseGhostLevelEnabled(data.mazeGhostLevelsEnabled, true);
+      mazeGhostLevelCounts = parseGhostLevelCounts(data.mazeGhostLevelsPerLevelCounts, DEFAULT_GHOST_LEVEL_COUNT);
       localStorage.setItem(TASK1_STORAGE_KEY, String(task1Seconds));
+      localStorage.setItem(TASK1_ENABLED_KEY, String(task1Enabled));
       localStorage.setItem(TASK2_STORAGE_KEY, String(task2Clicks));
+      localStorage.setItem(TASK2_ENABLED_KEY, String(task2Enabled));
       localStorage.setItem(TASK3_STORAGE_KEY, String(task3Seconds));
+      localStorage.setItem(TASK3_ENABLED_KEY, String(task3Enabled));
+      localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
       localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
+      MAZE_GHOST_LEVEL_ENABLED_KEYS.forEach((key, index) => {
+        localStorage.setItem(key, String(mazeGhostLevelsEnabled[index]));
+      });
+      MAZE_GHOST_LEVEL_COUNT_KEYS.forEach((key, index) => {
+        localStorage.setItem(key, String(mazeGhostLevelCounts[index]));
+      });
     }
   } catch {
     // Keep local fallback when API is unavailable.
   }
 
   task1DurationInput.value = String(task1Seconds);
+  task1EnabledToggle.checked = task1Enabled;
   task2ClicksInput.value = String(task2Clicks);
+  task2EnabledToggle.checked = task2Enabled;
   task3DragSecondsInput.value = String(task3Seconds);
+  task3EnabledToggle.checked = task3Enabled;
+  soundEnabledToggle.checked = soundEnabled;
   trainingPausedToggle.checked = trainingPaused;
+  mazeGhostLevelToggles.forEach((toggle, index) => {
+    if (toggle) {
+      toggle.checked = mazeGhostLevelsEnabled[index];
+    }
+  });
+  mazeGhostLevelCountInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(mazeGhostLevelCounts[index]);
+    }
+  });
 }
 
 async function saveTask1Settings() {
   const safeTask1Seconds = parseTask1Seconds(task1DurationInput.value);
+  const task1Enabled = Boolean(task1EnabledToggle.checked);
   const safeTask2Clicks = parseTask2Clicks(task2ClicksInput.value);
+  const task2Enabled = Boolean(task2EnabledToggle.checked);
   const safeTask3Seconds = parseTask3Seconds(task3DragSecondsInput.value);
+  const task3Enabled = Boolean(task3EnabledToggle.checked);
+  const soundEnabled = Boolean(soundEnabledToggle.checked);
   const trainingPaused = Boolean(trainingPausedToggle.checked);
+  const mazeGhostLevelsEnabled = mazeGhostLevelToggles.map((toggle) => Boolean(toggle && toggle.checked));
+  const mazeGhostLevelsPerLevelCounts = mazeGhostLevelCountInputs.map((inputEl) =>
+    parseGhostCount(inputEl ? inputEl.value : DEFAULT_GHOST_LEVEL_COUNT)
+  );
   task1DurationInput.value = String(safeTask1Seconds);
   task2ClicksInput.value = String(safeTask2Clicks);
   task3DragSecondsInput.value = String(safeTask3Seconds);
+  mazeGhostLevelCountInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(mazeGhostLevelsPerLevelCounts[index]);
+    }
+  });
   localStorage.setItem(TASK1_STORAGE_KEY, String(safeTask1Seconds));
+  localStorage.setItem(TASK1_ENABLED_KEY, String(task1Enabled));
   localStorage.setItem(TASK2_STORAGE_KEY, String(safeTask2Clicks));
+  localStorage.setItem(TASK2_ENABLED_KEY, String(task2Enabled));
   localStorage.setItem(TASK3_STORAGE_KEY, String(safeTask3Seconds));
+  localStorage.setItem(TASK3_ENABLED_KEY, String(task3Enabled));
+  localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
   localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
+  MAZE_GHOST_LEVEL_ENABLED_KEYS.forEach((key, index) => {
+    localStorage.setItem(key, String(mazeGhostLevelsEnabled[index]));
+  });
+  MAZE_GHOST_LEVEL_COUNT_KEYS.forEach((key, index) => {
+    localStorage.setItem(key, String(mazeGhostLevelsPerLevelCounts[index]));
+  });
 
   try {
     const response = await fetch(SETTINGS_API_PATH, {
@@ -109,9 +256,15 @@ async function saveTask1Settings() {
       },
       body: JSON.stringify({
         task1RequiredSeconds: safeTask1Seconds,
+        task1Enabled,
         task2RequiredClicks: safeTask2Clicks,
+        task2Enabled,
         task3RequiredDragSeconds: safeTask3Seconds,
+        task3Enabled,
+        soundEnabled,
         trainingPaused,
+        mazeGhostLevelsEnabled,
+        mazeGhostLevelsPerLevelCounts,
       }),
     });
 
@@ -128,7 +281,11 @@ async function saveTask1Settings() {
 loadTask1Settings();
 saveTask1Btn.addEventListener("click", saveTask1Settings);
 
-[task1DurationInput, task2ClicksInput, task3DragSecondsInput].forEach((inputEl) => {
+[task1DurationInput, task2ClicksInput, task3DragSecondsInput, ...mazeGhostLevelCountInputs].forEach((inputEl) => {
+  if (!inputEl) {
+    return;
+  }
+
   inputEl.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       event.preventDefault();

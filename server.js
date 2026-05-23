@@ -10,9 +10,15 @@ const SETTINGS_FILE = path.join(DATA_DIR, "settings.json");
 
 const DEFAULT_SETTINGS = {
   task1RequiredSeconds: 8,
+  task1Enabled: true,
   task2RequiredClicks: 10,
+  task2Enabled: true,
   task3RequiredDragSeconds: 6,
+  task3Enabled: true,
+  soundEnabled: true,
   trainingPaused: false,
+  mazeGhostLevelsEnabled: [true, true, true, true, true, true],
+  mazeGhostLevelsPerLevelCounts: [1, 1, 1, 1, 1, 1],
 };
 
 const MIME_TYPES = {
@@ -75,17 +81,80 @@ function parseTrainingPaused(value) {
   return String(value) === "true";
 }
 
+function parseTaskEnabled(value, fallback = true) {
+  if (value === null || typeof value === "undefined") {
+    return fallback;
+  }
+
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  return String(value) !== "false";
+}
+
+function parseGhostCount(value) {
+  const parsed = Number.parseInt(String(value || ""), 10);
+  if (!Number.isFinite(parsed)) {
+    return DEFAULT_SETTINGS.mazeGhostsPerLevel;
+  }
+
+  return Math.min(6, Math.max(0, parsed));
+}
+
+function parseGhostLevelCounts(value, fallback = 1) {
+  if (Array.isArray(value)) {
+    const normalized = value.slice(0, 6).map((item) => parseGhostCount(item));
+    while (normalized.length < 6) {
+      normalized.push(fallback);
+    }
+    return normalized;
+  }
+
+  if (value && typeof value === "object") {
+    return [1, 2, 3, 4, 5, 6].map((level) => parseGhostCount(value[`level${level}`]));
+  }
+
+  return [fallback, fallback, fallback, fallback, fallback, fallback];
+}
+
+function parseGhostLevelsEnabled(value, fallback = true) {
+  if (Array.isArray(value)) {
+    const normalized = value.slice(0, 6).map((item) => parseTaskEnabled(item, fallback));
+    while (normalized.length < 6) {
+      normalized.push(fallback);
+    }
+    return normalized;
+  }
+
+  if (value && typeof value === "object") {
+    return [1, 2, 3, 4, 5, 6].map((level) => parseTaskEnabled(value[`level${level}`], fallback));
+  }
+
+  return [...DEFAULT_SETTINGS.mazeGhostLevelsEnabled];
+}
+
 function loadSettings() {
   ensureSettingsFile();
 
   try {
     const raw = fs.readFileSync(SETTINGS_FILE, "utf8");
     const data = JSON.parse(raw);
+    const fallbackGhostCount = parseGhostCount(data.mazeGhostsPerLevel);
     return {
       task1RequiredSeconds: parseTask1Seconds(data.task1RequiredSeconds),
+      task1Enabled: parseTaskEnabled(data.task1Enabled, true),
       task2RequiredClicks: parseTask2Clicks(data.task2RequiredClicks),
+      task2Enabled: parseTaskEnabled(data.task2Enabled, true),
       task3RequiredDragSeconds: parseTask3Seconds(data.task3RequiredDragSeconds),
+      task3Enabled: parseTaskEnabled(data.task3Enabled, true),
+      soundEnabled: parseTaskEnabled(data.soundEnabled, true),
       trainingPaused: parseTrainingPaused(data.trainingPaused),
+      mazeGhostLevelsEnabled: parseGhostLevelsEnabled(data.mazeGhostLevelsEnabled, true),
+      mazeGhostLevelsPerLevelCounts: parseGhostLevelCounts(
+        data.mazeGhostLevelsPerLevelCounts,
+        fallbackGhostCount
+      ),
     };
   } catch {
     return { ...DEFAULT_SETTINGS };
@@ -97,9 +166,18 @@ function saveSettings(settings) {
   const existing = loadSettings();
   const normalized = {
     task1RequiredSeconds: parseTask1Seconds(settings.task1RequiredSeconds ?? existing.task1RequiredSeconds),
+    task1Enabled: parseTaskEnabled(settings.task1Enabled ?? existing.task1Enabled, true),
     task2RequiredClicks: parseTask2Clicks(settings.task2RequiredClicks ?? existing.task2RequiredClicks),
+    task2Enabled: parseTaskEnabled(settings.task2Enabled ?? existing.task2Enabled, true),
     task3RequiredDragSeconds: parseTask3Seconds(settings.task3RequiredDragSeconds ?? existing.task3RequiredDragSeconds),
+    task3Enabled: parseTaskEnabled(settings.task3Enabled ?? existing.task3Enabled, true),
+    soundEnabled: parseTaskEnabled(settings.soundEnabled ?? existing.soundEnabled, true),
     trainingPaused: parseTrainingPaused(settings.trainingPaused ?? existing.trainingPaused),
+    mazeGhostLevelsEnabled: parseGhostLevelsEnabled(settings.mazeGhostLevelsEnabled ?? existing.mazeGhostLevelsEnabled, true),
+    mazeGhostLevelsPerLevelCounts: parseGhostLevelCounts(
+      settings.mazeGhostLevelsPerLevelCounts ?? existing.mazeGhostLevelsPerLevelCounts,
+      1
+    ),
   };
   fs.writeFileSync(SETTINGS_FILE, JSON.stringify(normalized, null, 2));
   return normalized;

@@ -18,7 +18,7 @@ Then visit `http://localhost:8000`.
 
 ## Shared admin settings across computers
 
-Admin Task 1, Task 2, and Task 3 settings, plus shared training pause, are stored on the server at `data/settings.json` through `GET/PUT /api/settings`.
+Admin Task 1, Task 2, and Task 3 settings, plus shared training pause and sound toggle, are stored on the server at `data/settings.json` through `GET/PUT /api/settings`.
 
 For shared settings across multiple computers:
 

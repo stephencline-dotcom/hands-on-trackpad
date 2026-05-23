@@ -26,15 +26,25 @@
 
     <main class="home-shell">
       <section class="home-hero" aria-label="Game selection">
-        <p class="home-eyebrow">Hands-On Trackpad</p>
-        <h1>Choose a Practice Game</h1>
-        <p class="home-copy">Start with the maze challenge to practice precision cursor movement and hand positioning.</p>
+        <div class="home-hero-top">
+          <div class="home-hero-text">
+            <p class="home-eyebrow">Hands-On Trackpad</p>
+            <h1>Choose a Practice Game</h1>
+            <p class="home-copy">Start with the maze challenge to practice precision cursor movement and hand positioning.</p>
+          </div>
+
+          <a class="training-tool-link" href="trackpad-fullscreen.html" aria-label="Open fullscreen trackpad training tool">
+            <img class="training-tool-thumb" src="images/trackpad-hands-composite.png" alt="Fullscreen trackpad training thumbnail" loading="lazy" />
+            <span class="training-tool-title">Fullscreen Trackpad</span>
+            <span class="training-tool-subtitle">Training Tool</span>
+          </a>
+        </div>
 
         <div class="game-grid">
           <a class="game-card" href="maze.html" aria-label="Open Maze Game page">
             <img
               class="game-card-thumb"
-              src="images/trackpad-hands-composite.png"
+              src="images/maze-thumbnail.svg"
               alt="Maze game thumbnail"
               loading="lazy"
             />
@@ -42,20 +52,6 @@
               <span class="game-card-title">Maze Game</span>
               <span class="game-card-subtitle">Slide through six levels and reach FINISH.</span>
               <span class="game-card-cta">Play Maze</span>
-            </div>
-          </a>
-
-          <a class="game-card" href="trackpad-fullscreen.html" aria-label="Open fullscreen trackpad interaction">
-            <img
-              class="game-card-thumb"
-              src="images/trackpad.png"
-              alt="Fullscreen trackpad thumbnail"
-              loading="lazy"
-            />
-            <div class="game-card-body">
-              <span class="game-card-title">Fullscreen Trackpad</span>
-              <span class="game-card-subtitle">Use the full screen to practice smooth cursor and click movement.</span>
-              <span class="game-card-cta">Open Fullscreen</span>
             </div>
           </a>
         </div>

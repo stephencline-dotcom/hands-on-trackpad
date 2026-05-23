@@ -13,6 +13,7 @@ const audioUnlockZone = document.getElementById("audioUnlockZone");
 const task1Timer = document.getElementById("task1Timer");
 const task1TimerFill = document.getElementById("task1TimerFill");
 const task1TimerTime = document.getElementById("task1TimerTime");
+const activeTaskPrompt = document.getElementById("activeTaskPrompt");
 const task2Counter = document.getElementById("task2Counter");
 const task2CounterValue = document.getElementById("task2CounterValue");
 const task2CounterFill = document.getElementById("task2CounterFill");
@@ -29,6 +30,9 @@ let audioUnlockInFlight = false;
 const TASK1_STORAGE_KEY = "trackpadTask1RequiredSeconds";
 const TASK2_STORAGE_KEY = "trackpadTask2RequiredClicks";
 const TASK3_STORAGE_KEY = "trackpadTask3RequiredDragSeconds";
+const TASK1_ENABLED_KEY = "trackpadTask1Enabled";
+const TASK2_ENABLED_KEY = "trackpadTask2Enabled";
+const TASK3_ENABLED_KEY = "trackpadTask3Enabled";
 const TRAINING_PAUSED_KEY = "trackpadTrainingPaused";
 const TASK1_DEFAULT_SECONDS = 8;
 const TASK2_DEFAULT_CLICKS = 10;
@@ -347,9 +351,11 @@ let task1RequiredMs = TASK1_DEFAULT_SECONDS * 1000;
 let task1SlideStartAt = 0;
 let task1Tracking = false;
 let task1SuccessShown = false;
+let task1Enabled = true;
 let task2RequiredClicks = TASK2_DEFAULT_CLICKS;
 let task2ClickCount = 0;
 let task2SuccessShown = false;
+let task2Enabled = true;
 let task3RequiredMs = TASK3_DEFAULT_SECONDS * 1000;
 let task3DragElapsedMs = 0;
 let task3Dragging = false;
@@ -359,7 +365,8 @@ let task3LastPointerX = 0;
 let task3LastPointerY = 0;
 let task3StillTimeoutId = null;
 let task3SuccessShown = false;
-let task3PresentX = LAYOUT.scene.width * 0.7;
+let task3Enabled = true;
+let task3PresentX = LAYOUT.scene.width * 0.28;
 let task3PresentY = LAYOUT.scene.height * 0.54;
 let task1SuccessHideTimeoutId = null;
 let pressStartedAt = 0;
@@ -400,10 +407,112 @@ function parseTrainingPaused(value) {
   return String(value) === "true";
 }
 
+function parseTaskEnabled(value, fallback = true) {
+  if (value === null || typeof value === "undefined") {
+    return fallback;
+  }
+
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  return String(value) !== "false";
+}
+
+function setSoundEnabled(enabled) {
+  soundEnabled = Boolean(enabled);
+
+  if (soundEnabled) {
+    return;
+  }
+
+  stopHoldAudio();
+  stopSlideAudio();
+  stopJustSlideAudio();
+  stopBunnyEarsAudio();
+}
+
+function getActiveTaskNumber() {
+  if (task1Enabled && !task1SuccessShown) {
+    return 1;
+  }
+  if (task2Enabled && !task2SuccessShown) {
+    return 2;
+  }
+  if (task3Enabled && !task3SuccessShown) {
+    return 3;
+  }
+
+  return null;
+}
+
+function isTaskActive(taskNumber) {
+  return getActiveTaskNumber() === taskNumber;
+}
+
+function updateActiveTaskPrompt() {
+  if (!activeTaskPrompt) {
+    return;
+  }
+
+  if (trainingPaused) {
+    activeTaskPrompt.textContent = "Training is paused";
+    return;
+  }
+
+  if (twoFingerScrollActive) {
+    activeTaskPrompt.textContent = "Bunny Ears: scroll with two fingers";
+    return;
+  }
+
+  const activeTask = getActiveTaskNumber();
+  if (activeTask === 1) {
+    activeTaskPrompt.textContent = "Task 1: Slide";
+    return;
+  }
+  if (activeTask === 2) {
+    activeTaskPrompt.textContent = "Task 2: Click";
+    return;
+  }
+  if (activeTask === 3) {
+    activeTaskPrompt.textContent = "Task 3: Press and hold (drag the present)";
+    return;
+  }
+
+  activeTaskPrompt.textContent = "All enabled tasks complete";
+}
+
+function applyTaskFlowState() {
+  const activeTask = getActiveTaskNumber();
+
+  if (activeTask !== 1) {
+    stopTask1Tracking(true);
+  }
+
+  if (activeTask !== 2 && !task2SuccessShown) {
+    resetTask2Attempt();
+  }
+
+  if (activeTask !== 3 && !task3SuccessShown) {
+    finishTask3Drag(false);
+    resetTask3Attempt(true);
+  }
+
+  if (task3Present) {
+    task3Present.hidden = activeTask !== 3 || trainingPaused;
+  }
+
+  updateActiveTaskPrompt();
+}
+
 async function loadTaskRequirements() {
   let seconds = parseTask1Seconds(localStorage.getItem(TASK1_STORAGE_KEY));
+  let task1IsEnabled = parseTaskEnabled(localStorage.getItem(TASK1_ENABLED_KEY), true);
   let clicks = parseTask2Clicks(localStorage.getItem(TASK2_STORAGE_KEY));
+  let task2IsEnabled = parseTaskEnabled(localStorage.getItem(TASK2_ENABLED_KEY), true);
   let dragSeconds = parseTask3Seconds(localStorage.getItem(TASK3_STORAGE_KEY));
+  let task3IsEnabled = parseTaskEnabled(localStorage.getItem(TASK3_ENABLED_KEY), true);
+  let isSoundEnabled = parseTaskEnabled(localStorage.getItem(SOUND_ENABLED_KEY), true);
   let paused = parseTrainingPaused(localStorage.getItem(TRAINING_PAUSED_KEY));
 
   try {
@@ -411,12 +520,20 @@ async function loadTaskRequirements() {
     if (response.ok) {
       const data = await response.json();
       seconds = parseTask1Seconds(data.task1RequiredSeconds);
+      task1IsEnabled = parseTaskEnabled(data.task1Enabled, true);
       clicks = parseTask2Clicks(data.task2RequiredClicks);
+      task2IsEnabled = parseTaskEnabled(data.task2Enabled, true);
       dragSeconds = parseTask3Seconds(data.task3RequiredDragSeconds);
+      task3IsEnabled = parseTaskEnabled(data.task3Enabled, true);
+      isSoundEnabled = parseTaskEnabled(data.soundEnabled, true);
       paused = parseTrainingPaused(data.trainingPaused);
       localStorage.setItem(TASK1_STORAGE_KEY, String(seconds));
+      localStorage.setItem(TASK1_ENABLED_KEY, String(task1IsEnabled));
       localStorage.setItem(TASK2_STORAGE_KEY, String(clicks));
+      localStorage.setItem(TASK2_ENABLED_KEY, String(task2IsEnabled));
       localStorage.setItem(TASK3_STORAGE_KEY, String(dragSeconds));
+      localStorage.setItem(TASK3_ENABLED_KEY, String(task3IsEnabled));
+      localStorage.setItem(SOUND_ENABLED_KEY, String(isSoundEnabled));
       localStorage.setItem(TRAINING_PAUSED_KEY, String(paused));
     }
   } catch {
@@ -424,8 +541,12 @@ async function loadTaskRequirements() {
   }
 
   task1RequiredMs = seconds * 1000;
+  task1Enabled = task1IsEnabled;
   task2RequiredClicks = clicks;
+  task2Enabled = task2IsEnabled;
   task3RequiredMs = dragSeconds * 1000;
+  task3Enabled = task3IsEnabled;
+  setSoundEnabled(isSoundEnabled);
   setTrainingPaused(paused);
 
   if (!task1Tracking && !task1SuccessShown) {
@@ -447,23 +568,55 @@ async function loadTaskRequirements() {
   if (!task3SuccessShown) {
     resetTask3Attempt(false);
   }
+
+  applyTaskFlowState();
 }
 
-async function refreshTrainingPausedState() {
+async function refreshSharedSettingsLive() {
+  let seconds = parseTask1Seconds(localStorage.getItem(TASK1_STORAGE_KEY));
+  let task1IsEnabled = parseTaskEnabled(localStorage.getItem(TASK1_ENABLED_KEY), true);
+  let clicks = parseTask2Clicks(localStorage.getItem(TASK2_STORAGE_KEY));
+  let task2IsEnabled = parseTaskEnabled(localStorage.getItem(TASK2_ENABLED_KEY), true);
+  let dragSeconds = parseTask3Seconds(localStorage.getItem(TASK3_STORAGE_KEY));
+  let task3IsEnabled = parseTaskEnabled(localStorage.getItem(TASK3_ENABLED_KEY), true);
+  let isSoundEnabled = parseTaskEnabled(localStorage.getItem(SOUND_ENABLED_KEY), true);
   let paused = parseTrainingPaused(localStorage.getItem(TRAINING_PAUSED_KEY));
 
   try {
     const response = await fetch(SETTINGS_API_PATH, { cache: "no-store" });
     if (response.ok) {
       const data = await response.json();
+      seconds = parseTask1Seconds(data.task1RequiredSeconds);
+      task1IsEnabled = parseTaskEnabled(data.task1Enabled, true);
+      clicks = parseTask2Clicks(data.task2RequiredClicks);
+      task2IsEnabled = parseTaskEnabled(data.task2Enabled, true);
+      dragSeconds = parseTask3Seconds(data.task3RequiredDragSeconds);
+      task3IsEnabled = parseTaskEnabled(data.task3Enabled, true);
+      isSoundEnabled = parseTaskEnabled(data.soundEnabled, true);
       paused = parseTrainingPaused(data.trainingPaused);
+      localStorage.setItem(TASK1_STORAGE_KEY, String(seconds));
+      localStorage.setItem(TASK1_ENABLED_KEY, String(task1IsEnabled));
+      localStorage.setItem(TASK2_STORAGE_KEY, String(clicks));
+      localStorage.setItem(TASK2_ENABLED_KEY, String(task2IsEnabled));
+      localStorage.setItem(TASK3_STORAGE_KEY, String(dragSeconds));
+      localStorage.setItem(TASK3_ENABLED_KEY, String(task3IsEnabled));
+      localStorage.setItem(SOUND_ENABLED_KEY, String(isSoundEnabled));
       localStorage.setItem(TRAINING_PAUSED_KEY, String(paused));
     }
   } catch {
     // Keep local fallback when API is unavailable.
   }
 
+  task1RequiredMs = seconds * 1000;
+  task1Enabled = task1IsEnabled;
+  task2RequiredClicks = clicks;
+  task2Enabled = task2IsEnabled;
+  task3RequiredMs = dragSeconds * 1000;
+  task3Enabled = task3IsEnabled;
+  setSoundEnabled(isSoundEnabled);
   setTrainingPaused(paused);
+
+  applyTaskFlowState();
 }
 
 function setTrainingPaused(paused) {
@@ -475,6 +628,7 @@ function setTrainingPaused(paused) {
   }
 
   if (!trainingPaused) {
+    applyTaskFlowState();
     return;
   }
 
@@ -501,6 +655,8 @@ function setTrainingPaused(paused) {
   if (twoFingerScrollActive) {
     exitTwoFingerScrollMode();
   }
+
+  applyTaskFlowState();
 }
 
 function showTask1Timer() {
@@ -522,6 +678,10 @@ function hideTask1Timer() {
 }
 
 function updateTask1Timer(now = performance.now()) {
+  if (!isTaskActive(1)) {
+    return;
+  }
+
   if (!task1Tracking) {
     return;
   }
@@ -543,10 +703,15 @@ function updateTask1Timer(now = performance.now()) {
     task1Tracking = false;
     hideTask1Timer();
     triggerSuccessCelebration();
+    applyTaskFlowState();
   }
 }
 
 function startTask1Tracking() {
+  if (!isTaskActive(1)) {
+    return;
+  }
+
   if (task1SuccessShown || task1Tracking) {
     return;
   }
@@ -606,6 +771,23 @@ function pointerToScenePosition(event) {
   return {
     x: clamp(normalized.x * LAYOUT.scene.width, 0, LAYOUT.scene.width),
     y: clamp(normalized.y * LAYOUT.scene.height, 0, LAYOUT.scene.height),
+  };
+}
+
+function pointerToSceneFromRect(event) {
+  if (!scene) {
+    return pointerToScenePosition(event);
+  }
+
+  const rect = scene.getBoundingClientRect();
+  const width = Math.max(rect.width, 1);
+  const height = Math.max(rect.height, 1);
+  const localX = (event.clientX - rect.left) * (LAYOUT.scene.width / width);
+  const localY = (event.clientY - rect.top) * (LAYOUT.scene.height / height);
+
+  return {
+    x: clamp(localX, 0, LAYOUT.scene.width),
+    y: clamp(localY, 0, LAYOUT.scene.height),
   };
 }
 
@@ -674,6 +856,9 @@ function finishTask3Drag(success) {
   }
 
   task3Dragging = false;
+  setPressedState(false);
+  setSlideVisualState(false);
+  stopSlideAudio();
   if (task3Present) {
     task3Present.classList.remove("dragging");
   }
@@ -704,6 +889,7 @@ function registerTask3Movement(now) {
     finishTask3Drag(true);
     hideTask3Timer();
     triggerSuccessCelebration();
+    applyTaskFlowState();
     return;
   }
 
@@ -719,17 +905,30 @@ function registerTask3Movement(now) {
 }
 
 function beginTask3Drag(event) {
-  if (trainingPaused || task3SuccessShown || !task3Present) {
+  if (trainingPaused || !isTaskActive(3) || task3SuccessShown || !task3Present) {
     return;
   }
 
-  const point = pointerToScenePosition(event);
+  const point = pointerToSceneFromRect(event);
+  applyTask3PresentPosition(point.x, point.y);
   task3Dragging = true;
+  setPressedState(true);
+  setSlideVisualState(true);
+  playSlideAudio();
   task3Moving = false;
   task3MoveStartAt = 0;
   task3DragElapsedMs = 0;
   task3LastPointerX = point.x;
   task3LastPointerY = point.y;
+
+  if (typeof task3Present.setPointerCapture === "function") {
+    try {
+      task3Present.setPointerCapture(event.pointerId);
+    } catch {
+      // Ignore capture failures and keep drag interaction running.
+    }
+  }
+
   showTask3Timer();
   updateTask3TimerVisual();
   task3Present.classList.add("dragging");
@@ -740,7 +939,7 @@ function handleTask3DragMove(event) {
     return;
   }
 
-  const point = pointerToScenePosition(event);
+  const point = pointerToSceneFromRect(event);
   applyTask3PresentPosition(point.x, point.y);
 
   const dx = point.x - task3LastPointerX;
@@ -765,6 +964,10 @@ function resetTask2Attempt() {
 }
 
 function registerTask2Click() {
+  if (!isTaskActive(2)) {
+    return;
+  }
+
   if (task2SuccessShown) {
     return;
   }
@@ -777,6 +980,7 @@ function registerTask2Click() {
     task2SuccessShown = true;
     hideTask2Counter();
     triggerSuccessCelebration();
+    applyTaskFlowState();
   }
 }
 
@@ -892,6 +1096,7 @@ function enterTwoFingerScrollMode() {
     bunnyRain.classList.add("active");
   }
   playBunnyEarsAudio();
+  updateActiveTaskPrompt();
 }
 
 function exitTwoFingerScrollMode() {
@@ -905,6 +1110,7 @@ function exitTwoFingerScrollMode() {
     bunnyRain.classList.remove("active");
   }
   stopBunnyEarsAudio();
+  updateActiveTaskPrompt();
 }
 
 function beginTrackpadPress(event) {
@@ -980,7 +1186,7 @@ window.setInterval(() => {
 }, 5000);
 
 window.setInterval(() => {
-  refreshTrainingPausedState();
+  refreshSharedSettingsLive();
 }, 1200);
 
 document.addEventListener("pointermove", (event) => {
@@ -989,11 +1195,14 @@ document.addEventListener("pointermove", (event) => {
   }
 
   if (task3Dragging) {
+    updateRightFromPointer(event);
     handleTask3DragMove(event);
     return;
   }
 
-  updateTask1Timer();
+  if (isTaskActive(1)) {
+    updateTask1Timer();
+  }
   updateRightFromPointer(event);
   
   if (!holdingTrackpad) {
@@ -1051,9 +1260,6 @@ document.addEventListener("pointermove", (event) => {
     playSlideAudio();
     if (task2ClickCount > 0 && !task2SuccessShown) {
       resetTask2Attempt();
-    }
-    if (task3Dragging && !task3SuccessShown) {
-      finishTask3Drag(false);
     }
   }
 
@@ -1132,6 +1338,10 @@ document.addEventListener("pointerdown", (event) => {
     return;
   }
 
+  if (!isTaskActive(1) && !isTaskActive(2)) {
+    return;
+  }
+
   updateRightFromPointer(event);
   beginTrackpadPress(event);
 });
@@ -1180,13 +1390,18 @@ document.addEventListener("pointerup", () => {
     return;
   }
 
+  if (!isTaskActive(1) && !isTaskActive(2)) {
+    endTrackpadPress();
+    return;
+  }
+
   const elapsed = performance.now() - pressStartedAt;
   const dx = lastMoveX - lastPressX;
   const dy = lastMoveY - lastPressY;
   const moveDistance = Math.sqrt(dx * dx + dy * dy);
   const isValidTap = !isSliding && elapsed <= TAP_MAX_DURATION_MS && moveDistance <= TAP_MAX_MOVE_PX;
 
-  if (isValidTap) {
+  if (isValidTap && isTaskActive(2)) {
     registerTask2Click();
   } else if (task2ClickCount > 0 && !task2SuccessShown) {
     resetTask2Attempt();

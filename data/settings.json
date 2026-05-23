@@ -1,6 +1,26 @@
 {
   "task1RequiredSeconds": 8,
+  "task1Enabled": true,
   "task2RequiredClicks": 10,
+  "task2Enabled": true,
   "task3RequiredDragSeconds": 6,
-  "trainingPaused": false
+  "task3Enabled": true,
+  "soundEnabled": true,
+  "trainingPaused": false,
+  "mazeGhostLevelsEnabled": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "mazeGhostLevelsPerLevelCounts": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ]
 }
