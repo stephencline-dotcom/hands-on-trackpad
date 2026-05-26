@@ -20,6 +20,11 @@ const DEFAULT_SETTINGS = {
   mazeGhostLevelsEnabled: [true, true, true, true, true, true],
   mazeGhostLevelsPerLevelCounts: [1, 1, 1, 1, 1, 1],
   carGameLevelsEnabled: [true, true, true, true, true, true],
+  carGameLevelObstacleSpeeds: [0.18, 0.21, 0.24, 0.28, 0.33, 0.38],
+  carGameLevelMaxCars: [1, 2, 2, 3, 3, 4],
+  carGameLevelSurvivalSeconds: [12, 16, 20, 24, 28, 32],
+  carGameLevelGasPumpSpawnSeconds: [4.2, 4.8, 5.4, 6.0, 6.6, 7.2],
+  carGameLevelFuelDrainPerSecond: [2.2, 2.8, 3.5, 4.3, 5.2, 6.2],
 };
 
 const MIME_TYPES = {
@@ -151,6 +156,67 @@ function parseCarGameLevelsEnabled(value, fallback = true) {
   return [...DEFAULT_SETTINGS.carGameLevelsEnabled];
 }
 
+function parseCarLevelSpeed(value, fallback = 0.2) {
+  const parsed = Number.parseFloat(String(value || ""));
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.min(1.2, Math.max(0.08, parsed));
+}
+
+function parseCarLevelMaxCars(value, fallback = 2) {
+  const parsed = Number.parseInt(String(value || ""), 10);
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.min(12, Math.max(1, parsed));
+}
+
+function parseCarLevelSurvivalSeconds(value, fallback = 20) {
+  const parsed = Number.parseInt(String(value || ""), 10);
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.min(180, Math.max(5, parsed));
+}
+
+function parseCarGameGasPumpSpawnSeconds(value, fallback = 5.8) {
+  const parsed = Number.parseFloat(String(value || ""));
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.min(30, Math.max(2, parsed));
+}
+
+function parseCarGameFuelDrainPerSecond(value, fallback = 3.6) {
+  const parsed = Number.parseFloat(String(value || ""));
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.min(12, Math.max(0.5, parsed));
+}
+
+function parseCarLevelNumberArray(value, parser, fallbackArray) {
+  if (Array.isArray(value)) {
+    const normalized = value.slice(0, 6).map((item, index) => parser(item, fallbackArray[index]));
+    while (normalized.length < 6) {
+      normalized.push(fallbackArray[normalized.length]);
+    }
+    return normalized;
+  }
+
+  if (value && typeof value === "object") {
+    return [1, 2, 3, 4, 5, 6].map((level, index) => parser(value[`level${level}`], fallbackArray[index]));
+  }
+
+  return [...fallbackArray];
+}
+
 function loadSettings() {
   ensureSettingsFile();
 
@@ -173,6 +239,31 @@ function loadSettings() {
         fallbackGhostCount
       ),
       carGameLevelsEnabled: parseCarGameLevelsEnabled(data.carGameLevelsEnabled, true),
+      carGameLevelObstacleSpeeds: parseCarLevelNumberArray(
+        data.carGameLevelObstacleSpeeds,
+        parseCarLevelSpeed,
+        DEFAULT_SETTINGS.carGameLevelObstacleSpeeds
+      ),
+      carGameLevelMaxCars: parseCarLevelNumberArray(
+        data.carGameLevelMaxCars,
+        parseCarLevelMaxCars,
+        DEFAULT_SETTINGS.carGameLevelMaxCars
+      ),
+      carGameLevelSurvivalSeconds: parseCarLevelNumberArray(
+        data.carGameLevelSurvivalSeconds,
+        parseCarLevelSurvivalSeconds,
+        DEFAULT_SETTINGS.carGameLevelSurvivalSeconds
+      ),
+      carGameLevelGasPumpSpawnSeconds: parseCarLevelNumberArray(
+        data.carGameLevelGasPumpSpawnSeconds,
+        parseCarGameGasPumpSpawnSeconds,
+        DEFAULT_SETTINGS.carGameLevelGasPumpSpawnSeconds
+      ),
+      carGameLevelFuelDrainPerSecond: parseCarLevelNumberArray(
+        data.carGameLevelFuelDrainPerSecond,
+        parseCarGameFuelDrainPerSecond,
+        DEFAULT_SETTINGS.carGameLevelFuelDrainPerSecond
+      ),
     };
   } catch {
     return { ...DEFAULT_SETTINGS };
@@ -199,6 +290,31 @@ function saveSettings(settings) {
     carGameLevelsEnabled: parseCarGameLevelsEnabled(
       settings.carGameLevelsEnabled ?? existing.carGameLevelsEnabled,
       true
+    ),
+    carGameLevelObstacleSpeeds: parseCarLevelNumberArray(
+      settings.carGameLevelObstacleSpeeds ?? existing.carGameLevelObstacleSpeeds,
+      parseCarLevelSpeed,
+      DEFAULT_SETTINGS.carGameLevelObstacleSpeeds
+    ),
+    carGameLevelMaxCars: parseCarLevelNumberArray(
+      settings.carGameLevelMaxCars ?? existing.carGameLevelMaxCars,
+      parseCarLevelMaxCars,
+      DEFAULT_SETTINGS.carGameLevelMaxCars
+    ),
+    carGameLevelSurvivalSeconds: parseCarLevelNumberArray(
+      settings.carGameLevelSurvivalSeconds ?? existing.carGameLevelSurvivalSeconds,
+      parseCarLevelSurvivalSeconds,
+      DEFAULT_SETTINGS.carGameLevelSurvivalSeconds
+    ),
+    carGameLevelGasPumpSpawnSeconds: parseCarLevelNumberArray(
+      settings.carGameLevelGasPumpSpawnSeconds ?? existing.carGameLevelGasPumpSpawnSeconds,
+      parseCarGameGasPumpSpawnSeconds,
+      DEFAULT_SETTINGS.carGameLevelGasPumpSpawnSeconds
+    ),
+    carGameLevelFuelDrainPerSecond: parseCarLevelNumberArray(
+      settings.carGameLevelFuelDrainPerSecond ?? existing.carGameLevelFuelDrainPerSecond,
+      parseCarGameFuelDrainPerSecond,
+      DEFAULT_SETTINGS.carGameLevelFuelDrainPerSecond
     ),
   };
   fs.writeFileSync(SETTINGS_FILE, JSON.stringify(normalized, null, 2));

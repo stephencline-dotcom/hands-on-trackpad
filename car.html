@@ -16,9 +16,10 @@
               <span id="carLevelBadge" class="car-level-badge">Level 1 of 6</span>
               <span id="carHitsBadge" class="car-hits-badge">Hits 0/3</span>
               <span id="carDodgedBadge" class="car-dodged-badge">Dodged 0</span>
+              <button id="carVolumeToggle" class="car-volume-toggle" type="button" aria-label="Mute sound">&#128266;</button>
               <div id="carToast" class="car-toast" role="status" aria-live="polite" hidden></div>
             </div>
-            <p class="car-directions">Use Left and Right Arrow keys to slide the car and dodge obstacles.</p>
+            <p class="car-directions">Click START, then steer with your cursor to survive each level without crashing.</p>
 
             <div class="maze-nav">
               <a class="home-btn" href="index.html" aria-label="Return to home page">
@@ -28,12 +29,30 @@
             </div>
 
             <div id="carBoard" class="car-board" aria-label="Road board" tabindex="0">
+              <div id="carFuelBadge" class="car-fuel-badge" role="status" aria-live="polite" aria-label="Fuel level">
+                <span class="car-fuel-label">Fuel</span>
+                <div class="car-fuel-meter" aria-hidden="true">
+                  <div id="carFuelFill" class="car-fuel-fill"></div>
+                </div>
+                <span id="carFuelText" class="car-fuel-text">100%</span>
+              </div>
               <div class="car-road" aria-hidden="true">
                 <div class="car-center-line"></div>
               </div>
               <div id="carObstacles" class="car-obstacles" aria-hidden="true"></div>
-              <div id="playerCar" class="car-player" aria-hidden="true"></div>
+              <img id="playerCar" class="car-player" src="images/car.png" alt="Player car" draggable="false" />
               <button id="carStart" class="car-start" type="button">START</button>
+              <div id="carFinishBanner" class="car-finish-banner" hidden>
+                <div class="car-finish-card">
+                  <p class="car-finish-eyebrow">Level 6 Complete</p>
+                  <h2 class="car-finish-title">Way to go!</h2>
+                  <p class="car-finish-copy">You finished every level on Road Dash.</p>
+                  <div class="car-finish-actions">
+                    <button id="carPlayAgainBtn" class="car-finish-btn" type="button">Play Again</button>
+                    <a class="car-finish-home" href="index.html" aria-label="Go to home page">Home</a>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>

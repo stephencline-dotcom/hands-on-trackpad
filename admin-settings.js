@@ -15,6 +15,21 @@ const mazeGhostLevelCountInputs = [1, 2, 3, 4, 5, 6].map((level) =>
 const carGameLevelToggles = [1, 2, 3, 4, 5, 6].map((level) =>
   document.getElementById(`carGameLevel${level}Toggle`)
 );
+const carGameLevelSpeedInputs = [1, 2, 3, 4, 5, 6].map((level) =>
+  document.getElementById(`carLevel${level}Speed`)
+);
+const carGameLevelMaxCarsInputs = [1, 2, 3, 4, 5, 6].map((level) =>
+  document.getElementById(`carLevel${level}MaxCars`)
+);
+const carGameLevelSurvivalInputs = [1, 2, 3, 4, 5, 6].map((level) =>
+  document.getElementById(`carLevel${level}Survival`)
+);
+const carGameLevelGasPumpSpawnInputs = [1, 2, 3, 4, 5, 6].map((level) =>
+  document.getElementById(`carLevel${level}GasPumpSpawn`)
+);
+const carGameLevelFuelDrainInputs = [1, 2, 3, 4, 5, 6].map((level) =>
+  document.getElementById(`carLevel${level}FuelDrain`)
+);
 const saveTask1Btn = document.getElementById("saveTask1Btn");
 const task1SavedMessage = document.getElementById("task1SavedMessage");
 
@@ -50,10 +65,55 @@ const CAR_GAME_LEVEL_ENABLED_KEYS = [
   "carGameLevel5Enabled",
   "carGameLevel6Enabled",
 ];
+const CAR_GAME_LEVEL_SPEED_KEYS = [
+  "carGameLevel1Speed",
+  "carGameLevel2Speed",
+  "carGameLevel3Speed",
+  "carGameLevel4Speed",
+  "carGameLevel5Speed",
+  "carGameLevel6Speed",
+];
+const CAR_GAME_LEVEL_MAX_CARS_KEYS = [
+  "carGameLevel1MaxCars",
+  "carGameLevel2MaxCars",
+  "carGameLevel3MaxCars",
+  "carGameLevel4MaxCars",
+  "carGameLevel5MaxCars",
+  "carGameLevel6MaxCars",
+];
+const CAR_GAME_LEVEL_SURVIVAL_KEYS = [
+  "carGameLevel1Survival",
+  "carGameLevel2Survival",
+  "carGameLevel3Survival",
+  "carGameLevel4Survival",
+  "carGameLevel5Survival",
+  "carGameLevel6Survival",
+];
+const CAR_LEVEL_GAS_PUMP_SPAWN_SECONDS_KEYS = [
+  "carGameLevel1GasPumpSpawnSeconds",
+  "carGameLevel2GasPumpSpawnSeconds",
+  "carGameLevel3GasPumpSpawnSeconds",
+  "carGameLevel4GasPumpSpawnSeconds",
+  "carGameLevel5GasPumpSpawnSeconds",
+  "carGameLevel6GasPumpSpawnSeconds",
+];
+const CAR_LEVEL_FUEL_DRAIN_KEYS = [
+  "carGameLevel1FuelDrain",
+  "carGameLevel2FuelDrain",
+  "carGameLevel3FuelDrain",
+  "carGameLevel4FuelDrain",
+  "carGameLevel5FuelDrain",
+  "carGameLevel6FuelDrain",
+];
 const DEFAULT_TASK1_SECONDS = 8;
 const DEFAULT_TASK2_CLICKS = 10;
 const DEFAULT_TASK3_DRAG_SECONDS = 6;
 const DEFAULT_GHOST_LEVEL_COUNT = 1;
+const DEFAULT_CAR_LEVEL_SPEEDS = [0.18, 0.21, 0.24, 0.28, 0.33, 0.38];
+const DEFAULT_CAR_LEVEL_MAX_CARS = [1, 2, 2, 3, 3, 4];
+const DEFAULT_CAR_LEVEL_SURVIVAL = [12, 16, 20, 24, 28, 32];
+const DEFAULT_CAR_LEVEL_GAS_PUMP_SPAWN_SECONDS = [4.2, 4.8, 5.4, 6.0, 6.6, 7.2];
+const DEFAULT_CAR_LEVEL_FUEL_DRAIN = [2.2, 2.8, 3.5, 4.3, 5.2, 6.2];
 const SETTINGS_API_PATH = "/api/settings";
 
 function parseTask1Seconds(value) {
@@ -160,6 +220,67 @@ function parseCarGameLevelsEnabled(value, fallback = true) {
   return [fallback, fallback, fallback, fallback, fallback, fallback];
 }
 
+function parseCarLevelSpeed(value, fallback = 0.2) {
+  const parsed = Number.parseFloat(String(value || ""));
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.min(1.2, Math.max(0.08, parsed));
+}
+
+function parseCarLevelMaxCars(value, fallback = 2) {
+  const parsed = Number.parseInt(String(value || ""), 10);
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.min(12, Math.max(1, parsed));
+}
+
+function parseCarLevelSurvival(value, fallback = 20) {
+  const parsed = Number.parseInt(String(value || ""), 10);
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.min(180, Math.max(5, parsed));
+}
+
+function parseCarGasPumpSpawnSeconds(value, fallback = 5.8) {
+  const parsed = Number.parseFloat(String(value || ""));
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.min(30, Math.max(2, parsed));
+}
+
+function parseCarFuelDrain(value, fallback = 3.6) {
+  const parsed = Number.parseFloat(String(value || ""));
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.min(12, Math.max(0.5, parsed));
+}
+
+function parseCarLevelArray(value, parser, fallbackArray) {
+  if (Array.isArray(value)) {
+    const normalized = value.slice(0, 6).map((item, index) => parser(item, fallbackArray[index]));
+    while (normalized.length < 6) {
+      normalized.push(fallbackArray[normalized.length]);
+    }
+    return normalized;
+  }
+
+  if (value && typeof value === "object") {
+    return [1, 2, 3, 4, 5, 6].map((level, index) => parser(value[`level${level}`], fallbackArray[index]));
+  }
+
+  return [...fallbackArray];
+}
+
 function showSavedMessage(text) {
   task1SavedMessage.textContent = text;
   task1SavedMessage.hidden = false;
@@ -188,6 +309,21 @@ async function loadTask1Settings() {
   let carGameLevelsEnabled = CAR_GAME_LEVEL_ENABLED_KEYS.map((key) =>
     parseTaskEnabled(localStorage.getItem(key), true)
   );
+  let carGameLevelObstacleSpeeds = CAR_GAME_LEVEL_SPEED_KEYS.map((key, index) =>
+    parseCarLevelSpeed(localStorage.getItem(key), DEFAULT_CAR_LEVEL_SPEEDS[index])
+  );
+  let carGameLevelMaxCars = CAR_GAME_LEVEL_MAX_CARS_KEYS.map((key, index) =>
+    parseCarLevelMaxCars(localStorage.getItem(key), DEFAULT_CAR_LEVEL_MAX_CARS[index])
+  );
+  let carGameLevelSurvivalSeconds = CAR_GAME_LEVEL_SURVIVAL_KEYS.map((key, index) =>
+    parseCarLevelSurvival(localStorage.getItem(key), DEFAULT_CAR_LEVEL_SURVIVAL[index])
+  );
+  let carGameLevelGasPumpSpawnSeconds = CAR_LEVEL_GAS_PUMP_SPAWN_SECONDS_KEYS.map((key, index) =>
+    parseCarGasPumpSpawnSeconds(localStorage.getItem(key), DEFAULT_CAR_LEVEL_GAS_PUMP_SPAWN_SECONDS[index])
+  );
+  let carGameLevelFuelDrainPerSecond = CAR_LEVEL_FUEL_DRAIN_KEYS.map((key, index) =>
+    parseCarFuelDrain(localStorage.getItem(key), DEFAULT_CAR_LEVEL_FUEL_DRAIN[index])
+  );
 
   try {
     const response = await fetch(SETTINGS_API_PATH, { cache: "no-store" });
@@ -204,6 +340,31 @@ async function loadTask1Settings() {
       mazeGhostLevelsEnabled = parseGhostLevelEnabled(data.mazeGhostLevelsEnabled, true);
       mazeGhostLevelCounts = parseGhostLevelCounts(data.mazeGhostLevelsPerLevelCounts, DEFAULT_GHOST_LEVEL_COUNT);
       carGameLevelsEnabled = parseCarGameLevelsEnabled(data.carGameLevelsEnabled, true);
+      carGameLevelObstacleSpeeds = parseCarLevelArray(
+        data.carGameLevelObstacleSpeeds,
+        parseCarLevelSpeed,
+        DEFAULT_CAR_LEVEL_SPEEDS
+      );
+      carGameLevelMaxCars = parseCarLevelArray(
+        data.carGameLevelMaxCars,
+        parseCarLevelMaxCars,
+        DEFAULT_CAR_LEVEL_MAX_CARS
+      );
+      carGameLevelSurvivalSeconds = parseCarLevelArray(
+        data.carGameLevelSurvivalSeconds,
+        parseCarLevelSurvival,
+        DEFAULT_CAR_LEVEL_SURVIVAL
+      );
+      carGameLevelGasPumpSpawnSeconds = parseCarLevelArray(
+        data.carGameLevelGasPumpSpawnSeconds,
+        parseCarGasPumpSpawnSeconds,
+        DEFAULT_CAR_LEVEL_GAS_PUMP_SPAWN_SECONDS
+      );
+      carGameLevelFuelDrainPerSecond = parseCarLevelArray(
+        data.carGameLevelFuelDrainPerSecond,
+        parseCarFuelDrain,
+        DEFAULT_CAR_LEVEL_FUEL_DRAIN
+      );
       localStorage.setItem(TASK1_STORAGE_KEY, String(task1Seconds));
       localStorage.setItem(TASK1_ENABLED_KEY, String(task1Enabled));
       localStorage.setItem(TASK2_STORAGE_KEY, String(task2Clicks));
@@ -220,6 +381,21 @@ async function loadTask1Settings() {
       });
       CAR_GAME_LEVEL_ENABLED_KEYS.forEach((key, index) => {
         localStorage.setItem(key, String(carGameLevelsEnabled[index]));
+      });
+      CAR_GAME_LEVEL_SPEED_KEYS.forEach((key, index) => {
+        localStorage.setItem(key, String(carGameLevelObstacleSpeeds[index]));
+      });
+      CAR_GAME_LEVEL_MAX_CARS_KEYS.forEach((key, index) => {
+        localStorage.setItem(key, String(carGameLevelMaxCars[index]));
+      });
+      CAR_GAME_LEVEL_SURVIVAL_KEYS.forEach((key, index) => {
+        localStorage.setItem(key, String(carGameLevelSurvivalSeconds[index]));
+      });
+      CAR_LEVEL_GAS_PUMP_SPAWN_SECONDS_KEYS.forEach((key, index) => {
+        localStorage.setItem(key, String(carGameLevelGasPumpSpawnSeconds[index]));
+      });
+      CAR_LEVEL_FUEL_DRAIN_KEYS.forEach((key, index) => {
+        localStorage.setItem(key, String(carGameLevelFuelDrainPerSecond[index]));
       });
     }
   } catch {
@@ -249,6 +425,31 @@ async function loadTask1Settings() {
       toggle.checked = carGameLevelsEnabled[index];
     }
   });
+  carGameLevelSpeedInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(carGameLevelObstacleSpeeds[index]);
+    }
+  });
+  carGameLevelMaxCarsInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(carGameLevelMaxCars[index]);
+    }
+  });
+  carGameLevelSurvivalInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(carGameLevelSurvivalSeconds[index]);
+    }
+  });
+  carGameLevelGasPumpSpawnInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(carGameLevelGasPumpSpawnSeconds[index]);
+    }
+  });
+  carGameLevelFuelDrainInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(carGameLevelFuelDrainPerSecond[index]);
+    }
+  });
 }
 
 async function saveTask1Settings() {
@@ -265,6 +466,30 @@ async function saveTask1Settings() {
     parseGhostCount(inputEl ? inputEl.value : DEFAULT_GHOST_LEVEL_COUNT)
   );
   const carGameLevelsEnabled = carGameLevelToggles.map((toggle) => Boolean(toggle && toggle.checked));
+  const carGameLevelObstacleSpeeds = carGameLevelSpeedInputs.map((inputEl, index) =>
+    parseCarLevelSpeed(inputEl ? inputEl.value : DEFAULT_CAR_LEVEL_SPEEDS[index], DEFAULT_CAR_LEVEL_SPEEDS[index])
+  );
+  const carGameLevelMaxCars = carGameLevelMaxCarsInputs.map((inputEl, index) =>
+    parseCarLevelMaxCars(inputEl ? inputEl.value : DEFAULT_CAR_LEVEL_MAX_CARS[index], DEFAULT_CAR_LEVEL_MAX_CARS[index])
+  );
+  const carGameLevelSurvivalSeconds = carGameLevelSurvivalInputs.map((inputEl, index) =>
+    parseCarLevelSurvival(
+      inputEl ? inputEl.value : DEFAULT_CAR_LEVEL_SURVIVAL[index],
+      DEFAULT_CAR_LEVEL_SURVIVAL[index]
+    )
+  );
+  const carGameLevelGasPumpSpawnSeconds = carGameLevelGasPumpSpawnInputs.map((inputEl, index) =>
+    parseCarGasPumpSpawnSeconds(
+      inputEl ? inputEl.value : DEFAULT_CAR_LEVEL_GAS_PUMP_SPAWN_SECONDS[index],
+      DEFAULT_CAR_LEVEL_GAS_PUMP_SPAWN_SECONDS[index]
+    )
+  );
+  const carGameLevelFuelDrainPerSecond = carGameLevelFuelDrainInputs.map((inputEl, index) =>
+    parseCarFuelDrain(
+      inputEl ? inputEl.value : DEFAULT_CAR_LEVEL_FUEL_DRAIN[index],
+      DEFAULT_CAR_LEVEL_FUEL_DRAIN[index]
+    )
+  );
   task1DurationInput.value = String(safeTask1Seconds);
   task2ClicksInput.value = String(safeTask2Clicks);
   task3DragSecondsInput.value = String(safeTask3Seconds);
@@ -290,6 +515,46 @@ async function saveTask1Settings() {
   CAR_GAME_LEVEL_ENABLED_KEYS.forEach((key, index) => {
     localStorage.setItem(key, String(carGameLevelsEnabled[index]));
   });
+  CAR_GAME_LEVEL_SPEED_KEYS.forEach((key, index) => {
+    localStorage.setItem(key, String(carGameLevelObstacleSpeeds[index]));
+  });
+  CAR_GAME_LEVEL_MAX_CARS_KEYS.forEach((key, index) => {
+    localStorage.setItem(key, String(carGameLevelMaxCars[index]));
+  });
+  CAR_GAME_LEVEL_SURVIVAL_KEYS.forEach((key, index) => {
+    localStorage.setItem(key, String(carGameLevelSurvivalSeconds[index]));
+  });
+  CAR_LEVEL_GAS_PUMP_SPAWN_SECONDS_KEYS.forEach((key, index) => {
+    localStorage.setItem(key, String(carGameLevelGasPumpSpawnSeconds[index]));
+  });
+  CAR_LEVEL_FUEL_DRAIN_KEYS.forEach((key, index) => {
+    localStorage.setItem(key, String(carGameLevelFuelDrainPerSecond[index]));
+  });
+  carGameLevelSpeedInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(carGameLevelObstacleSpeeds[index]);
+    }
+  });
+  carGameLevelMaxCarsInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(carGameLevelMaxCars[index]);
+    }
+  });
+  carGameLevelSurvivalInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(carGameLevelSurvivalSeconds[index]);
+    }
+  });
+  carGameLevelGasPumpSpawnInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(carGameLevelGasPumpSpawnSeconds[index]);
+    }
+  });
+  carGameLevelFuelDrainInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(carGameLevelFuelDrainPerSecond[index]);
+    }
+  });
 
   try {
     const response = await fetch(SETTINGS_API_PATH, {
@@ -309,6 +574,11 @@ async function saveTask1Settings() {
         mazeGhostLevelsEnabled,
         mazeGhostLevelsPerLevelCounts,
         carGameLevelsEnabled,
+        carGameLevelObstacleSpeeds,
+        carGameLevelMaxCars,
+        carGameLevelSurvivalSeconds,
+        carGameLevelGasPumpSpawnSeconds,
+        carGameLevelFuelDrainPerSecond,
       }),
     });
 
@@ -325,7 +595,7 @@ async function saveTask1Settings() {
 loadTask1Settings();
 saveTask1Btn.addEventListener("click", saveTask1Settings);
 
-[task1DurationInput, task2ClicksInput, task3DragSecondsInput, ...mazeGhostLevelCountInputs].forEach((inputEl) => {
+[task1DurationInput, task2ClicksInput, task3DragSecondsInput, ...mazeGhostLevelCountInputs, ...carGameLevelSpeedInputs, ...carGameLevelMaxCarsInputs, ...carGameLevelSurvivalInputs, ...carGameLevelGasPumpSpawnInputs, ...carGameLevelFuelDrainInputs].forEach((inputEl) => {
   if (!inputEl) {
     return;
   }
