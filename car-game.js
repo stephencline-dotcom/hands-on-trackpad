@@ -20,6 +20,14 @@ const OBSTACLE_IMAGES = ["images/pinkcar.png", "images/greencar.png", "images/re
 const BIRD_IMAGE = "images/bird.png";
 const AIRPLANE_IMAGE = "images/airplane.png";
 const GASPUMP_IMAGE = "images/gaspump.png";
+const CAR_LEVEL_BACKGROUNDS = [
+  "images/roadbackground.png",
+  "images/tent.png",
+  "images/living-room.png",
+  "images/yar.png",
+  "images/beach.png",
+  "images/desert.png",
+];
 
 const SETTINGS_API_PATH = "/api/settings";
 const CAR_LEVEL_ENABLED_KEYS = [
@@ -92,6 +100,7 @@ const GASPUMP_PICKUP_MIN_SIZE_RATIO = 0.46;
 const GASPUMP_PICKUP_WINDOW_TOP_RATIO = 0.09;
 const GASPUMP_PICKUP_WINDOW_BOTTOM_RATIO = 0.25;
 const CAR_SETTINGS_REFRESH_INTERVAL_MS = 2000;
+const NEXT_LEVEL_DELAY_MS = 1000;
 
 const FUEL_MAX = 100;
 const FUEL_REFILL_PER_PICKUP = 48;
@@ -149,6 +158,7 @@ let score = 0;
 let toastTimer = null;
 let gasFillStopTimer = null;
 let levelAdvanceTimer = null;
+let levelAdvanceDueAtMs = 0;
 let waitingNextLevel = false;
 let isPressed = false;
 let carLevelGasPumpSpawnSeconds = [...DEFAULT_CAR_LEVEL_GAS_PUMP_SPAWN_SECONDS];
@@ -433,6 +443,16 @@ function updateLevelBadge() {
   }
 
   carLevelBadge.textContent = `Level ${currentLevelIndex + 1} of 6`;
+  applyLevelBackground();
+}
+
+function applyLevelBackground() {
+  if (!carBoard) {
+    return;
+  }
+
+  const backgroundImage = CAR_LEVEL_BACKGROUNDS[currentLevelIndex] || CAR_LEVEL_BACKGROUNDS[0];
+  carBoard.style.background = `url("${backgroundImage}") center bottom / 100% 100% no-repeat`;
 }
 
 function updateCrashBadge() {
@@ -507,6 +527,8 @@ function clearLevelAdvanceTimer() {
     window.clearTimeout(levelAdvanceTimer);
     levelAdvanceTimer = null;
   }
+
+  levelAdvanceDueAtMs = 0;
 }
 
 function hideLevelOverlay() {
@@ -1282,6 +1304,7 @@ function handleLevelComplete() {
   syncBirdAudio();
   clearObstacles();
 
+  const completedLevel = currentLevelIndex + 1;
   const nextLevel = getNextEnabledLevelIndex(currentLevelIndex);
   if (nextLevel >= 0) {
     currentLevelIndex = nextLevel;
@@ -1289,20 +1312,23 @@ function handleLevelComplete() {
     waitingNextLevel = true;
     updateLevelBadge();
     updateTimeBadge();
-    hideToast();
+    showToast(`Level ${completedLevel} complete! Next level starting...`, NEXT_LEVEL_DELAY_MS);
     showLevelOverlay("Way to go! On to the next level...");
     updateStartButtonVisibility();
 
+    levelAdvanceDueAtMs = Date.now() + NEXT_LEVEL_DELAY_MS;
     levelAdvanceTimer = window.setTimeout(() => {
+      levelAdvanceTimer = null;
+      levelAdvanceDueAtMs = 0;
       waitingNextLevel = false;
       hideLevelOverlay();
       startLevel();
-    }, 5000);
+    }, NEXT_LEVEL_DELAY_MS);
     return;
   } else {
     waitingNextLevel = false;
     hideLevelOverlay();
-    hideToast();
+    showToast(`Level ${completedLevel} complete! You finished all enabled levels.`, 3500);
     showFinalBanner();
   }
 
@@ -1527,6 +1553,14 @@ function gameLoop(timestamp) {
 
   updateCarPosition(dtMs);
   updateGame(dtMs);
+
+  // Failsafe: ensure the next level starts even if a timeout callback is dropped.
+  if (waitingNextLevel && levelAdvanceDueAtMs > 0 && Date.now() >= levelAdvanceDueAtMs) {
+    clearLevelAdvanceTimer();
+    waitingNextLevel = false;
+    hideLevelOverlay();
+    startLevel();
+  }
 
   animationFrameId = window.requestAnimationFrame(gameLoop);
 }

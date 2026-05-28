@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jack Jump Drag Game</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="jack-jump-page">
+    <main class="jack-jump-shell">
+      <section class="jack-jump-card" aria-label="Jack jump game">
+        <header class="jack-jump-header">
+          <a class="jack-jump-home" href="index.html" aria-label="Back to home">Back To Home</a>
+          <div>
+            <p class="jack-jump-eyebrow">Drag Challenge</p>
+            <h1>Guide Jack To Safety</h1>
+            <p class="jack-jump-copy">Drag Jack along the dotted path, make him jump over the candle, and land on the glowing target.</p>
+            <p id="jackLevelBadge" class="jack-level-badge">Level 1 of 6</p>
+          </div>
+        </header>
+
+        <section class="jack-jump-scene" id="jackScene" aria-label="Play area">
+          <div class="jack-room-windows" aria-hidden="true">
+            <span class="jack-window"></span>
+            <span class="jack-window"></span>
+            <span class="jack-window"></span>
+          </div>
+
+          <div class="jack-path-dots" id="jackPathDots" aria-hidden="true"></div>
+
+          <div id="jackLevelOverlay" class="jack-level-overlay" role="status" aria-live="polite" hidden></div>
+
+          <div class="jack-goal" id="jackGoal" aria-hidden="true">
+            <span class="jack-goal-ring"></span>
+            <span class="jack-goal-label">LAND HERE</span>
+          </div>
+
+          <img id="candleObstacle" class="jack-candle" src="images/candle.png" alt="Candle obstacle" />
+
+          <div class="jack-character-wrap" id="jackWrap" aria-live="polite">
+            <img id="jackCharacter" class="jack-character" src="images/jack.png" alt="Jack" draggable="false" />
+            <span class="jack-shadow" aria-hidden="true"></span>
+          </div>
+        </section>
+
+        <p id="jackStatus" class="jack-status">Move your cursor to Jack's start point.</p>
+      </section>
+    </main>
+
+    <script src="jack-jump.js"></script>
+  </body>
+</html>

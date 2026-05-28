@@ -6,219 +6,270 @@
     <title>Trackpad Admin Settings</title>
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body class="home-page">
+  <body class="home-page admin-settings-page">
     <main class="home-shell">
       <section class="home-hero" aria-label="Admin settings">
-        <p class="home-eyebrow">Admin</p>
+        <p class="home-eyebrow">Jumping Jack</p>
         <h1>Settings</h1>
         <p class="home-copy">Configure Full Trackpad Tasks.</p>
 
-        <section class="admin-task-card" aria-label="Trackpad task settings">
-          <h2>Task 1: Slide Finger</h2>
-          <p>Set how long a learner must continuously slide to complete Task 1.</p>
+        <section class="admin-task-card" aria-label="Trackpad task settings" data-dirty="false">
+          <header class="admin-panel-head">
+            <div>
+              <h2>Training Configuration</h2>
+              <p>Faster to scan, easier to edit, same saved settings.</p>
+            </div>
+            <div class="admin-quick-stats" aria-label="Quick status">
+              <p class="admin-stat-pill" id="taskSummaryPill">Tasks 0 / 3 enabled</p>
+              <p class="admin-stat-pill" id="carSummaryPill">Car levels 0 / 6 enabled</p>
+              <p class="admin-stat-pill" id="mazeSummaryPill">Ghost avg 0.0</p>
+            </div>
+          </header>
 
-          <label class="admin-task-label" for="task1Duration">Required slide time (seconds)</label>
-          <input id="task1Duration" class="admin-task-input" type="number" min="1" max="120" step="1" />
-          <label class="admin-toggle-row" for="task1EnabledToggle">
-            <input id="task1EnabledToggle" type="checkbox" checked />
-            <span>Enable Task 1</span>
-          </label>
+          <nav class="admin-tabs" aria-label="Settings sections">
+            <button class="admin-tab-button" type="button" role="tab" id="tabQuick" aria-controls="panelQuick" aria-selected="true" data-tab="quick">
+              Quick Setup
+            </button>
+            <button class="admin-tab-button" type="button" role="tab" id="tabMaze" aria-controls="panelMaze" aria-selected="false" data-tab="maze">
+              Maze
+            </button>
+            <button class="admin-tab-button" type="button" role="tab" id="tabCar" aria-controls="panelCar" aria-selected="false" data-tab="car">
+              Car Game
+            </button>
+            <button class="admin-tab-button" type="button" role="tab" id="tabAdvanced" aria-controls="panelAdvanced" aria-selected="false" data-tab="advanced">
+              Advanced
+            </button>
+          </nav>
 
-          <h2 class="admin-task-subhead">Task 2: Clicking</h2>
-          <p>Set how many valid clicks are needed to complete Task 2.</p>
+          <section class="admin-tab-content" id="panelQuick" role="tabpanel" aria-labelledby="tabQuick" aria-hidden="false">
+            <div class="admin-form-grid admin-form-grid--three">
+              <article class="admin-mini-card">
+                <h3>Task 1: Slide Finger</h3>
+                <label class="admin-task-label" for="task1Duration">Required slide time (seconds)</label>
+                <input id="task1Duration" class="admin-task-input" type="number" min="1" max="120" step="1" />
+                <label class="admin-toggle-row" for="task1EnabledToggle">
+                  <input id="task1EnabledToggle" type="checkbox" checked />
+                  <span>Enable task</span>
+                </label>
+              </article>
 
-          <label class="admin-task-label" for="task2Clicks">Required clicks (count)</label>
-          <input id="task2Clicks" class="admin-task-input" type="number" min="1" max="200" step="1" />
-          <label class="admin-toggle-row" for="task2EnabledToggle">
-            <input id="task2EnabledToggle" type="checkbox" checked />
-            <span>Enable Task 2</span>
-          </label>
+              <article class="admin-mini-card">
+                <h3>Task 2: Clicking</h3>
+                <label class="admin-task-label" for="task2Clicks">Required clicks (count)</label>
+                <input id="task2Clicks" class="admin-task-input" type="number" min="1" max="200" step="1" />
+                <label class="admin-toggle-row" for="task2EnabledToggle">
+                  <input id="task2EnabledToggle" type="checkbox" checked />
+                  <span>Enable task</span>
+                </label>
+              </article>
 
-          <h2 class="admin-task-subhead">Task 3: Click And Drag</h2>
-          <p>Set how long learners must continuously drag the present while it is moving.</p>
+              <article class="admin-mini-card">
+                <h3>Task 3: Click And Drag</h3>
+                <label class="admin-task-label" for="task3DragSeconds">Required drag time (seconds)</label>
+                <input id="task3DragSeconds" class="admin-task-input" type="number" min="1" max="120" step="1" />
+                <label class="admin-toggle-row" for="task3EnabledToggle">
+                  <input id="task3EnabledToggle" type="checkbox" checked />
+                  <span>Enable task</span>
+                </label>
+              </article>
+            </div>
 
-          <label class="admin-task-label" for="task3DragSeconds">Required drag time (seconds)</label>
-          <input id="task3DragSeconds" class="admin-task-input" type="number" min="1" max="120" step="1" />
-          <label class="admin-toggle-row" for="task3EnabledToggle">
-            <input id="task3EnabledToggle" type="checkbox" checked />
-            <span>Enable Task 3</span>
-          </label>
+            <article class="admin-mini-card admin-mini-card--wide">
+              <h3>Global Toggles</h3>
+              <div class="admin-inline-toggles">
+                <label class="admin-toggle-row" for="soundEnabledToggle">
+                  <input id="soundEnabledToggle" type="checkbox" checked />
+                  <span>Enable fullscreen sounds</span>
+                </label>
+                <label class="admin-toggle-row" for="trainingPausedToggle">
+                  <input id="trainingPausedToggle" type="checkbox" />
+                  <span>Disable fullscreen movement and sounds (pause training)</span>
+                </label>
+              </div>
+            </article>
+          </section>
 
-          <label class="admin-toggle-row" for="soundEnabledToggle">
-            <input id="soundEnabledToggle" type="checkbox" checked />
-            <span>Enable fullscreen sounds</span>
-          </label>
+          <section class="admin-tab-content" id="panelMaze" role="tabpanel" aria-labelledby="tabMaze" aria-hidden="true">
+            <p class="admin-panel-note">Set ghost behavior by maze level.</p>
+            <div class="admin-level-grid">
+              <article class="admin-level-card">
+                <h3>Maze Level 1</h3>
+                <label class="admin-toggle-row" for="mazeGhostLevel1Toggle"><input id="mazeGhostLevel1Toggle" type="checkbox" checked /><span>Enable ghosts</span></label>
+                <label class="admin-task-label" for="mazeGhostLevel1Count">Ghost count</label>
+                <input id="mazeGhostLevel1Count" class="admin-task-input" type="number" min="0" max="6" step="1" />
+              </article>
+              <article class="admin-level-card">
+                <h3>Maze Level 2</h3>
+                <label class="admin-toggle-row" for="mazeGhostLevel2Toggle"><input id="mazeGhostLevel2Toggle" type="checkbox" checked /><span>Enable ghosts</span></label>
+                <label class="admin-task-label" for="mazeGhostLevel2Count">Ghost count</label>
+                <input id="mazeGhostLevel2Count" class="admin-task-input" type="number" min="0" max="6" step="1" />
+              </article>
+              <article class="admin-level-card">
+                <h3>Maze Level 3</h3>
+                <label class="admin-toggle-row" for="mazeGhostLevel3Toggle"><input id="mazeGhostLevel3Toggle" type="checkbox" checked /><span>Enable ghosts</span></label>
+                <label class="admin-task-label" for="mazeGhostLevel3Count">Ghost count</label>
+                <input id="mazeGhostLevel3Count" class="admin-task-input" type="number" min="0" max="6" step="1" />
+              </article>
+              <article class="admin-level-card">
+                <h3>Maze Level 4</h3>
+                <label class="admin-toggle-row" for="mazeGhostLevel4Toggle"><input id="mazeGhostLevel4Toggle" type="checkbox" checked /><span>Enable ghosts</span></label>
+                <label class="admin-task-label" for="mazeGhostLevel4Count">Ghost count</label>
+                <input id="mazeGhostLevel4Count" class="admin-task-input" type="number" min="0" max="6" step="1" />
+              </article>
+              <article class="admin-level-card">
+                <h3>Maze Level 5</h3>
+                <label class="admin-toggle-row" for="mazeGhostLevel5Toggle"><input id="mazeGhostLevel5Toggle" type="checkbox" checked /><span>Enable ghosts</span></label>
+                <label class="admin-task-label" for="mazeGhostLevel5Count">Ghost count</label>
+                <input id="mazeGhostLevel5Count" class="admin-task-input" type="number" min="0" max="6" step="1" />
+              </article>
+              <article class="admin-level-card">
+                <h3>Maze Level 6</h3>
+                <label class="admin-toggle-row" for="mazeGhostLevel6Toggle"><input id="mazeGhostLevel6Toggle" type="checkbox" checked /><span>Enable ghosts</span></label>
+                <label class="admin-task-label" for="mazeGhostLevel6Count">Ghost count</label>
+                <input id="mazeGhostLevel6Count" class="admin-task-input" type="number" min="0" max="6" step="1" />
+              </article>
+            </div>
+          </section>
 
-          <label class="admin-toggle-row" for="trainingPausedToggle">
-            <input id="trainingPausedToggle" type="checkbox" />
-            <span>Disable fullscreen movement and sounds (pause training)</span>
-          </label>
+          <section class="admin-tab-content" id="panelCar" role="tabpanel" aria-labelledby="tabCar" aria-hidden="true">
+            <p class="admin-panel-note">Each card controls one car level.</p>
+            <div class="admin-level-grid">
+              <article class="admin-level-card">
+                <h3>Car Level 1</h3>
+                <label class="admin-toggle-row" for="carGameLevel1Toggle"><input id="carGameLevel1Toggle" type="checkbox" checked /><span>Enable level</span></label>
+                <div class="admin-control-grid">
+                  <div><label class="admin-task-label" for="carLevel1Speed">Speed (0.08 - 1.2)</label><input id="carLevel1Speed" class="admin-task-input" type="number" min="0.08" max="1.2" step="0.01" /></div>
+                  <div><label class="admin-task-label" for="carLevel1MaxCars">Max cars on road</label><input id="carLevel1MaxCars" class="admin-task-input" type="number" min="1" max="12" step="1" /></div>
+                  <div><label class="admin-task-label" for="carLevel1Survival">Survive time (seconds)</label><input id="carLevel1Survival" class="admin-task-input" type="number" min="5" max="180" step="1" /></div>
+                  <div><label class="admin-task-label" for="carLevel1GasPumpSpawn">Gas pump spawn (seconds)</label><input id="carLevel1GasPumpSpawn" class="admin-task-input" type="number" min="2" max="30" step="0.1" /></div>
+                  <div><label class="admin-task-label" for="carLevel1FuelDrain">Fuel drain per second</label><input id="carLevel1FuelDrain" class="admin-task-input" type="number" min="0.5" max="12" step="0.1" /></div>
+                </div>
+              </article>
+              <article class="admin-level-card">
+                <h3>Car Level 2</h3>
+                <label class="admin-toggle-row" for="carGameLevel2Toggle"><input id="carGameLevel2Toggle" type="checkbox" checked /><span>Enable level</span></label>
+                <div class="admin-control-grid">
+                  <div><label class="admin-task-label" for="carLevel2Speed">Speed (0.08 - 1.2)</label><input id="carLevel2Speed" class="admin-task-input" type="number" min="0.08" max="1.2" step="0.01" /></div>
+                  <div><label class="admin-task-label" for="carLevel2MaxCars">Max cars on road</label><input id="carLevel2MaxCars" class="admin-task-input" type="number" min="1" max="12" step="1" /></div>
+                  <div><label class="admin-task-label" for="carLevel2Survival">Survive time (seconds)</label><input id="carLevel2Survival" class="admin-task-input" type="number" min="5" max="180" step="1" /></div>
+                  <div><label class="admin-task-label" for="carLevel2GasPumpSpawn">Gas pump spawn (seconds)</label><input id="carLevel2GasPumpSpawn" class="admin-task-input" type="number" min="2" max="30" step="0.1" /></div>
+                  <div><label class="admin-task-label" for="carLevel2FuelDrain">Fuel drain per second</label><input id="carLevel2FuelDrain" class="admin-task-input" type="number" min="0.5" max="12" step="0.1" /></div>
+                </div>
+              </article>
+              <article class="admin-level-card">
+                <h3>Car Level 3</h3>
+                <label class="admin-toggle-row" for="carGameLevel3Toggle"><input id="carGameLevel3Toggle" type="checkbox" checked /><span>Enable level</span></label>
+                <div class="admin-control-grid">
+                  <div><label class="admin-task-label" for="carLevel3Speed">Speed (0.08 - 1.2)</label><input id="carLevel3Speed" class="admin-task-input" type="number" min="0.08" max="1.2" step="0.01" /></div>
+                  <div><label class="admin-task-label" for="carLevel3MaxCars">Max cars on road</label><input id="carLevel3MaxCars" class="admin-task-input" type="number" min="1" max="12" step="1" /></div>
+                  <div><label class="admin-task-label" for="carLevel3Survival">Survive time (seconds)</label><input id="carLevel3Survival" class="admin-task-input" type="number" min="5" max="180" step="1" /></div>
+                  <div><label class="admin-task-label" for="carLevel3GasPumpSpawn">Gas pump spawn (seconds)</label><input id="carLevel3GasPumpSpawn" class="admin-task-input" type="number" min="2" max="30" step="0.1" /></div>
+                  <div><label class="admin-task-label" for="carLevel3FuelDrain">Fuel drain per second</label><input id="carLevel3FuelDrain" class="admin-task-input" type="number" min="0.5" max="12" step="0.1" /></div>
+                </div>
+              </article>
+              <article class="admin-level-card">
+                <h3>Car Level 4</h3>
+                <label class="admin-toggle-row" for="carGameLevel4Toggle"><input id="carGameLevel4Toggle" type="checkbox" checked /><span>Enable level</span></label>
+                <div class="admin-control-grid">
+                  <div><label class="admin-task-label" for="carLevel4Speed">Speed (0.08 - 1.2)</label><input id="carLevel4Speed" class="admin-task-input" type="number" min="0.08" max="1.2" step="0.01" /></div>
+                  <div><label class="admin-task-label" for="carLevel4MaxCars">Max cars on road</label><input id="carLevel4MaxCars" class="admin-task-input" type="number" min="1" max="12" step="1" /></div>
+                  <div><label class="admin-task-label" for="carLevel4Survival">Survive time (seconds)</label><input id="carLevel4Survival" class="admin-task-input" type="number" min="5" max="180" step="1" /></div>
+                  <div><label class="admin-task-label" for="carLevel4GasPumpSpawn">Gas pump spawn (seconds)</label><input id="carLevel4GasPumpSpawn" class="admin-task-input" type="number" min="2" max="30" step="0.1" /></div>
+                  <div><label class="admin-task-label" for="carLevel4FuelDrain">Fuel drain per second</label><input id="carLevel4FuelDrain" class="admin-task-input" type="number" min="0.5" max="12" step="0.1" /></div>
+                </div>
+              </article>
+              <article class="admin-level-card">
+                <h3>Car Level 5</h3>
+                <label class="admin-toggle-row" for="carGameLevel5Toggle"><input id="carGameLevel5Toggle" type="checkbox" checked /><span>Enable level</span></label>
+                <div class="admin-control-grid">
+                  <div><label class="admin-task-label" for="carLevel5Speed">Speed (0.08 - 1.2)</label><input id="carLevel5Speed" class="admin-task-input" type="number" min="0.08" max="1.2" step="0.01" /></div>
+                  <div><label class="admin-task-label" for="carLevel5MaxCars">Max cars on road</label><input id="carLevel5MaxCars" class="admin-task-input" type="number" min="1" max="12" step="1" /></div>
+                  <div><label class="admin-task-label" for="carLevel5Survival">Survive time (seconds)</label><input id="carLevel5Survival" class="admin-task-input" type="number" min="5" max="180" step="1" /></div>
+                  <div><label class="admin-task-label" for="carLevel5GasPumpSpawn">Gas pump spawn (seconds)</label><input id="carLevel5GasPumpSpawn" class="admin-task-input" type="number" min="2" max="30" step="0.1" /></div>
+                  <div><label class="admin-task-label" for="carLevel5FuelDrain">Fuel drain per second</label><input id="carLevel5FuelDrain" class="admin-task-input" type="number" min="0.5" max="12" step="0.1" /></div>
+                </div>
+              </article>
+              <article class="admin-level-card">
+                <h3>Car Level 6</h3>
+                <label class="admin-toggle-row" for="carGameLevel6Toggle"><input id="carGameLevel6Toggle" type="checkbox" checked /><span>Enable level</span></label>
+                <div class="admin-control-grid">
+                  <div><label class="admin-task-label" for="carLevel6Speed">Speed (0.08 - 1.2)</label><input id="carLevel6Speed" class="admin-task-input" type="number" min="0.08" max="1.2" step="0.01" /></div>
+                  <div><label class="admin-task-label" for="carLevel6MaxCars">Max cars on road</label><input id="carLevel6MaxCars" class="admin-task-input" type="number" min="1" max="12" step="1" /></div>
+                  <div><label class="admin-task-label" for="carLevel6Survival">Survive time (seconds)</label><input id="carLevel6Survival" class="admin-task-input" type="number" min="5" max="180" step="1" /></div>
+                  <div><label class="admin-task-label" for="carLevel6GasPumpSpawn">Gas pump spawn (seconds)</label><input id="carLevel6GasPumpSpawn" class="admin-task-input" type="number" min="2" max="30" step="0.1" /></div>
+                  <div><label class="admin-task-label" for="carLevel6FuelDrain">Fuel drain per second</label><input id="carLevel6FuelDrain" class="admin-task-input" type="number" min="0.5" max="12" step="0.1" /></div>
+                </div>
+              </article>
+            </div>
+          </section>
 
-          <h2 class="admin-task-subhead">Maze Ghost Settings</h2>
-          <p>Configure ghost enable and ghost count for each maze level.</p>
+          <section class="admin-tab-content" id="panelAdvanced" role="tabpanel" aria-labelledby="tabAdvanced" aria-hidden="true">
+            <article class="admin-mini-card admin-mini-card--wide">
+              <h3>Jack Jump: Flame Rain (Level 4)</h3>
+              <div class="admin-inline-toggles">
+                <label class="admin-toggle-row" for="jackFlameRain4EnabledToggle">
+                  <input id="jackFlameRain4EnabledToggle" type="checkbox" checked />
+                  <span>Enable falling flames on level 4</span>
+                </label>
+              </div>
+              <div class="admin-control-grid">
+                <div><label class="admin-task-label" for="jackFlameRain4Size">Flame size (px)</label><input id="jackFlameRain4Size" class="admin-task-input" type="number" min="10" max="64" step="1" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain4HitRadius">Hit radius (px)</label><input id="jackFlameRain4HitRadius" class="admin-task-input" type="number" min="4" max="48" step="1" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain4BurstMin">Burst minimum</label><input id="jackFlameRain4BurstMin" class="admin-task-input" type="number" min="1" max="8" step="1" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain4BurstMax">Burst maximum</label><input id="jackFlameRain4BurstMax" class="admin-task-input" type="number" min="1" max="10" step="1" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain4IntervalMin">Interval min (ms)</label><input id="jackFlameRain4IntervalMin" class="admin-task-input" type="number" min="160" max="4000" step="10" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain4IntervalMax">Interval max (ms)</label><input id="jackFlameRain4IntervalMax" class="admin-task-input" type="number" min="200" max="5000" step="10" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain4SpeedMin">Fall speed min (px/sec)</label><input id="jackFlameRain4SpeedMin" class="admin-task-input" type="number" min="80" max="900" step="1" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain4SpeedMax">Fall speed max (px/sec)</label><input id="jackFlameRain4SpeedMax" class="admin-task-input" type="number" min="100" max="1200" step="1" /></div>
+              </div>
+            </article>
+            <article class="admin-mini-card admin-mini-card--wide">
+              <h3>Jack Jump: Flame Rain (Level 5)</h3>
+              <div class="admin-inline-toggles">
+                <label class="admin-toggle-row" for="jackFlameRain5EnabledToggle">
+                  <input id="jackFlameRain5EnabledToggle" type="checkbox" checked />
+                  <span>Enable falling flames on level 5</span>
+                </label>
+              </div>
+              <div class="admin-control-grid">
+                <div><label class="admin-task-label" for="jackFlameRain5Size">Flame size (px)</label><input id="jackFlameRain5Size" class="admin-task-input" type="number" min="10" max="64" step="1" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain5HitRadius">Hit radius (px)</label><input id="jackFlameRain5HitRadius" class="admin-task-input" type="number" min="4" max="48" step="1" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain5BurstMin">Burst minimum</label><input id="jackFlameRain5BurstMin" class="admin-task-input" type="number" min="1" max="8" step="1" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain5BurstMax">Burst maximum</label><input id="jackFlameRain5BurstMax" class="admin-task-input" type="number" min="1" max="10" step="1" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain5IntervalMin">Interval min (ms)</label><input id="jackFlameRain5IntervalMin" class="admin-task-input" type="number" min="160" max="4000" step="10" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain5IntervalMax">Interval max (ms)</label><input id="jackFlameRain5IntervalMax" class="admin-task-input" type="number" min="200" max="5000" step="10" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain5SpeedMin">Fall speed min (px/sec)</label><input id="jackFlameRain5SpeedMin" class="admin-task-input" type="number" min="80" max="900" step="1" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain5SpeedMax">Fall speed max (px/sec)</label><input id="jackFlameRain5SpeedMax" class="admin-task-input" type="number" min="100" max="1200" step="1" /></div>
+              </div>
+            </article>
+            <article class="admin-mini-card admin-mini-card--wide">
+              <h3>Jack Jump: Flame Rain (Level 6)</h3>
+              <div class="admin-inline-toggles">
+                <label class="admin-toggle-row" for="jackFlameRain6EnabledToggle">
+                  <input id="jackFlameRain6EnabledToggle" type="checkbox" checked />
+                  <span>Enable falling flames on level 6</span>
+                </label>
+              </div>
+              <div class="admin-control-grid">
+                <div><label class="admin-task-label" for="jackFlameRain6Size">Flame size (px)</label><input id="jackFlameRain6Size" class="admin-task-input" type="number" min="10" max="64" step="1" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain6HitRadius">Hit radius (px)</label><input id="jackFlameRain6HitRadius" class="admin-task-input" type="number" min="4" max="48" step="1" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain6BurstMin">Burst minimum</label><input id="jackFlameRain6BurstMin" class="admin-task-input" type="number" min="1" max="8" step="1" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain6BurstMax">Burst maximum</label><input id="jackFlameRain6BurstMax" class="admin-task-input" type="number" min="1" max="10" step="1" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain6IntervalMin">Interval min (ms)</label><input id="jackFlameRain6IntervalMin" class="admin-task-input" type="number" min="160" max="4000" step="10" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain6IntervalMax">Interval max (ms)</label><input id="jackFlameRain6IntervalMax" class="admin-task-input" type="number" min="200" max="5000" step="10" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain6SpeedMin">Fall speed min (px/sec)</label><input id="jackFlameRain6SpeedMin" class="admin-task-input" type="number" min="80" max="900" step="1" /></div>
+                <div><label class="admin-task-label" for="jackFlameRain6SpeedMax">Fall speed max (px/sec)</label><input id="jackFlameRain6SpeedMax" class="admin-task-input" type="number" min="100" max="1200" step="1" /></div>
+              </div>
+            </article>
 
-          <label class="admin-toggle-row" for="mazeGhostLevel1Toggle">
-            <input id="mazeGhostLevel1Toggle" type="checkbox" checked />
-            <span>Enable ghosts on Maze Level 1</span>
-          </label>
-          <label class="admin-task-label" for="mazeGhostLevel1Count">Ghost count on Level 1</label>
-          <input id="mazeGhostLevel1Count" class="admin-task-input" type="number" min="0" max="6" step="1" />
+            <article class="admin-mini-card admin-mini-card--wide">
+              <h3>Tips</h3>
+              <p class="admin-panel-note">Use Quick Setup for day-to-day changes, Maze for ghost tuning, and Car Game for all per-level driving parameters.</p>
+              <p class="admin-panel-note">All values save to the same settings keys and shared API endpoint used before this redesign.</p>
+            </article>
+          </section>
 
-          <label class="admin-toggle-row" for="mazeGhostLevel2Toggle">
-            <input id="mazeGhostLevel2Toggle" type="checkbox" checked />
-            <span>Enable ghosts on Maze Level 2</span>
-          </label>
-          <label class="admin-task-label" for="mazeGhostLevel2Count">Ghost count on Level 2</label>
-          <input id="mazeGhostLevel2Count" class="admin-task-input" type="number" min="0" max="6" step="1" />
-
-          <label class="admin-toggle-row" for="mazeGhostLevel3Toggle">
-            <input id="mazeGhostLevel3Toggle" type="checkbox" checked />
-            <span>Enable ghosts on Maze Level 3</span>
-          </label>
-          <label class="admin-task-label" for="mazeGhostLevel3Count">Ghost count on Level 3</label>
-          <input id="mazeGhostLevel3Count" class="admin-task-input" type="number" min="0" max="6" step="1" />
-
-          <label class="admin-toggle-row" for="mazeGhostLevel4Toggle">
-            <input id="mazeGhostLevel4Toggle" type="checkbox" checked />
-            <span>Enable ghosts on Maze Level 4</span>
-          </label>
-          <label class="admin-task-label" for="mazeGhostLevel4Count">Ghost count on Level 4</label>
-          <input id="mazeGhostLevel4Count" class="admin-task-input" type="number" min="0" max="6" step="1" />
-
-          <label class="admin-toggle-row" for="mazeGhostLevel5Toggle">
-            <input id="mazeGhostLevel5Toggle" type="checkbox" checked />
-            <span>Enable ghosts on Maze Level 5</span>
-          </label>
-          <label class="admin-task-label" for="mazeGhostLevel5Count">Ghost count on Level 5</label>
-          <input id="mazeGhostLevel5Count" class="admin-task-input" type="number" min="0" max="6" step="1" />
-
-          <label class="admin-toggle-row" for="mazeGhostLevel6Toggle">
-            <input id="mazeGhostLevel6Toggle" type="checkbox" checked />
-            <span>Enable ghosts on Maze Level 6</span>
-          </label>
-          <label class="admin-task-label" for="mazeGhostLevel6Count">Ghost count on Level 6</label>
-          <input id="mazeGhostLevel6Count" class="admin-task-input" type="number" min="0" max="6" step="1" />
-
-          <h2 class="admin-task-subhead">Car Game Levels</h2>
-          <p>Enable or disable each Car Game level.</p>
-
-          <label class="admin-toggle-row" for="carGameLevel1Toggle">
-            <input id="carGameLevel1Toggle" type="checkbox" checked />
-            <span>Enable Car Level 1</span>
-          </label>
-
-          <label class="admin-toggle-row" for="carGameLevel2Toggle">
-            <input id="carGameLevel2Toggle" type="checkbox" checked />
-            <span>Enable Car Level 2</span>
-          </label>
-
-          <label class="admin-toggle-row" for="carGameLevel3Toggle">
-            <input id="carGameLevel3Toggle" type="checkbox" checked />
-            <span>Enable Car Level 3</span>
-          </label>
-
-          <label class="admin-toggle-row" for="carGameLevel4Toggle">
-            <input id="carGameLevel4Toggle" type="checkbox" checked />
-            <span>Enable Car Level 4</span>
-          </label>
-
-          <label class="admin-toggle-row" for="carGameLevel5Toggle">
-            <input id="carGameLevel5Toggle" type="checkbox" checked />
-            <span>Enable Car Level 5</span>
-          </label>
-
-          <label class="admin-toggle-row" for="carGameLevel6Toggle">
-            <input id="carGameLevel6Toggle" type="checkbox" checked />
-            <span>Enable Car Level 6</span>
-          </label>
-
-          <h2 class="admin-task-subhead">Car Game Difficulty</h2>
-          <p>Set obstacle speed, max cars on road, and survive time for each Car Game level.</p>
-
-          <label class="admin-task-label" for="carLevel1Speed">Car Level 1 speed (0.08 - 1.2)</label>
-          <input id="carLevel1Speed" class="admin-task-input" type="number" min="0.08" max="1.2" step="0.01" />
-          <label class="admin-task-label" for="carLevel1MaxCars">Car Level 1 max cars on road</label>
-          <input id="carLevel1MaxCars" class="admin-task-input" type="number" min="1" max="12" step="1" />
-          <label class="admin-task-label" for="carLevel1Survival">Car Level 1 survive time (seconds)</label>
-          <input id="carLevel1Survival" class="admin-task-input" type="number" min="5" max="180" step="1" />
-
-          <label class="admin-task-label" for="carLevel2Speed">Car Level 2 speed (0.08 - 1.2)</label>
-          <input id="carLevel2Speed" class="admin-task-input" type="number" min="0.08" max="1.2" step="0.01" />
-          <label class="admin-task-label" for="carLevel2MaxCars">Car Level 2 max cars on road</label>
-          <input id="carLevel2MaxCars" class="admin-task-input" type="number" min="1" max="12" step="1" />
-          <label class="admin-task-label" for="carLevel2Survival">Car Level 2 survive time (seconds)</label>
-          <input id="carLevel2Survival" class="admin-task-input" type="number" min="5" max="180" step="1" />
-
-          <label class="admin-task-label" for="carLevel3Speed">Car Level 3 speed (0.08 - 1.2)</label>
-          <input id="carLevel3Speed" class="admin-task-input" type="number" min="0.08" max="1.2" step="0.01" />
-          <label class="admin-task-label" for="carLevel3MaxCars">Car Level 3 max cars on road</label>
-          <input id="carLevel3MaxCars" class="admin-task-input" type="number" min="1" max="12" step="1" />
-          <label class="admin-task-label" for="carLevel3Survival">Car Level 3 survive time (seconds)</label>
-          <input id="carLevel3Survival" class="admin-task-input" type="number" min="5" max="180" step="1" />
-
-          <label class="admin-task-label" for="carLevel4Speed">Car Level 4 speed (0.08 - 1.2)</label>
-          <input id="carLevel4Speed" class="admin-task-input" type="number" min="0.08" max="1.2" step="0.01" />
-          <label class="admin-task-label" for="carLevel4MaxCars">Car Level 4 max cars on road</label>
-          <input id="carLevel4MaxCars" class="admin-task-input" type="number" min="1" max="12" step="1" />
-          <label class="admin-task-label" for="carLevel4Survival">Car Level 4 survive time (seconds)</label>
-          <input id="carLevel4Survival" class="admin-task-input" type="number" min="5" max="180" step="1" />
-
-          <label class="admin-task-label" for="carLevel5Speed">Car Level 5 speed (0.08 - 1.2)</label>
-          <input id="carLevel5Speed" class="admin-task-input" type="number" min="0.08" max="1.2" step="0.01" />
-          <label class="admin-task-label" for="carLevel5MaxCars">Car Level 5 max cars on road</label>
-          <input id="carLevel5MaxCars" class="admin-task-input" type="number" min="1" max="12" step="1" />
-          <label class="admin-task-label" for="carLevel5Survival">Car Level 5 survive time (seconds)</label>
-          <input id="carLevel5Survival" class="admin-task-input" type="number" min="5" max="180" step="1" />
-
-          <label class="admin-task-label" for="carLevel6Speed">Car Level 6 speed (0.08 - 1.2)</label>
-          <input id="carLevel6Speed" class="admin-task-input" type="number" min="0.08" max="1.2" step="0.01" />
-          <label class="admin-task-label" for="carLevel6MaxCars">Car Level 6 max cars on road</label>
-          <input id="carLevel6MaxCars" class="admin-task-input" type="number" min="1" max="12" step="1" />
-          <label class="admin-task-label" for="carLevel6Survival">Car Level 6 survive time (seconds)</label>
-          <input id="carLevel6Survival" class="admin-task-input" type="number" min="5" max="180" step="1" />
-
-          <h2 class="admin-task-subhead">Car Game Fuel Settings</h2>
-          <p>Set how often gas pumps appear on each car level.</p>
-
-          <label class="admin-task-label" for="carLevel1GasPumpSpawn">Car Level 1 gas pump spawn (seconds)</label>
-          <input id="carLevel1GasPumpSpawn" class="admin-task-input" type="number" min="2" max="30" step="0.1" />
-
-          <label class="admin-task-label" for="carLevel2GasPumpSpawn">Car Level 2 gas pump spawn (seconds)</label>
-          <input id="carLevel2GasPumpSpawn" class="admin-task-input" type="number" min="2" max="30" step="0.1" />
-
-          <label class="admin-task-label" for="carLevel3GasPumpSpawn">Car Level 3 gas pump spawn (seconds)</label>
-          <input id="carLevel3GasPumpSpawn" class="admin-task-input" type="number" min="2" max="30" step="0.1" />
-
-          <label class="admin-task-label" for="carLevel4GasPumpSpawn">Car Level 4 gas pump spawn (seconds)</label>
-          <input id="carLevel4GasPumpSpawn" class="admin-task-input" type="number" min="2" max="30" step="0.1" />
-
-          <label class="admin-task-label" for="carLevel5GasPumpSpawn">Car Level 5 gas pump spawn (seconds)</label>
-          <input id="carLevel5GasPumpSpawn" class="admin-task-input" type="number" min="2" max="30" step="0.1" />
-
-          <label class="admin-task-label" for="carLevel6GasPumpSpawn">Car Level 6 gas pump spawn (seconds)</label>
-          <input id="carLevel6GasPumpSpawn" class="admin-task-input" type="number" min="2" max="30" step="0.1" />
-
-          <p>Set how quickly fuel drains on each car level.</p>
-
-          <label class="admin-task-label" for="carLevel1FuelDrain">Car Level 1 fuel drain per second</label>
-          <input id="carLevel1FuelDrain" class="admin-task-input" type="number" min="0.5" max="12" step="0.1" />
-
-          <label class="admin-task-label" for="carLevel2FuelDrain">Car Level 2 fuel drain per second</label>
-          <input id="carLevel2FuelDrain" class="admin-task-input" type="number" min="0.5" max="12" step="0.1" />
-
-          <label class="admin-task-label" for="carLevel3FuelDrain">Car Level 3 fuel drain per second</label>
-          <input id="carLevel3FuelDrain" class="admin-task-input" type="number" min="0.5" max="12" step="0.1" />
-
-          <label class="admin-task-label" for="carLevel4FuelDrain">Car Level 4 fuel drain per second</label>
-          <input id="carLevel4FuelDrain" class="admin-task-input" type="number" min="0.5" max="12" step="0.1" />
-
-          <label class="admin-task-label" for="carLevel5FuelDrain">Car Level 5 fuel drain per second</label>
-          <input id="carLevel5FuelDrain" class="admin-task-input" type="number" min="0.5" max="12" step="0.1" />
-
-          <label class="admin-task-label" for="carLevel6FuelDrain">Car Level 6 fuel drain per second</label>
-          <input id="carLevel6FuelDrain" class="admin-task-input" type="number" min="0.5" max="12" step="0.1" />
-
-          <div class="admin-task-actions">
+          <div class="admin-task-actions admin-task-actions--sticky">
             <button id="saveTask1Btn" class="admin-task-save" type="button">Save Settings</button>
             <a class="admin-task-open" href="trackpad-fullscreen.html">Open Fullscreen Trackpad</a>
           </div>

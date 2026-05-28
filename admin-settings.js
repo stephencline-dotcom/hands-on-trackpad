@@ -6,6 +6,17 @@ const task3DragSecondsInput = document.getElementById("task3DragSeconds");
 const task3EnabledToggle = document.getElementById("task3EnabledToggle");
 const soundEnabledToggle = document.getElementById("soundEnabledToggle");
 const trainingPausedToggle = document.getElementById("trainingPausedToggle");
+const jackFlameRainInputs = [4, 5, 6].map((level) => ({
+  enabled: document.getElementById(`jackFlameRain${level}EnabledToggle`),
+  size: document.getElementById(`jackFlameRain${level}Size`),
+  hitRadius: document.getElementById(`jackFlameRain${level}HitRadius`),
+  burstMin: document.getElementById(`jackFlameRain${level}BurstMin`),
+  burstMax: document.getElementById(`jackFlameRain${level}BurstMax`),
+  intervalMin: document.getElementById(`jackFlameRain${level}IntervalMin`),
+  intervalMax: document.getElementById(`jackFlameRain${level}IntervalMax`),
+  speedMin: document.getElementById(`jackFlameRain${level}SpeedMin`),
+  speedMax: document.getElementById(`jackFlameRain${level}SpeedMax`),
+}));
 const mazeGhostLevelToggles = [1, 2, 3, 4, 5, 6].map((level) =>
   document.getElementById(`mazeGhostLevel${level}Toggle`)
 );
@@ -30,6 +41,12 @@ const carGameLevelGasPumpSpawnInputs = [1, 2, 3, 4, 5, 6].map((level) =>
 const carGameLevelFuelDrainInputs = [1, 2, 3, 4, 5, 6].map((level) =>
   document.getElementById(`carLevel${level}FuelDrain`)
 );
+const adminTaskCard = document.querySelector(".admin-task-card");
+const taskSummaryPill = document.getElementById("taskSummaryPill");
+const carSummaryPill = document.getElementById("carSummaryPill");
+const mazeSummaryPill = document.getElementById("mazeSummaryPill");
+const tabButtons = Array.from(document.querySelectorAll(".admin-tab-button"));
+const tabPanels = Array.from(document.querySelectorAll(".admin-tab-content"));
 const saveTask1Btn = document.getElementById("saveTask1Btn");
 const task1SavedMessage = document.getElementById("task1SavedMessage");
 
@@ -41,6 +58,17 @@ const TASK2_ENABLED_KEY = "trackpadTask2Enabled";
 const TASK3_ENABLED_KEY = "trackpadTask3Enabled";
 const SOUND_ENABLED_KEY = "trackpadSoundEnabled";
 const TRAINING_PAUSED_KEY = "trackpadTrainingPaused";
+const JACK_FLAME_RAIN_KEYS = [4, 5, 6].map((level) => ({
+  enabled: `jackFlameRain${level}Enabled`,
+  size: `jackFlameRain${level}SizePx`,
+  hitRadius: `jackFlameRain${level}HitRadiusPx`,
+  burstMin: `jackFlameRain${level}BurstMin`,
+  burstMax: `jackFlameRain${level}BurstMax`,
+  intervalMin: `jackFlameRain${level}IntervalMinMs`,
+  intervalMax: `jackFlameRain${level}IntervalMaxMs`,
+  speedMin: `jackFlameRain${level}SpeedMin`,
+  speedMax: `jackFlameRain${level}SpeedMax`,
+}));
 const MAZE_GHOST_LEVEL_ENABLED_KEYS = [
   "mazeGhostLevel1Enabled",
   "mazeGhostLevel2Enabled",
@@ -114,7 +142,93 @@ const DEFAULT_CAR_LEVEL_MAX_CARS = [1, 2, 2, 3, 3, 4];
 const DEFAULT_CAR_LEVEL_SURVIVAL = [12, 16, 20, 24, 28, 32];
 const DEFAULT_CAR_LEVEL_GAS_PUMP_SPAWN_SECONDS = [4.2, 4.8, 5.4, 6.0, 6.6, 7.2];
 const DEFAULT_CAR_LEVEL_FUEL_DRAIN = [2.2, 2.8, 3.5, 4.3, 5.2, 6.2];
+const DEFAULT_JACK_FLAME_RAIN = {
+  enabled: true,
+  size: 24,
+  hitRadius: 12,
+  burstMin: 2,
+  burstMax: 4,
+  intervalMin: 620,
+  intervalMax: 1300,
+  speedMin: 210,
+  speedMax: 320,
+};
 const SETTINGS_API_PATH = "/api/settings";
+const ACTIVE_TAB_STORAGE_KEY = "adminSettingsActiveTab";
+
+function setDirtyState(isDirty) {
+  if (!adminTaskCard) {
+    return;
+  }
+
+  adminTaskCard.dataset.dirty = isDirty ? "true" : "false";
+}
+
+function updateQuickSummary() {
+  if (taskSummaryPill) {
+    const taskEnabledCount = [task1EnabledToggle, task2EnabledToggle, task3EnabledToggle].filter(
+      (toggle) => toggle && toggle.checked
+    ).length;
+    taskSummaryPill.textContent = `Tasks ${taskEnabledCount} / 3 enabled`;
+  }
+
+  if (carSummaryPill) {
+    const enabledCars = carGameLevelToggles.filter((toggle) => toggle && toggle.checked).length;
+    carSummaryPill.textContent = `Car levels ${enabledCars} / 6 enabled`;
+  }
+
+  if (mazeSummaryPill) {
+    const counts = mazeGhostLevelCountInputs.map((inputEl) => parseGhostCount(inputEl ? inputEl.value : 0));
+    const average = counts.reduce((sum, value) => sum + value, 0) / counts.length;
+    mazeSummaryPill.textContent = `Ghost avg ${average.toFixed(1)}`;
+  }
+}
+
+function setActiveTab(nextTabName) {
+  tabButtons.forEach((button) => {
+    const isActive = button.dataset.tab === nextTabName;
+    button.setAttribute("aria-selected", isActive ? "true" : "false");
+    button.tabIndex = isActive ? 0 : -1;
+  });
+
+  tabPanels.forEach((panel) => {
+    const panelTabName = panel.id.replace("panel", "").toLowerCase();
+    panel.setAttribute("aria-hidden", panelTabName === nextTabName ? "false" : "true");
+  });
+
+  sessionStorage.setItem(ACTIVE_TAB_STORAGE_KEY, nextTabName);
+}
+
+function initTabs() {
+  if (!tabButtons.length || !tabPanels.length) {
+    return;
+  }
+
+  tabButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      setActiveTab(button.dataset.tab || "quick");
+    });
+
+    button.addEventListener("keydown", (event) => {
+      if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") {
+        return;
+      }
+
+      event.preventDefault();
+      const currentIndex = tabButtons.indexOf(button);
+      const direction = event.key === "ArrowRight" ? 1 : -1;
+      const nextIndex = (currentIndex + direction + tabButtons.length) % tabButtons.length;
+      const nextButton = tabButtons[nextIndex];
+      nextButton.focus();
+      setActiveTab(nextButton.dataset.tab || "quick");
+    });
+  });
+
+  const savedTab = sessionStorage.getItem(ACTIVE_TAB_STORAGE_KEY);
+  const allowedTabs = new Set(tabButtons.map((button) => button.dataset.tab));
+  const initialTab = allowedTabs.has(savedTab) ? savedTab : "quick";
+  setActiveTab(initialTab);
+}
 
 function parseTask1Seconds(value) {
   const parsed = Number.parseInt(String(value || ""), 10);
@@ -265,6 +379,78 @@ function parseCarFuelDrain(value, fallback = 3.6) {
   return Math.min(12, Math.max(0.5, parsed));
 }
 
+function parseJackFlameRainSize(value, fallback = DEFAULT_JACK_FLAME_RAIN_SIZE) {
+  const parsed = Number.parseInt(String(value || ""), 10);
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.min(64, Math.max(10, parsed));
+}
+
+function parseJackFlameRainHitRadius(value, fallback = DEFAULT_JACK_FLAME_RAIN_HIT_RADIUS) {
+  const parsed = Number.parseInt(String(value || ""), 10);
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.min(48, Math.max(4, parsed));
+}
+
+function parseJackFlameRainBurstMin(value, fallback = DEFAULT_JACK_FLAME_RAIN_BURST_MIN) {
+  const parsed = Number.parseInt(String(value || ""), 10);
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.min(8, Math.max(1, parsed));
+}
+
+function parseJackFlameRainBurstMax(value, burstMin, fallback = DEFAULT_JACK_FLAME_RAIN_BURST_MAX) {
+  const parsed = Number.parseInt(String(value || ""), 10);
+  if (!Number.isFinite(parsed)) {
+    return Math.max(burstMin, fallback);
+  }
+
+  return Math.min(10, Math.max(burstMin, parsed));
+}
+
+function parseJackFlameRainIntervalMin(value, fallback = DEFAULT_JACK_FLAME_RAIN_INTERVAL_MIN) {
+  const parsed = Number.parseInt(String(value || ""), 10);
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.min(4000, Math.max(160, parsed));
+}
+
+function parseJackFlameRainIntervalMax(value, intervalMin, fallback = DEFAULT_JACK_FLAME_RAIN_INTERVAL_MAX) {
+  const parsed = Number.parseInt(String(value || ""), 10);
+  if (!Number.isFinite(parsed)) {
+    return Math.max(intervalMin + 30, fallback);
+  }
+
+  return Math.min(5000, Math.max(intervalMin + 30, parsed));
+}
+
+function parseJackFlameRainSpeedMin(value, fallback = DEFAULT_JACK_FLAME_RAIN_SPEED_MIN) {
+  const parsed = Number.parseFloat(String(value || ""));
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.min(900, Math.max(80, parsed));
+}
+
+function parseJackFlameRainSpeedMax(value, speedMin, fallback = DEFAULT_JACK_FLAME_RAIN_SPEED_MAX) {
+  const parsed = Number.parseFloat(String(value || ""));
+  if (!Number.isFinite(parsed)) {
+    return Math.max(speedMin + 1, fallback);
+  }
+
+  return Math.min(1200, Math.max(speedMin + 1, parsed));
+}
+
 function parseCarLevelArray(value, parser, fallbackArray) {
   if (Array.isArray(value)) {
     const normalized = value.slice(0, 6).map((item, index) => parser(item, fallbackArray[index]));
@@ -300,6 +486,20 @@ async function loadTask1Settings() {
   let task3Enabled = parseTaskEnabled(localStorage.getItem(TASK3_ENABLED_KEY), true);
   let soundEnabled = parseTaskEnabled(localStorage.getItem(SOUND_ENABLED_KEY), true);
   let trainingPaused = parseTrainingPaused(localStorage.getItem(TRAINING_PAUSED_KEY));
+  const jackFlameRainSettings = [4, 5, 6].map((level, idx) => {
+    const keys = JACK_FLAME_RAIN_KEYS[idx];
+    return {
+      enabled: parseTaskEnabled(localStorage.getItem(keys.enabled), DEFAULT_JACK_FLAME_RAIN.enabled),
+      size: parseJackFlameRainSize(localStorage.getItem(keys.size)),
+      hitRadius: parseJackFlameRainHitRadius(localStorage.getItem(keys.hitRadius)),
+      burstMin: parseJackFlameRainBurstMin(localStorage.getItem(keys.burstMin)),
+      burstMax: parseJackFlameRainBurstMax(localStorage.getItem(keys.burstMax), DEFAULT_JACK_FLAME_RAIN.burstMin),
+      intervalMin: parseJackFlameRainIntervalMin(localStorage.getItem(keys.intervalMin)),
+      intervalMax: parseJackFlameRainIntervalMax(localStorage.getItem(keys.intervalMax), DEFAULT_JACK_FLAME_RAIN.intervalMin),
+      speedMin: parseJackFlameRainSpeedMin(localStorage.getItem(keys.speedMin)),
+      speedMax: parseJackFlameRainSpeedMax(localStorage.getItem(keys.speedMax), DEFAULT_JACK_FLAME_RAIN.speedMin),
+    };
+  });
   let mazeGhostLevelsEnabled = MAZE_GHOST_LEVEL_ENABLED_KEYS.map((key) =>
     parseTaskEnabled(localStorage.getItem(key), true)
   );
@@ -337,6 +537,21 @@ async function loadTask1Settings() {
       task3Enabled = parseTaskEnabled(data.task3Enabled, true);
       soundEnabled = parseTaskEnabled(data.soundEnabled, true);
       trainingPaused = parseTrainingPaused(data.trainingPaused);
+      [4, 5, 6].forEach((level, idx) => {
+        const keys = JACK_FLAME_RAIN_KEYS[idx];
+        const d = data[`jackFlameRain${level}`] || {};
+        jackFlameRainSettings[idx] = {
+          enabled: parseTaskEnabled(d.enabled, DEFAULT_JACK_FLAME_RAIN.enabled),
+          size: parseJackFlameRainSize(d.size),
+          hitRadius: parseJackFlameRainHitRadius(d.hitRadius),
+          burstMin: parseJackFlameRainBurstMin(d.burstMin),
+          burstMax: parseJackFlameRainBurstMax(d.burstMax, DEFAULT_JACK_FLAME_RAIN.burstMin),
+          intervalMin: parseJackFlameRainIntervalMin(d.intervalMin),
+          intervalMax: parseJackFlameRainIntervalMax(d.intervalMax, DEFAULT_JACK_FLAME_RAIN.intervalMin),
+          speedMin: parseJackFlameRainSpeedMin(d.speedMin),
+          speedMax: parseJackFlameRainSpeedMax(d.speedMax, DEFAULT_JACK_FLAME_RAIN.speedMin),
+        };
+      });
       mazeGhostLevelsEnabled = parseGhostLevelEnabled(data.mazeGhostLevelsEnabled, true);
       mazeGhostLevelCounts = parseGhostLevelCounts(data.mazeGhostLevelsPerLevelCounts, DEFAULT_GHOST_LEVEL_COUNT);
       carGameLevelsEnabled = parseCarGameLevelsEnabled(data.carGameLevelsEnabled, true);
@@ -373,6 +588,19 @@ async function loadTask1Settings() {
       localStorage.setItem(TASK3_ENABLED_KEY, String(task3Enabled));
       localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
       localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
+      [4, 5, 6].forEach((level, idx) => {
+        const keys = JACK_FLAME_RAIN_KEYS[idx];
+        const s = jackFlameRainSettings[idx];
+        localStorage.setItem(keys.enabled, String(s.enabled));
+        localStorage.setItem(keys.size, String(s.size));
+        localStorage.setItem(keys.hitRadius, String(s.hitRadius));
+        localStorage.setItem(keys.burstMin, String(s.burstMin));
+        localStorage.setItem(keys.burstMax, String(s.burstMax));
+        localStorage.setItem(keys.intervalMin, String(s.intervalMin));
+        localStorage.setItem(keys.intervalMax, String(s.intervalMax));
+        localStorage.setItem(keys.speedMin, String(s.speedMin));
+        localStorage.setItem(keys.speedMax, String(s.speedMax));
+      });
       MAZE_GHOST_LEVEL_ENABLED_KEYS.forEach((key, index) => {
         localStorage.setItem(key, String(mazeGhostLevelsEnabled[index]));
       });
@@ -410,6 +638,19 @@ async function loadTask1Settings() {
   task3EnabledToggle.checked = task3Enabled;
   soundEnabledToggle.checked = soundEnabled;
   trainingPausedToggle.checked = trainingPaused;
+  [4, 5, 6].forEach((level, idx) => {
+    const s = jackFlameRainSettings[idx];
+    const inputs = jackFlameRainInputs[idx];
+    if (inputs.enabled) inputs.enabled.checked = s.enabled;
+    if (inputs.size) inputs.size.value = String(s.size);
+    if (inputs.hitRadius) inputs.hitRadius.value = String(s.hitRadius);
+    if (inputs.burstMin) inputs.burstMin.value = String(s.burstMin);
+    if (inputs.burstMax) inputs.burstMax.value = String(s.burstMax);
+    if (inputs.intervalMin) inputs.intervalMin.value = String(s.intervalMin);
+    if (inputs.intervalMax) inputs.intervalMax.value = String(s.intervalMax);
+    if (inputs.speedMin) inputs.speedMin.value = String(s.speedMin);
+    if (inputs.speedMax) inputs.speedMax.value = String(s.speedMax);
+  });
   mazeGhostLevelToggles.forEach((toggle, index) => {
     if (toggle) {
       toggle.checked = mazeGhostLevelsEnabled[index];
@@ -461,6 +702,20 @@ async function saveTask1Settings() {
   const task3Enabled = Boolean(task3EnabledToggle.checked);
   const soundEnabled = Boolean(soundEnabledToggle.checked);
   const trainingPaused = Boolean(trainingPausedToggle.checked);
+  const jackFlameRainSettingsToSave = [4, 5, 6].map((level, idx) => {
+    const inputs = jackFlameRainInputs[idx];
+    return {
+      enabled: Boolean(inputs.enabled && inputs.enabled.checked),
+      size: parseJackFlameRainSize(inputs.size ? inputs.size.value : DEFAULT_JACK_FLAME_RAIN.size),
+      hitRadius: parseJackFlameRainHitRadius(inputs.hitRadius ? inputs.hitRadius.value : DEFAULT_JACK_FLAME_RAIN.hitRadius),
+      burstMin: parseJackFlameRainBurstMin(inputs.burstMin ? inputs.burstMin.value : DEFAULT_JACK_FLAME_RAIN.burstMin),
+      burstMax: parseJackFlameRainBurstMax(inputs.burstMax ? inputs.burstMax.value : DEFAULT_JACK_FLAME_RAIN.burstMax, DEFAULT_JACK_FLAME_RAIN.burstMin),
+      intervalMin: parseJackFlameRainIntervalMin(inputs.intervalMin ? inputs.intervalMin.value : DEFAULT_JACK_FLAME_RAIN.intervalMin),
+      intervalMax: parseJackFlameRainIntervalMax(inputs.intervalMax ? inputs.intervalMax.value : DEFAULT_JACK_FLAME_RAIN.intervalMax, DEFAULT_JACK_FLAME_RAIN.intervalMin),
+      speedMin: parseJackFlameRainSpeedMin(inputs.speedMin ? inputs.speedMin.value : DEFAULT_JACK_FLAME_RAIN.speedMin),
+      speedMax: parseJackFlameRainSpeedMax(inputs.speedMax ? inputs.speedMax.value : DEFAULT_JACK_FLAME_RAIN.speedMax, DEFAULT_JACK_FLAME_RAIN.speedMin),
+    };
+  });
   const mazeGhostLevelsEnabled = mazeGhostLevelToggles.map((toggle) => Boolean(toggle && toggle.checked));
   const mazeGhostLevelsPerLevelCounts = mazeGhostLevelCountInputs.map((inputEl) =>
     parseGhostCount(inputEl ? inputEl.value : DEFAULT_GHOST_LEVEL_COUNT)
@@ -506,6 +761,19 @@ async function saveTask1Settings() {
   localStorage.setItem(TASK3_ENABLED_KEY, String(task3Enabled));
   localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
   localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
+  [4, 5, 6].forEach((level, idx) => {
+    const keys = JACK_FLAME_RAIN_KEYS[idx];
+    const s = jackFlameRainSettingsToSave[idx];
+    localStorage.setItem(keys.enabled, String(s.enabled));
+    localStorage.setItem(keys.size, String(s.size));
+    localStorage.setItem(keys.hitRadius, String(s.hitRadius));
+    localStorage.setItem(keys.burstMin, String(s.burstMin));
+    localStorage.setItem(keys.burstMax, String(s.burstMax));
+    localStorage.setItem(keys.intervalMin, String(s.intervalMin));
+    localStorage.setItem(keys.intervalMax, String(s.intervalMax));
+    localStorage.setItem(keys.speedMin, String(s.speedMin));
+    localStorage.setItem(keys.speedMax, String(s.speedMax));
+  });
   MAZE_GHOST_LEVEL_ENABLED_KEYS.forEach((key, index) => {
     localStorage.setItem(key, String(mazeGhostLevelsEnabled[index]));
   });
@@ -555,6 +823,33 @@ async function saveTask1Settings() {
       inputEl.value = String(carGameLevelFuelDrainPerSecond[index]);
     }
   });
+  if (jackFlameRainSizeInput) {
+    jackFlameRainSizeInput.value = String(jackFlameRainSizePx);
+  }
+  if (jackFlameRainHitRadiusInput) {
+    jackFlameRainHitRadiusInput.value = String(jackFlameRainHitRadiusPx);
+  }
+  if (jackFlameRainBurstMinInput) {
+    jackFlameRainBurstMinInput.value = String(jackFlameRainBurstMin);
+  }
+  if (jackFlameRainBurstMaxInput) {
+    jackFlameRainBurstMaxInput.value = String(jackFlameRainBurstMax);
+  }
+  if (jackFlameRainIntervalMinInput) {
+    jackFlameRainIntervalMinInput.value = String(jackFlameRainIntervalMinMs);
+  }
+  if (jackFlameRainIntervalMaxInput) {
+    jackFlameRainIntervalMaxInput.value = String(jackFlameRainIntervalMaxMs);
+  }
+  if (jackFlameRainSpeedMinInput) {
+    jackFlameRainSpeedMinInput.value = String(jackFlameRainSpeedMin);
+  }
+  if (jackFlameRainSpeedMaxInput) {
+    jackFlameRainSpeedMaxInput.value = String(jackFlameRainSpeedMax);
+  }
+  if (jackFlameRainEnabledToggle) {
+    jackFlameRainEnabledToggle.checked = jackFlameRainEnabled;
+  }
 
   try {
     const response = await fetch(SETTINGS_API_PATH, {
@@ -571,6 +866,9 @@ async function saveTask1Settings() {
         task3Enabled,
         soundEnabled,
         trainingPaused,
+        jackFlameRain4: jackFlameRainSettingsToSave[0],
+        jackFlameRain5: jackFlameRainSettingsToSave[1],
+        jackFlameRain6: jackFlameRainSettingsToSave[2],
         mazeGhostLevelsEnabled,
         mazeGhostLevelsPerLevelCounts,
         carGameLevelsEnabled,
@@ -590,12 +888,61 @@ async function saveTask1Settings() {
   } catch {
     showSavedMessage("Saved on this device only (server unavailable).");
   }
+
+  setDirtyState(false);
+  updateQuickSummary();
 }
 
-loadTask1Settings();
+initTabs();
 saveTask1Btn.addEventListener("click", saveTask1Settings);
 
-[task1DurationInput, task2ClicksInput, task3DragSecondsInput, ...mazeGhostLevelCountInputs, ...carGameLevelSpeedInputs, ...carGameLevelMaxCarsInputs, ...carGameLevelSurvivalInputs, ...carGameLevelGasPumpSpawnInputs, ...carGameLevelFuelDrainInputs].forEach((inputEl) => {
+const allInputs = [
+  task1DurationInput,
+  task2ClicksInput,
+  task3DragSecondsInput,
+  ...mazeGhostLevelCountInputs,
+  ...carGameLevelSpeedInputs,
+  ...carGameLevelMaxCarsInputs,
+  ...carGameLevelSurvivalInputs,
+  ...carGameLevelGasPumpSpawnInputs,
+  ...carGameLevelFuelDrainInputs,
+  ...jackFlameRainInputs.flatMap((obj) => Object.values(obj)),
+];
+
+const allToggles = [
+  task1EnabledToggle,
+  task2EnabledToggle,
+  task3EnabledToggle,
+  soundEnabledToggle,
+  trainingPausedToggle,
+  jackFlameRainEnabledToggle,
+  ...mazeGhostLevelToggles,
+  ...carGameLevelToggles,
+];
+
+allInputs.forEach((inputEl) => {
+  if (!inputEl) {
+    return;
+  }
+
+  inputEl.addEventListener("input", () => {
+    setDirtyState(true);
+    updateQuickSummary();
+  });
+});
+
+allToggles.forEach((toggleEl) => {
+  if (!toggleEl) {
+    return;
+  }
+
+  toggleEl.addEventListener("change", () => {
+    setDirtyState(true);
+    updateQuickSummary();
+  });
+});
+
+allInputs.forEach((inputEl) => {
   if (!inputEl) {
     return;
   }
@@ -606,4 +953,9 @@ saveTask1Btn.addEventListener("click", saveTask1Settings);
       saveTask1Settings();
     }
   });
+});
+
+loadTask1Settings().then(() => {
+  updateQuickSummary();
+  setDirtyState(false);
 });
