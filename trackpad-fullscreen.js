@@ -26,6 +26,9 @@ const task1BalloonLayer = document.getElementById("task1BalloonLayer");
 const trainingPausedOverlay = document.getElementById("trainingPausedOverlay");
 let audioUnlocked = false;
 let audioUnlockInFlight = false;
+// Teacher setting that switches between hover-follow and click-and-drag movement.
+const FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY = "fullscreenRequireClickAndDrag";
+const movementGate = window.trackpadMovementSettings.createClickAndDragGate(FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY);
 
 const TASK1_STORAGE_KEY = "trackpadTask1RequiredSeconds";
 const TASK2_STORAGE_KEY = "trackpadTask2RequiredClicks";
@@ -525,6 +528,10 @@ async function loadTaskRequirements() {
       task2IsEnabled = parseTaskEnabled(data.task2Enabled, true);
       dragSeconds = parseTask3Seconds(data.task3RequiredDragSeconds);
       task3IsEnabled = parseTaskEnabled(data.task3Enabled, true);
+      const requireClickAndDrag = parseTaskEnabled(
+        data.fullscreenRequireClickAndDrag,
+        movementGate.isRequireClickAndDragEnabled(FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY)
+      );
       isSoundEnabled = parseTaskEnabled(data.soundEnabled, true);
       paused = parseTrainingPaused(data.trainingPaused);
       localStorage.setItem(TASK1_STORAGE_KEY, String(seconds));
@@ -533,6 +540,7 @@ async function loadTaskRequirements() {
       localStorage.setItem(TASK2_ENABLED_KEY, String(task2IsEnabled));
       localStorage.setItem(TASK3_STORAGE_KEY, String(dragSeconds));
       localStorage.setItem(TASK3_ENABLED_KEY, String(task3IsEnabled));
+      localStorage.setItem(FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY, String(requireClickAndDrag));
       localStorage.setItem(SOUND_ENABLED_KEY, String(isSoundEnabled));
       localStorage.setItem(TRAINING_PAUSED_KEY, String(paused));
     }
@@ -592,6 +600,10 @@ async function refreshSharedSettingsLive() {
       task2IsEnabled = parseTaskEnabled(data.task2Enabled, true);
       dragSeconds = parseTask3Seconds(data.task3RequiredDragSeconds);
       task3IsEnabled = parseTaskEnabled(data.task3Enabled, true);
+      const requireClickAndDrag = parseTaskEnabled(
+        data.fullscreenRequireClickAndDrag,
+        movementGate.isRequireClickAndDragEnabled(FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY)
+      );
       isSoundEnabled = parseTaskEnabled(data.soundEnabled, true);
       paused = parseTrainingPaused(data.trainingPaused);
       localStorage.setItem(TASK1_STORAGE_KEY, String(seconds));
@@ -600,6 +612,7 @@ async function refreshSharedSettingsLive() {
       localStorage.setItem(TASK2_ENABLED_KEY, String(task2IsEnabled));
       localStorage.setItem(TASK3_STORAGE_KEY, String(dragSeconds));
       localStorage.setItem(TASK3_ENABLED_KEY, String(task3IsEnabled));
+      localStorage.setItem(FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY, String(requireClickAndDrag));
       localStorage.setItem(SOUND_ENABLED_KEY, String(isSoundEnabled));
       localStorage.setItem(TRAINING_PAUSED_KEY, String(paused));
     }
@@ -1203,7 +1216,9 @@ document.addEventListener("pointermove", (event) => {
   if (isTaskActive(1)) {
     updateTask1Timer();
   }
-  updateRightFromPointer(event);
+  if (movementGate.shouldMove(event)) {
+    updateRightFromPointer(event);
+  }
   
   if (!holdingTrackpad) {
     if (!hasHoverPosition) {
@@ -1342,6 +1357,7 @@ document.addEventListener("pointerdown", (event) => {
     return;
   }
 
+  movementGate.begin(event);
   updateRightFromPointer(event);
   beginTrackpadPress(event);
 });
@@ -1374,10 +1390,12 @@ document.addEventListener("keydown", () => {
   unlockAudioFromGesture();
 });
 
-document.addEventListener("pointerup", () => {
+document.addEventListener("pointerup", (event) => {
   if (trainingPaused) {
     return;
   }
+
+  movementGate.end(event);
 
   if (task3Dragging) {
     finishTask3Drag(task3SuccessShown);
@@ -1410,10 +1428,12 @@ document.addEventListener("pointerup", () => {
   endTrackpadPress();
 });
 
-document.addEventListener("pointercancel", () => {
+document.addEventListener("pointercancel", (event) => {
   if (trainingPaused) {
     return;
   }
+
+  movementGate.end(event);
 
   if (task3Dragging) {
     finishTask3Drag(false);

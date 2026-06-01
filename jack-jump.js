@@ -7,6 +7,10 @@ const jackGoal = document.getElementById("jackGoal");
 const jackStatus = document.getElementById("jackStatus");
 const jackLevelBadge = document.getElementById("jackLevelBadge");
 const jackLevelOverlay = document.getElementById("jackLevelOverlay");
+const jackTrackpadScene = document.getElementById("scene");
+const jackTrackpadLeftHand = document.getElementById("leftHand");
+const jackTrackpadRightHand = document.getElementById("rightHand");
+const jackTrackpadPressIndicator = document.getElementById("pressIndicator");
 
 const BASE_SCENE_WIDTH = 700;
 const BASE_SCENE_HEIGHT = 394;
@@ -28,6 +32,15 @@ const FALLING_FLAME_LEVEL_START_INDEX = 3;
 const FALLING_FLAME_SIZE_PX = 24;
 const FALLING_FLAME_HIT_RADIUS = 12;
 const FLAME_SETTINGS_REFRESH_INTERVAL_MS = 2200;
+const JACK_TRACKPAD_LAYOUT = {
+  scene: { width: 626, height: 437 },
+  trackpadScale: 0.84,
+  leftStart: { x: -34, y: 178 },
+  rightStart: { x: 230, y: 158 },
+};
+// This gate reads the saved teacher setting from localStorage and decides whether hover movement is allowed.
+const JACK_REQUIRE_CLICK_AND_DRAG_KEY = "jackRequireClickAndDrag";
+const jackTrackpadMovementGate = window.trackpadMovementSettings.createClickAndDragGate(JACK_REQUIRE_CLICK_AND_DRAG_KEY);
 const DEFAULT_FLAME_RAIN_SETTINGS = {
   4: {
     enabled: true,
@@ -110,6 +123,11 @@ runningFeetSound.preload = "auto";
 runningFeetSound.volume = 0.55;
 runningFeetSound.loop = true;
 
+const woohooSound = new Audio("sounds/woohoo.mp3");
+woohooSound.preload = "auto";
+woohooSound.volume = 0.72;
+woohooSound.loop = false;
+
 const JACK_PATH_LEVELS = [
   [
     { x: 76, y: 322 },
@@ -139,99 +157,127 @@ const JACK_PATH_LEVELS = [
   ],
   [
     { x: 76, y: 322 },
-    { x: 132, y: 326 },
-    { x: 186, y: 314 },
-    { x: 230, y: 286 },
-    { x: 266, y: 250 },
-    { x: 300, y: 220 },
-    { x: 338, y: 206 },
-    { x: 376, y: 214 },
-    { x: 408, y: 240 },
-    { x: 430, y: 274 },
-    { x: 416, y: 302 },
-    { x: 446, y: 320 },
-    { x: 486, y: 306 },
-    { x: 514, y: 274 },
-    { x: 500, y: 242 },
-    { x: 532, y: 224 },
-    { x: 574, y: 252 },
-    { x: 602, y: 292 },
-    { x: 624, y: 322 },
-  ],
-  [
-    { x: 76, y: 322 },
     { x: 126, y: 330 },
-    { x: 172, y: 320 },
-    { x: 210, y: 292 },
-    { x: 242, y: 254 },
-    { x: 274, y: 222 },
-    { x: 310, y: 204 },
-    { x: 346, y: 210 },
-    { x: 374, y: 238 },
-    { x: 392, y: 272 },
-    { x: 404, y: 306 },
-    { x: 432, y: 332 },
-    { x: 470, y: 334 },
-    { x: 498, y: 310 },
-    { x: 500, y: 278 },
-    { x: 478, y: 250 },
-    { x: 500, y: 224 },
-    { x: 540, y: 214 },
-    { x: 578, y: 236 },
-    { x: 602, y: 274 },
+    { x: 170, y: 324 },
+    { x: 208, y: 300 },
+    { x: 238, y: 266 },
+    { x: 268, y: 234 },
+    { x: 304, y: 214 },
+    { x: 342, y: 208 },
+    { x: 372, y: 222 },
+    { x: 392, y: 248 },
+    { x: 408, y: 280 },
+    { x: 396, y: 306 },
+    { x: 420, y: 324 },
+    { x: 452, y: 332 },
+    { x: 484, y: 320 },
+    { x: 506, y: 296 },
+    { x: 502, y: 268 },
+    { x: 480, y: 246 },
+    { x: 496, y: 224 },
+    { x: 528, y: 214 },
+    { x: 562, y: 226 },
+    { x: 590, y: 252 },
+    { x: 606, y: 286 },
     { x: 624, y: 322 },
   ],
   [
     { x: 76, y: 322 },
-    { x: 122, y: 332 },
-    { x: 164, y: 324 },
-    { x: 200, y: 296 },
-    { x: 230, y: 258 },
-    { x: 258, y: 220 },
-    { x: 292, y: 194 },
-    { x: 332, y: 186 },
-    { x: 370, y: 202 },
-    { x: 398, y: 232 },
-    { x: 414, y: 270 },
-    { x: 422, y: 308 },
-    { x: 448, y: 338 },
-    { x: 486, y: 344 },
-    { x: 518, y: 324 },
-    { x: 528, y: 292 },
-    { x: 516, y: 260 },
-    { x: 492, y: 236 },
-    { x: 508, y: 208 },
-    { x: 548, y: 196 },
-    { x: 590, y: 216 },
-    { x: 616, y: 258 },
+    { x: 122, y: 334 },
+    { x: 162, y: 326 },
+    { x: 196, y: 302 },
+    { x: 224, y: 268 },
+    { x: 252, y: 236 },
+    { x: 286, y: 210 },
+    { x: 324, y: 196 },
+    { x: 362, y: 204 },
+    { x: 390, y: 228 },
+    { x: 404, y: 258 },
+    { x: 414, y: 290 },
+    { x: 430, y: 318 },
+    { x: 456, y: 336 },
+    { x: 488, y: 338 },
+    { x: 516, y: 324 },
+    { x: 532, y: 298 },
+    { x: 530, y: 268 },
+    { x: 514, y: 244 },
+    { x: 490, y: 228 },
+    { x: 498, y: 206 },
+    { x: 528, y: 192 },
+    { x: 564, y: 196 },
+    { x: 592, y: 220 },
+    { x: 610, y: 252 },
+    { x: 616, y: 286 },
     { x: 624, y: 322 },
   ],
   [
     { x: 76, y: 322 },
-    { x: 118, y: 334 },
-    { x: 156, y: 328 },
-    { x: 190, y: 304 },
-    { x: 218, y: 268 },
-    { x: 242, y: 228 },
-    { x: 272, y: 194 },
-    { x: 308, y: 174 },
-    { x: 350, y: 174 },
-    { x: 386, y: 194 },
-    { x: 410, y: 228 },
-    { x: 420, y: 268 },
-    { x: 424, y: 308 },
-    { x: 446, y: 340 },
-    { x: 482, y: 352 },
-    { x: 520, y: 338 },
-    { x: 542, y: 306 },
-    { x: 542, y: 272 },
-    { x: 524, y: 242 },
-    { x: 500, y: 218 },
-    { x: 510, y: 192 },
-    { x: 548, y: 178 },
-    { x: 590, y: 194 },
-    { x: 620, y: 232 },
-    { x: 620, y: 274 },
+    { x: 118, y: 336 },
+    { x: 154, y: 330 },
+    { x: 186, y: 308 },
+    { x: 214, y: 276 },
+    { x: 238, y: 240 },
+    { x: 266, y: 208 },
+    { x: 302, y: 184 },
+    { x: 342, y: 174 },
+    { x: 380, y: 184 },
+    { x: 408, y: 208 },
+    { x: 426, y: 238 },
+    { x: 438, y: 272 },
+    { x: 446, y: 304 },
+    { x: 462, y: 332 },
+    { x: 490, y: 350 },
+    { x: 524, y: 350 },
+    { x: 548, y: 332 },
+    { x: 558, y: 304 },
+    { x: 554, y: 274 },
+    { x: 538, y: 248 },
+    { x: 514, y: 230 },
+    { x: 496, y: 214 },
+    { x: 504, y: 192 },
+    { x: 534, y: 174 },
+    { x: 570, y: 176 },
+    { x: 600, y: 196 },
+    { x: 618, y: 226 },
+    { x: 622, y: 260 },
+    { x: 622, y: 292 },
+    { x: 624, y: 322 },
+  ],
+  [
+    { x: 76, y: 322 },
+    { x: 114, y: 338 },
+    { x: 148, y: 334 },
+    { x: 178, y: 314 },
+    { x: 204, y: 286 },
+    { x: 226, y: 250 },
+    { x: 250, y: 214 },
+    { x: 280, y: 184 },
+    { x: 316, y: 166 },
+    { x: 356, y: 162 },
+    { x: 392, y: 174 },
+    { x: 420, y: 198 },
+    { x: 438, y: 228 },
+    { x: 448, y: 262 },
+    { x: 454, y: 296 },
+    { x: 466, y: 326 },
+    { x: 490, y: 346 },
+    { x: 522, y: 354 },
+    { x: 552, y: 344 },
+    { x: 572, y: 320 },
+    { x: 580, y: 292 },
+    { x: 576, y: 262 },
+    { x: 562, y: 236 },
+    { x: 542, y: 216 },
+    { x: 518, y: 198 },
+    { x: 502, y: 182 },
+    { x: 510, y: 164 },
+    { x: 538, y: 150 },
+    { x: 572, y: 152 },
+    { x: 602, y: 170 },
+    { x: 622, y: 198 },
+    { x: 630, y: 230 },
+    { x: 630, y: 262 },
+    { x: 628, y: 292 },
     { x: 624, y: 322 },
   ],
 ];
@@ -260,6 +306,7 @@ const JACK_LEVELS = [
   {
     pathPoints: JACK_PATH_LEVELS[2],
     candleT: 0.44,
+    candleOffsetY: 76,
     pathTolerance: 30,
     candleZonePathTolerance: 50,
     candleCollisionWindow: 0.16,
@@ -331,6 +378,7 @@ let goalPoint = { x: 0, y: 0 };
 let headingDeg = 0;
 let facingScaleX = 1;
 let movementPxPerFrame = 0;
+let activeScenePointerId = null;
 
 function getFallingFlameLevelOffset() {
   return Math.max(0, currentLevelIndex - FALLING_FLAME_LEVEL_START_INDEX);
@@ -429,6 +477,11 @@ async function refreshFlameRainSettingsFromApi() {
       return;
     }
     const data = await response.json();
+    const requireClickAndDrag = parseBool(
+      data.jackRequireClickAndDrag,
+      jackTrackpadMovementGate.isRequireClickAndDragEnabled(JACK_REQUIRE_CLICK_AND_DRAG_KEY)
+    );
+    localStorage.setItem(JACK_REQUIRE_CLICK_AND_DRAG_KEY, String(requireClickAndDrag));
     for (const level of [4, 5, 6]) {
       flameRainSettings[level] = normalizeFlameRainSettings(data[`jackFlameRain${level}`] || {}, level);
     }
@@ -995,8 +1048,10 @@ function resetToStart(message, state = "neutral") {
   headingDeg = 0;
   facingScaleX = 1;
   jackCharacter.src = "images/jack.png";
-  jackWrap.classList.remove("is-running", "is-failed", "is-success");
+  jackWrap.classList.remove("is-running", "is-failed", "is-success", "is-celebrating");
   jackGoal.classList.remove("is-success");
+  woohooSound.pause();
+  woohooSound.currentTime = 0;
   fireSound.pause();
   stopFireLoopGuard();
   seekFireSoundStart();
@@ -1041,8 +1096,26 @@ function triggerSuccess() {
   runningFeetSound.currentTime = 0;
   clearFallingFlames();
   jackWrap.classList.remove("is-running", "is-failed");
-  jackWrap.classList.add("is-success");
+  jackWrap.classList.add("is-success", "is-celebrating");
   jackGoal.classList.add("is-success");
+
+  let successDelayMs = NEXT_LEVEL_DELAY_MS;
+  try {
+    woohooSound.pause();
+    woohooSound.currentTime = 0;
+    const remainingSeconds = Number.isFinite(woohooSound.duration)
+      ? Math.max(0, woohooSound.duration)
+      : 0;
+    if (remainingSeconds > 0) {
+      successDelayMs = Math.ceil(remainingSeconds * 1000);
+    }
+
+    woohooSound.play().catch(() => {
+      // Ignore autoplay-blocking errors.
+    });
+  } catch {
+    // Ignore media errors and keep gameplay responsive.
+  }
 
   const completedLevel = currentLevelIndex + 1;
   const hasNextLevel = currentLevelIndex < JACK_LEVELS.length - 1;
@@ -1058,7 +1131,7 @@ function triggerSuccess() {
   showLevelOverlay("Way to go! On to the next level...");
 
   clearLevelAdvanceTimer();
-  levelAdvanceDueAtMs = Date.now() + NEXT_LEVEL_DELAY_MS;
+  levelAdvanceDueAtMs = Date.now() + successDelayMs;
   levelAdvanceTimer = window.setTimeout(() => {
     levelAdvanceTimer = null;
     levelAdvanceDueAtMs = 0;
@@ -1067,7 +1140,7 @@ function triggerSuccess() {
     updateLevelBadge();
     applyLevelBackground();
     rebuildLayoutAndReset(`Level ${currentLevelIndex + 1}: follow the path and clear the candle.`, "neutral");
-  }, NEXT_LEVEL_DELAY_MS);
+  }, successDelayMs);
 }
 
 function checkGameRules(metrics) {
@@ -1104,8 +1177,138 @@ function checkGameRules(metrics) {
   }
 }
 
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function applyJackTrackpadLeftPosition(x, y) {
+  if (!jackTrackpadLeftHand) {
+    return;
+  }
+
+  jackTrackpadLeftHand.style.left = `${(x / JACK_TRACKPAD_LAYOUT.scene.width) * 100}%`;
+  jackTrackpadLeftHand.style.top = `${(y / JACK_TRACKPAD_LAYOUT.scene.height) * 100}%`;
+}
+
+function applyJackTrackpadRightPosition(x, y) {
+  if (!jackTrackpadRightHand) {
+    return;
+  }
+
+  jackTrackpadRightHand.style.left = `${(x / JACK_TRACKPAD_LAYOUT.scene.width) * 100}%`;
+  jackTrackpadRightHand.style.top = `${(y / JACK_TRACKPAD_LAYOUT.scene.height) * 100}%`;
+}
+
+function getJackTrackpadArea() {
+  const scale = JACK_TRACKPAD_LAYOUT.trackpadScale;
+  const width = JACK_TRACKPAD_LAYOUT.scene.width * scale;
+  const height = JACK_TRACKPAD_LAYOUT.scene.height * scale;
+
+  return {
+    x: (JACK_TRACKPAD_LAYOUT.scene.width - width) / 2,
+    y: (JACK_TRACKPAD_LAYOUT.scene.height - height) / 2,
+    width,
+    height,
+  };
+}
+
+function getJackTrackpadRightRange() {
+  const area = getJackTrackpadArea();
+
+  return {
+    minX: area.x + area.width * 0.2,
+    maxX: area.x + area.width * 0.62,
+    minY: area.y + area.height * 0.1,
+    maxY: area.y + area.height * 0.8,
+  };
+}
+
+function pointerToJackViewportNormalized(event) {
+  const width = Math.max(window.innerWidth || 0, 1);
+  const height = Math.max(window.innerHeight || 0, 1);
+  return {
+    x: clamp(event.clientX / width, 0, 1),
+    y: clamp(event.clientY / height, 0, 1),
+  };
+}
+
+function mapJackTrackpadPointToRightPosition(pointerX, pointerY) {
+  const area = getJackTrackpadArea();
+  const range = getJackTrackpadRightRange();
+  const nx = clamp((pointerX - area.x) / area.width, 0, 1);
+  const ny = clamp((pointerY - area.y) / area.height, 0, 1);
+
+  return {
+    x: range.minX + nx * (range.maxX - range.minX),
+    y: range.minY + ny * (range.maxY - range.minY),
+  };
+}
+
+function setJackTrackpadPressState(pressed) {
+  if (jackTrackpadLeftHand) {
+    jackTrackpadLeftHand.classList.toggle("pressed", pressed);
+  }
+
+  if (jackTrackpadScene) {
+    jackTrackpadScene.classList.toggle("is-pressed", pressed);
+  }
+
+  if (jackTrackpadPressIndicator) {
+    jackTrackpadPressIndicator.hidden = !pressed;
+  }
+}
+
+function updateJackTrackpadHandsFromPointer(event) {
+  const normalized = pointerToJackViewportNormalized(event);
+  const area = getJackTrackpadArea();
+  const scenePos = {
+    x: area.x + normalized.x * area.width,
+    y: area.y + normalized.y * area.height,
+  };
+
+  const rightPosition = mapJackTrackpadPointToRightPosition(scenePos.x, scenePos.y);
+  applyJackTrackpadRightPosition(rightPosition.x, rightPosition.y);
+}
+
+function initializeJackTrackpadHands() {
+  applyJackTrackpadLeftPosition(JACK_TRACKPAD_LAYOUT.leftStart.x, JACK_TRACKPAD_LAYOUT.leftStart.y);
+  applyJackTrackpadRightPosition(JACK_TRACKPAD_LAYOUT.rightStart.x, JACK_TRACKPAD_LAYOUT.rightStart.y);
+  setJackTrackpadPressState(false);
+
+  if (!jackTrackpadScene) {
+    return;
+  }
+
+  document.addEventListener("pointermove", (event) => {
+    if (jackTrackpadMovementGate.shouldMove(event)) {
+      updateJackTrackpadHandsFromPointer(event);
+    }
+  });
+
+  document.addEventListener("pointerdown", (event) => {
+    jackTrackpadMovementGate.begin(event);
+    updateJackTrackpadHandsFromPointer(event);
+    setJackTrackpadPressState(true);
+  });
+
+  document.addEventListener("pointerup", (event) => {
+    jackTrackpadMovementGate.end(event);
+    setJackTrackpadPressState(false);
+  });
+
+  document.addEventListener("pointercancel", (event) => {
+    jackTrackpadMovementGate.end(event);
+    setJackTrackpadPressState(false);
+  });
+}
+
 function onScenePointerMove(event) {
   if (waitingNextLevel) {
+    return;
+  }
+
+  if (!jackTrackpadMovementGate.shouldMove(event)) {
+    jackWrap.classList.remove("is-running");
     return;
   }
 
@@ -1135,13 +1338,59 @@ function onScenePointerLeave() {
   jackWrap.classList.remove("is-running");
 }
 
+function onScenePointerDown(event) {
+  if (!jackScene) {
+    return;
+  }
+
+  jackTrackpadMovementGate.begin(event);
+
+  onScenePointerMove(event);
+
+  if (typeof event.pointerId !== "number") {
+    return;
+  }
+
+  activeScenePointerId = event.pointerId;
+  if (typeof jackScene.setPointerCapture === "function") {
+    try {
+      jackScene.setPointerCapture(event.pointerId);
+    } catch {
+      // Ignore pointer-capture failures and continue with normal handling.
+    }
+  }
+}
+
+function onScenePointerRelease(event) {
+  if (!jackScene || typeof event.pointerId !== "number") {
+    return;
+  }
+
+  jackTrackpadMovementGate.end(event);
+
+  if (activeScenePointerId !== event.pointerId) {
+    return;
+  }
+
+  if (typeof jackScene.releasePointerCapture === "function") {
+    try {
+      jackScene.releasePointerCapture(event.pointerId);
+    } catch {
+      // Ignore pointer-capture failures and continue with normal handling.
+    }
+  }
+
+  activeScenePointerId = null;
+  onScenePointerLeave();
+}
+
 function placeSceneObjects() {
   const level = getCurrentLevel();
   candlePoint = getPointAtT(level.candleT);
   goalPoint = getPointAtT(GOAL_T);
 
   const candleLeft = candlePoint.x - 24;
-  const candleTop = candlePoint.y + 66;
+  const candleTop = candlePoint.y + (Number.isFinite(level.candleOffsetY) ? level.candleOffsetY : 66);
   candleObstacle.style.left = `${candleLeft}px`;
   candleObstacle.style.top = `${candleTop}px`;
 
@@ -1200,10 +1449,20 @@ function initialize() {
   rebuildLayoutAndReset();
 
   jackScene.addEventListener("pointermove", onScenePointerMove);
+  jackScene.addEventListener("pointerdown", onScenePointerDown);
+  jackScene.addEventListener("pointerup", onScenePointerRelease);
+  jackScene.addEventListener("pointercancel", onScenePointerRelease);
+  jackScene.addEventListener("dragstart", (event) => {
+    event.preventDefault();
+  });
+  jackScene.addEventListener("drop", (event) => {
+    event.preventDefault();
+  });
   jackScene.addEventListener("pointerdown", primeFireSound, { once: true });
   jackScene.addEventListener("pointermove", primeFireSound, { once: true });
   jackScene.addEventListener("touchstart", primeFireSound, { once: true });
   jackScene.addEventListener("pointerleave", onScenePointerLeave);
+  initializeJackTrackpadHands();
   window.addEventListener("resize", () => {
     rebuildLayoutAndReset("Layout adjusted. Start again from the beginning.", "neutral");
   });
@@ -1219,6 +1478,7 @@ window.addEventListener("beforeunload", () => {
   fireSound.pause();
   stopFireLoopGuard();
   runningFeetSound.pause();
+  woohooSound.pause();
   window.clearInterval(flameSettingsRefreshTimerId);
 
   if (animationFrameId) {

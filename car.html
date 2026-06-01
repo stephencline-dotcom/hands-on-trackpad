@@ -6,7 +6,7 @@
     <title>Trackpad Hand Trainer - Car Game</title>
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body class="car-page">
+  <body class="car-page" data-game-active-key="carGameActive">
     <main class="page">
       <section class="top-row">
         <section class="playfield" aria-label="Car game area">
@@ -69,6 +69,8 @@
       </section>
     </main>
 
+    <script src="game-access.js"></script>
+    <script src="movement-mode.js"></script>
     <script src="car-game.js"></script>
   </body>
 </html>

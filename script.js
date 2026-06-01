@@ -38,6 +38,9 @@ let ghostAudioFadeTimer = null;
 let ghostAudioTargetVolume = 0;
 let mazeToastTimer = null;
 let mazeTokenRunTimer = null;
+// This reads the teacher setting that switches between hover-follow and click-and-drag movement.
+const MAZE_REQUIRE_CLICK_AND_DRAG_KEY = "mazeRequireClickAndDrag";
+const movementGate = window.trackpadMovementSettings.createClickAndDragGate(MAZE_REQUIRE_CLICK_AND_DRAG_KEY);
 
 const GHOST_LEVEL_ENABLED_KEYS = [
   "mazeGhostLevel1Enabled",
@@ -1078,20 +1081,25 @@ document.addEventListener(
 );
 
 document.addEventListener("pointermove", (event) => {
-  updateRightFromPointer(event);
-  updateMazeFromPointer(event);
+  if (movementGate.shouldMove(event)) {
+    updateRightFromPointer(event);
+    updateMazeFromPointer(event);
+  }
 });
 
 document.addEventListener("pointerdown", (event) => {
+  movementGate.begin(event);
   setPressedState(true);
   updateRightFromPointer(event);
 });
 
-document.addEventListener("pointerup", () => {
+document.addEventListener("pointerup", (event) => {
+  movementGate.end(event);
   setPressedState(false);
 });
 
-document.addEventListener("pointercancel", () => {
+document.addEventListener("pointercancel", (event) => {
+  movementGate.end(event);
   setPressedState(false);
 });
 

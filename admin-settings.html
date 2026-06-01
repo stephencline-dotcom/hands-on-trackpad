@@ -28,7 +28,7 @@
 
           <nav class="admin-tabs" aria-label="Settings sections">
             <button class="admin-tab-button" type="button" role="tab" id="tabQuick" aria-controls="panelQuick" aria-selected="true" data-tab="quick">
-              Quick Setup
+              Fullscreen Trackpad
             </button>
             <button class="admin-tab-button" type="button" role="tab" id="tabMaze" aria-controls="panelMaze" aria-selected="false" data-tab="maze">
               Maze
@@ -37,7 +37,7 @@
               Car Game
             </button>
             <button class="admin-tab-button" type="button" role="tab" id="tabAdvanced" aria-controls="panelAdvanced" aria-selected="false" data-tab="advanced">
-              Advanced
+              Jumping Jack
             </button>
           </nav>
 
@@ -47,6 +47,7 @@
                 <h3>Task 1: Slide Finger</h3>
                 <label class="admin-task-label" for="task1Duration">Required slide time (seconds)</label>
                 <input id="task1Duration" class="admin-task-input" type="number" min="1" max="120" step="1" />
+                <p class="admin-panel-note">Preset: 8 seconds</p>
                 <label class="admin-toggle-row" for="task1EnabledToggle">
                   <input id="task1EnabledToggle" type="checkbox" checked />
                   <span>Enable task</span>
@@ -57,6 +58,7 @@
                 <h3>Task 2: Clicking</h3>
                 <label class="admin-task-label" for="task2Clicks">Required clicks (count)</label>
                 <input id="task2Clicks" class="admin-task-input" type="number" min="1" max="200" step="1" />
+                <p class="admin-panel-note">Preset: 10 clicks</p>
                 <label class="admin-toggle-row" for="task2EnabledToggle">
                   <input id="task2EnabledToggle" type="checkbox" checked />
                   <span>Enable task</span>
@@ -67,6 +69,7 @@
                 <h3>Task 3: Click And Drag</h3>
                 <label class="admin-task-label" for="task3DragSeconds">Required drag time (seconds)</label>
                 <input id="task3DragSeconds" class="admin-task-input" type="number" min="1" max="120" step="1" />
+                <p class="admin-panel-note">Preset: 6 seconds</p>
                 <label class="admin-toggle-row" for="task3EnabledToggle">
                   <input id="task3EnabledToggle" type="checkbox" checked />
                   <span>Enable task</span>
@@ -75,8 +78,12 @@
             </div>
 
             <article class="admin-mini-card admin-mini-card--wide">
-              <h3>Global Toggles</h3>
+              <h3>Fullscreen Trackpad</h3>
               <div class="admin-inline-toggles">
+                <label class="admin-toggle-row" for="fullscreenRequireClickAndDragToggle">
+                  <input id="fullscreenRequireClickAndDragToggle" type="checkbox" />
+                  <span>Require click and drag</span>
+                </label>
                 <label class="admin-toggle-row" for="soundEnabledToggle">
                   <input id="soundEnabledToggle" type="checkbox" checked />
                   <span>Enable fullscreen sounds</span>
@@ -87,10 +94,41 @@
                 </label>
               </div>
             </article>
+
+            <article class="admin-mini-card admin-mini-card--wide">
+              <h3>Activity Availability</h3>
+              <div class="admin-inline-toggles">
+                <label class="admin-toggle-row" for="fullscreenGameActiveToggle">
+                  <input id="fullscreenGameActiveToggle" type="checkbox" checked />
+                  <span>Fullscreen Trackpad is active</span>
+                </label>
+                <label class="admin-toggle-row" for="mazeGameActiveToggle">
+                  <input id="mazeGameActiveToggle" type="checkbox" checked />
+                  <span>Maze Game is active</span>
+                </label>
+                <label class="admin-toggle-row" for="carGameActiveToggle">
+                  <input id="carGameActiveToggle" type="checkbox" checked />
+                  <span>Car Game is active</span>
+                </label>
+                <label class="admin-toggle-row" for="jackGameActiveToggle">
+                  <input id="jackGameActiveToggle" type="checkbox" checked />
+                  <span>Jumping Jack is active</span>
+                </label>
+              </div>
+            </article>
           </section>
 
           <section class="admin-tab-content" id="panelMaze" role="tabpanel" aria-labelledby="tabMaze" aria-hidden="true">
             <p class="admin-panel-note">Set ghost behavior by maze level.</p>
+            <article class="admin-mini-card admin-mini-card--wide">
+              <h3>Maze</h3>
+              <div class="admin-inline-toggles">
+                <label class="admin-toggle-row" for="mazeRequireClickAndDragToggle">
+                  <input id="mazeRequireClickAndDragToggle" type="checkbox" />
+                  <span>Require click and drag</span>
+                </label>
+              </div>
+            </article>
             <div class="admin-level-grid">
               <article class="admin-level-card">
                 <h3>Maze Level 1</h3>
@@ -133,6 +171,15 @@
 
           <section class="admin-tab-content" id="panelCar" role="tabpanel" aria-labelledby="tabCar" aria-hidden="true">
             <p class="admin-panel-note">Each card controls one car level.</p>
+            <article class="admin-mini-card admin-mini-card--wide">
+              <h3>Car Game</h3>
+              <div class="admin-inline-toggles">
+                <label class="admin-toggle-row" for="carRequireClickAndDragToggle">
+                  <input id="carRequireClickAndDragToggle" type="checkbox" />
+                  <span>Require click and drag</span>
+                </label>
+              </div>
+            </article>
             <div class="admin-level-grid">
               <article class="admin-level-card">
                 <h3>Car Level 1</h3>
@@ -205,6 +252,15 @@
 
           <section class="admin-tab-content" id="panelAdvanced" role="tabpanel" aria-labelledby="tabAdvanced" aria-hidden="true">
             <article class="admin-mini-card admin-mini-card--wide">
+              <h3>Jack Jump</h3>
+              <div class="admin-inline-toggles">
+                <label class="admin-toggle-row" for="jackRequireClickAndDragToggle">
+                  <input id="jackRequireClickAndDragToggle" type="checkbox" />
+                  <span>Require click and drag</span>
+                </label>
+              </div>
+            </article>
+            <article class="admin-mini-card admin-mini-card--wide">
               <h3>Jack Jump: Flame Rain (Level 4)</h3>
               <div class="admin-inline-toggles">
                 <label class="admin-toggle-row" for="jackFlameRain4EnabledToggle">
@@ -264,12 +320,13 @@
 
             <article class="admin-mini-card admin-mini-card--wide">
               <h3>Tips</h3>
-              <p class="admin-panel-note">Use Quick Setup for day-to-day changes, Maze for ghost tuning, and Car Game for all per-level driving parameters.</p>
+              <p class="admin-panel-note">Use Fullscreen Trackpad for day-to-day changes, Maze for ghost tuning, Car Game for driving levels, and Jumping Jack for flame rain settings.</p>
               <p class="admin-panel-note">All values save to the same settings keys and shared API endpoint used before this redesign.</p>
             </article>
           </section>
 
           <div class="admin-task-actions admin-task-actions--sticky">
+            <button id="applyPresetsBtn" class="admin-task-open" type="button">Apply Progressive Presets</button>
             <button id="saveTask1Btn" class="admin-task-save" type="button">Save Settings</button>
             <a class="admin-task-open" href="trackpad-fullscreen.html">Open Fullscreen Trackpad</a>
           </div>

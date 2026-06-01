@@ -4,6 +4,14 @@ const task2ClicksInput = document.getElementById("task2Clicks");
 const task2EnabledToggle = document.getElementById("task2EnabledToggle");
 const task3DragSecondsInput = document.getElementById("task3DragSeconds");
 const task3EnabledToggle = document.getElementById("task3EnabledToggle");
+const fullscreenRequireClickAndDragToggle = document.getElementById("fullscreenRequireClickAndDragToggle");
+const mazeRequireClickAndDragToggle = document.getElementById("mazeRequireClickAndDragToggle");
+const carRequireClickAndDragToggle = document.getElementById("carRequireClickAndDragToggle");
+const jackRequireClickAndDragToggle = document.getElementById("jackRequireClickAndDragToggle");
+const fullscreenGameActiveToggle = document.getElementById("fullscreenGameActiveToggle");
+const mazeGameActiveToggle = document.getElementById("mazeGameActiveToggle");
+const carGameActiveToggle = document.getElementById("carGameActiveToggle");
+const jackGameActiveToggle = document.getElementById("jackGameActiveToggle");
 const soundEnabledToggle = document.getElementById("soundEnabledToggle");
 const trainingPausedToggle = document.getElementById("trainingPausedToggle");
 const jackFlameRainInputs = [4, 5, 6].map((level) => ({
@@ -47,6 +55,7 @@ const carSummaryPill = document.getElementById("carSummaryPill");
 const mazeSummaryPill = document.getElementById("mazeSummaryPill");
 const tabButtons = Array.from(document.querySelectorAll(".admin-tab-button"));
 const tabPanels = Array.from(document.querySelectorAll(".admin-tab-content"));
+const applyPresetsBtn = document.getElementById("applyPresetsBtn");
 const saveTask1Btn = document.getElementById("saveTask1Btn");
 const task1SavedMessage = document.getElementById("task1SavedMessage");
 
@@ -56,6 +65,14 @@ const TASK3_STORAGE_KEY = "trackpadTask3RequiredDragSeconds";
 const TASK1_ENABLED_KEY = "trackpadTask1Enabled";
 const TASK2_ENABLED_KEY = "trackpadTask2Enabled";
 const TASK3_ENABLED_KEY = "trackpadTask3Enabled";
+const FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY = "fullscreenRequireClickAndDrag";
+const MAZE_REQUIRE_CLICK_AND_DRAG_KEY = "mazeRequireClickAndDrag";
+const CAR_REQUIRE_CLICK_AND_DRAG_KEY = "carRequireClickAndDrag";
+const JACK_REQUIRE_CLICK_AND_DRAG_KEY = "jackRequireClickAndDrag";
+const FULLSCREEN_GAME_ACTIVE_KEY = "fullscreenGameActive";
+const MAZE_GAME_ACTIVE_KEY = "mazeGameActive";
+const CAR_GAME_ACTIVE_KEY = "carGameActive";
+const JACK_GAME_ACTIVE_KEY = "jackGameActive";
 const SOUND_ENABLED_KEY = "trackpadSoundEnabled";
 const TRAINING_PAUSED_KEY = "trackpadTrainingPaused";
 const JACK_FLAME_RAIN_KEYS = [4, 5, 6].map((level) => ({
@@ -136,23 +153,48 @@ const CAR_LEVEL_FUEL_DRAIN_KEYS = [
 const DEFAULT_TASK1_SECONDS = 8;
 const DEFAULT_TASK2_CLICKS = 10;
 const DEFAULT_TASK3_DRAG_SECONDS = 6;
-const DEFAULT_GHOST_LEVEL_COUNT = 1;
-const DEFAULT_CAR_LEVEL_SPEEDS = [0.18, 0.21, 0.24, 0.28, 0.33, 0.38];
-const DEFAULT_CAR_LEVEL_MAX_CARS = [1, 2, 2, 3, 3, 4];
-const DEFAULT_CAR_LEVEL_SURVIVAL = [12, 16, 20, 24, 28, 32];
-const DEFAULT_CAR_LEVEL_GAS_PUMP_SPAWN_SECONDS = [4.2, 4.8, 5.4, 6.0, 6.6, 7.2];
-const DEFAULT_CAR_LEVEL_FUEL_DRAIN = [2.2, 2.8, 3.5, 4.3, 5.2, 6.2];
-const DEFAULT_JACK_FLAME_RAIN = {
-  enabled: true,
-  size: 24,
-  hitRadius: 12,
-  burstMin: 2,
-  burstMax: 4,
-  intervalMin: 620,
-  intervalMax: 1300,
-  speedMin: 210,
-  speedMax: 320,
-};
+const DEFAULT_MAZE_GHOST_LEVEL_COUNTS = [1, 2, 3, 4, 5, 6];
+const DEFAULT_GHOST_LEVEL_COUNT = DEFAULT_MAZE_GHOST_LEVEL_COUNTS[0];
+const DEFAULT_CAR_LEVEL_SPEEDS = [0.16, 0.22, 0.28, 0.34, 0.4, 0.48];
+const DEFAULT_CAR_LEVEL_MAX_CARS = [1, 2, 3, 4, 5, 6];
+const DEFAULT_CAR_LEVEL_SURVIVAL = [10, 15, 20, 25, 30, 35];
+const DEFAULT_CAR_LEVEL_GAS_PUMP_SPAWN_SECONDS = [5.2, 4.8, 4.4, 4.0, 3.6, 3.2];
+const DEFAULT_CAR_LEVEL_FUEL_DRAIN = [1.8, 2.4, 3.2, 4.0, 5.0, 6.2];
+const DEFAULT_JACK_FLAME_RAIN_BY_LEVEL = [
+  {
+    enabled: true,
+    size: 22,
+    hitRadius: 10,
+    burstMin: 2,
+    burstMax: 3,
+    intervalMin: 700,
+    intervalMax: 1400,
+    speedMin: 180,
+    speedMax: 260,
+  },
+  {
+    enabled: true,
+    size: 24,
+    hitRadius: 12,
+    burstMin: 3,
+    burstMax: 5,
+    intervalMin: 520,
+    intervalMax: 1100,
+    speedMin: 250,
+    speedMax: 370,
+  },
+  {
+    enabled: true,
+    size: 26,
+    hitRadius: 13,
+    burstMin: 5,
+    burstMax: 8,
+    intervalMin: 340,
+    intervalMax: 700,
+    speedMin: 340,
+    speedMax: 520,
+  },
+];
 const SETTINGS_API_PATH = "/api/settings";
 const ACTIVE_TAB_STORAGE_KEY = "adminSettingsActiveTab";
 
@@ -315,7 +357,11 @@ function parseGhostLevelCounts(value, fallback = DEFAULT_GHOST_LEVEL_COUNT) {
     return [1, 2, 3, 4, 5, 6].map((level) => parseGhostCount(value[`level${level}`]));
   }
 
-  return [fallback, fallback, fallback, fallback, fallback, fallback];
+  if (Number.isFinite(fallback)) {
+    return [fallback, fallback, fallback, fallback, fallback, fallback];
+  }
+
+  return [...DEFAULT_MAZE_GHOST_LEVEL_COUNTS];
 }
 
 function parseCarGameLevelsEnabled(value, fallback = true) {
@@ -379,7 +425,7 @@ function parseCarFuelDrain(value, fallback = 3.6) {
   return Math.min(12, Math.max(0.5, parsed));
 }
 
-function parseJackFlameRainSize(value, fallback = DEFAULT_JACK_FLAME_RAIN_SIZE) {
+function parseJackFlameRainSize(value, fallback = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[0].size) {
   const parsed = Number.parseInt(String(value || ""), 10);
   if (!Number.isFinite(parsed)) {
     return fallback;
@@ -388,7 +434,7 @@ function parseJackFlameRainSize(value, fallback = DEFAULT_JACK_FLAME_RAIN_SIZE) 
   return Math.min(64, Math.max(10, parsed));
 }
 
-function parseJackFlameRainHitRadius(value, fallback = DEFAULT_JACK_FLAME_RAIN_HIT_RADIUS) {
+function parseJackFlameRainHitRadius(value, fallback = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[0].hitRadius) {
   const parsed = Number.parseInt(String(value || ""), 10);
   if (!Number.isFinite(parsed)) {
     return fallback;
@@ -397,7 +443,7 @@ function parseJackFlameRainHitRadius(value, fallback = DEFAULT_JACK_FLAME_RAIN_H
   return Math.min(48, Math.max(4, parsed));
 }
 
-function parseJackFlameRainBurstMin(value, fallback = DEFAULT_JACK_FLAME_RAIN_BURST_MIN) {
+function parseJackFlameRainBurstMin(value, fallback = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[0].burstMin) {
   const parsed = Number.parseInt(String(value || ""), 10);
   if (!Number.isFinite(parsed)) {
     return fallback;
@@ -406,7 +452,7 @@ function parseJackFlameRainBurstMin(value, fallback = DEFAULT_JACK_FLAME_RAIN_BU
   return Math.min(8, Math.max(1, parsed));
 }
 
-function parseJackFlameRainBurstMax(value, burstMin, fallback = DEFAULT_JACK_FLAME_RAIN_BURST_MAX) {
+function parseJackFlameRainBurstMax(value, burstMin, fallback = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[0].burstMax) {
   const parsed = Number.parseInt(String(value || ""), 10);
   if (!Number.isFinite(parsed)) {
     return Math.max(burstMin, fallback);
@@ -415,7 +461,7 @@ function parseJackFlameRainBurstMax(value, burstMin, fallback = DEFAULT_JACK_FLA
   return Math.min(10, Math.max(burstMin, parsed));
 }
 
-function parseJackFlameRainIntervalMin(value, fallback = DEFAULT_JACK_FLAME_RAIN_INTERVAL_MIN) {
+function parseJackFlameRainIntervalMin(value, fallback = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[0].intervalMin) {
   const parsed = Number.parseInt(String(value || ""), 10);
   if (!Number.isFinite(parsed)) {
     return fallback;
@@ -424,7 +470,7 @@ function parseJackFlameRainIntervalMin(value, fallback = DEFAULT_JACK_FLAME_RAIN
   return Math.min(4000, Math.max(160, parsed));
 }
 
-function parseJackFlameRainIntervalMax(value, intervalMin, fallback = DEFAULT_JACK_FLAME_RAIN_INTERVAL_MAX) {
+function parseJackFlameRainIntervalMax(value, intervalMin, fallback = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[0].intervalMax) {
   const parsed = Number.parseInt(String(value || ""), 10);
   if (!Number.isFinite(parsed)) {
     return Math.max(intervalMin + 30, fallback);
@@ -433,7 +479,7 @@ function parseJackFlameRainIntervalMax(value, intervalMin, fallback = DEFAULT_JA
   return Math.min(5000, Math.max(intervalMin + 30, parsed));
 }
 
-function parseJackFlameRainSpeedMin(value, fallback = DEFAULT_JACK_FLAME_RAIN_SPEED_MIN) {
+function parseJackFlameRainSpeedMin(value, fallback = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[0].speedMin) {
   const parsed = Number.parseFloat(String(value || ""));
   if (!Number.isFinite(parsed)) {
     return fallback;
@@ -442,7 +488,7 @@ function parseJackFlameRainSpeedMin(value, fallback = DEFAULT_JACK_FLAME_RAIN_SP
   return Math.min(900, Math.max(80, parsed));
 }
 
-function parseJackFlameRainSpeedMax(value, speedMin, fallback = DEFAULT_JACK_FLAME_RAIN_SPEED_MAX) {
+function parseJackFlameRainSpeedMax(value, speedMin, fallback = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[0].speedMax) {
   const parsed = Number.parseFloat(String(value || ""));
   if (!Number.isFinite(parsed)) {
     return Math.max(speedMin + 1, fallback);
@@ -477,6 +523,94 @@ function showSavedMessage(text) {
   }, 1700);
 }
 
+function applyProgressivePresets() {
+  task1DurationInput.value = String(DEFAULT_TASK1_SECONDS);
+  task1EnabledToggle.checked = true;
+  task2ClicksInput.value = String(DEFAULT_TASK2_CLICKS);
+  task2EnabledToggle.checked = true;
+  task3DragSecondsInput.value = String(DEFAULT_TASK3_DRAG_SECONDS);
+  task3EnabledToggle.checked = true;
+  if (fullscreenRequireClickAndDragToggle) fullscreenRequireClickAndDragToggle.checked = false;
+  if (mazeRequireClickAndDragToggle) mazeRequireClickAndDragToggle.checked = false;
+  if (carRequireClickAndDragToggle) carRequireClickAndDragToggle.checked = false;
+  if (jackRequireClickAndDragToggle) jackRequireClickAndDragToggle.checked = false;
+  if (fullscreenGameActiveToggle) fullscreenGameActiveToggle.checked = true;
+  if (mazeGameActiveToggle) mazeGameActiveToggle.checked = true;
+  if (carGameActiveToggle) carGameActiveToggle.checked = true;
+  if (jackGameActiveToggle) jackGameActiveToggle.checked = true;
+  soundEnabledToggle.checked = true;
+  trainingPausedToggle.checked = false;
+
+  mazeGhostLevelToggles.forEach((toggle) => {
+    if (toggle) {
+      toggle.checked = true;
+    }
+  });
+
+  mazeGhostLevelCountInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(DEFAULT_MAZE_GHOST_LEVEL_COUNTS[index]);
+    }
+  });
+
+  carGameLevelToggles.forEach((toggle) => {
+    if (toggle) {
+      toggle.checked = true;
+    }
+  });
+
+  carGameLevelSpeedInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(DEFAULT_CAR_LEVEL_SPEEDS[index]);
+    }
+  });
+
+  carGameLevelMaxCarsInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(DEFAULT_CAR_LEVEL_MAX_CARS[index]);
+    }
+  });
+
+  carGameLevelSurvivalInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(DEFAULT_CAR_LEVEL_SURVIVAL[index]);
+    }
+  });
+
+  carGameLevelGasPumpSpawnInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(DEFAULT_CAR_LEVEL_GAS_PUMP_SPAWN_SECONDS[index]);
+    }
+  });
+
+  carGameLevelFuelDrainInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(DEFAULT_CAR_LEVEL_FUEL_DRAIN[index]);
+    }
+  });
+
+  jackFlameRainInputs.forEach((inputs, index) => {
+    const defaults = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[index];
+    if (!defaults) {
+      return;
+    }
+
+    if (inputs.enabled) inputs.enabled.checked = defaults.enabled;
+    if (inputs.size) inputs.size.value = String(defaults.size);
+    if (inputs.hitRadius) inputs.hitRadius.value = String(defaults.hitRadius);
+    if (inputs.burstMin) inputs.burstMin.value = String(defaults.burstMin);
+    if (inputs.burstMax) inputs.burstMax.value = String(defaults.burstMax);
+    if (inputs.intervalMin) inputs.intervalMin.value = String(defaults.intervalMin);
+    if (inputs.intervalMax) inputs.intervalMax.value = String(defaults.intervalMax);
+    if (inputs.speedMin) inputs.speedMin.value = String(defaults.speedMin);
+    if (inputs.speedMax) inputs.speedMax.value = String(defaults.speedMax);
+  });
+
+  setDirtyState(true);
+  updateQuickSummary();
+  showSavedMessage("Progressive presets applied. Click Save Settings to publish.");
+}
+
 async function loadTask1Settings() {
   let task1Seconds = parseTask1Seconds(localStorage.getItem(TASK1_STORAGE_KEY));
   let task1Enabled = parseTaskEnabled(localStorage.getItem(TASK1_ENABLED_KEY), true);
@@ -484,20 +618,29 @@ async function loadTask1Settings() {
   let task2Enabled = parseTaskEnabled(localStorage.getItem(TASK2_ENABLED_KEY), true);
   let task3Seconds = parseTask3Seconds(localStorage.getItem(TASK3_STORAGE_KEY));
   let task3Enabled = parseTaskEnabled(localStorage.getItem(TASK3_ENABLED_KEY), true);
+  let fullscreenRequireClickAndDrag = parseTaskEnabled(localStorage.getItem(FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY), false);
+  let mazeRequireClickAndDrag = parseTaskEnabled(localStorage.getItem(MAZE_REQUIRE_CLICK_AND_DRAG_KEY), false);
+  let carRequireClickAndDrag = parseTaskEnabled(localStorage.getItem(CAR_REQUIRE_CLICK_AND_DRAG_KEY), false);
+  let jackRequireClickAndDrag = parseTaskEnabled(localStorage.getItem(JACK_REQUIRE_CLICK_AND_DRAG_KEY), false);
+  let fullscreenGameActive = parseTaskEnabled(localStorage.getItem(FULLSCREEN_GAME_ACTIVE_KEY), true);
+  let mazeGameActive = parseTaskEnabled(localStorage.getItem(MAZE_GAME_ACTIVE_KEY), true);
+  let carGameActive = parseTaskEnabled(localStorage.getItem(CAR_GAME_ACTIVE_KEY), true);
+  let jackGameActive = parseTaskEnabled(localStorage.getItem(JACK_GAME_ACTIVE_KEY), true);
   let soundEnabled = parseTaskEnabled(localStorage.getItem(SOUND_ENABLED_KEY), true);
   let trainingPaused = parseTrainingPaused(localStorage.getItem(TRAINING_PAUSED_KEY));
   const jackFlameRainSettings = [4, 5, 6].map((level, idx) => {
     const keys = JACK_FLAME_RAIN_KEYS[idx];
+    const defaults = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[idx];
     return {
-      enabled: parseTaskEnabled(localStorage.getItem(keys.enabled), DEFAULT_JACK_FLAME_RAIN.enabled),
-      size: parseJackFlameRainSize(localStorage.getItem(keys.size)),
-      hitRadius: parseJackFlameRainHitRadius(localStorage.getItem(keys.hitRadius)),
-      burstMin: parseJackFlameRainBurstMin(localStorage.getItem(keys.burstMin)),
-      burstMax: parseJackFlameRainBurstMax(localStorage.getItem(keys.burstMax), DEFAULT_JACK_FLAME_RAIN.burstMin),
-      intervalMin: parseJackFlameRainIntervalMin(localStorage.getItem(keys.intervalMin)),
-      intervalMax: parseJackFlameRainIntervalMax(localStorage.getItem(keys.intervalMax), DEFAULT_JACK_FLAME_RAIN.intervalMin),
-      speedMin: parseJackFlameRainSpeedMin(localStorage.getItem(keys.speedMin)),
-      speedMax: parseJackFlameRainSpeedMax(localStorage.getItem(keys.speedMax), DEFAULT_JACK_FLAME_RAIN.speedMin),
+      enabled: parseTaskEnabled(localStorage.getItem(keys.enabled), defaults.enabled),
+      size: parseJackFlameRainSize(localStorage.getItem(keys.size), defaults.size),
+      hitRadius: parseJackFlameRainHitRadius(localStorage.getItem(keys.hitRadius), defaults.hitRadius),
+      burstMin: parseJackFlameRainBurstMin(localStorage.getItem(keys.burstMin), defaults.burstMin),
+      burstMax: parseJackFlameRainBurstMax(localStorage.getItem(keys.burstMax), defaults.burstMin, defaults.burstMax),
+      intervalMin: parseJackFlameRainIntervalMin(localStorage.getItem(keys.intervalMin), defaults.intervalMin),
+      intervalMax: parseJackFlameRainIntervalMax(localStorage.getItem(keys.intervalMax), defaults.intervalMin, defaults.intervalMax),
+      speedMin: parseJackFlameRainSpeedMin(localStorage.getItem(keys.speedMin), defaults.speedMin),
+      speedMax: parseJackFlameRainSpeedMax(localStorage.getItem(keys.speedMax), defaults.speedMin, defaults.speedMax),
     };
   });
   let mazeGhostLevelsEnabled = MAZE_GHOST_LEVEL_ENABLED_KEYS.map((key) =>
@@ -535,25 +678,37 @@ async function loadTask1Settings() {
       task2Enabled = parseTaskEnabled(data.task2Enabled, true);
       task3Seconds = parseTask3Seconds(data.task3RequiredDragSeconds);
       task3Enabled = parseTaskEnabled(data.task3Enabled, true);
+      fullscreenRequireClickAndDrag = parseTaskEnabled(
+        data.fullscreenRequireClickAndDrag,
+        fullscreenRequireClickAndDrag
+      );
+      mazeRequireClickAndDrag = parseTaskEnabled(data.mazeRequireClickAndDrag, mazeRequireClickAndDrag);
+      carRequireClickAndDrag = parseTaskEnabled(data.carRequireClickAndDrag, carRequireClickAndDrag);
+      jackRequireClickAndDrag = parseTaskEnabled(data.jackRequireClickAndDrag, jackRequireClickAndDrag);
+      fullscreenGameActive = parseTaskEnabled(data.fullscreenGameActive, fullscreenGameActive);
+      mazeGameActive = parseTaskEnabled(data.mazeGameActive, mazeGameActive);
+      carGameActive = parseTaskEnabled(data.carGameActive, carGameActive);
+      jackGameActive = parseTaskEnabled(data.jackGameActive, jackGameActive);
       soundEnabled = parseTaskEnabled(data.soundEnabled, true);
       trainingPaused = parseTrainingPaused(data.trainingPaused);
       [4, 5, 6].forEach((level, idx) => {
         const keys = JACK_FLAME_RAIN_KEYS[idx];
+        const defaults = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[idx];
         const d = data[`jackFlameRain${level}`] || {};
         jackFlameRainSettings[idx] = {
-          enabled: parseTaskEnabled(d.enabled, DEFAULT_JACK_FLAME_RAIN.enabled),
-          size: parseJackFlameRainSize(d.size),
-          hitRadius: parseJackFlameRainHitRadius(d.hitRadius),
-          burstMin: parseJackFlameRainBurstMin(d.burstMin),
-          burstMax: parseJackFlameRainBurstMax(d.burstMax, DEFAULT_JACK_FLAME_RAIN.burstMin),
-          intervalMin: parseJackFlameRainIntervalMin(d.intervalMin),
-          intervalMax: parseJackFlameRainIntervalMax(d.intervalMax, DEFAULT_JACK_FLAME_RAIN.intervalMin),
-          speedMin: parseJackFlameRainSpeedMin(d.speedMin),
-          speedMax: parseJackFlameRainSpeedMax(d.speedMax, DEFAULT_JACK_FLAME_RAIN.speedMin),
+          enabled: parseTaskEnabled(d.enabled, defaults.enabled),
+          size: parseJackFlameRainSize(d.size, defaults.size),
+          hitRadius: parseJackFlameRainHitRadius(d.hitRadius, defaults.hitRadius),
+          burstMin: parseJackFlameRainBurstMin(d.burstMin, defaults.burstMin),
+          burstMax: parseJackFlameRainBurstMax(d.burstMax, defaults.burstMin, defaults.burstMax),
+          intervalMin: parseJackFlameRainIntervalMin(d.intervalMin, defaults.intervalMin),
+          intervalMax: parseJackFlameRainIntervalMax(d.intervalMax, defaults.intervalMin, defaults.intervalMax),
+          speedMin: parseJackFlameRainSpeedMin(d.speedMin, defaults.speedMin),
+          speedMax: parseJackFlameRainSpeedMax(d.speedMax, defaults.speedMin, defaults.speedMax),
         };
       });
       mazeGhostLevelsEnabled = parseGhostLevelEnabled(data.mazeGhostLevelsEnabled, true);
-      mazeGhostLevelCounts = parseGhostLevelCounts(data.mazeGhostLevelsPerLevelCounts, DEFAULT_GHOST_LEVEL_COUNT);
+      mazeGhostLevelCounts = parseGhostLevelCounts(data.mazeGhostLevelsPerLevelCounts, Number.NaN);
       carGameLevelsEnabled = parseCarGameLevelsEnabled(data.carGameLevelsEnabled, true);
       carGameLevelObstacleSpeeds = parseCarLevelArray(
         data.carGameLevelObstacleSpeeds,
@@ -586,6 +741,14 @@ async function loadTask1Settings() {
       localStorage.setItem(TASK2_ENABLED_KEY, String(task2Enabled));
       localStorage.setItem(TASK3_STORAGE_KEY, String(task3Seconds));
       localStorage.setItem(TASK3_ENABLED_KEY, String(task3Enabled));
+      localStorage.setItem(FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY, String(fullscreenRequireClickAndDrag));
+      localStorage.setItem(MAZE_REQUIRE_CLICK_AND_DRAG_KEY, String(mazeRequireClickAndDrag));
+      localStorage.setItem(CAR_REQUIRE_CLICK_AND_DRAG_KEY, String(carRequireClickAndDrag));
+      localStorage.setItem(JACK_REQUIRE_CLICK_AND_DRAG_KEY, String(jackRequireClickAndDrag));
+      localStorage.setItem(FULLSCREEN_GAME_ACTIVE_KEY, String(fullscreenGameActive));
+      localStorage.setItem(MAZE_GAME_ACTIVE_KEY, String(mazeGameActive));
+      localStorage.setItem(CAR_GAME_ACTIVE_KEY, String(carGameActive));
+      localStorage.setItem(JACK_GAME_ACTIVE_KEY, String(jackGameActive));
       localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
       localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
       [4, 5, 6].forEach((level, idx) => {
@@ -636,6 +799,14 @@ async function loadTask1Settings() {
   task2EnabledToggle.checked = task2Enabled;
   task3DragSecondsInput.value = String(task3Seconds);
   task3EnabledToggle.checked = task3Enabled;
+  if (fullscreenRequireClickAndDragToggle) fullscreenRequireClickAndDragToggle.checked = fullscreenRequireClickAndDrag;
+  if (mazeRequireClickAndDragToggle) mazeRequireClickAndDragToggle.checked = mazeRequireClickAndDrag;
+  if (carRequireClickAndDragToggle) carRequireClickAndDragToggle.checked = carRequireClickAndDrag;
+  if (jackRequireClickAndDragToggle) jackRequireClickAndDragToggle.checked = jackRequireClickAndDrag;
+  if (fullscreenGameActiveToggle) fullscreenGameActiveToggle.checked = fullscreenGameActive;
+  if (mazeGameActiveToggle) mazeGameActiveToggle.checked = mazeGameActive;
+  if (carGameActiveToggle) carGameActiveToggle.checked = carGameActive;
+  if (jackGameActiveToggle) jackGameActiveToggle.checked = jackGameActive;
   soundEnabledToggle.checked = soundEnabled;
   trainingPausedToggle.checked = trainingPaused;
   [4, 5, 6].forEach((level, idx) => {
@@ -700,20 +871,29 @@ async function saveTask1Settings() {
   const task2Enabled = Boolean(task2EnabledToggle.checked);
   const safeTask3Seconds = parseTask3Seconds(task3DragSecondsInput.value);
   const task3Enabled = Boolean(task3EnabledToggle.checked);
+  const fullscreenRequireClickAndDrag = Boolean(fullscreenRequireClickAndDragToggle && fullscreenRequireClickAndDragToggle.checked);
+  const mazeRequireClickAndDrag = Boolean(mazeRequireClickAndDragToggle && mazeRequireClickAndDragToggle.checked);
+  const carRequireClickAndDrag = Boolean(carRequireClickAndDragToggle && carRequireClickAndDragToggle.checked);
+  const jackRequireClickAndDrag = Boolean(jackRequireClickAndDragToggle && jackRequireClickAndDragToggle.checked);
+  const fullscreenGameActive = Boolean(fullscreenGameActiveToggle && fullscreenGameActiveToggle.checked);
+  const mazeGameActive = Boolean(mazeGameActiveToggle && mazeGameActiveToggle.checked);
+  const carGameActive = Boolean(carGameActiveToggle && carGameActiveToggle.checked);
+  const jackGameActive = Boolean(jackGameActiveToggle && jackGameActiveToggle.checked);
   const soundEnabled = Boolean(soundEnabledToggle.checked);
   const trainingPaused = Boolean(trainingPausedToggle.checked);
   const jackFlameRainSettingsToSave = [4, 5, 6].map((level, idx) => {
     const inputs = jackFlameRainInputs[idx];
+    const defaults = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[idx];
     return {
       enabled: Boolean(inputs.enabled && inputs.enabled.checked),
-      size: parseJackFlameRainSize(inputs.size ? inputs.size.value : DEFAULT_JACK_FLAME_RAIN.size),
-      hitRadius: parseJackFlameRainHitRadius(inputs.hitRadius ? inputs.hitRadius.value : DEFAULT_JACK_FLAME_RAIN.hitRadius),
-      burstMin: parseJackFlameRainBurstMin(inputs.burstMin ? inputs.burstMin.value : DEFAULT_JACK_FLAME_RAIN.burstMin),
-      burstMax: parseJackFlameRainBurstMax(inputs.burstMax ? inputs.burstMax.value : DEFAULT_JACK_FLAME_RAIN.burstMax, DEFAULT_JACK_FLAME_RAIN.burstMin),
-      intervalMin: parseJackFlameRainIntervalMin(inputs.intervalMin ? inputs.intervalMin.value : DEFAULT_JACK_FLAME_RAIN.intervalMin),
-      intervalMax: parseJackFlameRainIntervalMax(inputs.intervalMax ? inputs.intervalMax.value : DEFAULT_JACK_FLAME_RAIN.intervalMax, DEFAULT_JACK_FLAME_RAIN.intervalMin),
-      speedMin: parseJackFlameRainSpeedMin(inputs.speedMin ? inputs.speedMin.value : DEFAULT_JACK_FLAME_RAIN.speedMin),
-      speedMax: parseJackFlameRainSpeedMax(inputs.speedMax ? inputs.speedMax.value : DEFAULT_JACK_FLAME_RAIN.speedMax, DEFAULT_JACK_FLAME_RAIN.speedMin),
+      size: parseJackFlameRainSize(inputs.size ? inputs.size.value : defaults.size, defaults.size),
+      hitRadius: parseJackFlameRainHitRadius(inputs.hitRadius ? inputs.hitRadius.value : defaults.hitRadius, defaults.hitRadius),
+      burstMin: parseJackFlameRainBurstMin(inputs.burstMin ? inputs.burstMin.value : defaults.burstMin, defaults.burstMin),
+      burstMax: parseJackFlameRainBurstMax(inputs.burstMax ? inputs.burstMax.value : defaults.burstMax, defaults.burstMin, defaults.burstMax),
+      intervalMin: parseJackFlameRainIntervalMin(inputs.intervalMin ? inputs.intervalMin.value : defaults.intervalMin, defaults.intervalMin),
+      intervalMax: parseJackFlameRainIntervalMax(inputs.intervalMax ? inputs.intervalMax.value : defaults.intervalMax, defaults.intervalMin, defaults.intervalMax),
+      speedMin: parseJackFlameRainSpeedMin(inputs.speedMin ? inputs.speedMin.value : defaults.speedMin, defaults.speedMin),
+      speedMax: parseJackFlameRainSpeedMax(inputs.speedMax ? inputs.speedMax.value : defaults.speedMax, defaults.speedMin, defaults.speedMax),
     };
   });
   const mazeGhostLevelsEnabled = mazeGhostLevelToggles.map((toggle) => Boolean(toggle && toggle.checked));
@@ -759,6 +939,14 @@ async function saveTask1Settings() {
   localStorage.setItem(TASK2_ENABLED_KEY, String(task2Enabled));
   localStorage.setItem(TASK3_STORAGE_KEY, String(safeTask3Seconds));
   localStorage.setItem(TASK3_ENABLED_KEY, String(task3Enabled));
+  localStorage.setItem(FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY, String(fullscreenRequireClickAndDrag));
+  localStorage.setItem(MAZE_REQUIRE_CLICK_AND_DRAG_KEY, String(mazeRequireClickAndDrag));
+  localStorage.setItem(CAR_REQUIRE_CLICK_AND_DRAG_KEY, String(carRequireClickAndDrag));
+  localStorage.setItem(JACK_REQUIRE_CLICK_AND_DRAG_KEY, String(jackRequireClickAndDrag));
+  localStorage.setItem(FULLSCREEN_GAME_ACTIVE_KEY, String(fullscreenGameActive));
+  localStorage.setItem(MAZE_GAME_ACTIVE_KEY, String(mazeGameActive));
+  localStorage.setItem(CAR_GAME_ACTIVE_KEY, String(carGameActive));
+  localStorage.setItem(JACK_GAME_ACTIVE_KEY, String(jackGameActive));
   localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
   localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
   [4, 5, 6].forEach((level, idx) => {
@@ -823,34 +1011,6 @@ async function saveTask1Settings() {
       inputEl.value = String(carGameLevelFuelDrainPerSecond[index]);
     }
   });
-  if (jackFlameRainSizeInput) {
-    jackFlameRainSizeInput.value = String(jackFlameRainSizePx);
-  }
-  if (jackFlameRainHitRadiusInput) {
-    jackFlameRainHitRadiusInput.value = String(jackFlameRainHitRadiusPx);
-  }
-  if (jackFlameRainBurstMinInput) {
-    jackFlameRainBurstMinInput.value = String(jackFlameRainBurstMin);
-  }
-  if (jackFlameRainBurstMaxInput) {
-    jackFlameRainBurstMaxInput.value = String(jackFlameRainBurstMax);
-  }
-  if (jackFlameRainIntervalMinInput) {
-    jackFlameRainIntervalMinInput.value = String(jackFlameRainIntervalMinMs);
-  }
-  if (jackFlameRainIntervalMaxInput) {
-    jackFlameRainIntervalMaxInput.value = String(jackFlameRainIntervalMaxMs);
-  }
-  if (jackFlameRainSpeedMinInput) {
-    jackFlameRainSpeedMinInput.value = String(jackFlameRainSpeedMin);
-  }
-  if (jackFlameRainSpeedMaxInput) {
-    jackFlameRainSpeedMaxInput.value = String(jackFlameRainSpeedMax);
-  }
-  if (jackFlameRainEnabledToggle) {
-    jackFlameRainEnabledToggle.checked = jackFlameRainEnabled;
-  }
-
   try {
     const response = await fetch(SETTINGS_API_PATH, {
       method: "PUT",
@@ -864,6 +1024,14 @@ async function saveTask1Settings() {
         task2Enabled,
         task3RequiredDragSeconds: safeTask3Seconds,
         task3Enabled,
+        fullscreenRequireClickAndDrag,
+        mazeRequireClickAndDrag,
+        carRequireClickAndDrag,
+        jackRequireClickAndDrag,
+        fullscreenGameActive,
+        mazeGameActive,
+        carGameActive,
+        jackGameActive,
         soundEnabled,
         trainingPaused,
         jackFlameRain4: jackFlameRainSettingsToSave[0],
@@ -894,6 +1062,9 @@ async function saveTask1Settings() {
 }
 
 initTabs();
+if (applyPresetsBtn) {
+  applyPresetsBtn.addEventListener("click", applyProgressivePresets);
+}
 saveTask1Btn.addEventListener("click", saveTask1Settings);
 
 const allInputs = [
@@ -910,12 +1081,19 @@ const allInputs = [
 ];
 
 const allToggles = [
+  fullscreenRequireClickAndDragToggle,
+  mazeRequireClickAndDragToggle,
+  carRequireClickAndDragToggle,
+  jackRequireClickAndDragToggle,
+  fullscreenGameActiveToggle,
+  mazeGameActiveToggle,
+  carGameActiveToggle,
+  jackGameActiveToggle,
   task1EnabledToggle,
   task2EnabledToggle,
   task3EnabledToggle,
   soundEnabledToggle,
   trainingPausedToggle,
-  jackFlameRainEnabledToggle,
   ...mazeGhostLevelToggles,
   ...carGameLevelToggles,
 ];
@@ -939,6 +1117,21 @@ allToggles.forEach((toggleEl) => {
   toggleEl.addEventListener("change", () => {
     setDirtyState(true);
     updateQuickSummary();
+  });
+});
+
+[
+  [fullscreenRequireClickAndDragToggle, FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY],
+  [mazeRequireClickAndDragToggle, MAZE_REQUIRE_CLICK_AND_DRAG_KEY],
+  [carRequireClickAndDragToggle, CAR_REQUIRE_CLICK_AND_DRAG_KEY],
+  [jackRequireClickAndDragToggle, JACK_REQUIRE_CLICK_AND_DRAG_KEY],
+].forEach(([toggleEl, storageKey]) => {
+  if (!toggleEl) {
+    return;
+  }
+
+  toggleEl.addEventListener("change", () => {
+    localStorage.setItem(storageKey, String(toggleEl.checked));
   });
 });
 

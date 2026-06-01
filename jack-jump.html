@@ -6,7 +6,7 @@
     <title>Jack Jump Drag Game</title>
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body class="jack-jump-page">
+  <body class="jack-jump-page" data-game-active-key="jackGameActive">
     <main class="jack-jump-shell">
       <section class="jack-jump-card" aria-label="Jack jump game">
         <header class="jack-jump-header">
@@ -35,7 +35,7 @@
             <span class="jack-goal-label">LAND HERE</span>
           </div>
 
-          <img id="candleObstacle" class="jack-candle" src="images/candle.png" alt="Candle obstacle" />
+          <img id="candleObstacle" class="jack-candle" src="images/candle.png" alt="Candle obstacle" draggable="false" />
 
           <div class="jack-character-wrap" id="jackWrap" aria-live="polite">
             <img id="jackCharacter" class="jack-character" src="images/jack.png" alt="Jack" draggable="false" />
@@ -44,9 +44,21 @@
         </section>
 
         <p id="jackStatus" class="jack-status">Move your cursor to Jack's start point.</p>
+
+        <section class="pad-dock jack-trackpad-dock" aria-label="Trackpad practice box">
+          <p class="pad-label">Trackpad practice box</p>
+          <section id="scene" class="scene" aria-label="Interactive trackpad trainer">
+            <img class="trackpad" src="images/trackpad.png" alt="Trackpad" draggable="false" />
+            <img id="leftHand" class="hand left-hand" src="images/left-hand-transparent.png" alt="Left hand" draggable="false" />
+            <img id="rightHand" class="hand right-hand" src="images/right-hand-transparent.png" alt="Right hand" draggable="false" />
+            <div id="pressIndicator" class="press-indicator" aria-hidden="true"></div>
+          </section>
+        </section>
       </section>
     </main>
 
+    <script src="game-access.js"></script>
+    <script src="movement-mode.js"></script>
     <script src="jack-jump.js"></script>
   </body>
 </html>

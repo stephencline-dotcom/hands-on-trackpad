@@ -6,7 +6,7 @@
     <title>Trackpad Hand Trainer - Maze</title>
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body class="maze-page">
+  <body class="maze-page" data-game-active-key="mazeGameActive">
     <audio id="mazeStartAudio" src="sounds/Maze start.mp3" preload="auto"></audio>
     <audio id="mazeHitAudio" src="sounds/wall-hit.mp3" preload="auto"></audio>
     <audio id="mazeFinishAudio" src="sounds/Maze finish.mp3" preload="auto"></audio>
@@ -57,6 +57,8 @@
       </section>
     </main>
 
+    <script src="game-access.js"></script>
+    <script src="movement-mode.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

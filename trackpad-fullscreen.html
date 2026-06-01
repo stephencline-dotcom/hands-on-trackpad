@@ -6,7 +6,7 @@
     <title>Trackpad Hand Trainer - Fullscreen Trackpad</title>
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body class="trackpad-full-page">
+  <body class="trackpad-full-page" data-game-active-key="fullscreenGameActive">
     <audio id="clickHoldAudio" src="sounds/click and hold.mp3" preload="auto" loop></audio>
     <audio id="slideAndClickAudio" src="sounds/clickandslide.mp3" preload="auto" loop></audio>
     <audio id="justSlideAudio" src="sounds/justslide.mp3" preload="auto" loop></audio>
@@ -67,6 +67,8 @@
       </section>
     </main>
 
+    <script src="game-access.js"></script>
+    <script src="movement-mode.js"></script>
     <script src="trackpad-fullscreen.js"></script>
   </body>
 </html>

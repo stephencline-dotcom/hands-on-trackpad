@@ -15,6 +15,14 @@ const DEFAULT_SETTINGS = {
   task2Enabled: true,
   task3RequiredDragSeconds: 6,
   task3Enabled: true,
+  fullscreenRequireClickAndDrag: false,
+  mazeRequireClickAndDrag: false,
+  carRequireClickAndDrag: false,
+  jackRequireClickAndDrag: false,
+  fullscreenGameActive: true,
+  mazeGameActive: true,
+  carGameActive: true,
+  jackGameActive: true,
   soundEnabled: true,
   trainingPaused: false,
   jackFlameRainEnabled: true,
@@ -60,13 +68,13 @@ const DEFAULT_SETTINGS = {
       speedMax: 480,
     },
   mazeGhostLevelsEnabled: [true, true, true, true, true, true],
-  mazeGhostLevelsPerLevelCounts: [1, 1, 1, 1, 1, 1],
+  mazeGhostLevelsPerLevelCounts: [1, 2, 3, 4, 5, 6],
   carGameLevelsEnabled: [true, true, true, true, true, true],
-  carGameLevelObstacleSpeeds: [0.18, 0.21, 0.24, 0.28, 0.33, 0.38],
-  carGameLevelMaxCars: [1, 2, 2, 3, 3, 4],
-  carGameLevelSurvivalSeconds: [12, 16, 20, 24, 28, 32],
-  carGameLevelGasPumpSpawnSeconds: [4.2, 4.8, 5.4, 6.0, 6.6, 7.2],
-  carGameLevelFuelDrainPerSecond: [2.2, 2.8, 3.5, 4.3, 5.2, 6.2],
+  carGameLevelObstacleSpeeds: [0.16, 0.22, 0.28, 0.34, 0.4, 0.48],
+  carGameLevelMaxCars: [1, 2, 3, 4, 5, 6],
+  carGameLevelSurvivalSeconds: [10, 15, 20, 25, 30, 35],
+  carGameLevelGasPumpSpawnSeconds: [5.2, 4.8, 4.4, 4.0, 3.6, 3.2],
+  carGameLevelFuelDrainPerSecond: [1.8, 2.4, 3.2, 4.0, 5.0, 6.2],
 };
 
 const MIME_TYPES = {
@@ -144,7 +152,7 @@ function parseTaskEnabled(value, fallback = true) {
 function parseGhostCount(value) {
   const parsed = Number.parseInt(String(value || ""), 10);
   if (!Number.isFinite(parsed)) {
-    return DEFAULT_SETTINGS.mazeGhostsPerLevel;
+    return DEFAULT_SETTINGS.mazeGhostLevelsPerLevelCounts[0];
   }
 
   return Math.min(6, Math.max(0, parsed));
@@ -315,6 +323,25 @@ function parseJackFlameRainSpeedMax(value, speedMin) {
   return Math.min(1200, Math.max(speedMin + 1, parsed));
 }
 
+function parseFlameRainLevel(value, fallback) {
+  const source = value && typeof value === "object" ? value : fallback;
+  const burstMin = parseJackFlameRainBurstMin(source.burstMin);
+  const intervalMin = parseJackFlameRainIntervalMin(source.intervalMin);
+  const speedMin = parseJackFlameRainSpeedMin(source.speedMin);
+
+  return {
+    enabled: parseTaskEnabled(source.enabled, fallback.enabled),
+    size: parseJackFlameRainSize(source.size),
+    hitRadius: parseJackFlameRainHitRadius(source.hitRadius),
+    burstMin,
+    burstMax: parseJackFlameRainBurstMax(source.burstMax, burstMin),
+    intervalMin,
+    intervalMax: parseJackFlameRainIntervalMax(source.intervalMax, intervalMin),
+    speedMin,
+    speedMax: parseJackFlameRainSpeedMax(source.speedMax, speedMin),
+  };
+}
+
 function parseCarLevelNumberArray(value, parser, fallbackArray) {
   if (Array.isArray(value)) {
     const normalized = value.slice(0, 6).map((item, index) => parser(item, fallbackArray[index]));
@@ -337,7 +364,9 @@ function loadSettings() {
   try {
     const raw = fs.readFileSync(SETTINGS_FILE, "utf8");
     const data = JSON.parse(raw);
-    const fallbackGhostCount = parseGhostCount(data.mazeGhostsPerLevel);
+    const fallbackGhostCount = parseGhostCount(
+      data.mazeGhostsPerLevel ?? DEFAULT_SETTINGS.mazeGhostLevelsPerLevelCounts[0]
+    );
     const flameBurstMin = parseJackFlameRainBurstMin(data.jackFlameRainBurstMin);
     const flameIntervalMin = parseJackFlameRainIntervalMin(data.jackFlameRainIntervalMinMs);
     const flameSpeedMin = parseJackFlameRainSpeedMin(data.jackFlameRainSpeedMin);
@@ -348,6 +377,38 @@ function loadSettings() {
       task2Enabled: parseTaskEnabled(data.task2Enabled, true),
       task3RequiredDragSeconds: parseTask3Seconds(data.task3RequiredDragSeconds),
       task3Enabled: parseTaskEnabled(data.task3Enabled, true),
+      fullscreenRequireClickAndDrag: parseTaskEnabled(
+        data.fullscreenRequireClickAndDrag,
+        DEFAULT_SETTINGS.fullscreenRequireClickAndDrag
+      ),
+      mazeRequireClickAndDrag: parseTaskEnabled(
+        data.mazeRequireClickAndDrag,
+        DEFAULT_SETTINGS.mazeRequireClickAndDrag
+      ),
+      carRequireClickAndDrag: parseTaskEnabled(
+        data.carRequireClickAndDrag,
+        DEFAULT_SETTINGS.carRequireClickAndDrag
+      ),
+      jackRequireClickAndDrag: parseTaskEnabled(
+        data.jackRequireClickAndDrag,
+        DEFAULT_SETTINGS.jackRequireClickAndDrag
+      ),
+      fullscreenGameActive: parseTaskEnabled(
+        data.fullscreenGameActive,
+        DEFAULT_SETTINGS.fullscreenGameActive
+      ),
+      mazeGameActive: parseTaskEnabled(
+        data.mazeGameActive,
+        DEFAULT_SETTINGS.mazeGameActive
+      ),
+      carGameActive: parseTaskEnabled(
+        data.carGameActive,
+        DEFAULT_SETTINGS.carGameActive
+      ),
+      jackGameActive: parseTaskEnabled(
+        data.jackGameActive,
+        DEFAULT_SETTINGS.jackGameActive
+      ),
       soundEnabled: parseTaskEnabled(data.soundEnabled, true),
       trainingPaused: parseTrainingPaused(data.trainingPaused),
       jackFlameRainEnabled: parseTaskEnabled(data.jackFlameRainEnabled, DEFAULT_SETTINGS.jackFlameRainEnabled),
@@ -418,6 +479,38 @@ function saveSettings(settings) {
     task2Enabled: parseTaskEnabled(settings.task2Enabled ?? existing.task2Enabled, true),
     task3RequiredDragSeconds: parseTask3Seconds(settings.task3RequiredDragSeconds ?? existing.task3RequiredDragSeconds),
     task3Enabled: parseTaskEnabled(settings.task3Enabled ?? existing.task3Enabled, true),
+    fullscreenRequireClickAndDrag: parseTaskEnabled(
+      settings.fullscreenRequireClickAndDrag ?? existing.fullscreenRequireClickAndDrag,
+      DEFAULT_SETTINGS.fullscreenRequireClickAndDrag
+    ),
+    mazeRequireClickAndDrag: parseTaskEnabled(
+      settings.mazeRequireClickAndDrag ?? existing.mazeRequireClickAndDrag,
+      DEFAULT_SETTINGS.mazeRequireClickAndDrag
+    ),
+    carRequireClickAndDrag: parseTaskEnabled(
+      settings.carRequireClickAndDrag ?? existing.carRequireClickAndDrag,
+      DEFAULT_SETTINGS.carRequireClickAndDrag
+    ),
+    jackRequireClickAndDrag: parseTaskEnabled(
+      settings.jackRequireClickAndDrag ?? existing.jackRequireClickAndDrag,
+      DEFAULT_SETTINGS.jackRequireClickAndDrag
+    ),
+    fullscreenGameActive: parseTaskEnabled(
+      settings.fullscreenGameActive ?? existing.fullscreenGameActive,
+      DEFAULT_SETTINGS.fullscreenGameActive
+    ),
+    mazeGameActive: parseTaskEnabled(
+      settings.mazeGameActive ?? existing.mazeGameActive,
+      DEFAULT_SETTINGS.mazeGameActive
+    ),
+    carGameActive: parseTaskEnabled(
+      settings.carGameActive ?? existing.carGameActive,
+      DEFAULT_SETTINGS.carGameActive
+    ),
+    jackGameActive: parseTaskEnabled(
+      settings.jackGameActive ?? existing.jackGameActive,
+      DEFAULT_SETTINGS.jackGameActive
+    ),
     soundEnabled: parseTaskEnabled(settings.soundEnabled ?? existing.soundEnabled, true),
     trainingPaused: parseTrainingPaused(settings.trainingPaused ?? existing.trainingPaused),
     jackFlameRainEnabled: parseTaskEnabled(
@@ -443,6 +536,9 @@ function saveSettings(settings) {
       settings.jackFlameRainSpeedMax ?? existing.jackFlameRainSpeedMax,
       jackFlameRainSpeedMin
     ),
+    jackFlameRain4: parseFlameRainLevel(settings.jackFlameRain4, existing.jackFlameRain4),
+    jackFlameRain5: parseFlameRainLevel(settings.jackFlameRain5, existing.jackFlameRain5),
+    jackFlameRain6: parseFlameRainLevel(settings.jackFlameRain6, existing.jackFlameRain6),
     mazeGhostLevelsEnabled: parseGhostLevelsEnabled(settings.mazeGhostLevelsEnabled ?? existing.mazeGhostLevelsEnabled, true),
     mazeGhostLevelsPerLevelCounts: parseGhostLevelCounts(
       settings.mazeGhostLevelsPerLevelCounts ?? existing.mazeGhostLevelsPerLevelCounts,
@@ -474,9 +570,6 @@ function saveSettings(settings) {
     ),
     carGameLevelFuelDrainPerSecond: parseCarLevelNumberArray(
       settings.carGameLevelFuelDrainPerSecond ?? existing.carGameLevelFuelDrainPerSecond,
-        jackFlameRain4: settings.jackFlameRain4 ?? existing.jackFlameRain4,
-        jackFlameRain5: settings.jackFlameRain5 ?? existing.jackFlameRain5,
-        jackFlameRain6: settings.jackFlameRain6 ?? existing.jackFlameRain6,
       parseCarGameFuelDrainPerSecond,
       DEFAULT_SETTINGS.carGameLevelFuelDrainPerSecond
     ),

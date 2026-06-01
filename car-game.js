@@ -20,14 +20,7 @@ const OBSTACLE_IMAGES = ["images/pinkcar.png", "images/greencar.png", "images/re
 const BIRD_IMAGE = "images/bird.png";
 const AIRPLANE_IMAGE = "images/airplane.png";
 const GASPUMP_IMAGE = "images/gaspump.png";
-const CAR_LEVEL_BACKGROUNDS = [
-  "images/roadbackground.png",
-  "images/tent.png",
-  "images/living-room.png",
-  "images/yar.png",
-  "images/beach.png",
-  "images/desert.png",
-];
+const CAR_GAME_BACKGROUND = "images/roadbackground.png";
 
 const SETTINGS_API_PATH = "/api/settings";
 const CAR_LEVEL_ENABLED_KEYS = [
@@ -94,7 +87,7 @@ const AIRPLANE_SPAWN_MAX_MS = 9800;
 const GASPUMP_SPAWN_MIN_MS = 2000;
 const GASPUMP_SPAWN_MAX_MS = 30000;
 const GASPUMP_START_PROGRESS = -0.45;
-const GASPUMP_END_PROGRESS = 1.28;
+const GASPUMP_END_PROGRESS = 1.08;
 const GASPUMP_SPEED_MULTIPLIER = 0.62;
 const GASPUMP_PICKUP_MIN_SIZE_RATIO = 0.46;
 const GASPUMP_PICKUP_WINDOW_TOP_RATIO = 0.09;
@@ -186,6 +179,9 @@ let carLevelObstacleSpeeds = [...DEFAULT_CAR_LEVEL_SPEEDS];
 let carLevelMaxCars = [...DEFAULT_CAR_LEVEL_MAX_CARS];
 let carLevelSurvivalSeconds = [...DEFAULT_CAR_LEVEL_SURVIVAL];
 let carLevelFuelDrainPerSec = [...DEFAULT_CAR_LEVEL_FUEL_DRAIN];
+// Read the teacher-controlled movement mode once and reuse it everywhere on this page.
+const CAR_REQUIRE_CLICK_AND_DRAG_KEY = "carRequireClickAndDrag";
+const carMovementGate = window.trackpadMovementSettings.createClickAndDragGate(CAR_REQUIRE_CLICK_AND_DRAG_KEY);
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
@@ -451,8 +447,7 @@ function applyLevelBackground() {
     return;
   }
 
-  const backgroundImage = CAR_LEVEL_BACKGROUNDS[currentLevelIndex] || CAR_LEVEL_BACKGROUNDS[0];
-  carBoard.style.background = `url("${backgroundImage}") center bottom / 100% 100% no-repeat`;
+  carBoard.style.background = `url("${CAR_GAME_BACKGROUND}") center bottom / 100% 100% no-repeat`;
 }
 
 function updateCrashBadge() {
@@ -923,6 +918,7 @@ function spawnCarObstacle() {
   node.className = "car-obstacle";
   node.alt = "";
   node.setAttribute("aria-hidden", "true");
+  node.draggable = false;
   node.src = OBSTACLE_IMAGES[Math.floor(Math.random() * OBSTACLE_IMAGES.length)];
 
   const lane = Math.random() < 0.5 ? "left" : "right";
@@ -941,6 +937,7 @@ function spawnBird() {
   node.className = "car-obstacle car-bird";
   node.alt = "";
   node.setAttribute("aria-hidden", "true");
+  node.draggable = false;
   node.src = BIRD_IMAGE;
 
   const direction = Math.random() < 0.5 ? "ltr" : "rtl";
@@ -964,6 +961,7 @@ function spawnAirplane() {
   node.className = "car-obstacle car-airplane";
   node.alt = "";
   node.setAttribute("aria-hidden", "true");
+  node.draggable = false;
   node.src = AIRPLANE_IMAGE;
 
   const direction = Math.random() < 0.5 ? "ltr" : "rtl";
@@ -998,6 +996,7 @@ function spawnGasPump() {
   node.className = "car-obstacle car-gaspump";
   node.alt = "";
   node.setAttribute("aria-hidden", "true");
+  node.draggable = false;
   node.src = GASPUMP_IMAGE;
 
   const lane = Math.random() < 0.5 ? "left" : "right";
@@ -1141,8 +1140,8 @@ function isCollidingWithPlayer(obstacle, obstacleState) {
   const carHeight = playerCar.offsetHeight;
   const carCenterY = carBoard.clientHeight - 2 - carHeight / 2;
 
-  const minCrashWidth = carWidth * 0.55;
-  const minCrashHeight = carHeight * 0.55;
+  const minCrashWidth = carWidth * 0.5;
+  const minCrashHeight = carHeight * 0.5;
   const isCrashEligible = obstacleState.width >= minCrashWidth || obstacleState.height >= minCrashHeight;
   if (!isCrashEligible) {
     return false;
@@ -1154,10 +1153,10 @@ function isCollidingWithPlayer(obstacle, obstacleState) {
   }
 
   // Smaller hitboxes keep near-miss visuals from counting as crashes.
-  const carHitboxWidth = carWidth * 0.6;
-  const carHitboxHeight = carHeight * 0.7;
-  const obstacleHitboxWidth = obstacleState.width * 0.6;
-  const obstacleHitboxHeight = obstacleState.height * 0.7;
+  const carHitboxWidth = carWidth * 0.48;
+  const carHitboxHeight = carHeight * 0.54;
+  const obstacleHitboxWidth = obstacleState.width * 0.46;
+  const obstacleHitboxHeight = obstacleState.height * 0.54;
 
   const carRect = {
     left: carX - carHitboxWidth / 2,
@@ -1177,7 +1176,7 @@ function isCollidingWithPlayer(obstacle, obstacleState) {
     obstacleRect.left < carRect.right &&
     obstacleRect.right > carRect.left &&
     obstacleRect.top < carRect.bottom &&
-    obstacleRect.bottom > carRect.top
+    obstacleRect.bottom > carRect.top + carHitboxHeight * 0.08
   );
 }
 
@@ -1240,7 +1239,7 @@ function hasPassedPlayerDepth(obstacleState) {
   const carHeight = playerCar.offsetHeight;
   const carCenterY = carBoard.clientHeight - 2 - carHeight / 2;
   const carHitboxHeight = carHeight * 0.7;
-  return obstacleState.y > carCenterY + carHitboxHeight * 0.08;
+  return obstacleState.y > carCenterY - carHitboxHeight * 0.06;
 }
 
 function getCarSpawnIntervalMs() {
@@ -1449,7 +1448,7 @@ function updateObstacles(dtMs) {
       return;
     }
 
-    if (obstacle.progress > 1.03) {
+    if (obstacle.progress > 0.96) {
       score += 1;
       playHonk();
       removeObstacle(obstacle.id);
@@ -1570,6 +1569,24 @@ function initializeCar() {
     return;
   }
 
+  function isBoardControlTarget(target) {
+    return target === carStart || target === carPlayAgainBtn;
+  }
+
+  function handleStartAction(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    if (gameActive || waitingNextLevel) {
+      return;
+    }
+
+    enableAudio();
+    startLevel();
+  }
+
   carObstaclesTop = document.createElement("div");
   carObstaclesTop.className = "car-obstacles car-obstacles-top";
   carObstaclesTop.setAttribute("aria-hidden", "true");
@@ -1609,8 +1626,35 @@ function initializeCar() {
     });
   }, CAR_SETTINGS_REFRESH_INTERVAL_MS);
 
-  carBoard.addEventListener("pointermove", updateTargetFromPointer);
-  carBoard.addEventListener("pointerenter", updateTargetFromPointer);
+  carBoard.addEventListener("pointermove", (event) => {
+    if (carMovementGate.shouldMove(event)) {
+      updateTargetFromPointer(event);
+    }
+  });
+  carBoard.addEventListener("pointerenter", (event) => {
+    if (!carMovementGate.isRequireClickAndDragEnabled()) {
+      updateTargetFromPointer(event);
+    }
+  });
+
+  carBoard.addEventListener("pointerdown", (event) => {
+    if (isBoardControlTarget(event.target)) {
+      return;
+    }
+    updateTargetFromPointer(event);
+  });
+  carBoard.addEventListener("dragstart", (event) => {
+    event.preventDefault();
+  });
+  carBoard.addEventListener("drop", (event) => {
+    event.preventDefault();
+  });
+  document.addEventListener("pointerup", (event) => {
+    carMovementGate.end(event);
+  });
+  document.addEventListener("pointercancel", (event) => {
+    carMovementGate.end(event);
+  });
 
   carBoard.addEventListener("pointerdown", enableAudio, { once: true });
   carBoard.addEventListener("pointermove", enableAudio, { once: true });
@@ -1622,16 +1666,25 @@ function initializeCar() {
   }
 
   if (carStart) {
-    carStart.addEventListener("click", () => {
-      carStart.classList.add("hidden");
-      carStart.classList.remove("pulse-cue");
-      enableAudio();
-      startLevel();
-    });
+    carStart.addEventListener("pointerdown", handleStartAction);
+    carStart.addEventListener("click", handleStartAction);
   }
 
   if (carPlayAgainBtn) {
-    carPlayAgainBtn.addEventListener("click", () => {
+    carPlayAgainBtn.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const firstEnabled = getFirstEnabledLevelIndex();
+      if (firstEnabled >= 0) {
+        currentLevelIndex = firstEnabled;
+      }
+      enableAudio();
+      startLevel();
+    });
+
+    carPlayAgainBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       const firstEnabled = getFirstEnabledLevelIndex();
       if (firstEnabled >= 0) {
         currentLevelIndex = firstEnabled;
@@ -1656,19 +1709,24 @@ function initializeCar() {
   });
 
   document.addEventListener("pointermove", (event) => {
-    updateRightFromPointer(event);
+    if (carMovementGate.shouldMove(event)) {
+      updateRightFromPointer(event);
+    }
   });
 
   document.addEventListener("pointerdown", (event) => {
+    carMovementGate.begin(event);
     setPressedState(true);
     updateRightFromPointer(event);
   });
 
-  document.addEventListener("pointerup", () => {
+  document.addEventListener("pointerup", (event) => {
+    carMovementGate.end(event);
     setPressedState(false);
   });
 
-  document.addEventListener("pointercancel", () => {
+  document.addEventListener("pointercancel", (event) => {
+    carMovementGate.end(event);
     setPressedState(false);
   });
 

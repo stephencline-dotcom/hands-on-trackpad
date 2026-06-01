@@ -1500,14 +1500,12 @@ body {
 }
 
 .home-hero-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 14px;
+  display: block;
 }
 
 .home-hero-text {
   min-width: 0;
+  text-align: center;
 }
 
 .home-eyebrow {
@@ -1519,21 +1517,23 @@ body {
 }
 
 .home-hero h1 {
-  margin: 8px 0 8px;
+  margin: 4px 0 8px;
   font-size: clamp(1.6rem, 4.4vw, 2.7rem);
   line-height: 1.1;
   color: #eef6ff;
+  font-family: "Comic Sans MS", "Chalkboard SE", "Marker Felt", "Trebuchet MS", sans-serif;
 }
 
 .home-copy {
-  margin: 0 0 18px;
+  margin: 0 auto 18px;
   max-width: 62ch;
   color: #c9daea;
 }
 
 .training-tool-link {
-  width: 164px;
-  flex: 0 0 164px;
+  position: relative;
+  width: 172px;
+  margin: 0 auto 12px;
   text-decoration: none;
   color: inherit;
   border: 1px solid rgba(175, 221, 251, 0.36);
@@ -1551,6 +1551,39 @@ body {
   transform: translateY(-1px);
   border-color: rgba(143, 210, 255, 0.72);
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.36);
+}
+
+.training-tool-link.activity-disabled,
+.game-card.activity-disabled {
+  opacity: 0.42;
+  filter: saturate(0.35);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.training-tool-link.activity-disabled:hover,
+.training-tool-link.activity-disabled:focus-visible,
+.game-card.activity-disabled:hover,
+.game-card.activity-disabled:focus-visible {
+  transform: none;
+  border-color: rgba(191, 223, 249, 0.32);
+  box-shadow: none;
+}
+
+.training-tool-link.activity-disabled::after,
+.game-card.activity-disabled::after {
+  content: "INACTIVE";
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  background: rgba(18, 24, 34, 0.82);
+  color: #d6e8f8;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
 }
 
 .training-tool-thumb {
@@ -1580,6 +1613,7 @@ body {
 }
 
 .game-card {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr;
@@ -1646,15 +1680,8 @@ body {
     padding: 14px;
   }
 
-  .home-hero-top {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
-
   .training-tool-link {
     width: min(100%, 210px);
-    flex-basis: auto;
   }
 
   .game-card-body {
@@ -1826,6 +1853,11 @@ body {
   pointer-events: none;
 }
 
+.jack-jump-scene img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
 .jack-room-windows {
   display: none;
 }
@@ -1935,18 +1967,6 @@ body {
   pointer-events: none;
 }
 
-.jack-falling-flame {
-  position: absolute;
-  width: 24px;
-  height: 24px;
-  transform: translate(-50%, -50%);
-  object-fit: contain;
-  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.24));
-  pointer-events: none;
-  user-select: none;
-  z-index: 4;
-}
-
 .jack-character-wrap {
   position: absolute;
   width: 260px;
@@ -1997,6 +2017,10 @@ body {
 
 .jack-character-wrap.is-success .jack-character {
   animation: jackCelebrate 300ms ease-in-out 3;
+}
+
+.jack-character-wrap.is-celebrating .jack-character {
+  animation: jackCelebrate 300ms ease-in-out infinite;
 }
 
 @keyframes jackRun {
@@ -2079,6 +2103,15 @@ body {
   color: #2f8f62;
 }
 
+.jack-trackpad-dock {
+  margin-top: 12px;
+  width: min(100%, 420px);
+}
+
+.jack-trackpad-dock .pad-label {
+  color: #2f5979;
+}
+
 @media (max-width: 760px) {
   .jack-jump-shell {
     padding: 14px;
@@ -2090,6 +2123,10 @@ body {
 
   .jack-window {
     height: 70px;
+  }
+
+  .jack-trackpad-dock {
+    width: 100%;
   }
 
 }
