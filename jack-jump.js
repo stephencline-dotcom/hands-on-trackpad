@@ -123,11 +123,6 @@ runningFeetSound.preload = "auto";
 runningFeetSound.volume = 0.55;
 runningFeetSound.loop = true;
 
-const woohooSound = new Audio("sounds/woohoo.mp3");
-woohooSound.preload = "auto";
-woohooSound.volume = 0.72;
-woohooSound.loop = false;
-
 const JACK_PATH_LEVELS = [
   [
     { x: 76, y: 322 },
@@ -306,7 +301,6 @@ const JACK_LEVELS = [
   {
     pathPoints: JACK_PATH_LEVELS[2],
     candleT: 0.44,
-    candleOffsetY: 76,
     pathTolerance: 30,
     candleZonePathTolerance: 50,
     candleCollisionWindow: 0.16,
@@ -378,7 +372,6 @@ let goalPoint = { x: 0, y: 0 };
 let headingDeg = 0;
 let facingScaleX = 1;
 let movementPxPerFrame = 0;
-let activeScenePointerId = null;
 
 function getFallingFlameLevelOffset() {
   return Math.max(0, currentLevelIndex - FALLING_FLAME_LEVEL_START_INDEX);
@@ -477,11 +470,6 @@ async function refreshFlameRainSettingsFromApi() {
       return;
     }
     const data = await response.json();
-    const requireClickAndDrag = parseBool(
-      data.jackRequireClickAndDrag,
-      jackTrackpadMovementGate.isRequireClickAndDragEnabled(JACK_REQUIRE_CLICK_AND_DRAG_KEY)
-    );
-    localStorage.setItem(JACK_REQUIRE_CLICK_AND_DRAG_KEY, String(requireClickAndDrag));
     for (const level of [4, 5, 6]) {
       flameRainSettings[level] = normalizeFlameRainSettings(data[`jackFlameRain${level}`] || {}, level);
     }
@@ -1048,10 +1036,8 @@ function resetToStart(message, state = "neutral") {
   headingDeg = 0;
   facingScaleX = 1;
   jackCharacter.src = "images/jack.png";
-  jackWrap.classList.remove("is-running", "is-failed", "is-success", "is-celebrating");
+  jackWrap.classList.remove("is-running", "is-failed", "is-success");
   jackGoal.classList.remove("is-success");
-  woohooSound.pause();
-  woohooSound.currentTime = 0;
   fireSound.pause();
   stopFireLoopGuard();
   seekFireSoundStart();
@@ -1096,26 +1082,8 @@ function triggerSuccess() {
   runningFeetSound.currentTime = 0;
   clearFallingFlames();
   jackWrap.classList.remove("is-running", "is-failed");
-  jackWrap.classList.add("is-success", "is-celebrating");
+  jackWrap.classList.add("is-success");
   jackGoal.classList.add("is-success");
-
-  let successDelayMs = NEXT_LEVEL_DELAY_MS;
-  try {
-    woohooSound.pause();
-    woohooSound.currentTime = 0;
-    const remainingSeconds = Number.isFinite(woohooSound.duration)
-      ? Math.max(0, woohooSound.duration)
-      : 0;
-    if (remainingSeconds > 0) {
-      successDelayMs = Math.ceil(remainingSeconds * 1000);
-    }
-
-    woohooSound.play().catch(() => {
-      // Ignore autoplay-blocking errors.
-    });
-  } catch {
-    // Ignore media errors and keep gameplay responsive.
-  }
 
   const completedLevel = currentLevelIndex + 1;
   const hasNextLevel = currentLevelIndex < JACK_LEVELS.length - 1;
@@ -1131,7 +1099,7 @@ function triggerSuccess() {
   showLevelOverlay("Way to go! On to the next level...");
 
   clearLevelAdvanceTimer();
-  levelAdvanceDueAtMs = Date.now() + successDelayMs;
+  levelAdvanceDueAtMs = Date.now() + NEXT_LEVEL_DELAY_MS;
   levelAdvanceTimer = window.setTimeout(() => {
     levelAdvanceTimer = null;
     levelAdvanceDueAtMs = 0;
@@ -1140,7 +1108,7 @@ function triggerSuccess() {
     updateLevelBadge();
     applyLevelBackground();
     rebuildLayoutAndReset(`Level ${currentLevelIndex + 1}: follow the path and clear the candle.`, "neutral");
-  }, successDelayMs);
+  }, NEXT_LEVEL_DELAY_MS);
 }
 
 function checkGameRules(metrics) {
@@ -1223,20 +1191,29 @@ function getJackTrackpadRightRange() {
   };
 }
 
-function pointerToJackViewportNormalized(event) {
-  const width = Math.max(window.innerWidth || 0, 1);
-  const height = Math.max(window.innerHeight || 0, 1);
+function pointerToJackTrackpadPoint(event) {
+  if (!jackTrackpadScene) {
+    return {
+      x: JACK_TRACKPAD_LAYOUT.scene.width * 0.5,
+      y: JACK_TRACKPAD_LAYOUT.scene.height * 0.5,
+    };
+  }
+
+  const rect = jackTrackpadScene.getBoundingClientRect();
+  const width = Math.max(rect.width, 1);
+  const height = Math.max(rect.height, 1);
+
   return {
-    x: clamp(event.clientX / width, 0, 1),
-    y: clamp(event.clientY / height, 0, 1),
+    x: clamp((event.clientX - rect.left) * (JACK_TRACKPAD_LAYOUT.scene.width / width), 0, JACK_TRACKPAD_LAYOUT.scene.width),
+    y: clamp((event.clientY - rect.top) * (JACK_TRACKPAD_LAYOUT.scene.height / height), 0, JACK_TRACKPAD_LAYOUT.scene.height),
   };
 }
 
-function mapJackTrackpadPointToRightPosition(pointerX, pointerY) {
+function mapJackTrackpadPointToRightPosition(point) {
   const area = getJackTrackpadArea();
   const range = getJackTrackpadRightRange();
-  const nx = clamp((pointerX - area.x) / area.width, 0, 1);
-  const ny = clamp((pointerY - area.y) / area.height, 0, 1);
+  const nx = clamp((point.x - area.x) / area.width, 0, 1);
+  const ny = clamp((point.y - area.y) / area.height, 0, 1);
 
   return {
     x: range.minX + nx * (range.maxX - range.minX),
@@ -1258,16 +1235,32 @@ function setJackTrackpadPressState(pressed) {
   }
 }
 
-function updateJackTrackpadHandsFromPointer(event) {
-  const normalized = pointerToJackViewportNormalized(event);
+function updateJackTrackpadHandsFromPoint(point) {
+  const rightPosition = mapJackTrackpadPointToRightPosition(point);
+  applyJackTrackpadRightPosition(rightPosition.x, rightPosition.y);
+}
+
+function nudgeJackTrackpadHandsFromWheel(event) {
   const area = getJackTrackpadArea();
-  const scenePos = {
-    x: area.x + normalized.x * area.width,
-    y: area.y + normalized.y * area.height,
+  const range = getJackTrackpadRightRange();
+  const currentLeft = jackTrackpadRightHand ? Number.parseFloat(jackTrackpadRightHand.style.left || "0") : 0;
+  const currentTop = jackTrackpadRightHand ? Number.parseFloat(jackTrackpadRightHand.style.top || "0") : 0;
+  const currentPoint = {
+    x: Number.isFinite(currentLeft) ? (currentLeft / 100) * JACK_TRACKPAD_LAYOUT.scene.width : area.x + area.width * 0.5,
+    y: Number.isFinite(currentTop) ? (currentTop / 100) * JACK_TRACKPAD_LAYOUT.scene.height : area.y + area.height * 0.5,
   };
 
-  const rightPosition = mapJackTrackpadPointToRightPosition(scenePos.x, scenePos.y);
-  applyJackTrackpadRightPosition(rightPosition.x, rightPosition.y);
+  const nextPoint = {
+    x: clamp(currentPoint.x + event.deltaX * 0.35, area.x, area.x + area.width),
+    y: clamp(currentPoint.y + event.deltaY * 0.35, area.y, area.y + area.height),
+  };
+
+  const mapped = {
+    x: range.minX + ((nextPoint.x - area.x) / area.width) * (range.maxX - range.minX),
+    y: range.minY + ((nextPoint.y - area.y) / area.height) * (range.maxY - range.minY),
+  };
+
+  applyJackTrackpadRightPosition(mapped.x, mapped.y);
 }
 
 function initializeJackTrackpadHands() {
@@ -1281,13 +1274,13 @@ function initializeJackTrackpadHands() {
 
   document.addEventListener("pointermove", (event) => {
     if (jackTrackpadMovementGate.shouldMove(event)) {
-      updateJackTrackpadHandsFromPointer(event);
+      updateJackTrackpadHandsFromPoint(pointerToJackTrackpadPoint(event));
     }
   });
 
   document.addEventListener("pointerdown", (event) => {
     jackTrackpadMovementGate.begin(event);
-    updateJackTrackpadHandsFromPointer(event);
+    updateJackTrackpadHandsFromPoint(pointerToJackTrackpadPoint(event));
     setJackTrackpadPressState(true);
   });
 
@@ -1300,15 +1293,21 @@ function initializeJackTrackpadHands() {
     jackTrackpadMovementGate.end(event);
     setJackTrackpadPressState(false);
   });
+
+  document.addEventListener(
+    "wheel",
+    (event) => {
+      event.preventDefault();
+      if (jackTrackpadMovementGate.shouldMove()) {
+        nudgeJackTrackpadHandsFromWheel(event);
+      }
+    },
+    { passive: false }
+  );
 }
 
 function onScenePointerMove(event) {
   if (waitingNextLevel) {
-    return;
-  }
-
-  if (!jackTrackpadMovementGate.shouldMove(event)) {
-    jackWrap.classList.remove("is-running");
     return;
   }
 
@@ -1338,59 +1337,13 @@ function onScenePointerLeave() {
   jackWrap.classList.remove("is-running");
 }
 
-function onScenePointerDown(event) {
-  if (!jackScene) {
-    return;
-  }
-
-  jackTrackpadMovementGate.begin(event);
-
-  onScenePointerMove(event);
-
-  if (typeof event.pointerId !== "number") {
-    return;
-  }
-
-  activeScenePointerId = event.pointerId;
-  if (typeof jackScene.setPointerCapture === "function") {
-    try {
-      jackScene.setPointerCapture(event.pointerId);
-    } catch {
-      // Ignore pointer-capture failures and continue with normal handling.
-    }
-  }
-}
-
-function onScenePointerRelease(event) {
-  if (!jackScene || typeof event.pointerId !== "number") {
-    return;
-  }
-
-  jackTrackpadMovementGate.end(event);
-
-  if (activeScenePointerId !== event.pointerId) {
-    return;
-  }
-
-  if (typeof jackScene.releasePointerCapture === "function") {
-    try {
-      jackScene.releasePointerCapture(event.pointerId);
-    } catch {
-      // Ignore pointer-capture failures and continue with normal handling.
-    }
-  }
-
-  activeScenePointerId = null;
-  onScenePointerLeave();
-}
-
 function placeSceneObjects() {
   const level = getCurrentLevel();
   candlePoint = getPointAtT(level.candleT);
   goalPoint = getPointAtT(GOAL_T);
 
   const candleLeft = candlePoint.x - 24;
-  const candleTop = candlePoint.y + (Number.isFinite(level.candleOffsetY) ? level.candleOffsetY : 66);
+  const candleTop = candlePoint.y + 66;
   candleObstacle.style.left = `${candleLeft}px`;
   candleObstacle.style.top = `${candleTop}px`;
 
@@ -1449,15 +1402,6 @@ function initialize() {
   rebuildLayoutAndReset();
 
   jackScene.addEventListener("pointermove", onScenePointerMove);
-  jackScene.addEventListener("pointerdown", onScenePointerDown);
-  jackScene.addEventListener("pointerup", onScenePointerRelease);
-  jackScene.addEventListener("pointercancel", onScenePointerRelease);
-  jackScene.addEventListener("dragstart", (event) => {
-    event.preventDefault();
-  });
-  jackScene.addEventListener("drop", (event) => {
-    event.preventDefault();
-  });
   jackScene.addEventListener("pointerdown", primeFireSound, { once: true });
   jackScene.addEventListener("pointermove", primeFireSound, { once: true });
   jackScene.addEventListener("touchstart", primeFireSound, { once: true });
@@ -1478,7 +1422,6 @@ window.addEventListener("beforeunload", () => {
   fireSound.pause();
   stopFireLoopGuard();
   runningFeetSound.pause();
-  woohooSound.pause();
   window.clearInterval(flameSettingsRefreshTimerId);
 
   if (animationFrameId) {
