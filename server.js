@@ -23,6 +23,11 @@ const DEFAULT_SETTINGS = {
   mazeGameActive: true,
   carGameActive: true,
   jackGameActive: true,
+  lightGameActive: true,
+  streetCarGameActive: true,
+  dragonDodgeGameActive: true,
+  firefighterRescueGameActive: true,
+  martianMadnessGameActive: true,
   soundEnabled: true,
   trainingPaused: false,
   jackFlameRainEnabled: true,
@@ -409,6 +414,26 @@ function loadSettings() {
         data.jackGameActive,
         DEFAULT_SETTINGS.jackGameActive
       ),
+      lightGameActive: parseTaskEnabled(
+        data.lightGameActive,
+        DEFAULT_SETTINGS.lightGameActive
+      ),
+      streetCarGameActive: parseTaskEnabled(
+        data.streetCarGameActive,
+        DEFAULT_SETTINGS.streetCarGameActive
+      ),
+      dragonDodgeGameActive: parseTaskEnabled(
+        data.dragonDodgeGameActive,
+        DEFAULT_SETTINGS.dragonDodgeGameActive
+      ),
+      firefighterRescueGameActive: parseTaskEnabled(
+        data.firefighterRescueGameActive,
+        DEFAULT_SETTINGS.firefighterRescueGameActive
+      ),
+      martianMadnessGameActive: parseTaskEnabled(
+        data.martianMadnessGameActive,
+        DEFAULT_SETTINGS.martianMadnessGameActive
+      ),
       soundEnabled: parseTaskEnabled(data.soundEnabled, true),
       trainingPaused: parseTrainingPaused(data.trainingPaused),
       jackFlameRainEnabled: parseTaskEnabled(data.jackFlameRainEnabled, DEFAULT_SETTINGS.jackFlameRainEnabled),
@@ -510,6 +535,26 @@ function saveSettings(settings) {
     jackGameActive: parseTaskEnabled(
       settings.jackGameActive ?? existing.jackGameActive,
       DEFAULT_SETTINGS.jackGameActive
+    ),
+    lightGameActive: parseTaskEnabled(
+      settings.lightGameActive ?? existing.lightGameActive,
+      DEFAULT_SETTINGS.lightGameActive
+    ),
+    streetCarGameActive: parseTaskEnabled(
+      settings.streetCarGameActive ?? existing.streetCarGameActive,
+      DEFAULT_SETTINGS.streetCarGameActive
+    ),
+    dragonDodgeGameActive: parseTaskEnabled(
+      settings.dragonDodgeGameActive ?? existing.dragonDodgeGameActive,
+      DEFAULT_SETTINGS.dragonDodgeGameActive
+    ),
+    firefighterRescueGameActive: parseTaskEnabled(
+      settings.firefighterRescueGameActive ?? existing.firefighterRescueGameActive,
+      DEFAULT_SETTINGS.firefighterRescueGameActive
+    ),
+    martianMadnessGameActive: parseTaskEnabled(
+      settings.martianMadnessGameActive ?? existing.martianMadnessGameActive,
+      DEFAULT_SETTINGS.martianMadnessGameActive
     ),
     soundEnabled: parseTaskEnabled(settings.soundEnabled ?? existing.soundEnabled, true),
     trainingPaused: parseTrainingPaused(settings.trainingPaused ?? existing.trainingPaused),

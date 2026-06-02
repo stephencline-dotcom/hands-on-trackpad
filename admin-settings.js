@@ -12,6 +12,11 @@ const fullscreenGameActiveToggle = document.getElementById("fullscreenGameActive
 const mazeGameActiveToggle = document.getElementById("mazeGameActiveToggle");
 const carGameActiveToggle = document.getElementById("carGameActiveToggle");
 const jackGameActiveToggle = document.getElementById("jackGameActiveToggle");
+const lightGameActiveToggle = document.getElementById("lightGameActive");
+const streetCarGameActiveToggle = document.getElementById("streetCarGameActive");
+const dragonDodgeGameActiveToggle = document.getElementById("dragonDodgeGameActive");
+const firefighterRescueGameActiveToggle = document.getElementById("firefighterRescueGameActive");
+const martianMadnessGameActiveToggle = document.getElementById("martianMadnessGameActive");
 const soundEnabledToggle = document.getElementById("soundEnabledToggle");
 const trainingPausedToggle = document.getElementById("trainingPausedToggle");
 const jackFlameRainInputs = [4, 5, 6].map((level) => ({
@@ -73,6 +78,11 @@ const FULLSCREEN_GAME_ACTIVE_KEY = "fullscreenGameActive";
 const MAZE_GAME_ACTIVE_KEY = "mazeGameActive";
 const CAR_GAME_ACTIVE_KEY = "carGameActive";
 const JACK_GAME_ACTIVE_KEY = "jackGameActive";
+const LIGHT_GAME_ACTIVE_KEY = "lightGameActive";
+const STREET_CAR_GAME_ACTIVE_KEY = "streetCarGameActive";
+const DRAGON_DODGE_GAME_ACTIVE_KEY = "dragonDodgeGameActive";
+const FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY = "firefighterRescueGameActive";
+const MARTIAN_MADNESS_GAME_ACTIVE_KEY = "martianMadnessGameActive";
 const SOUND_ENABLED_KEY = "trackpadSoundEnabled";
 const TRAINING_PAUSED_KEY = "trackpadTrainingPaused";
 const JACK_FLAME_RAIN_KEYS = [4, 5, 6].map((level) => ({
@@ -538,6 +548,11 @@ function applyProgressivePresets() {
   if (mazeGameActiveToggle) mazeGameActiveToggle.checked = true;
   if (carGameActiveToggle) carGameActiveToggle.checked = true;
   if (jackGameActiveToggle) jackGameActiveToggle.checked = true;
+  if (lightGameActiveToggle) lightGameActiveToggle.checked = true;
+  if (streetCarGameActiveToggle) streetCarGameActiveToggle.checked = true;
+  if (dragonDodgeGameActiveToggle) dragonDodgeGameActiveToggle.checked = true;
+  if (firefighterRescueGameActiveToggle) firefighterRescueGameActiveToggle.checked = true;
+  if (martianMadnessGameActiveToggle) martianMadnessGameActiveToggle.checked = true;
   soundEnabledToggle.checked = true;
   trainingPausedToggle.checked = false;
 
@@ -626,6 +641,11 @@ async function loadTask1Settings() {
   let mazeGameActive = parseTaskEnabled(localStorage.getItem(MAZE_GAME_ACTIVE_KEY), true);
   let carGameActive = parseTaskEnabled(localStorage.getItem(CAR_GAME_ACTIVE_KEY), true);
   let jackGameActive = parseTaskEnabled(localStorage.getItem(JACK_GAME_ACTIVE_KEY), true);
+  let lightGameActive = parseTaskEnabled(localStorage.getItem(LIGHT_GAME_ACTIVE_KEY), true);
+  let streetCarGameActive = parseTaskEnabled(localStorage.getItem(STREET_CAR_GAME_ACTIVE_KEY), true);
+  let dragonDodgeGameActive = parseTaskEnabled(localStorage.getItem(DRAGON_DODGE_GAME_ACTIVE_KEY), true);
+  let firefighterRescueGameActive = parseTaskEnabled(localStorage.getItem(FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY), true);
+  let martianMadnessGameActive = parseTaskEnabled(localStorage.getItem(MARTIAN_MADNESS_GAME_ACTIVE_KEY), true);
   let soundEnabled = parseTaskEnabled(localStorage.getItem(SOUND_ENABLED_KEY), true);
   let trainingPaused = parseTrainingPaused(localStorage.getItem(TRAINING_PAUSED_KEY));
   const jackFlameRainSettings = [4, 5, 6].map((level, idx) => {
@@ -689,6 +709,11 @@ async function loadTask1Settings() {
       mazeGameActive = parseTaskEnabled(data.mazeGameActive, mazeGameActive);
       carGameActive = parseTaskEnabled(data.carGameActive, carGameActive);
       jackGameActive = parseTaskEnabled(data.jackGameActive, jackGameActive);
+      lightGameActive = parseTaskEnabled(data.lightGameActive, lightGameActive);
+      streetCarGameActive = parseTaskEnabled(data.streetCarGameActive, streetCarGameActive);
+      dragonDodgeGameActive = parseTaskEnabled(data.dragonDodgeGameActive, dragonDodgeGameActive);
+      firefighterRescueGameActive = parseTaskEnabled(data.firefighterRescueGameActive, firefighterRescueGameActive);
+      martianMadnessGameActive = parseTaskEnabled(data.martianMadnessGameActive, martianMadnessGameActive);
       soundEnabled = parseTaskEnabled(data.soundEnabled, true);
       trainingPaused = parseTrainingPaused(data.trainingPaused);
       [4, 5, 6].forEach((level, idx) => {
@@ -749,6 +774,11 @@ async function loadTask1Settings() {
       localStorage.setItem(MAZE_GAME_ACTIVE_KEY, String(mazeGameActive));
       localStorage.setItem(CAR_GAME_ACTIVE_KEY, String(carGameActive));
       localStorage.setItem(JACK_GAME_ACTIVE_KEY, String(jackGameActive));
+      localStorage.setItem(LIGHT_GAME_ACTIVE_KEY, String(lightGameActive));
+      localStorage.setItem(STREET_CAR_GAME_ACTIVE_KEY, String(streetCarGameActive));
+      localStorage.setItem(DRAGON_DODGE_GAME_ACTIVE_KEY, String(dragonDodgeGameActive));
+      localStorage.setItem(FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY, String(firefighterRescueGameActive));
+      localStorage.setItem(MARTIAN_MADNESS_GAME_ACTIVE_KEY, String(martianMadnessGameActive));
       localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
       localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
       [4, 5, 6].forEach((level, idx) => {
@@ -807,6 +837,11 @@ async function loadTask1Settings() {
   if (mazeGameActiveToggle) mazeGameActiveToggle.checked = mazeGameActive;
   if (carGameActiveToggle) carGameActiveToggle.checked = carGameActive;
   if (jackGameActiveToggle) jackGameActiveToggle.checked = jackGameActive;
+  if (lightGameActiveToggle) lightGameActiveToggle.checked = lightGameActive;
+  if (streetCarGameActiveToggle) streetCarGameActiveToggle.checked = streetCarGameActive;
+  if (dragonDodgeGameActiveToggle) dragonDodgeGameActiveToggle.checked = dragonDodgeGameActive;
+  if (firefighterRescueGameActiveToggle) firefighterRescueGameActiveToggle.checked = firefighterRescueGameActive;
+  if (martianMadnessGameActiveToggle) martianMadnessGameActiveToggle.checked = martianMadnessGameActive;
   soundEnabledToggle.checked = soundEnabled;
   trainingPausedToggle.checked = trainingPaused;
   [4, 5, 6].forEach((level, idx) => {
@@ -879,6 +914,11 @@ async function saveTask1Settings() {
   const mazeGameActive = Boolean(mazeGameActiveToggle && mazeGameActiveToggle.checked);
   const carGameActive = Boolean(carGameActiveToggle && carGameActiveToggle.checked);
   const jackGameActive = Boolean(jackGameActiveToggle && jackGameActiveToggle.checked);
+  const lightGameActive = Boolean(lightGameActiveToggle && lightGameActiveToggle.checked);
+  const streetCarGameActive = Boolean(streetCarGameActiveToggle && streetCarGameActiveToggle.checked);
+  const dragonDodgeGameActive = Boolean(dragonDodgeGameActiveToggle && dragonDodgeGameActiveToggle.checked);
+  const firefighterRescueGameActive = Boolean(firefighterRescueGameActiveToggle && firefighterRescueGameActiveToggle.checked);
+  const martianMadnessGameActive = Boolean(martianMadnessGameActiveToggle && martianMadnessGameActiveToggle.checked);
   const soundEnabled = Boolean(soundEnabledToggle.checked);
   const trainingPaused = Boolean(trainingPausedToggle.checked);
   const jackFlameRainSettingsToSave = [4, 5, 6].map((level, idx) => {
@@ -947,6 +987,11 @@ async function saveTask1Settings() {
   localStorage.setItem(MAZE_GAME_ACTIVE_KEY, String(mazeGameActive));
   localStorage.setItem(CAR_GAME_ACTIVE_KEY, String(carGameActive));
   localStorage.setItem(JACK_GAME_ACTIVE_KEY, String(jackGameActive));
+  localStorage.setItem(LIGHT_GAME_ACTIVE_KEY, String(lightGameActive));
+  localStorage.setItem(STREET_CAR_GAME_ACTIVE_KEY, String(streetCarGameActive));
+  localStorage.setItem(DRAGON_DODGE_GAME_ACTIVE_KEY, String(dragonDodgeGameActive));
+  localStorage.setItem(FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY, String(firefighterRescueGameActive));
+  localStorage.setItem(MARTIAN_MADNESS_GAME_ACTIVE_KEY, String(martianMadnessGameActive));
   localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
   localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
   [4, 5, 6].forEach((level, idx) => {
@@ -1032,6 +1077,11 @@ async function saveTask1Settings() {
         mazeGameActive,
         carGameActive,
         jackGameActive,
+        lightGameActive,
+        streetCarGameActive,
+        dragonDodgeGameActive,
+        firefighterRescueGameActive,
+        martianMadnessGameActive,
         soundEnabled,
         trainingPaused,
         jackFlameRain4: jackFlameRainSettingsToSave[0],
@@ -1089,6 +1139,11 @@ const allToggles = [
   mazeGameActiveToggle,
   carGameActiveToggle,
   jackGameActiveToggle,
+  lightGameActiveToggle,
+  streetCarGameActiveToggle,
+  dragonDodgeGameActiveToggle,
+  firefighterRescueGameActiveToggle,
+  martianMadnessGameActiveToggle,
   task1EnabledToggle,
   task2EnabledToggle,
   task3EnabledToggle,
