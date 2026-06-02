@@ -188,6 +188,13 @@ const STUDENT_NAME_STORAGE_KEY = 'moving-sound-student-name-v1';
 const SOUND_ENABLED_STORAGE_KEY = 'moving-sound-sound-enabled-v1';
 const MARTIAN_MAX_UFOS = 12;
 
+// Read the game URL parameter so links can open a specific game after sign-in.
+const selectedGame = new URLSearchParams(window.location.search).get('game');
+console.log('Requested game:', selectedGame);
+const selectedGameKey = (selectedGame || '').trim().toLowerCase();
+// Direct portal links with ?game= should send Home/back to the portal homepage.
+const openedFromPortalGameLink = selectedGame !== null;
+
 let soundEnabled = true;
 
 const homeMenuState = {
@@ -2046,6 +2053,7 @@ function saveCompletedGameResult(gameName, state, levelCompleted) {
 
   // Save one shared result row each time a student completes a level.
   if (window.gameResultsStore) {
+    console.log('Saving result for:', gameName);
     void window.gameResultsStore.saveResult(buildSavedGameResult(gameName, state, levelCompleted));
   }
 
@@ -2113,6 +2121,37 @@ function showMainMenuAfterName(name, isReturningStudent) {
   showStudentBannerOnHome();
 }
 
+function openRequestedGameFromUrlIfPresent() {
+  if (selectedGameKey === 'light') {
+    console.log('Opening requested game:', selectedGame);
+    enterGame();
+    return;
+  }
+
+  if (selectedGameKey === 'car') {
+    console.log('Opening requested game:', selectedGame);
+    enterCarGame();
+    return;
+  }
+
+  if (selectedGameKey === 'dragon') {
+    console.log('Opening requested game:', selectedGame);
+    enterDragonGame();
+    return;
+  }
+
+  if (selectedGameKey === 'fire') {
+    console.log('Opening requested game:', selectedGame);
+    enterFireGame();
+    return;
+  }
+
+  if (selectedGameKey === 'martian') {
+    console.log('Opening requested game:', selectedGame);
+    enterMartianGame();
+  }
+}
+
 function startWithStudentName() {
   const enteredName = sanitizeStudentName(studentNameInput.value);
 
@@ -2124,6 +2163,7 @@ function startWithStudentName() {
   // Save so returning students skip sign-in next time.
   saveStudentName(enteredName);
   showMainMenuAfterName(enteredName, false);
+  openRequestedGameFromUrlIfPresent();
 }
 
 function handleChangeName() {
@@ -2150,6 +2190,7 @@ function initializeStudentNameFlow() {
   if (savedName) {
     // Returning student: skip sign-in and jump to main menu.
     showMainMenuAfterName(savedName, true);
+    openRequestedGameFromUrlIfPresent();
     return;
   }
 
@@ -4217,6 +4258,11 @@ function enterMartianGame() {
 }
 
 function backToMenu() {
+  if (openedFromPortalGameLink) {
+    window.location.href = '../../index.html';
+    return;
+  }
+
   endGame('Press start to play');
   endCarGame('Press start to play');
   endDragonGame('Press start to play');
@@ -4283,6 +4329,11 @@ function backToMenu() {
 }
 
 function backToMenuFromCar() {
+  if (openedFromPortalGameLink) {
+    window.location.href = '../../index.html';
+    return;
+  }
+
   endCarGame('Press start to play');
   endFireGame('Press start to play');
   endMartianGame('Press start to play');
@@ -4302,6 +4353,11 @@ function backToMenuFromCar() {
 }
 
 function backToMenuFromDragon() {
+  if (openedFromPortalGameLink) {
+    window.location.href = '../../index.html';
+    return;
+  }
+
   endDragonGame('Press start to play');
   endFireGame('Press start to play');
   endMartianGame('Press start to play');
@@ -4327,6 +4383,11 @@ function backToMenuFromDragon() {
 }
 
 function backToMenuFromFire() {
+  if (openedFromPortalGameLink) {
+    window.location.href = '../../index.html';
+    return;
+  }
+
   endFireGame('Press start to play');
   fireGameScreen.setAttribute('hidden', '');
   dragonGameScreen.setAttribute('hidden', '');
@@ -4344,6 +4405,11 @@ function backToMenuFromFire() {
 }
 
 function backToMenuFromMartian() {
+  if (openedFromPortalGameLink) {
+    window.location.href = '../../index.html';
+    return;
+  }
+
   endMartianGame('Press start to play');
   martianGameScreen.setAttribute('hidden', '');
   fireGameScreen.setAttribute('hidden', '');
