@@ -1,0 +1,959 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Moving Sound Mini Game</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    <script defer src="firebase-config.js"></script>
+    <script defer src="game-results-store.js"></script>
+  </head>
+  <body>
+    <section id="nameScreen" class="name-screen">
+      <div class="name-card">
+        <p class="eyebrow">Welcome</p>
+        <h1 class="home-title">Mr. Cline's Game Zone</h1>
+        <p class="description">Type your nickname or class number to start playing.</p>
+        <label class="name-field" for="studentNameInput">
+          <span>Nickname or class number</span>
+          <input id="studentNameInput" type="text" maxlength="30" autocomplete="nickname" placeholder="Nickname or class number" />
+        </label>
+        <button id="studentStartButton" class="start-button" type="button">Let the fun begin</button>
+      </div>
+    </section>
+
+    <div id="studentBanner" class="student-banner" hidden>
+      <span id="studentWelcomeText">Welcome!</span>
+      <button id="changeNameButton" class="change-name-button" type="button">Change Name</button>
+    </div>
+
+    <section id="homeScreen" class="home-screen" hidden>
+      <button id="adminToggle" class="admin-toggle" type="button" aria-expanded="false" aria-controls="adminDrawer">
+        Admin
+      </button>
+
+      <div class="home-card">
+        <p class="eyebrow">Let's Play</p>
+        <h1 class="home-title">Mr. Cline's Game Zone</h1>
+        <p class="description">Pick a game and tap the moving things.</p>
+        <div class="home-actions">
+          <div class="home-slot">
+            <button id="enterGameButton" class="start-button home-start" type="button">
+              <span class="game-thumb game-thumb-light" aria-hidden="true"></span>
+              <span class="game-labels">
+                <span class="game-label-title">Light Tap Game</span>
+                <span class="game-label-subtitle">Tap the glowing lights</span>
+              </span>
+            </button>
+          </div>
+          <div class="home-slot">
+            <button id="enterCarGameButton" class="start-button home-start home-alt" type="button">
+              <span class="game-thumb game-thumb-car" aria-hidden="true"></span>
+              <span class="game-labels">
+                <span class="game-label-title">Street Car Game</span>
+                <span class="game-label-subtitle">Tap the matching cars</span>
+              </span>
+            </button>
+          </div>
+          <div class="home-slot">
+            <button id="enterDragonGameButton" class="start-button home-start home-dragon" type="button">
+              <span class="game-thumb game-thumb-dragon" aria-hidden="true"></span>
+              <span class="game-labels">
+                <span class="game-label-title">Dragon Dodge</span>
+                <span class="game-label-subtitle">Stop the dragon's fire breath</span>
+              </span>
+            </button>
+          </div>
+          <div class="home-slot">
+            <button id="enterFireGameButton" class="start-button home-start home-fire" type="button">
+              <span class="game-thumb game-thumb-fire" aria-hidden="true"></span>
+              <span class="game-labels">
+                <span class="game-label-title">Firefighter Rescue</span>
+                <span class="game-label-subtitle">Spray flames in the windows</span>
+              </span>
+            </button>
+          </div>
+          <div class="home-slot">
+            <button id="enterMartianGameButton" class="start-button home-start home-martian" type="button">
+              <span class="game-thumb game-thumb-martian" aria-hidden="true"></span>
+              <span class="game-labels">
+                <span class="game-label-title">Martian Madness</span>
+                <span class="game-label-subtitle">Free people from alien beams</span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <aside id="adminDrawer" class="admin-drawer" hidden>
+        <h2>Grown-up Settings</h2>
+
+        <form id="adminUnlock" class="admin-unlock" autocomplete="off">
+          <label class="admin-field" for="adminPassword">
+            <span>Password</span>
+            <input id="adminPassword" type="password" placeholder="Enter password" required />
+          </label>
+          <button id="adminUnlockButton" class="admin-apply" type="submit">Unlock</button>
+        </form>
+
+        <div id="adminControls" class="admin-controls" hidden>
+          <div class="admin-level-group">
+            <h3>Homepage Games</h3>
+            <label class="admin-toggle-field" for="adminShowLightGame">
+              <span>Show Light Tap Game</span>
+              <input id="adminShowLightGame" type="checkbox" checked />
+            </label>
+            <label class="admin-toggle-field" for="adminShowCarGame">
+              <span>Show Street Car Game</span>
+              <input id="adminShowCarGame" type="checkbox" checked />
+            </label>
+            <label class="admin-toggle-field" for="adminShowDragonGame">
+              <span>Show Dragon Dodge</span>
+              <input id="adminShowDragonGame" type="checkbox" checked />
+            </label>
+            <label class="admin-toggle-field" for="adminShowFireGame">
+              <span>Show Firefighter Rescue</span>
+              <input id="adminShowFireGame" type="checkbox" checked />
+            </label>
+            <label class="admin-toggle-field" for="adminShowMartianGame">
+              <span>Show Martian Madness</span>
+              <input id="adminShowMartianGame" type="checkbox" checked />
+            </label>
+          </div>
+
+          <div class="admin-level-group">
+            <h3>Level 1</h3>
+            <label class="admin-field" for="adminLivesL1">
+              <span>Lives</span>
+              <input id="adminLivesL1" type="number" min="1" max="20" step="1" value="3" />
+            </label>
+            <label class="admin-field" for="adminTimeL1">
+              <span>Time (seconds)</span>
+              <input id="adminTimeL1" type="number" min="10" max="300" step="5" value="30" />
+            </label>
+            <label class="admin-field" for="adminGoalL1">
+              <span>Goal (lights)</span>
+              <input id="adminGoalL1" type="number" min="1" max="200" step="1" value="10" />
+            </label>
+          </div>
+
+          <div class="admin-level-group">
+            <h3>Level 2</h3>
+            <label class="admin-field" for="adminLivesL2">
+              <span>Lives</span>
+              <input id="adminLivesL2" type="number" min="1" max="20" step="1" value="3" />
+            </label>
+            <label class="admin-field" for="adminTimeL2">
+              <span>Time (seconds)</span>
+              <input id="adminTimeL2" type="number" min="10" max="300" step="5" value="30" />
+            </label>
+            <label class="admin-field" for="adminGoalL2">
+              <span>Goal (lights)</span>
+              <input id="adminGoalL2" type="number" min="1" max="200" step="1" value="12" />
+            </label>
+          </div>
+
+          <div class="admin-level-group">
+            <h3>Level 3</h3>
+            <label class="admin-field" for="adminLivesL3">
+              <span>Lives</span>
+              <input id="adminLivesL3" type="number" min="1" max="20" step="1" value="3" />
+            </label>
+            <label class="admin-field" for="adminTimeL3">
+              <span>Time (seconds)</span>
+              <input id="adminTimeL3" type="number" min="10" max="300" step="5" value="30" />
+            </label>
+            <label class="admin-field" for="adminGoalL3">
+              <span>Goal (lights)</span>
+              <input id="adminGoalL3" type="number" min="1" max="200" step="1" value="15" />
+            </label>
+          </div>
+
+          <div class="admin-level-group">
+            <h3>Car Level 1</h3>
+            <label class="admin-field" for="adminCarSpawnIntervalL1">
+              <span>Spawn interval (seconds)</span>
+              <input id="adminCarSpawnIntervalL1" type="number" min="0.5" max="6" step="0.1" value="1.5" />
+            </label>
+            <label class="admin-field" for="adminCarTargetColorL1">
+              <span>Target color</span>
+              <select id="adminCarTargetColorL1">
+                <option value="#38bdf8">Blue</option>
+                <option value="#f97316">Orange</option>
+                <option value="#facc15">Yellow</option>
+                <option value="#a78bfa">Purple</option>
+                <option value="#34d399">Green</option>
+                <option value="#fb7185">Pink</option>
+              </select>
+            </label>
+            <label class="admin-field" for="adminCarTimeL1">
+              <span>Time (seconds)</span>
+              <input id="adminCarTimeL1" type="number" min="10" max="300" step="1" value="30" />
+            </label>
+            <label class="admin-field" for="adminCarCountL1">
+              <span>Cars on screen</span>
+              <input id="adminCarCountL1" type="number" min="1" max="20" step="1" value="4" />
+            </label>
+            <label class="admin-field" for="adminCarMissesL1">
+              <span>Misses allowed</span>
+              <input id="adminCarMissesL1" type="number" min="1" max="20" step="1" value="3" />
+            </label>
+            <label class="admin-field" for="adminCarGoalL1">
+              <span>Goal (cars)</span>
+              <input id="adminCarGoalL1" type="number" min="1" max="200" step="1" value="8" />
+            </label>
+            <label class="admin-field" for="adminCarSpeedMinL1">
+              <span>Speed min</span>
+              <input id="adminCarSpeedMinL1" type="number" min="40" max="600" step="5" value="70" />
+            </label>
+            <label class="admin-field" for="adminCarSpeedMaxL1">
+              <span>Speed max</span>
+              <input id="adminCarSpeedMaxL1" type="number" min="40" max="600" step="5" value="125" />
+            </label>
+          </div>
+
+          <div class="admin-level-group">
+            <h3>Car Level 2</h3>
+            <label class="admin-field" for="adminCarSpawnIntervalL2">
+              <span>Spawn interval (seconds)</span>
+              <input id="adminCarSpawnIntervalL2" type="number" min="0.5" max="6" step="0.1" value="1.2" />
+            </label>
+            <label class="admin-field" for="adminCarTargetColorL2">
+              <span>Target color</span>
+              <select id="adminCarTargetColorL2">
+                <option value="#38bdf8">Blue</option>
+                <option value="#f97316">Orange</option>
+                <option value="#facc15">Yellow</option>
+                <option value="#a78bfa">Purple</option>
+                <option value="#34d399">Green</option>
+                <option value="#fb7185">Pink</option>
+              </select>
+            </label>
+            <label class="admin-field" for="adminCarTimeL2">
+              <span>Time (seconds)</span>
+              <input id="adminCarTimeL2" type="number" min="10" max="300" step="1" value="26" />
+            </label>
+            <label class="admin-field" for="adminCarCountL2">
+              <span>Cars on screen</span>
+              <input id="adminCarCountL2" type="number" min="1" max="20" step="1" value="5" />
+            </label>
+            <label class="admin-field" for="adminCarMissesL2">
+              <span>Misses allowed</span>
+              <input id="adminCarMissesL2" type="number" min="1" max="20" step="1" value="3" />
+            </label>
+            <label class="admin-field" for="adminCarGoalL2">
+              <span>Goal (cars)</span>
+              <input id="adminCarGoalL2" type="number" min="1" max="200" step="1" value="10" />
+            </label>
+            <label class="admin-field" for="adminCarSpeedMinL2">
+              <span>Speed min</span>
+              <input id="adminCarSpeedMinL2" type="number" min="40" max="600" step="5" value="135" />
+            </label>
+            <label class="admin-field" for="adminCarSpeedMaxL2">
+              <span>Speed max</span>
+              <input id="adminCarSpeedMaxL2" type="number" min="40" max="600" step="5" value="220" />
+            </label>
+          </div>
+
+          <div class="admin-level-group">
+            <h3>Car Level 3</h3>
+            <label class="admin-field" for="adminCarSpawnIntervalL3">
+              <span>Spawn interval (seconds)</span>
+              <input id="adminCarSpawnIntervalL3" type="number" min="0.5" max="6" step="0.1" value="0.95" />
+            </label>
+            <label class="admin-field" for="adminCarTargetColorL3">
+              <span>Target color</span>
+              <select id="adminCarTargetColorL3">
+                <option value="#38bdf8">Blue</option>
+                <option value="#f97316">Orange</option>
+                <option value="#facc15">Yellow</option>
+                <option value="#a78bfa">Purple</option>
+                <option value="#34d399">Green</option>
+                <option value="#fb7185">Pink</option>
+              </select>
+            </label>
+            <label class="admin-field" for="adminCarTimeL3">
+              <span>Time (seconds)</span>
+              <input id="adminCarTimeL3" type="number" min="10" max="300" step="1" value="22" />
+            </label>
+            <label class="admin-field" for="adminCarCountL3">
+              <span>Cars on screen</span>
+              <input id="adminCarCountL3" type="number" min="1" max="20" step="1" value="6" />
+            </label>
+            <label class="admin-field" for="adminCarMissesL3">
+              <span>Misses allowed</span>
+              <input id="adminCarMissesL3" type="number" min="1" max="20" step="1" value="3" />
+            </label>
+            <label class="admin-field" for="adminCarGoalL3">
+              <span>Goal (cars)</span>
+              <input id="adminCarGoalL3" type="number" min="1" max="200" step="1" value="12" />
+            </label>
+            <label class="admin-field" for="adminCarSpeedMinL3">
+              <span>Speed min</span>
+              <input id="adminCarSpeedMinL3" type="number" min="40" max="600" step="5" value="240" />
+            </label>
+            <label class="admin-field" for="adminCarSpeedMaxL3">
+              <span>Speed max</span>
+              <input id="adminCarSpeedMaxL3" type="number" min="40" max="600" step="5" value="360" />
+            </label>
+          </div>
+
+          <div class="admin-level-group">
+            <h3>Dragon Level 1</h3>
+            <label class="admin-field" for="adminDragonCountL1">
+              <span>Dragons on screen</span>
+              <input id="adminDragonCountL1" type="number" min="1" max="12" step="1" value="1" />
+            </label>
+            <label class="admin-field" for="adminDragonTimeL1">
+              <span>Time (seconds)</span>
+              <input id="adminDragonTimeL1" type="number" min="10" max="300" step="1" value="30" />
+            </label>
+            <label class="admin-field" for="adminDragonMissesL1">
+              <span>Misses allowed</span>
+              <input id="adminDragonMissesL1" type="number" min="1" max="20" step="1" value="3" />
+            </label>
+            <label class="admin-field" for="adminDragonGoalL1">
+              <span>Goal (saves)</span>
+              <input id="adminDragonGoalL1" type="number" min="1" max="200" step="1" value="6" />
+            </label>
+            <label class="admin-field" for="adminDragonFireDurationL1">
+              <span>Fire duration (seconds)</span>
+              <input id="adminDragonFireDurationL1" type="number" min="0.2" max="5" step="0.05" value="1" />
+            </label>
+            <label class="admin-field" for="adminDragonSpeedMinL1">
+              <span>Speed min</span>
+              <input id="adminDragonSpeedMinL1" type="number" min="40" max="600" step="5" value="100" />
+            </label>
+            <label class="admin-field" for="adminDragonSpeedMaxL1">
+              <span>Speed max</span>
+              <input id="adminDragonSpeedMaxL1" type="number" min="40" max="600" step="5" value="170" />
+            </label>
+            <label class="admin-toggle-field" for="adminDragonPrincessL1">
+              <span>Show Princess</span>
+              <input id="adminDragonPrincessL1" type="checkbox" />
+            </label>
+            <label class="admin-toggle-field" for="adminDragonKnightL1">
+              <span>Show Knight</span>
+              <input id="adminDragonKnightL1" type="checkbox" />
+            </label>
+          </div>
+
+          <div class="admin-level-group">
+            <h3>Dragon Level 2</h3>
+            <label class="admin-field" for="adminDragonCountL2">
+              <span>Dragons on screen</span>
+              <input id="adminDragonCountL2" type="number" min="1" max="12" step="1" value="2" />
+            </label>
+            <label class="admin-field" for="adminDragonTimeL2">
+              <span>Time (seconds)</span>
+              <input id="adminDragonTimeL2" type="number" min="10" max="300" step="1" value="27" />
+            </label>
+            <label class="admin-field" for="adminDragonMissesL2">
+              <span>Misses allowed</span>
+              <input id="adminDragonMissesL2" type="number" min="1" max="20" step="1" value="3" />
+            </label>
+            <label class="admin-field" for="adminDragonGoalL2">
+              <span>Goal (saves)</span>
+              <input id="adminDragonGoalL2" type="number" min="1" max="200" step="1" value="10" />
+            </label>
+            <label class="admin-field" for="adminDragonFireDurationL2">
+              <span>Fire duration (seconds)</span>
+              <input id="adminDragonFireDurationL2" type="number" min="0.2" max="5" step="0.05" value="0.9" />
+            </label>
+            <label class="admin-field" for="adminDragonSpeedMinL2">
+              <span>Speed min</span>
+              <input id="adminDragonSpeedMinL2" type="number" min="40" max="600" step="5" value="125" />
+            </label>
+            <label class="admin-field" for="adminDragonSpeedMaxL2">
+              <span>Speed max</span>
+              <input id="adminDragonSpeedMaxL2" type="number" min="40" max="600" step="5" value="195" />
+            </label>
+            <label class="admin-toggle-field" for="adminDragonPrincessL2">
+              <span>Show Princess</span>
+              <input id="adminDragonPrincessL2" type="checkbox" />
+            </label>
+            <label class="admin-toggle-field" for="adminDragonKnightL2">
+              <span>Show Knight</span>
+              <input id="adminDragonKnightL2" type="checkbox" />
+            </label>
+          </div>
+
+          <div class="admin-level-group">
+            <h3>Dragon Level 3</h3>
+            <label class="admin-field" for="adminDragonCountL3">
+              <span>Dragons on screen</span>
+              <input id="adminDragonCountL3" type="number" min="1" max="12" step="1" value="3" />
+            </label>
+            <label class="admin-field" for="adminDragonTimeL3">
+              <span>Time (seconds)</span>
+              <input id="adminDragonTimeL3" type="number" min="10" max="300" step="1" value="24" />
+            </label>
+            <label class="admin-field" for="adminDragonMissesL3">
+              <span>Misses allowed</span>
+              <input id="adminDragonMissesL3" type="number" min="1" max="20" step="1" value="3" />
+            </label>
+            <label class="admin-field" for="adminDragonGoalL3">
+              <span>Goal (saves)</span>
+              <input id="adminDragonGoalL3" type="number" min="1" max="200" step="1" value="15" />
+            </label>
+            <label class="admin-field" for="adminDragonFireDurationL3">
+              <span>Fire duration (seconds)</span>
+              <input id="adminDragonFireDurationL3" type="number" min="0.2" max="5" step="0.05" value="0.75" />
+            </label>
+            <label class="admin-field" for="adminDragonSpeedMinL3">
+              <span>Speed min</span>
+              <input id="adminDragonSpeedMinL3" type="number" min="40" max="600" step="5" value="150" />
+            </label>
+            <label class="admin-field" for="adminDragonSpeedMaxL3">
+              <span>Speed max</span>
+              <input id="adminDragonSpeedMaxL3" type="number" min="40" max="600" step="5" value="225" />
+            </label>
+            <label class="admin-toggle-field" for="adminDragonPrincessL3">
+              <span>Show Princess</span>
+              <input id="adminDragonPrincessL3" type="checkbox" checked />
+            </label>
+            <label class="admin-toggle-field" for="adminDragonKnightL3">
+              <span>Show Knight</span>
+              <input id="adminDragonKnightL3" type="checkbox" />
+            </label>
+          </div>
+
+          <div class="admin-level-group">
+            <h3>Dragon Level 4</h3>
+            <label class="admin-field" for="adminDragonCountL4">
+              <span>Dragons on screen</span>
+              <input id="adminDragonCountL4" type="number" min="1" max="12" step="1" value="4" />
+            </label>
+            <label class="admin-field" for="adminDragonTimeL4">
+              <span>Time (seconds)</span>
+              <input id="adminDragonTimeL4" type="number" min="10" max="300" step="1" value="22" />
+            </label>
+            <label class="admin-field" for="adminDragonMissesL4">
+              <span>Misses allowed</span>
+              <input id="adminDragonMissesL4" type="number" min="1" max="20" step="1" value="4" />
+            </label>
+            <label class="admin-field" for="adminDragonGoalL4">
+              <span>Goal (saves)</span>
+              <input id="adminDragonGoalL4" type="number" min="1" max="200" step="1" value="18" />
+            </label>
+            <label class="admin-field" for="adminDragonFireDurationL4">
+              <span>Fire duration (seconds)</span>
+              <input id="adminDragonFireDurationL4" type="number" min="0.2" max="5" step="0.05" value="0.7" />
+            </label>
+            <label class="admin-field" for="adminDragonSpeedMinL4">
+              <span>Speed min</span>
+              <input id="adminDragonSpeedMinL4" type="number" min="40" max="600" step="5" value="170" />
+            </label>
+            <label class="admin-field" for="adminDragonSpeedMaxL4">
+              <span>Speed max</span>
+              <input id="adminDragonSpeedMaxL4" type="number" min="40" max="600" step="5" value="245" />
+            </label>
+            <label class="admin-toggle-field" for="adminDragonPrincessL4">
+              <span>Show Princess</span>
+              <input id="adminDragonPrincessL4" type="checkbox" checked />
+            </label>
+            <label class="admin-toggle-field" for="adminDragonKnightL4">
+              <span>Show Knight</span>
+              <input id="adminDragonKnightL4" type="checkbox" checked />
+            </label>
+          </div>
+
+          <div class="admin-level-group">
+            <h3>Firefighter Level 1</h3>
+            <label class="admin-field" for="adminFireTimeL1">
+              <span>Time (seconds)</span>
+              <input id="adminFireTimeL1" type="number" min="10" max="300" step="1" value="30" />
+            </label>
+            <label class="admin-field" for="adminFireMissesL1">
+              <span>Misses allowed</span>
+              <input id="adminFireMissesL1" type="number" min="1" max="20" step="1" value="3" />
+            </label>
+            <label class="admin-field" for="adminFireGoalL1">
+              <span>Goal (flames)</span>
+              <input id="adminFireGoalL1" type="number" min="1" max="200" step="1" value="8" />
+            </label>
+            <label class="admin-field" for="adminFireSpawnIntervalL1">
+              <span>Flame spawn interval (seconds)</span>
+              <input id="adminFireSpawnIntervalL1" type="number" min="0.2" max="4" step="0.05" value="0.85" />
+            </label>
+            <label class="admin-field" for="adminFireFlameDurationL1">
+              <span>Flame duration (seconds)</span>
+              <input id="adminFireFlameDurationL1" type="number" min="0.3" max="6" step="0.05" value="1.58" />
+            </label>
+          </div>
+
+          <div class="admin-level-group">
+            <h3>Firefighter Level 2</h3>
+            <label class="admin-field" for="adminFireTimeL2">
+              <span>Time (seconds)</span>
+              <input id="adminFireTimeL2" type="number" min="10" max="300" step="1" value="26" />
+            </label>
+            <label class="admin-field" for="adminFireMissesL2">
+              <span>Misses allowed</span>
+              <input id="adminFireMissesL2" type="number" min="1" max="20" step="1" value="3" />
+            </label>
+            <label class="admin-field" for="adminFireGoalL2">
+              <span>Goal (flames)</span>
+              <input id="adminFireGoalL2" type="number" min="1" max="200" step="1" value="11" />
+            </label>
+            <label class="admin-field" for="adminFireSpawnIntervalL2">
+              <span>Flame spawn interval (seconds)</span>
+              <input id="adminFireSpawnIntervalL2" type="number" min="0.2" max="4" step="0.05" value="0.72" />
+            </label>
+            <label class="admin-field" for="adminFireFlameDurationL2">
+              <span>Flame duration (seconds)</span>
+              <input id="adminFireFlameDurationL2" type="number" min="0.3" max="6" step="0.05" value="1.35" />
+            </label>
+          </div>
+
+          <div class="admin-level-group">
+            <h3>Firefighter Level 3</h3>
+            <label class="admin-field" for="adminFireTimeL3">
+              <span>Time (seconds)</span>
+              <input id="adminFireTimeL3" type="number" min="10" max="300" step="1" value="22" />
+            </label>
+            <label class="admin-field" for="adminFireMissesL3">
+              <span>Misses allowed</span>
+              <input id="adminFireMissesL3" type="number" min="1" max="20" step="1" value="3" />
+            </label>
+            <label class="admin-field" for="adminFireGoalL3">
+              <span>Goal (flames)</span>
+              <input id="adminFireGoalL3" type="number" min="1" max="200" step="1" value="14" />
+            </label>
+            <label class="admin-field" for="adminFireSpawnIntervalL3">
+              <span>Flame spawn interval (seconds)</span>
+              <input id="adminFireSpawnIntervalL3" type="number" min="0.2" max="4" step="0.05" value="0.62" />
+            </label>
+            <label class="admin-field" for="adminFireFlameDurationL3">
+              <span>Flame duration (seconds)</span>
+              <input id="adminFireFlameDurationL3" type="number" min="0.3" max="6" step="0.05" value="1.15" />
+            </label>
+          </div>
+
+          <div class="admin-level-group">
+            <h3>Martian Level 1</h3>
+            <label class="admin-field" for="adminMartianPeopleCountL1">
+              <span>People on screen</span>
+              <input id="adminMartianPeopleCountL1" type="number" min="1" max="9" step="1" value="6" />
+            </label>
+            <label class="admin-field" for="adminMartianUfoCountL1">
+              <span>Spaceships on screen</span>
+              <input id="adminMartianUfoCountL1" type="number" min="1" max="12" step="1" value="1" />
+            </label>
+            <label class="admin-field" for="adminMartianUfoSpeedL1">
+              <span>Spaceship speed</span>
+              <input id="adminMartianUfoSpeedL1" type="number" min="20" max="300" step="5" value="72" />
+            </label>
+            <label class="admin-field" for="adminMartianLiftSpeedL1">
+              <span>Beam lift speed</span>
+              <input id="adminMartianLiftSpeedL1" type="number" min="40" max="600" step="5" value="124" />
+            </label>
+          </div>
+
+          <div class="admin-level-group">
+            <h3>Martian Level 2</h3>
+            <label class="admin-field" for="adminMartianPeopleCountL2">
+              <span>People on screen</span>
+              <input id="adminMartianPeopleCountL2" type="number" min="1" max="9" step="1" value="7" />
+            </label>
+            <label class="admin-field" for="adminMartianUfoCountL2">
+              <span>Spaceships on screen</span>
+              <input id="adminMartianUfoCountL2" type="number" min="1" max="12" step="1" value="2" />
+            </label>
+            <label class="admin-field" for="adminMartianUfoSpeedL2">
+              <span>Spaceship speed</span>
+              <input id="adminMartianUfoSpeedL2" type="number" min="20" max="300" step="5" value="86" />
+            </label>
+            <label class="admin-field" for="adminMartianLiftSpeedL2">
+              <span>Beam lift speed</span>
+              <input id="adminMartianLiftSpeedL2" type="number" min="40" max="600" step="5" value="146" />
+            </label>
+          </div>
+
+          <div class="admin-level-group">
+            <h3>Martian Level 3</h3>
+            <label class="admin-field" for="adminMartianPeopleCountL3">
+              <span>People on screen</span>
+              <input id="adminMartianPeopleCountL3" type="number" min="1" max="9" step="1" value="8" />
+            </label>
+            <label class="admin-field" for="adminMartianUfoCountL3">
+              <span>Spaceships on screen</span>
+              <input id="adminMartianUfoCountL3" type="number" min="1" max="12" step="1" value="3" />
+            </label>
+            <label class="admin-field" for="adminMartianUfoSpeedL3">
+              <span>Spaceship speed</span>
+              <input id="adminMartianUfoSpeedL3" type="number" min="20" max="300" step="5" value="102" />
+            </label>
+            <label class="admin-field" for="adminMartianLiftSpeedL3">
+              <span>Beam lift speed</span>
+              <input id="adminMartianLiftSpeedL3" type="number" min="40" max="600" step="5" value="168" />
+            </label>
+          </div>
+
+          <button id="adminApply" class="admin-apply" type="button">Apply settings</button>
+          <p id="adminMessage" class="admin-message" aria-live="polite"></p>
+        </div>
+      </aside>
+    </section>
+
+    <section id="gameScreen" hidden>
+      <main class="shell">
+        <section class="panel">
+          <div class="copy">
+            <p class="eyebrow">Mini Game</p>
+            <h1>Tap the glowing lights</h1>
+            <p class="description">Tap the glowing lights to get points. Press play when you are ready.</p>
+          </div>
+
+          <div class="hud" aria-live="polite">
+            <div class="stat">
+              <span class="label">Score</span>
+              <span class="value" id="score">0</span>
+            </div>
+            <div class="stat">
+              <span class="label">Lives</span>
+              <span class="value" id="lives">3</span>
+            </div>
+            <div class="stat">
+              <span class="label">Level</span>
+              <span class="value" id="level">1</span>
+            </div>
+            <div class="stat">
+              <span class="label">Goal</span>
+              <span class="value" id="goal">0/10</span>
+            </div>
+            <div class="stat">
+              <span class="label">Status</span>
+              <span class="value" id="status">Ready</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="arena-wrap">
+          <div class="arena-frame">
+            <div id="arena" class="arena" aria-label="Game area" role="application">
+              <div class="arena-timer" aria-live="polite">
+                <span class="label">Time</span>
+                <span class="value" id="time">30</span>
+              </div>
+              <div class="grid"></div>
+              <div class="glow glow-a"></div>
+              <div class="glow glow-b"></div>
+              <div class="arena-start">
+                <button id="startButton" class="start-button arena-start-button" type="button">Play Game</button>
+              </div>
+              <div class="status-tag">Tap Play to start</div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <button id="backToMenuButton" class="back-button" type="button">Home</button>
+      <button class="sound-toggle-button" type="button" aria-pressed="false">Sound: On</button>
+    </section>
+
+    <section id="carGameScreen" hidden>
+      <main class="shell">
+        <section class="panel">
+          <div class="copy">
+            <p class="eyebrow">Mini Game</p>
+            <h1>Tap the Cars</h1>
+            <p class="description">Tap the matching cars before time runs out.</p>
+          </div>
+
+          <div class="hud" aria-live="polite">
+            <div class="stat">
+              <span class="label">Score</span>
+              <span class="value" id="carScore">0</span>
+            </div>
+            <div class="stat">
+              <span class="label">Look for</span>
+              <span class="value" id="carTarget">Blue</span>
+            </div>
+            <div class="stat">
+              <span class="label">Level</span>
+              <span class="value" id="carLevel">1</span>
+            </div>
+            <div class="stat">
+              <span class="label">Goal</span>
+              <span class="value" id="carGoal">0/8</span>
+            </div>
+            <div class="stat">
+              <span class="label">Misses</span>
+              <span class="value" id="carMisses">3</span>
+            </div>
+            <div class="stat">
+              <span class="label">Status</span>
+              <span class="value" id="carStatus">Ready</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="arena-wrap">
+          <div class="arena-frame street-frame">
+            <div id="streetArena" class="street-arena" aria-label="Street game area" role="application">
+              <div class="arena-timer" aria-live="polite">
+                <span class="label">Time</span>
+                <span class="value" id="carTime">30</span>
+              </div>
+              <div class="street-sky"></div>
+              <div class="street-road"></div>
+              <div class="street-divider"></div>
+              <div class="street-start">
+                <button id="carStartButton" class="start-button street-start-button" type="button">Play</button>
+              </div>
+              <div class="street-tag">Tap Play to begin</div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <button id="backToMenuFromCarButton" class="back-button" type="button">Home</button>
+      <button class="sound-toggle-button" type="button" aria-pressed="false">Sound: On</button>
+    </section>
+
+    <section id="dragonGameScreen" hidden>
+      <main class="shell">
+        <section class="panel">
+          <div class="copy">
+            <p class="eyebrow">Mini Game</p>
+            <h1>Dragon Dodge</h1>
+            <p class="description">Click the dragon fast when fire appears to stop the flames.</p>
+          </div>
+
+          <div class="hud" aria-live="polite">
+            <div class="stat">
+              <span class="label">Score</span>
+              <span class="value" id="dragonScore">0</span>
+            </div>
+            <div class="stat">
+              <span class="label">Misses</span>
+              <span class="value" id="dragonMisses">3</span>
+            </div>
+            <div class="stat">
+              <span class="label">Level</span>
+              <span class="value" id="dragonLevel">1</span>
+            </div>
+            <div class="stat">
+              <span class="label">Goal</span>
+              <span class="value" id="dragonGoal">0/6</span>
+            </div>
+            <div class="stat">
+              <span class="label">Status</span>
+              <span class="value" id="dragonStatus">Ready</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="arena-wrap">
+          <div class="arena-frame dragon-frame">
+            <div id="dragonArena" class="dragon-arena" aria-label="Dragon game area" role="application">
+              <div class="arena-timer" aria-live="polite">
+                <span class="label">Time</span>
+                <span class="value" id="dragonTime">30</span>
+              </div>
+              <div class="dragon-sky"></div>
+              <div class="dragon-sun" aria-hidden="true"></div>
+              <div class="dragon-moat" aria-hidden="true"></div>
+              <div id="dragonKnight" class="dragon-knight" aria-hidden="true" hidden>
+                <img id="dragonKnightImage" src="images/horse.png" alt="" aria-hidden="true" />
+              </div>
+              <img class="castle-gilead" src="images/GILEAD_A.png" alt="" aria-hidden="true" />
+              <span id="gileadOuch" class="gilead-ouch" aria-hidden="true">Ouch!</span>
+              <div class="dragon-castle">
+                <span class="castle-window castle-window-a"></span>
+                <span class="castle-window castle-window-b"></span>
+                <span class="castle-window castle-window-c"></span>
+                <span class="castle-window castle-window-d"></span>
+                <span class="castle-door"></span>
+                <span class="castle-drawbridge"></span>
+              </div>
+              <div class="dragon-start">
+                <button id="dragonStartButton" class="start-button dragon-start-button" type="button">Play</button>
+              </div>
+              <div class="dragon-tag">Tap Play to begin</div>
+              <button id="dragonTarget" class="dragon-target" type="button" aria-label="Dragon">
+                <span class="dragon-wing dragon-wing-a"></span>
+                <span class="dragon-tail">
+                  <span class="tail-spike tail-spike-a"></span>
+                  <span class="tail-spike tail-spike-b"></span>
+                  <span class="tail-spike tail-spike-c"></span>
+                  <span class="tail-spike tail-spike-d"></span>
+                </span>
+                <span class="dragon-body"></span>
+                <span class="dragon-wing dragon-wing-b"></span>
+                <span class="dragon-head">
+                  <span class="dragon-ear dragon-ear-a"></span>
+                  <span class="dragon-eye"></span>
+                  <span class="dragon-fire"></span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <button id="backToMenuFromDragonButton" class="back-button" type="button">Home</button>
+      <button class="sound-toggle-button" type="button" aria-pressed="false">Sound: On</button>
+    </section>
+
+    <section id="fireGameScreen" hidden>
+      <main class="shell">
+        <section class="panel">
+          <div class="copy">
+            <p class="eyebrow">Mini Game</p>
+            <h1>Firefighter Rescue</h1>
+            <p class="description">Flames pop out of windows. Click the burning windows to spray water and put them out.</p>
+          </div>
+
+          <div class="hud" aria-live="polite">
+            <div class="stat">
+              <span class="label">Score</span>
+              <span class="value" id="fireScore">0</span>
+            </div>
+            <div class="stat">
+              <span class="label">Level</span>
+              <span class="value" id="fireLevel">1</span>
+            </div>
+            <div class="stat">
+              <span class="label">Goal</span>
+              <span class="value" id="fireGoal">0/8</span>
+            </div>
+            <div class="stat">
+              <span class="label">Misses</span>
+              <span class="value" id="fireMisses">3</span>
+            </div>
+            <div class="stat">
+              <span class="label">Status</span>
+              <span class="value" id="fireStatus">Ready</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="arena-wrap">
+          <div class="arena-frame fire-frame">
+            <div id="fireArena" class="fire-arena" aria-label="Fire rescue game area" role="application">
+              <div class="arena-timer" aria-live="polite">
+                <span class="label">Time</span>
+                <span class="value" id="fireTime">30</span>
+              </div>
+              <div class="fire-sky"></div>
+              <div class="fire-building">
+                <div class="fire-window window-a"><span class="window-flame"></span></div>
+                <div class="fire-window window-b"><span class="window-flame"></span></div>
+                <div class="fire-window window-c"><span class="window-flame"></span></div>
+                <div class="fire-window window-d"><span class="window-flame"></span></div>
+                <div class="fire-window window-e"><span class="window-flame"></span></div>
+                <div class="fire-window window-f"><span class="window-flame"></span></div>
+                <div class="fire-window window-g"><span class="window-flame"></span></div>
+                <div class="fire-window window-h"><span class="window-flame"></span></div>
+              </div>
+              <div id="waterStream" class="water-stream" aria-hidden="true"></div>
+              <button id="firemanButton" class="fireman" type="button" aria-label="Firefighter with hose">
+                <span class="fireman-helmet"></span>
+                <span class="fireman-body"></span>
+                <span class="fireman-hose"></span>
+              </button>
+              <div class="fire-start">
+                <button id="fireStartButton" class="start-button fire-start-button" type="button">Play</button>
+              </div>
+              <div class="fire-tag">Tap Play to begin</div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <button id="backToMenuFromFireButton" class="back-button" type="button">Home</button>
+      <button class="sound-toggle-button" type="button" aria-pressed="false">Sound: On</button>
+    </section>
+
+    <section id="martianGameScreen" hidden>
+      <main class="shell">
+        <section class="panel">
+          <div class="copy">
+            <p class="eyebrow">Mini Game</p>
+            <h1>Martian Madness</h1>
+            <p class="description">Aliens shine tractor beams over the city. Click the floating person before the spaceship pulls them away.</p>
+          </div>
+
+          <div class="hud" aria-live="polite">
+            <div class="stat">
+              <span class="label">Score</span>
+              <span class="value" id="martianScore">0</span>
+            </div>
+            <div class="stat">
+              <span class="label">Level</span>
+              <span class="value" id="martianLevel">1</span>
+            </div>
+            <div class="stat">
+              <span class="label">Goal</span>
+              <span class="value" id="martianGoal">0/6</span>
+            </div>
+            <div class="stat">
+              <span class="label">Misses</span>
+              <span class="value" id="martianMisses">3</span>
+            </div>
+            <div class="stat">
+              <span class="label">Status</span>
+              <span class="value" id="martianStatus">Ready</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="arena-wrap">
+          <div class="arena-frame martian-frame">
+            <div id="martianArena" class="martian-arena" aria-label="Martian Madness game area" role="application">
+              <div class="arena-timer" aria-live="polite">
+                <span class="label">Time</span>
+                <span class="value" id="martianTime">30</span>
+              </div>
+              <div class="martian-sky"></div>
+              <div class="martian-moon"></div>
+              <div class="martian-stars"></div>
+              <div class="martian-cityline martian-cityline-back"></div>
+              <div class="martian-cityline martian-cityline-front"></div>
+              <div class="martian-road"></div>
+              <div class="martian-sidewalk"></div>
+              <div id="martianUfoLayer" class="martian-ufo-layer" aria-hidden="true"></div>
+              <div id="martianPeopleLayer" class="martian-people-layer"></div>
+              <div class="martian-start">
+                <button id="martianStartButton" class="start-button martian-start-button" type="button">Play</button>
+              </div>
+              <div class="martian-tag">Tap the floating person to break the beam</div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <button id="backToMenuFromMartianButton" class="back-button" type="button">Home</button>
+      <button class="sound-toggle-button" type="button" aria-pressed="false">Sound: On</button>
+    </section>
+
+    <script defer src="script.js"></script>
+    <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyCml4sPXJCkNqGPeZBJRob_vKcxsb6MrrE",
+    authDomain: "moving-sound-mini-games.firebaseapp.com",
+    projectId: "moving-sound-mini-games",
+    storageBucket: "moving-sound-mini-games.firebasestorage.app",
+    messagingSenderId: "539904636706",
+    appId: "1:539904636706:web:4241edac4c82604dd2977b",
+    measurementId: "G-JEXT8REN06"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+  </body>
+</html>

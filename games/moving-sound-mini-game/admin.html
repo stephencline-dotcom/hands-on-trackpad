@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Settings</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .admin-page-shell {
+        min-height: 100svh;
+        padding: 5.2rem 1rem 1.5rem;
+      }
+
+      .admin-page {
+        width: min(1240px, 100%);
+        margin: 0 auto;
+        display: grid;
+        gap: 1rem;
+      }
+
+      .admin-page-card {
+        border-radius: 28px;
+        padding: 1rem;
+        backdrop-filter: blur(20px);
+        background: linear-gradient(180deg, rgba(16, 36, 63, 0.9), rgba(9, 19, 35, 0.88));
+        border: 1px solid rgba(180, 227, 255, 0.3);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+      }
+
+      .admin-page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .admin-page-actions {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+      }
+
+      .admin-grid {
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      .admin-grid.two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .admin-grid.three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .admin-grid.four {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .admin-card-title {
+        margin: 0 0 0.45rem;
+        color: var(--accent-2);
+        font-size: 1rem;
+      }
+
+      .teacher-link-admin {
+        color: var(--accent);
+        font-weight: 700;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(124, 247, 255, 0.45);
+      }
+
+      .teacher-link-admin:hover {
+        color: #ffffff;
+        border-bottom-color: rgba(255, 255, 255, 0.75);
+      }
+
+      .status-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.8rem;
+      }
+
+      .status-message {
+        margin: 0;
+        min-height: 1.2rem;
+        color: rgba(240, 249, 255, 0.9);
+        font-size: 0.88rem;
+      }
+
+      .login-card {
+        width: min(500px, 100%);
+        margin: 4rem auto 0;
+      }
+
+      .login-card form {
+        display: grid;
+        gap: 0.7rem;
+      }
+
+      @media (max-width: 960px) {
+        .admin-grid.four,
+        .admin-grid.three,
+        .admin-grid.two {
+          grid-template-columns: 1fr;
+        }
+
+        .admin-page-header {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button class="back-button" type="button" onclick="window.location.href='index.html'">Home</button>
+
+    <main class="admin-page-shell">
+      <section id="adminLoginSection" class="admin-page login-card admin-page-card" hidden>
+        <div>
+          <p class="eyebrow">Admin Only</p>
+          <h1>Admin Settings</h1>
+          <p class="description">Enter the admin password to continue.</p>
+        </div>
+        <form id="adminPageLoginForm" autocomplete="off">
+          <label class="admin-field" for="adminPagePasswordInput">
+            <span>Password</span>
+            <input id="adminPagePasswordInput" type="password" required placeholder="Enter password" />
+          </label>
+          <button class="admin-apply" type="submit">Open Admin Settings</button>
+          <p id="adminPageLoginMessage" class="status-message" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section id="adminSettingsSection" class="admin-page" hidden>
+        <div class="admin-page-card admin-page-header">
+          <div>
+            <p class="eyebrow">Control Center</p>
+            <h1>Admin Settings</h1>
+            <p class="description">Manage all game settings in one place. Students do not see this page.</p>
+            <a class="teacher-link-admin" href="teacher.html">Teacher Dashboard</a>
+          </div>
+          <div class="admin-page-actions">
+            <button id="adminResetDefaultsButton" class="admin-apply" type="button">Reset Defaults</button>
+            <button id="adminSaveButton" class="admin-apply" type="button">Save Settings</button>
+          </div>
+        </div>
+
+        <div class="admin-page-card">
+          <h2 class="admin-card-title">Homepage Games</h2>
+          <div class="admin-grid two">
+            <label class="admin-toggle-field" for="showLightGame"><span>Show Light Tap Game</span><input id="showLightGame" type="checkbox" /></label>
+            <label class="admin-toggle-field" for="showCarGame"><span>Show Street Car Game</span><input id="showCarGame" type="checkbox" /></label>
+            <label class="admin-toggle-field" for="showDragonGame"><span>Show Dragon Dodge</span><input id="showDragonGame" type="checkbox" /></label>
+            <label class="admin-toggle-field" for="showFireGame"><span>Show Firefighter Rescue</span><input id="showFireGame" type="checkbox" /></label>
+            <label class="admin-toggle-field" for="showMartianGame"><span>Show Martian Madness</span><input id="showMartianGame" type="checkbox" /></label>
+          </div>
+        </div>
+
+        <div class="admin-page-card">
+          <h2 class="admin-card-title">Light Tap Levels</h2>
+          <div id="lightLevelsGrid" class="admin-grid three"></div>
+        </div>
+
+        <div class="admin-page-card">
+          <h2 class="admin-card-title">Street Car Levels</h2>
+          <div id="carLevelsGrid" class="admin-grid three"></div>
+        </div>
+
+        <div class="admin-page-card">
+          <h2 class="admin-card-title">Dragon Dodge Levels</h2>
+          <div id="dragonLevelsGrid" class="admin-grid two"></div>
+        </div>
+
+        <div class="admin-page-card">
+          <h2 class="admin-card-title">Firefighter Rescue Levels</h2>
+          <div id="fireLevelsGrid" class="admin-grid three"></div>
+        </div>
+
+        <div class="admin-page-card">
+          <h2 class="admin-card-title">Martian Madness Levels</h2>
+          <div id="martianLevelsGrid" class="admin-grid three"></div>
+        </div>
+
+        <div class="admin-page-card status-row">
+          <p id="adminPageStatusMessage" class="status-message" aria-live="polite"></p>
+          <a class="teacher-link-admin" href="teacher.html">Teacher Dashboard</a>
+        </div>
+      </section>
+    </main>
+
+    <script defer src="admin.js"></script>
+  </body>
+</html>

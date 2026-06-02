@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teacher Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    <script defer src="firebase-config.js"></script>
+    <script defer src="game-results-store.js"></script>
+    <style>
+      body {
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .teacher-shell {
+        min-height: 100svh;
+        padding: 5.5rem 1rem 1.5rem;
+      }
+
+      .teacher-page {
+        width: min(1180px, 100%);
+        margin: 0 auto;
+        display: grid;
+        gap: 1rem;
+      }
+
+      .teacher-card {
+        border-radius: 28px;
+        padding: 1rem;
+        backdrop-filter: blur(20px);
+        background: linear-gradient(180deg, rgba(16, 36, 63, 0.9), rgba(9, 19, 35, 0.88));
+        border: 1px solid rgba(180, 227, 255, 0.3);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+      }
+
+      .teacher-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .teacher-header p {
+        margin-bottom: 0;
+      }
+
+      .teacher-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: end;
+      }
+
+      .teacher-controls .admin-field {
+        min-width: 220px;
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.75rem;
+      }
+
+      .summary-card {
+        padding: 0.85rem 0.95rem;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .summary-card .label {
+        display: block;
+        margin-bottom: 0.3rem;
+      }
+
+      .summary-card .value {
+        display: block;
+      }
+
+      .teacher-table-wrap {
+        overflow: auto;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .teacher-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 860px;
+        background: rgba(3, 10, 18, 0.5);
+      }
+
+      .teacher-table th,
+      .teacher-table td {
+        padding: 0.78rem 0.8rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .teacher-table th {
+        font-size: 0.83rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--accent-2);
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .teacher-table tbody tr:hover {
+        background: rgba(124, 247, 255, 0.05);
+      }
+
+      .empty-state {
+        padding: 1rem;
+        color: var(--muted);
+      }
+
+      .teacher-status {
+        margin-top: 0.55rem;
+        color: rgba(240, 249, 255, 0.84);
+        font-size: 0.88rem;
+      }
+
+      .group-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.75rem;
+      }
+
+      .group-card {
+        padding: 0.85rem 0.95rem;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        display: grid;
+        gap: 0.28rem;
+      }
+
+      .group-card h3 {
+        margin: 0;
+        font-size: 1rem;
+      }
+
+      @media (max-width: 900px) {
+        .summary-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .group-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .teacher-shell {
+          padding-top: 6.25rem;
+        }
+
+        .teacher-header {
+          flex-direction: column;
+        }
+
+        .summary-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button class="back-button" type="button" onclick="window.location.href='index.html'">Home</button>
+
+    <main class="teacher-shell">
+      <section class="teacher-page">
+        <div class="teacher-card teacher-header">
+          <div>
+            <p class="eyebrow">Teacher View</p>
+            <h1>Teacher Dashboard</h1>
+            <p class="description">This shared dashboard reads classroom results from Firebase Firestore.</p>
+            <p id="dashboardStatusText" class="teacher-status">Connecting to Firestore...</p>
+          </div>
+          <div class="teacher-controls">
+            <label class="admin-field" for="gameFilter">
+              <span>Filter by game</span>
+              <select id="gameFilter"></select>
+            </label>
+            <button id="clearDashboardButton" class="admin-apply" type="button">Clear Dashboard Data</button>
+          </div>
+        </div>
+
+        <div class="teacher-card">
+          <p class="eyebrow">Overall Summary</p>
+          <div class="summary-grid">
+            <div class="summary-card">
+              <span class="label">Students</span>
+              <span class="value" id="totalPlaysValue">0</span>
+            </div>
+            <div class="summary-card">
+              <span class="label">Games tracked</span>
+              <span class="value" id="highestScoreValue">0</span>
+            </div>
+            <div class="summary-card">
+              <span class="label">Levels completed</span>
+              <span class="value" id="averageScoreValue">0</span>
+            </div>
+            <div class="summary-card">
+              <span class="label">Average click accuracy</span>
+              <span class="value" id="averageTimeValue">0.0%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="teacher-card">
+          <p class="eyebrow">Quick Game Summary</p>
+          <div id="groupedResultsGrid" class="group-grid"></div>
+          <div id="emptyGroupedState" class="empty-state" hidden>No game groups yet.</div>
+        </div>
+
+        <div class="teacher-card">
+          <p class="eyebrow">Student Progress</p>
+          <div class="teacher-table-wrap">
+            <table class="teacher-table">
+              <thead>
+                <tr>
+                  <th>Student Nickname</th>
+                  <th>Games Played</th>
+                  <th>Levels Completed By Game</th>
+                  <th>Missed Clicks</th>
+                  <th>Average Click Accuracy</th>
+                </tr>
+              </thead>
+              <tbody id="resultsTableBody"></tbody>
+            </table>
+          </div>
+          <div id="emptyDashboardState" class="empty-state" hidden>No saved student progress yet.</div>
+        </div>
+      </section>
+    </main>
+
+    <script defer src="teacher.js"></script>
+  </body>
+</html>
