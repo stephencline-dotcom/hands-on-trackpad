@@ -54,6 +54,11 @@ const carGameLevelGasPumpSpawnInputs = [1, 2, 3, 4, 5, 6].map((level) =>
 const carGameLevelFuelDrainInputs = [1, 2, 3, 4, 5, 6].map((level) =>
   document.getElementById(`carLevel${level}FuelDrain`)
 );
+const lightTapLevelInputs = [1, 2, 3].map((level) => ({
+  lives: document.getElementById(`adminLivesL${level}`),
+  time: document.getElementById(`adminTimeL${level}`),
+  goal: document.getElementById(`adminGoalL${level}`),
+}));
 const adminTaskCard = document.querySelector(".admin-task-card");
 const taskSummaryPill = document.getElementById("taskSummaryPill");
 const carSummaryPill = document.getElementById("carSummaryPill");
@@ -85,6 +90,7 @@ const FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY = "firefighterRescueGameActive";
 const MARTIAN_MADNESS_GAME_ACTIVE_KEY = "martianMadnessGameActive";
 const SOUND_ENABLED_KEY = "trackpadSoundEnabled";
 const TRAINING_PAUSED_KEY = "trackpadTrainingPaused";
+const MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY = "moving-sound-admin-settings-v1";
 const JACK_FLAME_RAIN_KEYS = [4, 5, 6].map((level) => ({
   enabled: `jackFlameRain${level}Enabled`,
   size: `jackFlameRain${level}SizePx`,
@@ -170,6 +176,11 @@ const DEFAULT_CAR_LEVEL_MAX_CARS = [1, 2, 3, 4, 5, 6];
 const DEFAULT_CAR_LEVEL_SURVIVAL = [10, 15, 20, 25, 30, 35];
 const DEFAULT_CAR_LEVEL_GAS_PUMP_SPAWN_SECONDS = [5.2, 4.8, 4.4, 4.0, 3.6, 3.2];
 const DEFAULT_CAR_LEVEL_FUEL_DRAIN = [1.8, 2.4, 3.2, 4.0, 5.0, 6.2];
+const DEFAULT_LIGHT_TAP_LEVELS = [
+  { lives: 3, time: 30, goal: 10 },
+  { lives: 3, time: 25, goal: 12 },
+  { lives: 3, time: 20, goal: 15 },
+];
 const DEFAULT_JACK_FLAME_RAIN_BY_LEVEL = [
   {
     enabled: true,
@@ -523,6 +534,57 @@ function parseCarLevelArray(value, parser, fallbackArray) {
   return [...fallbackArray];
 }
 
+function parseLightTapLevelValue(value, min, max, fallback) {
+  const parsed = Number.parseInt(String(value || ""), 10);
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.min(max, Math.max(min, parsed));
+}
+
+function normalizeLightTapLevels(levels) {
+  return DEFAULT_LIGHT_TAP_LEVELS.map((defaults, index) => {
+    const level = Array.isArray(levels) ? (levels[index] || {}) : {};
+    return {
+      lives: parseLightTapLevelValue(level.lives, 1, 20, defaults.lives),
+      time: parseLightTapLevelValue(level.time, 10, 300, defaults.time),
+      goal: parseLightTapLevelValue(level.goal, 1, 200, defaults.goal),
+    };
+  });
+}
+
+function loadStoredLightTapLevels() {
+  try {
+    const raw = localStorage.getItem(MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY);
+    if (!raw) {
+      return normalizeLightTapLevels(DEFAULT_LIGHT_TAP_LEVELS);
+    }
+
+    const parsed = JSON.parse(raw);
+    return normalizeLightTapLevels(parsed && parsed.arenaLevels);
+  } catch {
+    return normalizeLightTapLevels(DEFAULT_LIGHT_TAP_LEVELS);
+  }
+}
+
+function saveStoredLightTapLevels(levels) {
+  const normalized = normalizeLightTapLevels(levels);
+
+  try {
+    const raw = localStorage.getItem(MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    const next = parsed && typeof parsed === "object" ? parsed : {};
+    next.arenaLevels = normalized;
+    localStorage.setItem(MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY, JSON.stringify(next));
+  } catch {
+    localStorage.setItem(
+      MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY,
+      JSON.stringify({ arenaLevels: normalized })
+    );
+  }
+}
+
 function showSavedMessage(text) {
   task1SavedMessage.textContent = text;
   task1SavedMessage.hidden = false;
@@ -553,6 +615,12 @@ function applyProgressivePresets() {
   if (dragonDodgeGameActiveToggle) dragonDodgeGameActiveToggle.checked = true;
   if (firefighterRescueGameActiveToggle) firefighterRescueGameActiveToggle.checked = true;
   if (martianMadnessGameActiveToggle) martianMadnessGameActiveToggle.checked = true;
+  lightTapLevelInputs.forEach((inputs, index) => {
+    const defaults = DEFAULT_LIGHT_TAP_LEVELS[index];
+    if (inputs.lives) inputs.lives.value = String(defaults.lives);
+    if (inputs.time) inputs.time.value = String(defaults.time);
+    if (inputs.goal) inputs.goal.value = String(defaults.goal);
+  });
   soundEnabledToggle.checked = true;
   trainingPausedToggle.checked = false;
 
@@ -646,6 +714,7 @@ async function loadTask1Settings() {
   let dragonDodgeGameActive = parseTaskEnabled(localStorage.getItem(DRAGON_DODGE_GAME_ACTIVE_KEY), true);
   let firefighterRescueGameActive = parseTaskEnabled(localStorage.getItem(FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY), true);
   let martianMadnessGameActive = parseTaskEnabled(localStorage.getItem(MARTIAN_MADNESS_GAME_ACTIVE_KEY), true);
+  let lightTapLevels = loadStoredLightTapLevels();
   let soundEnabled = parseTaskEnabled(localStorage.getItem(SOUND_ENABLED_KEY), true);
   let trainingPaused = parseTrainingPaused(localStorage.getItem(TRAINING_PAUSED_KEY));
   const jackFlameRainSettings = [4, 5, 6].map((level, idx) => {
@@ -842,6 +911,16 @@ async function loadTask1Settings() {
   if (dragonDodgeGameActiveToggle) dragonDodgeGameActiveToggle.checked = dragonDodgeGameActive;
   if (firefighterRescueGameActiveToggle) firefighterRescueGameActiveToggle.checked = firefighterRescueGameActive;
   if (martianMadnessGameActiveToggle) martianMadnessGameActiveToggle.checked = martianMadnessGameActive;
+  lightTapLevelInputs.forEach((inputs, index) => {
+    const level = lightTapLevels[index];
+    if (!level) {
+      return;
+    }
+
+    if (inputs.lives) inputs.lives.value = String(level.lives);
+    if (inputs.time) inputs.time.value = String(level.time);
+    if (inputs.goal) inputs.goal.value = String(level.goal);
+  });
   soundEnabledToggle.checked = soundEnabled;
   trainingPausedToggle.checked = trainingPaused;
   [4, 5, 6].forEach((level, idx) => {
@@ -919,6 +998,13 @@ async function saveTask1Settings() {
   const dragonDodgeGameActive = Boolean(dragonDodgeGameActiveToggle && dragonDodgeGameActiveToggle.checked);
   const firefighterRescueGameActive = Boolean(firefighterRescueGameActiveToggle && firefighterRescueGameActiveToggle.checked);
   const martianMadnessGameActive = Boolean(martianMadnessGameActiveToggle && martianMadnessGameActiveToggle.checked);
+  const lightTapLevels = normalizeLightTapLevels(
+    lightTapLevelInputs.map((inputs) => ({
+      lives: inputs.lives ? inputs.lives.value : null,
+      time: inputs.time ? inputs.time.value : null,
+      goal: inputs.goal ? inputs.goal.value : null,
+    }))
+  );
   const soundEnabled = Boolean(soundEnabledToggle.checked);
   const trainingPaused = Boolean(trainingPausedToggle.checked);
   const jackFlameRainSettingsToSave = [4, 5, 6].map((level, idx) => {
@@ -992,6 +1078,17 @@ async function saveTask1Settings() {
   localStorage.setItem(DRAGON_DODGE_GAME_ACTIVE_KEY, String(dragonDodgeGameActive));
   localStorage.setItem(FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY, String(firefighterRescueGameActive));
   localStorage.setItem(MARTIAN_MADNESS_GAME_ACTIVE_KEY, String(martianMadnessGameActive));
+  saveStoredLightTapLevels(lightTapLevels);
+  lightTapLevelInputs.forEach((inputs, index) => {
+    const level = lightTapLevels[index];
+    if (!level) {
+      return;
+    }
+
+    if (inputs.lives) inputs.lives.value = String(level.lives);
+    if (inputs.time) inputs.time.value = String(level.time);
+    if (inputs.goal) inputs.goal.value = String(level.goal);
+  });
   localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
   localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
   [4, 5, 6].forEach((level, idx) => {
@@ -1121,6 +1218,7 @@ const allInputs = [
   task1DurationInput,
   task2ClicksInput,
   task3DragSecondsInput,
+  ...lightTapLevelInputs.flatMap((inputs) => [inputs.lives, inputs.time, inputs.goal]),
   ...mazeGhostLevelCountInputs,
   ...carGameLevelSpeedInputs,
   ...carGameLevelMaxCarsInputs,
