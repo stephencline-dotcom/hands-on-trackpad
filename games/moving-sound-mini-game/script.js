@@ -1738,11 +1738,15 @@ function buildAdminSettingsSnapshot() {
 }
 
 function applyAdminSettingsSnapshot(snapshot) {
-  if (!snapshot || !Array.isArray(snapshot.arenaLevels) || !Array.isArray(snapshot.carLevels) || !Array.isArray(snapshot.dragonLevels)) {
+  const hasRequiredArrays = !!(snapshot && Array.isArray(snapshot.arenaLevels) && Array.isArray(snapshot.carLevels) && Array.isArray(snapshot.dragonLevels));
+
+  if (!hasRequiredArrays) {
     return false;
   }
 
-  if (snapshot.arenaLevels.length < 3 || snapshot.carLevels.length < 3 || snapshot.dragonLevels.length < 3) {
+  const hasMinimumLevelCounts = snapshot.arenaLevels.length >= 3 && snapshot.carLevels.length >= 3 && snapshot.dragonLevels.length >= 3;
+
+  if (!hasMinimumLevelCounts) {
     return false;
   }
 

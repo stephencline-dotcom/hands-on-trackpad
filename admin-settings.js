@@ -181,6 +181,17 @@ const DEFAULT_LIGHT_TAP_LEVELS = [
   { lives: 3, time: 25, goal: 12 },
   { lives: 3, time: 20, goal: 15 },
 ];
+const DEFAULT_MOVING_SOUND_CAR_LEVELS = [
+  { spawnInterval: 1.5, targetColor: "#38bdf8", timeLimit: 30, carCount: 4, missesAllowed: 3, goal: 8, speedMin: 70, speedMax: 125 },
+  { spawnInterval: 1.2, targetColor: "#f97316", timeLimit: 26, carCount: 5, missesAllowed: 3, goal: 10, speedMin: 135, speedMax: 220 },
+  { spawnInterval: 0.95, targetColor: "#34d399", timeLimit: 22, carCount: 6, missesAllowed: 3, goal: 12, speedMin: 240, speedMax: 360 },
+];
+const DEFAULT_MOVING_SOUND_DRAGON_LEVELS = [
+  { dragonCount: 1, timeLimit: 30, missesAllowed: 3, goal: 6, fireDurationSeconds: 1, speedMin: 100, speedMax: 170 },
+  { dragonCount: 2, timeLimit: 27, missesAllowed: 3, goal: 10, fireDurationSeconds: 0.9, speedMin: 125, speedMax: 195 },
+  { dragonCount: 3, timeLimit: 24, missesAllowed: 3, goal: 15, fireDurationSeconds: 0.75, speedMin: 150, speedMax: 225 },
+  { dragonCount: 4, timeLimit: 22, missesAllowed: 4, goal: 18, fireDurationSeconds: 0.7, speedMin: 170, speedMax: 245 },
+];
 const DEFAULT_JACK_FLAME_RAIN_BY_LEVEL = [
   {
     enabled: true,
@@ -575,12 +586,49 @@ function saveStoredLightTapLevels(levels) {
     const raw = localStorage.getItem(MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY);
     const parsed = raw ? JSON.parse(raw) : {};
     const next = parsed && typeof parsed === "object" ? parsed : {};
+
+    if (!next.homeMenuVisibility || typeof next.homeMenuVisibility !== "object") {
+      next.homeMenuVisibility = {
+        showLightGame: true,
+        showCarGame: true,
+        showDragonGame: true,
+        showFireGame: true,
+        showMartianGame: true,
+      };
+    }
+
     next.arenaLevels = normalized;
+
+    if (!Array.isArray(next.carLevels) || next.carLevels.length < 3) {
+      next.carLevels = JSON.parse(JSON.stringify(DEFAULT_MOVING_SOUND_CAR_LEVELS));
+    }
+
+    if (!Array.isArray(next.dragonLevels) || next.dragonLevels.length < 4) {
+      next.dragonLevels = JSON.parse(JSON.stringify(DEFAULT_MOVING_SOUND_DRAGON_LEVELS));
+    }
+
+    console.log("[admin-settings] Saving Light Tap settings:", normalized);
+    console.log("[admin-settings] Saved under key:", MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY);
+
     localStorage.setItem(MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY, JSON.stringify(next));
   } catch {
+    console.log("[admin-settings] Saving Light Tap settings:", normalized);
+    console.log("[admin-settings] Saved under key:", MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY);
+
     localStorage.setItem(
       MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY,
-      JSON.stringify({ arenaLevels: normalized })
+      JSON.stringify({
+        homeMenuVisibility: {
+          showLightGame: true,
+          showCarGame: true,
+          showDragonGame: true,
+          showFireGame: true,
+          showMartianGame: true,
+        },
+        arenaLevels: normalized,
+        carLevels: DEFAULT_MOVING_SOUND_CAR_LEVELS,
+        dragonLevels: DEFAULT_MOVING_SOUND_DRAGON_LEVELS,
+      })
     );
   }
 }
