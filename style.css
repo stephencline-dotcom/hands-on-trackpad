@@ -1224,25 +1224,6 @@ body {
   font-size: 0.87rem;
 }
 
-.admin-quick-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: flex-end;
-}
-
-.admin-stat-pill {
-  margin: 0;
-  border-radius: 999px;
-  border: 1px solid rgba(127, 181, 224, 0.45);
-  background: rgba(233, 246, 255, 0.9);
-  color: #32506a;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  padding: 5px 10px;
-}
-
 .admin-availability-section {
   margin-top: 14px;
 }
@@ -1266,17 +1247,12 @@ body {
 .admin-tabs {
   margin-top: 14px;
   display: grid;
-  gap: 12px;
+  gap: 10px;
   padding-bottom: 12px;
   border-bottom: 1px solid rgba(133, 184, 224, 0.35);
 }
 
-.admin-tab-group {
-  display: grid;
-  gap: 8px;
-}
-
-.admin-tab-group-title {
+.admin-games-title {
   margin: 0;
   font-size: 0.76rem;
   letter-spacing: 0.08em;
@@ -1317,6 +1293,24 @@ body {
   border-color: rgba(87, 149, 198, 0.8);
   background: linear-gradient(180deg, #d9f0ff, #c9e8ff);
   box-shadow: 0 8px 16px rgba(77, 126, 163, 0.18);
+}
+
+.admin-back-availability {
+  margin-top: 10px;
+  border: 0;
+  background: transparent;
+  color: #2e78a8;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.admin-back-availability:hover,
+.admin-back-availability:focus-visible {
+  color: #1e5f89;
 }
 
 .admin-tab-content {
@@ -1543,10 +1537,6 @@ body {
   .admin-panel-head {
     flex-direction: column;
     align-items: stretch;
-  }
-
-  .admin-quick-stats {
-    justify-content: flex-start;
   }
 
   .admin-form-grid--three,

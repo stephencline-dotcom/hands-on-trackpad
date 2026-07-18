@@ -92,9 +92,8 @@ const martianLevelInputs = [1, 2, 3].map((level) => ({
   liftSpeed: document.getElementById(`adminMartianLiftSpeedL${level}`),
 }));
 const adminTaskCard = document.querySelector(".admin-task-card");
-const taskSummaryPill = document.getElementById("taskSummaryPill");
-const carSummaryPill = document.getElementById("carSummaryPill");
-const mazeSummaryPill = document.getElementById("mazeSummaryPill");
+const adminAvailabilitySection = document.getElementById("adminAvailabilitySection");
+const backToAvailabilityBtn = document.getElementById("backToAvailabilityBtn");
 const tabButtons = Array.from(document.querySelectorAll(".admin-tab-button"));
 const tabPanels = Array.from(document.querySelectorAll(".admin-tab-content"));
 const applyPresetsBtn = document.getElementById("applyPresetsBtn");
@@ -289,27 +288,12 @@ function setDirtyState(isDirty) {
 }
 
 function updateQuickSummary() {
-  if (taskSummaryPill) {
-    const taskEnabledCount = [task1EnabledToggle, task2EnabledToggle, task3EnabledToggle].filter(
-      (toggle) => toggle && toggle.checked
-    ).length;
-    taskSummaryPill.textContent = `Tasks ${taskEnabledCount} / 3 enabled`;
-  }
-
-  if (carSummaryPill) {
-    const enabledCars = carGameLevelToggles.filter((toggle) => toggle && toggle.checked).length;
-    carSummaryPill.textContent = `Car levels ${enabledCars} / 6 enabled`;
-  }
-
-  if (mazeSummaryPill) {
-    const counts = mazeGhostLevelCountInputs.map((inputEl) => parseGhostCount(inputEl ? inputEl.value : 0));
-    const average = counts.reduce((sum, value) => sum + value, 0) / counts.length;
-    mazeSummaryPill.textContent = `Ghost avg ${average.toFixed(1)}`;
-  }
+  // Summary pills were removed from the admin UI.
 }
 
 function setActiveTab(nextTabName) {
   const normalizedTabName = typeof nextTabName === "string" ? nextTabName : "";
+  const hasActiveTab = normalizedTabName.length > 0;
 
   tabButtons.forEach((button) => {
     const isActive = normalizedTabName.length > 0 && button.dataset.tab === normalizedTabName;
@@ -319,8 +303,15 @@ function setActiveTab(nextTabName) {
 
   tabPanels.forEach((panel) => {
     const panelTabName = panel.id.replace("panel", "").toLowerCase();
-    panel.setAttribute("aria-hidden", normalizedTabName.length > 0 && panelTabName === normalizedTabName ? "false" : "true");
+    panel.setAttribute("aria-hidden", hasActiveTab && panelTabName === normalizedTabName ? "false" : "true");
   });
+
+  if (adminAvailabilitySection) {
+    adminAvailabilitySection.hidden = hasActiveTab;
+  }
+  if (backToAvailabilityBtn) {
+    backToAvailabilityBtn.hidden = !hasActiveTab;
+  }
 }
 
 function initTabs() {
@@ -349,6 +340,12 @@ function initTabs() {
   });
 
   setActiveTab("");
+
+  if (backToAvailabilityBtn) {
+    backToAvailabilityBtn.addEventListener("click", () => {
+      setActiveTab("");
+    });
+  }
 }
 
 function parseTask1Seconds(value) {

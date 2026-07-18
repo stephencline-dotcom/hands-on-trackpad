@@ -19,14 +19,9 @@
               <h2>Training Configuration</h2>
               <p>Faster to scan, easier to edit, same saved settings.</p>
             </div>
-            <div class="admin-quick-stats" aria-label="Quick status">
-              <p class="admin-stat-pill" id="taskSummaryPill">Tasks 0 / 3 enabled</p>
-              <p class="admin-stat-pill" id="carSummaryPill">Car levels 0 / 6 enabled</p>
-              <p class="admin-stat-pill" id="mazeSummaryPill">Ghost avg 0.0</p>
-            </div>
           </header>
 
-          <section class="admin-availability-section" aria-label="Activity availability">
+          <section class="admin-availability-section" id="adminAvailabilitySection" aria-label="Activity availability">
             <article class="admin-mini-card admin-mini-card--wide admin-mini-card--availability">
               <h3>Activity Availability</h3>
               <p class="admin-panel-note">Choose which activities appear to students on the home screen.</p>
@@ -72,45 +67,39 @@
           </section>
 
           <nav class="admin-tabs" aria-label="Settings sections">
-            <section class="admin-tab-group" aria-label="Original activities">
-              <h3 class="admin-tab-group-title">Original Activities</h3>
-              <div class="admin-tab-group-buttons" role="tablist" aria-label="Original activities settings">
-                <button class="admin-tab-button" type="button" role="tab" id="tabQuick" aria-controls="panelQuick" aria-selected="false" data-tab="quick">
-                  Fullscreen Trackpad
-                </button>
-                <button class="admin-tab-button" type="button" role="tab" id="tabMaze" aria-controls="panelMaze" aria-selected="false" data-tab="maze">
-                  Maze
-                </button>
-                <button class="admin-tab-button" type="button" role="tab" id="tabCar" aria-controls="panelCar" aria-selected="false" data-tab="car">
-                  Car Game
-                </button>
-                <button class="admin-tab-button" type="button" role="tab" id="tabAdvanced" aria-controls="panelAdvanced" aria-selected="false" data-tab="advanced">
-                  Jumping Jack
-                </button>
-              </div>
-            </section>
-
-            <section class="admin-tab-group" aria-label="Imported games">
-              <h3 class="admin-tab-group-title">Imported Games</h3>
-              <div class="admin-tab-group-buttons" role="tablist" aria-label="Imported games settings">
-                <button class="admin-tab-button" type="button" role="tab" id="tabLightTap" aria-controls="panelLightTap" aria-selected="false" data-tab="lighttap">
-                  Light Tap Game
-                </button>
-                <button class="admin-tab-button" type="button" role="tab" id="tabStreetCar" aria-controls="panelStreetCar" aria-selected="false" data-tab="streetcar">
-                  Street Car Game
-                </button>
-                <button class="admin-tab-button" type="button" role="tab" id="tabDragon" aria-controls="panelDragon" aria-selected="false" data-tab="dragon">
-                  Dragon Dodge
-                </button>
-                <button class="admin-tab-button" type="button" role="tab" id="tabFire" aria-controls="panelFire" aria-selected="false" data-tab="fire">
-                  Firefighter Rescue
-                </button>
-                <button class="admin-tab-button" type="button" role="tab" id="tabMartian" aria-controls="panelMartian" aria-selected="false" data-tab="martian">
-                  Martian Madness
-                </button>
-              </div>
-            </section>
+            <h3 class="admin-games-title">Games</h3>
+            <div class="admin-tab-group-buttons" role="tablist" aria-label="Game settings">
+              <button class="admin-tab-button" type="button" role="tab" id="tabQuick" aria-controls="panelQuick" aria-selected="false" data-tab="quick">
+                Fullscreen Trackpad
+              </button>
+              <button class="admin-tab-button" type="button" role="tab" id="tabMaze" aria-controls="panelMaze" aria-selected="false" data-tab="maze">
+                Maze
+              </button>
+              <button class="admin-tab-button" type="button" role="tab" id="tabCar" aria-controls="panelCar" aria-selected="false" data-tab="car">
+                Car Game
+              </button>
+              <button class="admin-tab-button" type="button" role="tab" id="tabAdvanced" aria-controls="panelAdvanced" aria-selected="false" data-tab="advanced">
+                Jumping Jack
+              </button>
+              <button class="admin-tab-button" type="button" role="tab" id="tabLightTap" aria-controls="panelLightTap" aria-selected="false" data-tab="lighttap">
+                Light Tap Game
+              </button>
+              <button class="admin-tab-button" type="button" role="tab" id="tabStreetCar" aria-controls="panelStreetCar" aria-selected="false" data-tab="streetcar">
+                Street Car Game
+              </button>
+              <button class="admin-tab-button" type="button" role="tab" id="tabDragon" aria-controls="panelDragon" aria-selected="false" data-tab="dragon">
+                Dragon Dodge
+              </button>
+              <button class="admin-tab-button" type="button" role="tab" id="tabFire" aria-controls="panelFire" aria-selected="false" data-tab="fire">
+                Firefighter Rescue
+              </button>
+              <button class="admin-tab-button" type="button" role="tab" id="tabMartian" aria-controls="panelMartian" aria-selected="false" data-tab="martian">
+                Martian Madness
+              </button>
+            </div>
           </nav>
+
+          <button id="backToAvailabilityBtn" class="admin-back-availability" type="button" hidden>Back to Activity Availability</button>
 
           <section class="admin-tab-content" id="panelQuick" role="tabpanel" aria-labelledby="tabQuick" aria-hidden="true">
             <div class="admin-form-grid admin-form-grid--three">
