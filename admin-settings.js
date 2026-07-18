@@ -59,6 +59,25 @@ const lightTapLevelInputs = [1, 2, 3].map((level) => ({
   time: document.getElementById(`adminTimeL${level}`),
   goal: document.getElementById(`adminGoalL${level}`),
 }));
+const streetCarLevelInputs = [1, 2, 3].map((level) => ({
+  spawnInterval: document.getElementById(`adminCarSpawnIntervalL${level}`),
+  targetColor: document.getElementById(`adminCarTargetColorL${level}`),
+  timeLimit: document.getElementById(`adminCarTimeL${level}`),
+  carCount: document.getElementById(`adminCarCountL${level}`),
+  missesAllowed: document.getElementById(`adminCarMissesL${level}`),
+  goal: document.getElementById(`adminCarGoalL${level}`),
+  speedMin: document.getElementById(`adminCarSpeedMinL${level}`),
+  speedMax: document.getElementById(`adminCarSpeedMaxL${level}`),
+}));
+const dragonLevelInputs = [1, 2, 3, 4].map((level) => ({
+  dragonCount: document.getElementById(`adminDragonCountL${level}`),
+  timeLimit: document.getElementById(`adminDragonTimeL${level}`),
+  missesAllowed: document.getElementById(`adminDragonMissesL${level}`),
+  goal: document.getElementById(`adminDragonGoalL${level}`),
+  fireDurationSeconds: document.getElementById(`adminDragonFireDurationL${level}`),
+  speedMin: document.getElementById(`adminDragonSpeedMinL${level}`),
+  speedMax: document.getElementById(`adminDragonSpeedMaxL${level}`),
+}));
 const adminTaskCard = document.querySelector(".admin-task-card");
 const taskSummaryPill = document.getElementById("taskSummaryPill");
 const carSummaryPill = document.getElementById("carSummaryPill");
@@ -554,9 +573,102 @@ function parseLightTapLevelValue(value, min, max, fallback) {
   return Math.min(max, Math.max(min, parsed));
 }
 
-function normalizeLightTapLevels(levels) {
-  return DEFAULT_LIGHT_TAP_LEVELS.map((defaults, index) => {
+function normalizeLevelArray(levels, defaultLevels, normalizeLevel) {
+  return defaultLevels.map((defaults, index) => {
     const level = Array.isArray(levels) ? (levels[index] || {}) : {};
+    return normalizeLevel(level, defaults, index);
+  });
+}
+
+function loadGameLevelsFromStorage(storageField, defaultLevels, normalizeLevels) {
+  try {
+    const raw = localStorage.getItem(MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY);
+    if (!raw) {
+      return normalizeLevels(defaultLevels);
+    }
+
+    const parsed = JSON.parse(raw);
+    return normalizeLevels(parsed && parsed[storageField]);
+  } catch {
+    return normalizeLevels(defaultLevels);
+  }
+}
+
+function ensureMovingSoundSettingsShape(existingSettings) {
+  const next = existingSettings && typeof existingSettings === "object" ? existingSettings : {};
+
+  if (!next.homeMenuVisibility || typeof next.homeMenuVisibility !== "object") {
+    next.homeMenuVisibility = {
+      showLightGame: true,
+      showCarGame: true,
+      showDragonGame: true,
+      showFireGame: true,
+      showMartianGame: true,
+    };
+  }
+
+  if (!Array.isArray(next.arenaLevels) || next.arenaLevels.length < 3) {
+    next.arenaLevels = JSON.parse(JSON.stringify(DEFAULT_LIGHT_TAP_LEVELS));
+  }
+
+  if (!Array.isArray(next.carLevels) || next.carLevels.length < 3) {
+    next.carLevels = JSON.parse(JSON.stringify(DEFAULT_MOVING_SOUND_CAR_LEVELS));
+  }
+
+  if (!Array.isArray(next.dragonLevels) || next.dragonLevels.length < 4) {
+    next.dragonLevels = JSON.parse(JSON.stringify(DEFAULT_MOVING_SOUND_DRAGON_LEVELS));
+  }
+
+  return next;
+}
+
+function saveGameLevelsToStorage(storageField, levels, normalizeLevels) {
+  const normalized = normalizeLevels(levels);
+
+  try {
+    const raw = localStorage.getItem(MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    const next = ensureMovingSoundSettingsShape(parsed);
+    next[storageField] = normalized;
+    localStorage.setItem(MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY, JSON.stringify(next));
+  } catch {
+    const fallbackSettings = ensureMovingSoundSettingsShape({});
+    fallbackSettings[storageField] = normalized;
+    localStorage.setItem(MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY, JSON.stringify(fallbackSettings));
+  }
+
+  return normalized;
+}
+
+function readGameLevelsFromInputs(levelInputs, fieldMap) {
+  return levelInputs.map((inputs) => {
+    const level = {};
+
+    Object.entries(fieldMap).forEach(([levelKey, inputKey]) => {
+      level[levelKey] = inputs[inputKey] ? inputs[inputKey].value : null;
+    });
+
+    return level;
+  });
+}
+
+function applyGameLevelsToInputs(levels, levelInputs, fieldMap) {
+  levelInputs.forEach((inputs, index) => {
+    const level = levels[index];
+    if (!level) {
+      return;
+    }
+
+    Object.entries(fieldMap).forEach(([levelKey, inputKey]) => {
+      if (inputs[inputKey]) {
+        inputs[inputKey].value = String(level[levelKey]);
+      }
+    });
+  });
+}
+
+function normalizeLightTapLevels(levels) {
+  return normalizeLevelArray(levels, DEFAULT_LIGHT_TAP_LEVELS, (level, defaults) => {
     return {
       lives: parseLightTapLevelValue(level.lives, 1, 20, defaults.lives),
       time: parseLightTapLevelValue(level.time, 10, 300, defaults.time),
@@ -565,72 +677,73 @@ function normalizeLightTapLevels(levels) {
   });
 }
 
-function loadStoredLightTapLevels() {
-  try {
-    const raw = localStorage.getItem(MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY);
-    if (!raw) {
-      return normalizeLightTapLevels(DEFAULT_LIGHT_TAP_LEVELS);
-    }
+function normalizeStreetCarLevels(levels) {
+  return normalizeLevelArray(levels, DEFAULT_MOVING_SOUND_CAR_LEVELS, (level, defaults) => {
+    const speedMin = parseLightTapLevelValue(level.speedMin, 40, 600, defaults.speedMin);
+    const requestedSpeedMax = parseLightTapLevelValue(level.speedMax, 40, 600, defaults.speedMax);
+    const speedMax = Math.max(speedMin + 10, requestedSpeedMax);
+    const parsedTargetColor = String(level.targetColor || "");
 
-    const parsed = JSON.parse(raw);
-    return normalizeLightTapLevels(parsed && parsed.arenaLevels);
-  } catch {
-    return normalizeLightTapLevels(DEFAULT_LIGHT_TAP_LEVELS);
-  }
+    return {
+      spawnInterval: Math.min(6, Math.max(0.5, Number.parseFloat(String(level.spawnInterval || defaults.spawnInterval)) || defaults.spawnInterval)),
+      targetColor: ["#38bdf8", "#f97316", "#facc15", "#a78bfa", "#34d399", "#fb7185"].includes(parsedTargetColor)
+        ? parsedTargetColor
+        : defaults.targetColor,
+      timeLimit: parseLightTapLevelValue(level.timeLimit, 10, 300, defaults.timeLimit),
+      carCount: parseLightTapLevelValue(level.carCount, 1, 20, defaults.carCount),
+      missesAllowed: parseLightTapLevelValue(level.missesAllowed, 1, 20, defaults.missesAllowed),
+      goal: parseLightTapLevelValue(level.goal, 1, 200, defaults.goal),
+      speedMin,
+      speedMax,
+    };
+  });
+}
+
+function normalizeDragonLevels(levels) {
+  return normalizeLevelArray(levels, DEFAULT_MOVING_SOUND_DRAGON_LEVELS, (level, defaults) => {
+    const speedMin = parseLightTapLevelValue(level.speedMin, 40, 600, defaults.speedMin);
+    const requestedSpeedMax = parseLightTapLevelValue(level.speedMax, 40, 600, defaults.speedMax);
+    const speedMax = Math.max(speedMin + 10, requestedSpeedMax);
+    const parsedFireDuration = Number.parseFloat(String(level.fireDurationSeconds || ""));
+
+    return {
+      dragonCount: parseLightTapLevelValue(level.dragonCount, 1, 12, defaults.dragonCount),
+      timeLimit: parseLightTapLevelValue(level.timeLimit, 10, 300, defaults.timeLimit),
+      missesAllowed: parseLightTapLevelValue(level.missesAllowed, 1, 20, defaults.missesAllowed),
+      goal: parseLightTapLevelValue(level.goal, 1, 200, defaults.goal),
+      fireDurationSeconds: Number.isFinite(parsedFireDuration)
+        ? Math.min(5, Math.max(0.2, parsedFireDuration))
+        : defaults.fireDurationSeconds,
+      speedMin,
+      speedMax,
+    };
+  });
+}
+
+function loadStoredLightTapLevels() {
+  return loadGameLevelsFromStorage("arenaLevels", DEFAULT_LIGHT_TAP_LEVELS, normalizeLightTapLevels);
+}
+
+function loadStoredStreetCarLevels() {
+  return loadGameLevelsFromStorage("carLevels", DEFAULT_MOVING_SOUND_CAR_LEVELS, normalizeStreetCarLevels);
+}
+
+function loadStoredDragonLevels() {
+  return loadGameLevelsFromStorage("dragonLevels", DEFAULT_MOVING_SOUND_DRAGON_LEVELS, normalizeDragonLevels);
 }
 
 function saveStoredLightTapLevels(levels) {
-  const normalized = normalizeLightTapLevels(levels);
+  const normalized = saveGameLevelsToStorage("arenaLevels", levels, normalizeLightTapLevels);
+  console.log("[admin-settings] Saving Light Tap settings:", normalized);
+  console.log("[admin-settings] Saved under key:", MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY);
+}
 
-  try {
-    const raw = localStorage.getItem(MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : {};
-    const next = parsed && typeof parsed === "object" ? parsed : {};
+function saveStoredStreetCarLevels(levels) {
+  saveGameLevelsToStorage("carLevels", levels, normalizeStreetCarLevels);
+}
 
-    if (!next.homeMenuVisibility || typeof next.homeMenuVisibility !== "object") {
-      next.homeMenuVisibility = {
-        showLightGame: true,
-        showCarGame: true,
-        showDragonGame: true,
-        showFireGame: true,
-        showMartianGame: true,
-      };
-    }
-
-    next.arenaLevels = normalized;
-
-    if (!Array.isArray(next.carLevels) || next.carLevels.length < 3) {
-      next.carLevels = JSON.parse(JSON.stringify(DEFAULT_MOVING_SOUND_CAR_LEVELS));
-    }
-
-    if (!Array.isArray(next.dragonLevels) || next.dragonLevels.length < 4) {
-      next.dragonLevels = JSON.parse(JSON.stringify(DEFAULT_MOVING_SOUND_DRAGON_LEVELS));
-    }
-
-    console.log("[admin-settings] Saving Light Tap settings:", normalized);
-    console.log("[admin-settings] Saved under key:", MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY);
-
-    localStorage.setItem(MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY, JSON.stringify(next));
-  } catch {
-    console.log("[admin-settings] Saving Light Tap settings:", normalized);
-    console.log("[admin-settings] Saved under key:", MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY);
-
-    localStorage.setItem(
-      MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY,
-      JSON.stringify({
-        homeMenuVisibility: {
-          showLightGame: true,
-          showCarGame: true,
-          showDragonGame: true,
-          showFireGame: true,
-          showMartianGame: true,
-        },
-        arenaLevels: normalized,
-        carLevels: DEFAULT_MOVING_SOUND_CAR_LEVELS,
-        dragonLevels: DEFAULT_MOVING_SOUND_DRAGON_LEVELS,
-      })
-    );
-  }
+function saveStoredDragonLevels(levels) {
+  saveGameLevelsToStorage("dragonLevels", levels, normalizeDragonLevels);
 }
 
 function showSavedMessage(text) {
@@ -763,6 +876,8 @@ async function loadTask1Settings() {
   let firefighterRescueGameActive = parseTaskEnabled(localStorage.getItem(FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY), true);
   let martianMadnessGameActive = parseTaskEnabled(localStorage.getItem(MARTIAN_MADNESS_GAME_ACTIVE_KEY), true);
   let lightTapLevels = loadStoredLightTapLevels();
+  let streetCarLevels = loadStoredStreetCarLevels();
+  let dragonLevels = loadStoredDragonLevels();
   let soundEnabled = parseTaskEnabled(localStorage.getItem(SOUND_ENABLED_KEY), true);
   let trainingPaused = parseTrainingPaused(localStorage.getItem(TRAINING_PAUSED_KEY));
   const jackFlameRainSettings = [4, 5, 6].map((level, idx) => {
@@ -959,15 +1074,29 @@ async function loadTask1Settings() {
   if (dragonDodgeGameActiveToggle) dragonDodgeGameActiveToggle.checked = dragonDodgeGameActive;
   if (firefighterRescueGameActiveToggle) firefighterRescueGameActiveToggle.checked = firefighterRescueGameActive;
   if (martianMadnessGameActiveToggle) martianMadnessGameActiveToggle.checked = martianMadnessGameActive;
-  lightTapLevelInputs.forEach((inputs, index) => {
-    const level = lightTapLevels[index];
-    if (!level) {
-      return;
-    }
-
-    if (inputs.lives) inputs.lives.value = String(level.lives);
-    if (inputs.time) inputs.time.value = String(level.time);
-    if (inputs.goal) inputs.goal.value = String(level.goal);
+  applyGameLevelsToInputs(lightTapLevels, lightTapLevelInputs, {
+    lives: "lives",
+    time: "time",
+    goal: "goal",
+  });
+  applyGameLevelsToInputs(streetCarLevels, streetCarLevelInputs, {
+    spawnInterval: "spawnInterval",
+    targetColor: "targetColor",
+    timeLimit: "timeLimit",
+    carCount: "carCount",
+    missesAllowed: "missesAllowed",
+    goal: "goal",
+    speedMin: "speedMin",
+    speedMax: "speedMax",
+  });
+  applyGameLevelsToInputs(dragonLevels, dragonLevelInputs, {
+    dragonCount: "dragonCount",
+    timeLimit: "timeLimit",
+    missesAllowed: "missesAllowed",
+    goal: "goal",
+    fireDurationSeconds: "fireDurationSeconds",
+    speedMin: "speedMin",
+    speedMax: "speedMax",
   });
   soundEnabledToggle.checked = soundEnabled;
   trainingPausedToggle.checked = trainingPaused;
@@ -1047,12 +1176,45 @@ async function saveTask1Settings() {
   const firefighterRescueGameActive = Boolean(firefighterRescueGameActiveToggle && firefighterRescueGameActiveToggle.checked);
   const martianMadnessGameActive = Boolean(martianMadnessGameActiveToggle && martianMadnessGameActiveToggle.checked);
   const lightTapLevels = normalizeLightTapLevels(
-    lightTapLevelInputs.map((inputs) => ({
-      lives: inputs.lives ? inputs.lives.value : null,
-      time: inputs.time ? inputs.time.value : null,
-      goal: inputs.goal ? inputs.goal.value : null,
-    }))
+    readGameLevelsFromInputs(lightTapLevelInputs, {
+      lives: "lives",
+      time: "time",
+      goal: "goal",
+    })
   );
+  const hasStreetCarInputs = streetCarLevelInputs.some((inputs) =>
+    Boolean(inputs.spawnInterval || inputs.targetColor || inputs.timeLimit || inputs.carCount || inputs.missesAllowed || inputs.goal || inputs.speedMin || inputs.speedMax)
+  );
+  const streetCarLevels = hasStreetCarInputs
+    ? normalizeStreetCarLevels(
+      readGameLevelsFromInputs(streetCarLevelInputs, {
+        spawnInterval: "spawnInterval",
+        targetColor: "targetColor",
+        timeLimit: "timeLimit",
+        carCount: "carCount",
+        missesAllowed: "missesAllowed",
+        goal: "goal",
+        speedMin: "speedMin",
+        speedMax: "speedMax",
+      })
+    )
+    : null;
+  const hasDragonInputs = dragonLevelInputs.some((inputs) =>
+    Boolean(inputs.dragonCount || inputs.timeLimit || inputs.missesAllowed || inputs.goal || inputs.fireDurationSeconds || inputs.speedMin || inputs.speedMax)
+  );
+  const dragonLevels = hasDragonInputs
+    ? normalizeDragonLevels(
+      readGameLevelsFromInputs(dragonLevelInputs, {
+        dragonCount: "dragonCount",
+        timeLimit: "timeLimit",
+        missesAllowed: "missesAllowed",
+        goal: "goal",
+        fireDurationSeconds: "fireDurationSeconds",
+        speedMin: "speedMin",
+        speedMax: "speedMax",
+      })
+    )
+    : null;
   const soundEnabled = Boolean(soundEnabledToggle.checked);
   const trainingPaused = Boolean(trainingPausedToggle.checked);
   const jackFlameRainSettingsToSave = [4, 5, 6].map((level, idx) => {
@@ -1127,16 +1289,40 @@ async function saveTask1Settings() {
   localStorage.setItem(FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY, String(firefighterRescueGameActive));
   localStorage.setItem(MARTIAN_MADNESS_GAME_ACTIVE_KEY, String(martianMadnessGameActive));
   saveStoredLightTapLevels(lightTapLevels);
-  lightTapLevelInputs.forEach((inputs, index) => {
-    const level = lightTapLevels[index];
-    if (!level) {
-      return;
-    }
-
-    if (inputs.lives) inputs.lives.value = String(level.lives);
-    if (inputs.time) inputs.time.value = String(level.time);
-    if (inputs.goal) inputs.goal.value = String(level.goal);
+  if (streetCarLevels) {
+    saveStoredStreetCarLevels(streetCarLevels);
+  }
+  if (dragonLevels) {
+    saveStoredDragonLevels(dragonLevels);
+  }
+  applyGameLevelsToInputs(lightTapLevels, lightTapLevelInputs, {
+    lives: "lives",
+    time: "time",
+    goal: "goal",
   });
+  if (streetCarLevels) {
+    applyGameLevelsToInputs(streetCarLevels, streetCarLevelInputs, {
+      spawnInterval: "spawnInterval",
+      targetColor: "targetColor",
+      timeLimit: "timeLimit",
+      carCount: "carCount",
+      missesAllowed: "missesAllowed",
+      goal: "goal",
+      speedMin: "speedMin",
+      speedMax: "speedMax",
+    });
+  }
+  if (dragonLevels) {
+    applyGameLevelsToInputs(dragonLevels, dragonLevelInputs, {
+      dragonCount: "dragonCount",
+      timeLimit: "timeLimit",
+      missesAllowed: "missesAllowed",
+      goal: "goal",
+      fireDurationSeconds: "fireDurationSeconds",
+      speedMin: "speedMin",
+      speedMax: "speedMax",
+    });
+  }
   localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
   localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
   [4, 5, 6].forEach((level, idx) => {
@@ -1267,6 +1453,15 @@ const allInputs = [
   task2ClicksInput,
   task3DragSecondsInput,
   ...lightTapLevelInputs.flatMap((inputs) => [inputs.lives, inputs.time, inputs.goal]),
+  ...dragonLevelInputs.flatMap((inputs) => [
+    inputs.dragonCount,
+    inputs.timeLimit,
+    inputs.missesAllowed,
+    inputs.goal,
+    inputs.fireDurationSeconds,
+    inputs.speedMin,
+    inputs.speedMax,
+  ]),
   ...mazeGhostLevelCountInputs,
   ...carGameLevelSpeedInputs,
   ...carGameLevelMaxCarsInputs,

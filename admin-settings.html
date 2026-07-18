@@ -39,6 +39,9 @@
             <button class="admin-tab-button" type="button" role="tab" id="tabLightTap" aria-controls="panelLightTap" aria-selected="false" data-tab="lighttap">
               Light Tap Game
             </button>
+            <button class="admin-tab-button" type="button" role="tab" id="tabDragon" aria-controls="panelDragon" aria-selected="false" data-tab="dragon">
+              Dragon Dodge
+            </button>
             <button class="admin-tab-button" type="button" role="tab" id="tabAdvanced" aria-controls="panelAdvanced" aria-selected="false" data-tab="advanced">
               Jumping Jack
             </button>
@@ -302,6 +305,80 @@
                 <input id="adminTimeL3" class="admin-task-input" type="number" min="10" max="300" step="1" />
                 <label class="admin-task-label" for="adminGoalL3">Goal (lights)</label>
                 <input id="adminGoalL3" class="admin-task-input" type="number" min="1" max="200" step="1" />
+              </article>
+            </div>
+          </section>
+
+          <section class="admin-tab-content" id="panelDragon" role="tabpanel" aria-labelledby="tabDragon" aria-hidden="true">
+            <p class="admin-panel-note">Adjust Dragon Dodge level goals and timing.</p>
+            <div class="admin-level-grid">
+              <article class="admin-level-card">
+                <h3>Level 1</h3>
+                <label class="admin-task-label" for="adminDragonCountL1">Dragons on screen</label>
+                <input id="adminDragonCountL1" class="admin-task-input" type="number" min="1" max="12" step="1" />
+                <label class="admin-task-label" for="adminDragonTimeL1">Time (seconds)</label>
+                <input id="adminDragonTimeL1" class="admin-task-input" type="number" min="10" max="300" step="1" />
+                <label class="admin-task-label" for="adminDragonMissesL1">Misses allowed</label>
+                <input id="adminDragonMissesL1" class="admin-task-input" type="number" min="1" max="20" step="1" />
+                <label class="admin-task-label" for="adminDragonGoalL1">Goal (saves)</label>
+                <input id="adminDragonGoalL1" class="admin-task-input" type="number" min="1" max="200" step="1" />
+                <label class="admin-task-label" for="adminDragonFireDurationL1">Fire duration (seconds)</label>
+                <input id="adminDragonFireDurationL1" class="admin-task-input" type="number" min="0.2" max="5" step="0.05" />
+                <label class="admin-task-label" for="adminDragonSpeedMinL1">Speed min</label>
+                <input id="adminDragonSpeedMinL1" class="admin-task-input" type="number" min="40" max="600" step="5" />
+                <label class="admin-task-label" for="adminDragonSpeedMaxL1">Speed max</label>
+                <input id="adminDragonSpeedMaxL1" class="admin-task-input" type="number" min="40" max="600" step="5" />
+              </article>
+              <article class="admin-level-card">
+                <h3>Level 2</h3>
+                <label class="admin-task-label" for="adminDragonCountL2">Dragons on screen</label>
+                <input id="adminDragonCountL2" class="admin-task-input" type="number" min="1" max="12" step="1" />
+                <label class="admin-task-label" for="adminDragonTimeL2">Time (seconds)</label>
+                <input id="adminDragonTimeL2" class="admin-task-input" type="number" min="10" max="300" step="1" />
+                <label class="admin-task-label" for="adminDragonMissesL2">Misses allowed</label>
+                <input id="adminDragonMissesL2" class="admin-task-input" type="number" min="1" max="20" step="1" />
+                <label class="admin-task-label" for="adminDragonGoalL2">Goal (saves)</label>
+                <input id="adminDragonGoalL2" class="admin-task-input" type="number" min="1" max="200" step="1" />
+                <label class="admin-task-label" for="adminDragonFireDurationL2">Fire duration (seconds)</label>
+                <input id="adminDragonFireDurationL2" class="admin-task-input" type="number" min="0.2" max="5" step="0.05" />
+                <label class="admin-task-label" for="adminDragonSpeedMinL2">Speed min</label>
+                <input id="adminDragonSpeedMinL2" class="admin-task-input" type="number" min="40" max="600" step="5" />
+                <label class="admin-task-label" for="adminDragonSpeedMaxL2">Speed max</label>
+                <input id="adminDragonSpeedMaxL2" class="admin-task-input" type="number" min="40" max="600" step="5" />
+              </article>
+              <article class="admin-level-card">
+                <h3>Level 3</h3>
+                <label class="admin-task-label" for="adminDragonCountL3">Dragons on screen</label>
+                <input id="adminDragonCountL3" class="admin-task-input" type="number" min="1" max="12" step="1" />
+                <label class="admin-task-label" for="adminDragonTimeL3">Time (seconds)</label>
+                <input id="adminDragonTimeL3" class="admin-task-input" type="number" min="10" max="300" step="1" />
+                <label class="admin-task-label" for="adminDragonMissesL3">Misses allowed</label>
+                <input id="adminDragonMissesL3" class="admin-task-input" type="number" min="1" max="20" step="1" />
+                <label class="admin-task-label" for="adminDragonGoalL3">Goal (saves)</label>
+                <input id="adminDragonGoalL3" class="admin-task-input" type="number" min="1" max="200" step="1" />
+                <label class="admin-task-label" for="adminDragonFireDurationL3">Fire duration (seconds)</label>
+                <input id="adminDragonFireDurationL3" class="admin-task-input" type="number" min="0.2" max="5" step="0.05" />
+                <label class="admin-task-label" for="adminDragonSpeedMinL3">Speed min</label>
+                <input id="adminDragonSpeedMinL3" class="admin-task-input" type="number" min="40" max="600" step="5" />
+                <label class="admin-task-label" for="adminDragonSpeedMaxL3">Speed max</label>
+                <input id="adminDragonSpeedMaxL3" class="admin-task-input" type="number" min="40" max="600" step="5" />
+              </article>
+              <article class="admin-level-card">
+                <h3>Level 4</h3>
+                <label class="admin-task-label" for="adminDragonCountL4">Dragons on screen</label>
+                <input id="adminDragonCountL4" class="admin-task-input" type="number" min="1" max="12" step="1" />
+                <label class="admin-task-label" for="adminDragonTimeL4">Time (seconds)</label>
+                <input id="adminDragonTimeL4" class="admin-task-input" type="number" min="10" max="300" step="1" />
+                <label class="admin-task-label" for="adminDragonMissesL4">Misses allowed</label>
+                <input id="adminDragonMissesL4" class="admin-task-input" type="number" min="1" max="20" step="1" />
+                <label class="admin-task-label" for="adminDragonGoalL4">Goal (saves)</label>
+                <input id="adminDragonGoalL4" class="admin-task-input" type="number" min="1" max="200" step="1" />
+                <label class="admin-task-label" for="adminDragonFireDurationL4">Fire duration (seconds)</label>
+                <input id="adminDragonFireDurationL4" class="admin-task-input" type="number" min="0.2" max="5" step="0.05" />
+                <label class="admin-task-label" for="adminDragonSpeedMinL4">Speed min</label>
+                <input id="adminDragonSpeedMinL4" class="admin-task-input" type="number" min="40" max="600" step="5" />
+                <label class="admin-task-label" for="adminDragonSpeedMaxL4">Speed max</label>
+                <input id="adminDragonSpeedMaxL4" class="admin-task-input" type="number" min="40" max="600" step="5" />
               </article>
             </div>
           </section>
