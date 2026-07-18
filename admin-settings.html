@@ -36,6 +36,9 @@
             <button class="admin-tab-button" type="button" role="tab" id="tabCar" aria-controls="panelCar" aria-selected="false" data-tab="car">
               Car Game
             </button>
+            <button class="admin-tab-button" type="button" role="tab" id="tabStreetCar" aria-controls="panelStreetCar" aria-selected="false" data-tab="streetcar">
+              Street Car Game
+            </button>
             <button class="admin-tab-button" type="button" role="tab" id="tabLightTap" aria-controls="panelLightTap" aria-selected="false" data-tab="lighttap">
               Light Tap Game
             </button>
@@ -148,6 +151,8 @@
                 </label>
               </div>
             </article>
+
+            <button id="resetFullscreenDefaultsBtn" class="admin-apply" type="button">Reset Fullscreen Trackpad to Defaults</button>
           </section>
 
           <section class="admin-tab-content" id="panelMaze" role="tabpanel" aria-labelledby="tabMaze" aria-hidden="true">
@@ -199,6 +204,7 @@
                 <input id="mazeGhostLevel6Count" class="admin-task-input" type="number" min="0" max="6" step="1" />
               </article>
             </div>
+            <button id="resetMazeDefaultsBtn" class="admin-apply" type="button">Reset Maze to Defaults</button>
           </section>
 
           <section class="admin-tab-content" id="panelCar" role="tabpanel" aria-labelledby="tabCar" aria-hidden="true">
@@ -280,6 +286,92 @@
                 </div>
               </article>
             </div>
+            <button id="resetCarGameDefaultsBtn" class="admin-apply" type="button">Reset Car Game to Defaults</button>
+          </section>
+
+          <section class="admin-tab-content" id="panelStreetCar" role="tabpanel" aria-labelledby="tabStreetCar" aria-hidden="true">
+            <p class="admin-panel-note">Adjust Street Car level goals and timing.</p>
+            <div class="admin-level-grid">
+              <article class="admin-level-card">
+                <h3>Level 1</h3>
+                <label class="admin-task-label" for="adminCarSpawnIntervalL1">Spawn interval (seconds)</label>
+                <input id="adminCarSpawnIntervalL1" class="admin-task-input" type="number" min="0.5" max="6" step="0.1" />
+                <label class="admin-task-label" for="adminCarTargetColorL1">Target color</label>
+                <select id="adminCarTargetColorL1" class="admin-task-input">
+                  <option value="#38bdf8">Blue</option>
+                  <option value="#f97316">Orange</option>
+                  <option value="#facc15">Yellow</option>
+                  <option value="#a78bfa">Purple</option>
+                  <option value="#34d399">Green</option>
+                  <option value="#fb7185">Pink</option>
+                </select>
+                <label class="admin-task-label" for="adminCarTimeL1">Time (seconds)</label>
+                <input id="adminCarTimeL1" class="admin-task-input" type="number" min="10" max="300" step="1" />
+                <label class="admin-task-label" for="adminCarCountL1">Cars on screen</label>
+                <input id="adminCarCountL1" class="admin-task-input" type="number" min="1" max="20" step="1" />
+                <label class="admin-task-label" for="adminCarMissesL1">Misses allowed</label>
+                <input id="adminCarMissesL1" class="admin-task-input" type="number" min="1" max="20" step="1" />
+                <label class="admin-task-label" for="adminCarGoalL1">Goal (cars)</label>
+                <input id="adminCarGoalL1" class="admin-task-input" type="number" min="1" max="200" step="1" />
+                <label class="admin-task-label" for="adminCarSpeedMinL1">Speed min</label>
+                <input id="adminCarSpeedMinL1" class="admin-task-input" type="number" min="40" max="600" step="5" />
+                <label class="admin-task-label" for="adminCarSpeedMaxL1">Speed max</label>
+                <input id="adminCarSpeedMaxL1" class="admin-task-input" type="number" min="40" max="600" step="5" />
+              </article>
+              <article class="admin-level-card">
+                <h3>Level 2</h3>
+                <label class="admin-task-label" for="adminCarSpawnIntervalL2">Spawn interval (seconds)</label>
+                <input id="adminCarSpawnIntervalL2" class="admin-task-input" type="number" min="0.5" max="6" step="0.1" />
+                <label class="admin-task-label" for="adminCarTargetColorL2">Target color</label>
+                <select id="adminCarTargetColorL2" class="admin-task-input">
+                  <option value="#38bdf8">Blue</option>
+                  <option value="#f97316">Orange</option>
+                  <option value="#facc15">Yellow</option>
+                  <option value="#a78bfa">Purple</option>
+                  <option value="#34d399">Green</option>
+                  <option value="#fb7185">Pink</option>
+                </select>
+                <label class="admin-task-label" for="adminCarTimeL2">Time (seconds)</label>
+                <input id="adminCarTimeL2" class="admin-task-input" type="number" min="10" max="300" step="1" />
+                <label class="admin-task-label" for="adminCarCountL2">Cars on screen</label>
+                <input id="adminCarCountL2" class="admin-task-input" type="number" min="1" max="20" step="1" />
+                <label class="admin-task-label" for="adminCarMissesL2">Misses allowed</label>
+                <input id="adminCarMissesL2" class="admin-task-input" type="number" min="1" max="20" step="1" />
+                <label class="admin-task-label" for="adminCarGoalL2">Goal (cars)</label>
+                <input id="adminCarGoalL2" class="admin-task-input" type="number" min="1" max="200" step="1" />
+                <label class="admin-task-label" for="adminCarSpeedMinL2">Speed min</label>
+                <input id="adminCarSpeedMinL2" class="admin-task-input" type="number" min="40" max="600" step="5" />
+                <label class="admin-task-label" for="adminCarSpeedMaxL2">Speed max</label>
+                <input id="adminCarSpeedMaxL2" class="admin-task-input" type="number" min="40" max="600" step="5" />
+              </article>
+              <article class="admin-level-card">
+                <h3>Level 3</h3>
+                <label class="admin-task-label" for="adminCarSpawnIntervalL3">Spawn interval (seconds)</label>
+                <input id="adminCarSpawnIntervalL3" class="admin-task-input" type="number" min="0.5" max="6" step="0.1" />
+                <label class="admin-task-label" for="adminCarTargetColorL3">Target color</label>
+                <select id="adminCarTargetColorL3" class="admin-task-input">
+                  <option value="#38bdf8">Blue</option>
+                  <option value="#f97316">Orange</option>
+                  <option value="#facc15">Yellow</option>
+                  <option value="#a78bfa">Purple</option>
+                  <option value="#34d399">Green</option>
+                  <option value="#fb7185">Pink</option>
+                </select>
+                <label class="admin-task-label" for="adminCarTimeL3">Time (seconds)</label>
+                <input id="adminCarTimeL3" class="admin-task-input" type="number" min="10" max="300" step="1" />
+                <label class="admin-task-label" for="adminCarCountL3">Cars on screen</label>
+                <input id="adminCarCountL3" class="admin-task-input" type="number" min="1" max="20" step="1" />
+                <label class="admin-task-label" for="adminCarMissesL3">Misses allowed</label>
+                <input id="adminCarMissesL3" class="admin-task-input" type="number" min="1" max="20" step="1" />
+                <label class="admin-task-label" for="adminCarGoalL3">Goal (cars)</label>
+                <input id="adminCarGoalL3" class="admin-task-input" type="number" min="1" max="200" step="1" />
+                <label class="admin-task-label" for="adminCarSpeedMinL3">Speed min</label>
+                <input id="adminCarSpeedMinL3" class="admin-task-input" type="number" min="40" max="600" step="5" />
+                <label class="admin-task-label" for="adminCarSpeedMaxL3">Speed max</label>
+                <input id="adminCarSpeedMaxL3" class="admin-task-input" type="number" min="40" max="600" step="5" />
+              </article>
+            </div>
+            <button id="resetStreetCarDefaultsBtn" class="admin-apply" type="button">Reset Street Car to Defaults</button>
           </section>
 
           <section class="admin-tab-content" id="panelLightTap" role="tabpanel" aria-labelledby="tabLightTap" aria-hidden="true">
@@ -388,6 +480,7 @@
                 <input id="adminDragonSpeedMaxL4" class="admin-task-input" type="number" min="40" max="600" step="5" />
               </article>
             </div>
+            <button id="resetDragonDefaultsBtn" class="admin-apply" type="button">Reset Dragon Dodge to Defaults</button>
           </section>
 
           <section class="admin-tab-content" id="panelFire" role="tabpanel" aria-labelledby="tabFire" aria-hidden="true">
@@ -433,6 +526,7 @@
                 <input id="adminFireFlameDurationL3" class="admin-task-input" type="number" min="0.3" max="6" step="0.05" />
               </article>
             </div>
+            <button id="resetFireDefaultsBtn" class="admin-apply" type="button">Reset Firefighter Rescue to Defaults</button>
           </section>
 
           <section class="admin-tab-content" id="panelMartian" role="tabpanel" aria-labelledby="tabMartian" aria-hidden="true">
@@ -472,6 +566,7 @@
                 <input id="adminMartianLiftSpeedL3" class="admin-task-input" type="number" min="40" max="600" step="5" />
               </article>
             </div>
+            <button id="resetMartianDefaultsBtn" class="admin-apply" type="button">Reset Martian Madness to Defaults</button>
           </section>
 
           <section class="admin-tab-content" id="panelAdvanced" role="tabpanel" aria-labelledby="tabAdvanced" aria-hidden="true">
@@ -547,6 +642,8 @@
               <p class="admin-panel-note">Use Fullscreen Trackpad for day-to-day changes, Maze for ghost tuning, Car Game for driving levels, and Jumping Jack for flame rain settings.</p>
               <p class="admin-panel-note">All values save to the same settings keys and shared API endpoint used before this redesign.</p>
             </article>
+
+            <button id="resetJackDefaultsBtn" class="admin-apply" type="button">Reset Jumping Jack to Defaults</button>
           </section>
 
           <div class="admin-task-actions admin-task-actions--sticky">

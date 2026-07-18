@@ -98,7 +98,15 @@ const mazeSummaryPill = document.getElementById("mazeSummaryPill");
 const tabButtons = Array.from(document.querySelectorAll(".admin-tab-button"));
 const tabPanels = Array.from(document.querySelectorAll(".admin-tab-content"));
 const applyPresetsBtn = document.getElementById("applyPresetsBtn");
+const resetMazeDefaultsBtn = document.getElementById("resetMazeDefaultsBtn");
+const resetCarGameDefaultsBtn = document.getElementById("resetCarGameDefaultsBtn");
+const resetStreetCarDefaultsBtn = document.getElementById("resetStreetCarDefaultsBtn");
 const resetLightTapDefaultsBtn = document.getElementById("resetLightTapDefaultsBtn");
+const resetDragonDefaultsBtn = document.getElementById("resetDragonDefaultsBtn");
+const resetFireDefaultsBtn = document.getElementById("resetFireDefaultsBtn");
+const resetMartianDefaultsBtn = document.getElementById("resetMartianDefaultsBtn");
+const resetJackDefaultsBtn = document.getElementById("resetJackDefaultsBtn");
+const resetFullscreenDefaultsBtn = document.getElementById("resetFullscreenDefaultsBtn");
 const saveTask1Btn = document.getElementById("saveTask1Btn");
 const task1SavedMessage = document.getElementById("task1SavedMessage");
 
@@ -960,6 +968,410 @@ function resetLightTapToDefaults() {
   showSavedMessage("Light Tap reset to defaults.");
 }
 
+function resetStreetCarToDefaults() {
+  const confirmed = window.confirm("Reset Street Car to default values? This only affects Street Car settings.");
+  if (!confirmed) {
+    return;
+  }
+
+  const defaultStreetCarLevels = normalizeStreetCarLevels(DEFAULT_MOVING_SOUND_CAR_LEVELS);
+  saveStoredStreetCarLevels(defaultStreetCarLevels);
+  applyGameLevelsToInputs(defaultStreetCarLevels, streetCarLevelInputs, {
+    spawnInterval: "spawnInterval",
+    targetColor: "targetColor",
+    timeLimit: "timeLimit",
+    carCount: "carCount",
+    missesAllowed: "missesAllowed",
+    goal: "goal",
+    speedMin: "speedMin",
+    speedMax: "speedMax",
+  });
+
+  setDirtyState(false);
+  updateQuickSummary();
+  showSavedMessage("Street Car reset to defaults.");
+}
+
+async function resetCarGameToDefaults() {
+  const confirmed = window.confirm("Reset Car Game to default values? This only affects Car Game settings.");
+  if (!confirmed) {
+    return;
+  }
+
+  const carRequireClickAndDrag = false;
+  const carGameLevelsEnabled = [true, true, true, true, true, true];
+  const carGameLevelObstacleSpeeds = [...DEFAULT_CAR_LEVEL_SPEEDS];
+  const carGameLevelMaxCars = [...DEFAULT_CAR_LEVEL_MAX_CARS];
+  const carGameLevelSurvivalSeconds = [...DEFAULT_CAR_LEVEL_SURVIVAL];
+  const carGameLevelGasPumpSpawnSeconds = [...DEFAULT_CAR_LEVEL_GAS_PUMP_SPAWN_SECONDS];
+  const carGameLevelFuelDrainPerSecond = [...DEFAULT_CAR_LEVEL_FUEL_DRAIN];
+
+  if (carRequireClickAndDragToggle) {
+    carRequireClickAndDragToggle.checked = carRequireClickAndDrag;
+  }
+
+  carGameLevelToggles.forEach((toggleEl, index) => {
+    if (toggleEl) {
+      toggleEl.checked = carGameLevelsEnabled[index];
+    }
+  });
+
+  carGameLevelSpeedInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(carGameLevelObstacleSpeeds[index]);
+    }
+  });
+
+  carGameLevelMaxCarsInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(carGameLevelMaxCars[index]);
+    }
+  });
+
+  carGameLevelSurvivalInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(carGameLevelSurvivalSeconds[index]);
+    }
+  });
+
+  carGameLevelGasPumpSpawnInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(carGameLevelGasPumpSpawnSeconds[index]);
+    }
+  });
+
+  carGameLevelFuelDrainInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(carGameLevelFuelDrainPerSecond[index]);
+    }
+  });
+
+  localStorage.setItem(CAR_REQUIRE_CLICK_AND_DRAG_KEY, String(carRequireClickAndDrag));
+  CAR_GAME_LEVEL_ENABLED_KEYS.forEach((key, index) => {
+    localStorage.setItem(key, String(carGameLevelsEnabled[index]));
+  });
+  CAR_GAME_LEVEL_SPEED_KEYS.forEach((key, index) => {
+    localStorage.setItem(key, String(carGameLevelObstacleSpeeds[index]));
+  });
+  CAR_GAME_LEVEL_MAX_CARS_KEYS.forEach((key, index) => {
+    localStorage.setItem(key, String(carGameLevelMaxCars[index]));
+  });
+  CAR_GAME_LEVEL_SURVIVAL_KEYS.forEach((key, index) => {
+    localStorage.setItem(key, String(carGameLevelSurvivalSeconds[index]));
+  });
+  CAR_LEVEL_GAS_PUMP_SPAWN_SECONDS_KEYS.forEach((key, index) => {
+    localStorage.setItem(key, String(carGameLevelGasPumpSpawnSeconds[index]));
+  });
+  CAR_LEVEL_FUEL_DRAIN_KEYS.forEach((key, index) => {
+    localStorage.setItem(key, String(carGameLevelFuelDrainPerSecond[index]));
+  });
+
+  try {
+    const response = await fetch(SETTINGS_API_PATH, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        carRequireClickAndDrag,
+        carGameLevelsEnabled,
+        carGameLevelObstacleSpeeds,
+        carGameLevelMaxCars,
+        carGameLevelSurvivalSeconds,
+        carGameLevelGasPumpSpawnSeconds,
+        carGameLevelFuelDrainPerSecond,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to save Car Game settings.");
+    }
+
+    showSavedMessage("Car Game reset to defaults.");
+  } catch {
+    showSavedMessage("Car Game reset on this device only (server unavailable).");
+  }
+
+  setDirtyState(false);
+  updateQuickSummary();
+}
+
+async function resetMazeToDefaults() {
+  const confirmed = window.confirm("Reset Maze to default values? This only affects Maze settings.");
+  if (!confirmed) {
+    return;
+  }
+
+  const mazeRequireClickAndDrag = false;
+  const mazeGhostLevelsEnabled = [true, true, true, true, true, true];
+  const mazeGhostLevelsPerLevelCounts = [...DEFAULT_MAZE_GHOST_LEVEL_COUNTS];
+
+  if (mazeRequireClickAndDragToggle) {
+    mazeRequireClickAndDragToggle.checked = mazeRequireClickAndDrag;
+  }
+
+  mazeGhostLevelToggles.forEach((toggleEl, index) => {
+    if (toggleEl) {
+      toggleEl.checked = mazeGhostLevelsEnabled[index];
+    }
+  });
+
+  mazeGhostLevelCountInputs.forEach((inputEl, index) => {
+    if (inputEl) {
+      inputEl.value = String(mazeGhostLevelsPerLevelCounts[index]);
+    }
+  });
+
+  localStorage.setItem(MAZE_REQUIRE_CLICK_AND_DRAG_KEY, String(mazeRequireClickAndDrag));
+  MAZE_GHOST_LEVEL_ENABLED_KEYS.forEach((key, index) => {
+    localStorage.setItem(key, String(mazeGhostLevelsEnabled[index]));
+  });
+  MAZE_GHOST_LEVEL_COUNT_KEYS.forEach((key, index) => {
+    localStorage.setItem(key, String(mazeGhostLevelsPerLevelCounts[index]));
+  });
+
+  try {
+    const response = await fetch(SETTINGS_API_PATH, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        mazeRequireClickAndDrag,
+        mazeGhostLevelsEnabled,
+        mazeGhostLevelsPerLevelCounts,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to save Maze settings.");
+    }
+
+    showSavedMessage("Maze reset to defaults.");
+  } catch {
+    showSavedMessage("Maze reset on this device only (server unavailable).");
+  }
+
+  setDirtyState(false);
+  updateQuickSummary();
+}
+
+async function resetFullscreenToDefaults() {
+  const confirmed = window.confirm("Reset Fullscreen Trackpad to default values? This only affects Fullscreen Trackpad settings.");
+  if (!confirmed) {
+    return;
+  }
+
+  const task1RequiredSeconds = DEFAULT_TASK1_SECONDS;
+  const task1Enabled = true;
+  const task2RequiredClicks = DEFAULT_TASK2_CLICKS;
+  const task2Enabled = true;
+  const task3RequiredDragSeconds = DEFAULT_TASK3_DRAG_SECONDS;
+  const task3Enabled = true;
+  const fullscreenRequireClickAndDrag = false;
+  const fullscreenGameActive = true;
+  const soundEnabled = true;
+  const trainingPaused = false;
+
+  task1DurationInput.value = String(task1RequiredSeconds);
+  task1EnabledToggle.checked = task1Enabled;
+  task2ClicksInput.value = String(task2RequiredClicks);
+  task2EnabledToggle.checked = task2Enabled;
+  task3DragSecondsInput.value = String(task3RequiredDragSeconds);
+  task3EnabledToggle.checked = task3Enabled;
+  if (fullscreenRequireClickAndDragToggle) {
+    fullscreenRequireClickAndDragToggle.checked = fullscreenRequireClickAndDrag;
+  }
+  if (fullscreenGameActiveToggle) {
+    fullscreenGameActiveToggle.checked = fullscreenGameActive;
+  }
+  if (soundEnabledToggle) {
+    soundEnabledToggle.checked = soundEnabled;
+  }
+  if (trainingPausedToggle) {
+    trainingPausedToggle.checked = trainingPaused;
+  }
+
+  localStorage.setItem(TASK1_STORAGE_KEY, String(task1RequiredSeconds));
+  localStorage.setItem(TASK1_ENABLED_KEY, String(task1Enabled));
+  localStorage.setItem(TASK2_STORAGE_KEY, String(task2RequiredClicks));
+  localStorage.setItem(TASK2_ENABLED_KEY, String(task2Enabled));
+  localStorage.setItem(TASK3_STORAGE_KEY, String(task3RequiredDragSeconds));
+  localStorage.setItem(TASK3_ENABLED_KEY, String(task3Enabled));
+  localStorage.setItem(FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY, String(fullscreenRequireClickAndDrag));
+  localStorage.setItem(FULLSCREEN_GAME_ACTIVE_KEY, String(fullscreenGameActive));
+  localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
+  localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
+
+  try {
+    const response = await fetch(SETTINGS_API_PATH, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        task1RequiredSeconds,
+        task1Enabled,
+        task2RequiredClicks,
+        task2Enabled,
+        task3RequiredDragSeconds,
+        task3Enabled,
+        fullscreenRequireClickAndDrag,
+        fullscreenGameActive,
+        soundEnabled,
+        trainingPaused,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to save Fullscreen Trackpad settings.");
+    }
+
+    showSavedMessage("Fullscreen Trackpad reset to defaults.");
+  } catch {
+    showSavedMessage("Fullscreen Trackpad reset on this device only (server unavailable).");
+  }
+
+  setDirtyState(false);
+  updateQuickSummary();
+}
+
+async function resetJackToDefaults() {
+  const confirmed = window.confirm("Reset Jumping Jack to default values? This only affects Jumping Jack settings.");
+  if (!confirmed) {
+    return;
+  }
+
+  const jackRequireClickAndDrag = false;
+  const jackFlameRainDefaults = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL.map((defaults) => ({ ...defaults }));
+
+  if (jackRequireClickAndDragToggle) {
+    jackRequireClickAndDragToggle.checked = jackRequireClickAndDrag;
+  }
+
+  jackFlameRainInputs.forEach((inputs, index) => {
+    const defaults = jackFlameRainDefaults[index];
+    if (!defaults) {
+      return;
+    }
+
+    if (inputs.enabled) inputs.enabled.checked = defaults.enabled;
+    if (inputs.size) inputs.size.value = String(defaults.size);
+    if (inputs.hitRadius) inputs.hitRadius.value = String(defaults.hitRadius);
+    if (inputs.burstMin) inputs.burstMin.value = String(defaults.burstMin);
+    if (inputs.burstMax) inputs.burstMax.value = String(defaults.burstMax);
+    if (inputs.intervalMin) inputs.intervalMin.value = String(defaults.intervalMin);
+    if (inputs.intervalMax) inputs.intervalMax.value = String(defaults.intervalMax);
+    if (inputs.speedMin) inputs.speedMin.value = String(defaults.speedMin);
+    if (inputs.speedMax) inputs.speedMax.value = String(defaults.speedMax);
+  });
+
+  localStorage.setItem(JACK_REQUIRE_CLICK_AND_DRAG_KEY, String(jackRequireClickAndDrag));
+  [4, 5, 6].forEach((level, idx) => {
+    const keys = JACK_FLAME_RAIN_KEYS[idx];
+    const defaults = jackFlameRainDefaults[idx];
+    localStorage.setItem(keys.enabled, String(defaults.enabled));
+    localStorage.setItem(keys.size, String(defaults.size));
+    localStorage.setItem(keys.hitRadius, String(defaults.hitRadius));
+    localStorage.setItem(keys.burstMin, String(defaults.burstMin));
+    localStorage.setItem(keys.burstMax, String(defaults.burstMax));
+    localStorage.setItem(keys.intervalMin, String(defaults.intervalMin));
+    localStorage.setItem(keys.intervalMax, String(defaults.intervalMax));
+    localStorage.setItem(keys.speedMin, String(defaults.speedMin));
+    localStorage.setItem(keys.speedMax, String(defaults.speedMax));
+  });
+
+  try {
+    const response = await fetch(SETTINGS_API_PATH, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        jackRequireClickAndDrag,
+        jackFlameRain4: jackFlameRainDefaults[0],
+        jackFlameRain5: jackFlameRainDefaults[1],
+        jackFlameRain6: jackFlameRainDefaults[2],
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to save Jumping Jack settings.");
+    }
+
+    showSavedMessage("Jumping Jack reset to defaults.");
+  } catch {
+    showSavedMessage("Jumping Jack reset on this device only (server unavailable).");
+  }
+
+  setDirtyState(false);
+  updateQuickSummary();
+}
+
+function resetDragonToDefaults() {
+  const confirmed = window.confirm("Reset Dragon Dodge to default values? This only affects Dragon Dodge settings.");
+  if (!confirmed) {
+    return;
+  }
+
+  const defaultDragonLevels = normalizeDragonLevels(DEFAULT_MOVING_SOUND_DRAGON_LEVELS);
+  saveStoredDragonLevels(defaultDragonLevels);
+  applyGameLevelsToInputs(defaultDragonLevels, dragonLevelInputs, {
+    dragonCount: "dragonCount",
+    timeLimit: "timeLimit",
+    missesAllowed: "missesAllowed",
+    goal: "goal",
+    fireDurationSeconds: "fireDurationSeconds",
+    speedMin: "speedMin",
+    speedMax: "speedMax",
+  });
+
+  setDirtyState(false);
+  updateQuickSummary();
+  showSavedMessage("Dragon Dodge reset to defaults.");
+}
+
+function resetFireToDefaults() {
+  const confirmed = window.confirm("Reset Firefighter Rescue to default values? This only affects Firefighter Rescue settings.");
+  if (!confirmed) {
+    return;
+  }
+
+  const defaultFireLevels = normalizeFireLevels(DEFAULT_MOVING_SOUND_FIRE_LEVELS);
+  saveStoredFireLevels(defaultFireLevels);
+  applyGameLevelsToInputs(defaultFireLevels, fireLevelInputs, {
+    timeLimit: "timeLimit",
+    missesAllowed: "missesAllowed",
+    goal: "goal",
+    spawnIntervalSeconds: "spawnIntervalSeconds",
+    flameDurationSeconds: "flameDurationSeconds",
+  });
+
+  setDirtyState(false);
+  updateQuickSummary();
+  showSavedMessage("Firefighter Rescue reset to defaults.");
+}
+
+function resetMartianToDefaults() {
+  const confirmed = window.confirm("Reset Martian Madness to default values? This only affects Martian Madness settings.");
+  if (!confirmed) {
+    return;
+  }
+
+  const defaultMartianLevels = normalizeMartianLevels(DEFAULT_MOVING_SOUND_MARTIAN_LEVELS);
+  saveStoredMartianLevels(defaultMartianLevels);
+  applyGameLevelsToInputs(defaultMartianLevels, martianLevelInputs, {
+    peopleCount: "peopleCount",
+    ufoCount: "ufoCount",
+    ufoSpeed: "ufoSpeed",
+    liftSpeed: "liftSpeed",
+  });
+
+  setDirtyState(false);
+  updateQuickSummary();
+  showSavedMessage("Martian Madness reset to defaults.");
+}
+
 async function loadTask1Settings() {
   let task1Seconds = parseTask1Seconds(localStorage.getItem(TASK1_STORAGE_KEY));
   let task1Enabled = parseTaskEnabled(localStorage.getItem(TASK1_ENABLED_KEY), true);
@@ -1616,8 +2028,32 @@ initTabs();
 if (applyPresetsBtn) {
   applyPresetsBtn.addEventListener("click", applyProgressivePresets);
 }
+if (resetMazeDefaultsBtn) {
+  resetMazeDefaultsBtn.addEventListener("click", resetMazeToDefaults);
+}
+if (resetCarGameDefaultsBtn) {
+  resetCarGameDefaultsBtn.addEventListener("click", resetCarGameToDefaults);
+}
+if (resetStreetCarDefaultsBtn) {
+  resetStreetCarDefaultsBtn.addEventListener("click", resetStreetCarToDefaults);
+}
 if (resetLightTapDefaultsBtn) {
   resetLightTapDefaultsBtn.addEventListener("click", resetLightTapToDefaults);
+}
+if (resetDragonDefaultsBtn) {
+  resetDragonDefaultsBtn.addEventListener("click", resetDragonToDefaults);
+}
+if (resetFireDefaultsBtn) {
+  resetFireDefaultsBtn.addEventListener("click", resetFireToDefaults);
+}
+if (resetMartianDefaultsBtn) {
+  resetMartianDefaultsBtn.addEventListener("click", resetMartianToDefaults);
+}
+if (resetJackDefaultsBtn) {
+  resetJackDefaultsBtn.addEventListener("click", resetJackToDefaults);
+}
+if (resetFullscreenDefaultsBtn) {
+  resetFullscreenDefaultsBtn.addEventListener("click", resetFullscreenToDefaults);
 }
 saveTask1Btn.addEventListener("click", saveTask1Settings);
 
