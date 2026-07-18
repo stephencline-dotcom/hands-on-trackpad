@@ -26,37 +26,93 @@
             </div>
           </header>
 
+          <section class="admin-availability-section" aria-label="Activity availability">
+            <article class="admin-mini-card admin-mini-card--wide admin-mini-card--availability">
+              <h3>Activity Availability</h3>
+              <p class="admin-panel-note">Choose which activities appear to students on the home screen.</p>
+              <div class="admin-inline-toggles admin-inline-toggles--availability">
+                <label class="admin-toggle-row" for="fullscreenGameActiveToggle">
+                  <input id="fullscreenGameActiveToggle" type="checkbox" checked />
+                  <span>Fullscreen Trackpad is active</span>
+                </label>
+                <label class="admin-toggle-row" for="mazeGameActiveToggle">
+                  <input id="mazeGameActiveToggle" type="checkbox" checked />
+                  <span>Maze Game is active</span>
+                </label>
+                <label class="admin-toggle-row" for="carGameActiveToggle">
+                  <input id="carGameActiveToggle" type="checkbox" checked />
+                  <span>Car Game is active</span>
+                </label>
+                <label class="admin-toggle-row" for="jackGameActiveToggle">
+                  <input id="jackGameActiveToggle" type="checkbox" checked />
+                  <span>Jumping Jack is active</span>
+                </label>
+                <label class="admin-toggle-row" for="lightGameActive">
+                  <input id="lightGameActive" type="checkbox" checked />
+                  <span>Light Tap Game is active</span>
+                </label>
+                <label class="admin-toggle-row" for="streetCarGameActive">
+                  <input id="streetCarGameActive" type="checkbox" checked />
+                  <span>Street Car Game is active</span>
+                </label>
+                <label class="admin-toggle-row" for="dragonDodgeGameActive">
+                  <input id="dragonDodgeGameActive" type="checkbox" checked />
+                  <span>Dragon Dodge is active</span>
+                </label>
+                <label class="admin-toggle-row" for="firefighterRescueGameActive">
+                  <input id="firefighterRescueGameActive" type="checkbox" checked />
+                  <span>Firefighter Rescue is active</span>
+                </label>
+                <label class="admin-toggle-row" for="martianMadnessGameActive">
+                  <input id="martianMadnessGameActive" type="checkbox" checked />
+                  <span>Martian Madness is active</span>
+                </label>
+              </div>
+            </article>
+          </section>
+
           <nav class="admin-tabs" aria-label="Settings sections">
-            <button class="admin-tab-button" type="button" role="tab" id="tabQuick" aria-controls="panelQuick" aria-selected="true" data-tab="quick">
-              Fullscreen Trackpad
-            </button>
-            <button class="admin-tab-button" type="button" role="tab" id="tabMaze" aria-controls="panelMaze" aria-selected="false" data-tab="maze">
-              Maze
-            </button>
-            <button class="admin-tab-button" type="button" role="tab" id="tabCar" aria-controls="panelCar" aria-selected="false" data-tab="car">
-              Car Game
-            </button>
-            <button class="admin-tab-button" type="button" role="tab" id="tabStreetCar" aria-controls="panelStreetCar" aria-selected="false" data-tab="streetcar">
-              Street Car Game
-            </button>
-            <button class="admin-tab-button" type="button" role="tab" id="tabLightTap" aria-controls="panelLightTap" aria-selected="false" data-tab="lighttap">
-              Light Tap Game
-            </button>
-            <button class="admin-tab-button" type="button" role="tab" id="tabDragon" aria-controls="panelDragon" aria-selected="false" data-tab="dragon">
-              Dragon Dodge
-            </button>
-            <button class="admin-tab-button" type="button" role="tab" id="tabFire" aria-controls="panelFire" aria-selected="false" data-tab="fire">
-              Firefighter Rescue
-            </button>
-            <button class="admin-tab-button" type="button" role="tab" id="tabMartian" aria-controls="panelMartian" aria-selected="false" data-tab="martian">
-              Martian Madness
-            </button>
-            <button class="admin-tab-button" type="button" role="tab" id="tabAdvanced" aria-controls="panelAdvanced" aria-selected="false" data-tab="advanced">
-              Jumping Jack
-            </button>
+            <section class="admin-tab-group" aria-label="Original activities">
+              <h3 class="admin-tab-group-title">Original Activities</h3>
+              <div class="admin-tab-group-buttons" role="tablist" aria-label="Original activities settings">
+                <button class="admin-tab-button" type="button" role="tab" id="tabQuick" aria-controls="panelQuick" aria-selected="false" data-tab="quick">
+                  Fullscreen Trackpad
+                </button>
+                <button class="admin-tab-button" type="button" role="tab" id="tabMaze" aria-controls="panelMaze" aria-selected="false" data-tab="maze">
+                  Maze
+                </button>
+                <button class="admin-tab-button" type="button" role="tab" id="tabCar" aria-controls="panelCar" aria-selected="false" data-tab="car">
+                  Car Game
+                </button>
+                <button class="admin-tab-button" type="button" role="tab" id="tabAdvanced" aria-controls="panelAdvanced" aria-selected="false" data-tab="advanced">
+                  Jumping Jack
+                </button>
+              </div>
+            </section>
+
+            <section class="admin-tab-group" aria-label="Imported games">
+              <h3 class="admin-tab-group-title">Imported Games</h3>
+              <div class="admin-tab-group-buttons" role="tablist" aria-label="Imported games settings">
+                <button class="admin-tab-button" type="button" role="tab" id="tabLightTap" aria-controls="panelLightTap" aria-selected="false" data-tab="lighttap">
+                  Light Tap Game
+                </button>
+                <button class="admin-tab-button" type="button" role="tab" id="tabStreetCar" aria-controls="panelStreetCar" aria-selected="false" data-tab="streetcar">
+                  Street Car Game
+                </button>
+                <button class="admin-tab-button" type="button" role="tab" id="tabDragon" aria-controls="panelDragon" aria-selected="false" data-tab="dragon">
+                  Dragon Dodge
+                </button>
+                <button class="admin-tab-button" type="button" role="tab" id="tabFire" aria-controls="panelFire" aria-selected="false" data-tab="fire">
+                  Firefighter Rescue
+                </button>
+                <button class="admin-tab-button" type="button" role="tab" id="tabMartian" aria-controls="panelMartian" aria-selected="false" data-tab="martian">
+                  Martian Madness
+                </button>
+              </div>
+            </section>
           </nav>
 
-          <section class="admin-tab-content" id="panelQuick" role="tabpanel" aria-labelledby="tabQuick" aria-hidden="false">
+          <section class="admin-tab-content" id="panelQuick" role="tabpanel" aria-labelledby="tabQuick" aria-hidden="true">
             <div class="admin-form-grid admin-form-grid--three">
               <article class="admin-mini-card">
                 <h3>Task 1: Slide Finger</h3>
@@ -110,49 +166,7 @@
               </div>
             </article>
 
-            <article class="admin-mini-card admin-mini-card--wide">
-              <h3>Activity Availability</h3>
-              <div class="admin-inline-toggles">
-                <label class="admin-toggle-row" for="fullscreenGameActiveToggle">
-                  <input id="fullscreenGameActiveToggle" type="checkbox" checked />
-                  <span>Fullscreen Trackpad is active</span>
-                </label>
-                <label class="admin-toggle-row" for="mazeGameActiveToggle">
-                  <input id="mazeGameActiveToggle" type="checkbox" checked />
-                  <span>Maze Game is active</span>
-                </label>
-                <label class="admin-toggle-row" for="carGameActiveToggle">
-                  <input id="carGameActiveToggle" type="checkbox" checked />
-                  <span>Car Game is active</span>
-                </label>
-                <label class="admin-toggle-row" for="jackGameActiveToggle">
-                  <input id="jackGameActiveToggle" type="checkbox" checked />
-                  <span>Jumping Jack is active</span>
-                </label>
-                <label class="admin-toggle-row" for="lightGameActive">
-                  <input id="lightGameActive" type="checkbox" checked />
-                  <span>Light Tap Game is active</span>
-                </label>
-                <label class="admin-toggle-row" for="streetCarGameActive">
-                  <input id="streetCarGameActive" type="checkbox" checked />
-                  <span>Street Car Game is active</span>
-                </label>
-                <label class="admin-toggle-row" for="dragonDodgeGameActive">
-                  <input id="dragonDodgeGameActive" type="checkbox" checked />
-                  <span>Dragon Dodge is active</span>
-                </label>
-                <label class="admin-toggle-row" for="firefighterRescueGameActive">
-                  <input id="firefighterRescueGameActive" type="checkbox" checked />
-                  <span>Firefighter Rescue is active</span>
-                </label>
-                <label class="admin-toggle-row" for="martianMadnessGameActive">
-                  <input id="martianMadnessGameActive" type="checkbox" checked />
-                  <span>Martian Madness is active</span>
-                </label>
-              </div>
-            </article>
-
-            <button id="resetFullscreenDefaultsBtn" class="admin-apply" type="button">Reset Fullscreen Trackpad to Defaults</button>
+            <button id="resetFullscreenDefaultsBtn" class="admin-apply admin-reset-action" type="button">Reset Fullscreen Trackpad to Defaults</button>
           </section>
 
           <section class="admin-tab-content" id="panelMaze" role="tabpanel" aria-labelledby="tabMaze" aria-hidden="true">
@@ -204,7 +218,7 @@
                 <input id="mazeGhostLevel6Count" class="admin-task-input" type="number" min="0" max="6" step="1" />
               </article>
             </div>
-            <button id="resetMazeDefaultsBtn" class="admin-apply" type="button">Reset Maze to Defaults</button>
+            <button id="resetMazeDefaultsBtn" class="admin-apply admin-reset-action" type="button">Reset Maze to Defaults</button>
           </section>
 
           <section class="admin-tab-content" id="panelCar" role="tabpanel" aria-labelledby="tabCar" aria-hidden="true">
@@ -286,7 +300,7 @@
                 </div>
               </article>
             </div>
-            <button id="resetCarGameDefaultsBtn" class="admin-apply" type="button">Reset Car Game to Defaults</button>
+            <button id="resetCarGameDefaultsBtn" class="admin-apply admin-reset-action" type="button">Reset Car Game to Defaults</button>
           </section>
 
           <section class="admin-tab-content" id="panelStreetCar" role="tabpanel" aria-labelledby="tabStreetCar" aria-hidden="true">
@@ -371,7 +385,7 @@
                 <input id="adminCarSpeedMaxL3" class="admin-task-input" type="number" min="40" max="600" step="5" />
               </article>
             </div>
-            <button id="resetStreetCarDefaultsBtn" class="admin-apply" type="button">Reset Street Car to Defaults</button>
+            <button id="resetStreetCarDefaultsBtn" class="admin-apply admin-reset-action" type="button">Reset Street Car to Defaults</button>
           </section>
 
           <section class="admin-tab-content" id="panelLightTap" role="tabpanel" aria-labelledby="tabLightTap" aria-hidden="true">
@@ -405,7 +419,7 @@
                 <input id="adminGoalL3" class="admin-task-input" type="number" min="1" max="200" step="1" />
               </article>
             </div>
-            <button id="resetLightTapDefaultsBtn" class="admin-apply" type="button">Reset Light Tap to Defaults</button>
+            <button id="resetLightTapDefaultsBtn" class="admin-apply admin-reset-action" type="button">Reset Light Tap to Defaults</button>
           </section>
 
           <section class="admin-tab-content" id="panelDragon" role="tabpanel" aria-labelledby="tabDragon" aria-hidden="true">
@@ -480,7 +494,7 @@
                 <input id="adminDragonSpeedMaxL4" class="admin-task-input" type="number" min="40" max="600" step="5" />
               </article>
             </div>
-            <button id="resetDragonDefaultsBtn" class="admin-apply" type="button">Reset Dragon Dodge to Defaults</button>
+            <button id="resetDragonDefaultsBtn" class="admin-apply admin-reset-action" type="button">Reset Dragon Dodge to Defaults</button>
           </section>
 
           <section class="admin-tab-content" id="panelFire" role="tabpanel" aria-labelledby="tabFire" aria-hidden="true">
@@ -526,7 +540,7 @@
                 <input id="adminFireFlameDurationL3" class="admin-task-input" type="number" min="0.3" max="6" step="0.05" />
               </article>
             </div>
-            <button id="resetFireDefaultsBtn" class="admin-apply" type="button">Reset Firefighter Rescue to Defaults</button>
+            <button id="resetFireDefaultsBtn" class="admin-apply admin-reset-action" type="button">Reset Firefighter Rescue to Defaults</button>
           </section>
 
           <section class="admin-tab-content" id="panelMartian" role="tabpanel" aria-labelledby="tabMartian" aria-hidden="true">
@@ -566,7 +580,7 @@
                 <input id="adminMartianLiftSpeedL3" class="admin-task-input" type="number" min="40" max="600" step="5" />
               </article>
             </div>
-            <button id="resetMartianDefaultsBtn" class="admin-apply" type="button">Reset Martian Madness to Defaults</button>
+            <button id="resetMartianDefaultsBtn" class="admin-apply admin-reset-action" type="button">Reset Martian Madness to Defaults</button>
           </section>
 
           <section class="admin-tab-content" id="panelAdvanced" role="tabpanel" aria-labelledby="tabAdvanced" aria-hidden="true">
@@ -643,19 +657,17 @@
               <p class="admin-panel-note">All values save to the same settings keys and shared API endpoint used before this redesign.</p>
             </article>
 
-            <button id="resetJackDefaultsBtn" class="admin-apply" type="button">Reset Jumping Jack to Defaults</button>
+            <button id="resetJackDefaultsBtn" class="admin-apply admin-reset-action" type="button">Reset Jumping Jack to Defaults</button>
           </section>
 
           <div class="admin-task-actions admin-task-actions--sticky">
             <button id="applyPresetsBtn" class="admin-task-open" type="button">Apply Progressive Presets</button>
             <button id="saveTask1Btn" class="admin-task-save" type="button">Save Settings</button>
-            <a class="admin-task-open" href="trackpad-fullscreen.html">Open Fullscreen Trackpad</a>
+            <a class="admin-back-home" href="index.html" aria-label="Back to home">Back To Home</a>
           </div>
 
           <p id="task1SavedMessage" class="admin-task-message" hidden>Settings saved.</p>
         </section>
-
-        <a class="admin-back-home" href="index.html" aria-label="Back to home">Back To Home</a>
       </section>
     </main>
     <script src="admin-settings.js"></script>

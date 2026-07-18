@@ -279,7 +279,6 @@ const DEFAULT_JACK_FLAME_RAIN_BY_LEVEL = [
   },
 ];
 const SETTINGS_API_PATH = "/api/settings";
-const ACTIVE_TAB_STORAGE_KEY = "adminSettingsActiveTab";
 
 function setDirtyState(isDirty) {
   if (!adminTaskCard) {
@@ -310,18 +309,18 @@ function updateQuickSummary() {
 }
 
 function setActiveTab(nextTabName) {
+  const normalizedTabName = typeof nextTabName === "string" ? nextTabName : "";
+
   tabButtons.forEach((button) => {
-    const isActive = button.dataset.tab === nextTabName;
+    const isActive = normalizedTabName.length > 0 && button.dataset.tab === normalizedTabName;
     button.setAttribute("aria-selected", isActive ? "true" : "false");
     button.tabIndex = isActive ? 0 : -1;
   });
 
   tabPanels.forEach((panel) => {
     const panelTabName = panel.id.replace("panel", "").toLowerCase();
-    panel.setAttribute("aria-hidden", panelTabName === nextTabName ? "false" : "true");
+    panel.setAttribute("aria-hidden", normalizedTabName.length > 0 && panelTabName === normalizedTabName ? "false" : "true");
   });
-
-  sessionStorage.setItem(ACTIVE_TAB_STORAGE_KEY, nextTabName);
 }
 
 function initTabs() {
@@ -331,7 +330,7 @@ function initTabs() {
 
   tabButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      setActiveTab(button.dataset.tab || "quick");
+      setActiveTab(button.dataset.tab || "");
     });
 
     button.addEventListener("keydown", (event) => {
@@ -345,14 +344,11 @@ function initTabs() {
       const nextIndex = (currentIndex + direction + tabButtons.length) % tabButtons.length;
       const nextButton = tabButtons[nextIndex];
       nextButton.focus();
-      setActiveTab(nextButton.dataset.tab || "quick");
+      setActiveTab(nextButton.dataset.tab || "");
     });
   });
 
-  const savedTab = sessionStorage.getItem(ACTIVE_TAB_STORAGE_KEY);
-  const allowedTabs = new Set(tabButtons.map((button) => button.dataset.tab));
-  const initialTab = allowedTabs.has(savedTab) ? savedTab : "quick";
-  setActiveTab(initialTab);
+  setActiveTab("");
 }
 
 function parseTask1Seconds(value) {
