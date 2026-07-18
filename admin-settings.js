@@ -98,6 +98,7 @@ const mazeSummaryPill = document.getElementById("mazeSummaryPill");
 const tabButtons = Array.from(document.querySelectorAll(".admin-tab-button"));
 const tabPanels = Array.from(document.querySelectorAll(".admin-tab-content"));
 const applyPresetsBtn = document.getElementById("applyPresetsBtn");
+const resetLightTapDefaultsBtn = document.getElementById("resetLightTapDefaultsBtn");
 const saveTask1Btn = document.getElementById("saveTask1Btn");
 const task1SavedMessage = document.getElementById("task1SavedMessage");
 
@@ -940,6 +941,25 @@ function applyProgressivePresets() {
   showSavedMessage("Progressive presets applied. Click Save Settings to publish.");
 }
 
+function resetLightTapToDefaults() {
+  const confirmed = window.confirm("Reset Light Tap to default values? This only affects Light Tap settings.");
+  if (!confirmed) {
+    return;
+  }
+
+  const defaultLightTapLevels = normalizeLightTapLevels(DEFAULT_LIGHT_TAP_LEVELS);
+  saveStoredLightTapLevels(defaultLightTapLevels);
+  applyGameLevelsToInputs(defaultLightTapLevels, lightTapLevelInputs, {
+    lives: "lives",
+    time: "time",
+    goal: "goal",
+  });
+
+  setDirtyState(false);
+  updateQuickSummary();
+  showSavedMessage("Light Tap reset to defaults.");
+}
+
 async function loadTask1Settings() {
   let task1Seconds = parseTask1Seconds(localStorage.getItem(TASK1_STORAGE_KEY));
   let task1Enabled = parseTaskEnabled(localStorage.getItem(TASK1_ENABLED_KEY), true);
@@ -1595,6 +1615,9 @@ async function saveTask1Settings() {
 initTabs();
 if (applyPresetsBtn) {
   applyPresetsBtn.addEventListener("click", applyProgressivePresets);
+}
+if (resetLightTapDefaultsBtn) {
+  resetLightTapDefaultsBtn.addEventListener("click", resetLightTapToDefaults);
 }
 saveTask1Btn.addEventListener("click", saveTask1Settings);
 
