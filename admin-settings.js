@@ -85,6 +85,12 @@ const fireLevelInputs = [1, 2, 3].map((level) => ({
   spawnIntervalSeconds: document.getElementById(`adminFireSpawnIntervalL${level}`),
   flameDurationSeconds: document.getElementById(`adminFireFlameDurationL${level}`),
 }));
+const martianLevelInputs = [1, 2, 3].map((level) => ({
+  peopleCount: document.getElementById(`adminMartianPeopleCountL${level}`),
+  ufoCount: document.getElementById(`adminMartianUfoCountL${level}`),
+  ufoSpeed: document.getElementById(`adminMartianUfoSpeedL${level}`),
+  liftSpeed: document.getElementById(`adminMartianLiftSpeedL${level}`),
+}));
 const adminTaskCard = document.querySelector(".admin-task-card");
 const taskSummaryPill = document.getElementById("taskSummaryPill");
 const carSummaryPill = document.getElementById("carSummaryPill");
@@ -222,6 +228,11 @@ const DEFAULT_MOVING_SOUND_FIRE_LEVELS = [
   { timeLimit: 30, missesAllowed: 3, goal: 8, spawnIntervalSeconds: 0.85, flameDurationSeconds: 1.58, helpSpawnChance: 0.3 },
   { timeLimit: 26, missesAllowed: 3, goal: 11, spawnIntervalSeconds: 0.72, flameDurationSeconds: 1.35, helpSpawnChance: 0.33 },
   { timeLimit: 22, missesAllowed: 3, goal: 14, spawnIntervalSeconds: 0.62, flameDurationSeconds: 1.15, helpSpawnChance: 0.36 },
+];
+const DEFAULT_MOVING_SOUND_MARTIAN_LEVELS = [
+  { timeLimit: 30, missesAllowed: 3, goal: 6, peopleCount: 6, ufoCount: 1, walkerSpeedMin: 42, walkerSpeedMax: 68, ufoSpeed: 72, liftSpeed: 124 },
+  { timeLimit: 26, missesAllowed: 3, goal: 9, peopleCount: 7, ufoCount: 2, walkerSpeedMin: 54, walkerSpeedMax: 82, ufoSpeed: 86, liftSpeed: 146 },
+  { timeLimit: 22, missesAllowed: 4, goal: 12, peopleCount: 8, ufoCount: 3, walkerSpeedMin: 66, walkerSpeedMax: 96, ufoSpeed: 102, liftSpeed: 168 },
 ];
 const DEFAULT_JACK_FLAME_RAIN_BY_LEVEL = [
   {
@@ -635,6 +646,10 @@ function ensureMovingSoundSettingsShape(existingSettings) {
     next.fireLevels = JSON.parse(JSON.stringify(DEFAULT_MOVING_SOUND_FIRE_LEVELS));
   }
 
+  if (!Array.isArray(next.martianLevels) || next.martianLevels.length < 3) {
+    next.martianLevels = JSON.parse(JSON.stringify(DEFAULT_MOVING_SOUND_MARTIAN_LEVELS));
+  }
+
   return next;
 }
 
@@ -758,6 +773,22 @@ function normalizeFireLevels(levels) {
   });
 }
 
+function normalizeMartianLevels(levels) {
+  return normalizeLevelArray(levels, DEFAULT_MOVING_SOUND_MARTIAN_LEVELS, (level, defaults) => {
+    return {
+      timeLimit: parseLightTapLevelValue(level.timeLimit, 10, 300, defaults.timeLimit),
+      missesAllowed: parseLightTapLevelValue(level.missesAllowed, 1, 20, defaults.missesAllowed),
+      goal: parseLightTapLevelValue(level.goal, 1, 200, defaults.goal),
+      peopleCount: parseLightTapLevelValue(level.peopleCount, 1, 9, defaults.peopleCount),
+      ufoCount: parseLightTapLevelValue(level.ufoCount, 1, 12, defaults.ufoCount),
+      walkerSpeedMin: parseLightTapLevelValue(level.walkerSpeedMin, 10, 300, defaults.walkerSpeedMin),
+      walkerSpeedMax: parseLightTapLevelValue(level.walkerSpeedMax, 10, 400, defaults.walkerSpeedMax),
+      ufoSpeed: parseLightTapLevelValue(level.ufoSpeed, 20, 300, defaults.ufoSpeed),
+      liftSpeed: parseLightTapLevelValue(level.liftSpeed, 40, 600, defaults.liftSpeed),
+    };
+  });
+}
+
 function loadStoredLightTapLevels() {
   return loadGameLevelsFromStorage("arenaLevels", DEFAULT_LIGHT_TAP_LEVELS, normalizeLightTapLevels);
 }
@@ -772,6 +803,10 @@ function loadStoredDragonLevels() {
 
 function loadStoredFireLevels() {
   return loadGameLevelsFromStorage("fireLevels", DEFAULT_MOVING_SOUND_FIRE_LEVELS, normalizeFireLevels);
+}
+
+function loadStoredMartianLevels() {
+  return loadGameLevelsFromStorage("martianLevels", DEFAULT_MOVING_SOUND_MARTIAN_LEVELS, normalizeMartianLevels);
 }
 
 function saveStoredLightTapLevels(levels) {
@@ -790,6 +825,10 @@ function saveStoredDragonLevels(levels) {
 
 function saveStoredFireLevels(levels) {
   saveGameLevelsToStorage("fireLevels", levels, normalizeFireLevels);
+}
+
+function saveStoredMartianLevels(levels) {
+  saveGameLevelsToStorage("martianLevels", levels, normalizeMartianLevels);
 }
 
 function showSavedMessage(text) {
@@ -925,6 +964,7 @@ async function loadTask1Settings() {
   let streetCarLevels = loadStoredStreetCarLevels();
   let dragonLevels = loadStoredDragonLevels();
   let fireLevels = loadStoredFireLevels();
+  let martianLevels = loadStoredMartianLevels();
   let soundEnabled = parseTaskEnabled(localStorage.getItem(SOUND_ENABLED_KEY), true);
   let trainingPaused = parseTrainingPaused(localStorage.getItem(TRAINING_PAUSED_KEY));
   const jackFlameRainSettings = [4, 5, 6].map((level, idx) => {
@@ -1152,6 +1192,12 @@ async function loadTask1Settings() {
     spawnIntervalSeconds: "spawnIntervalSeconds",
     flameDurationSeconds: "flameDurationSeconds",
   });
+  applyGameLevelsToInputs(martianLevels, martianLevelInputs, {
+    peopleCount: "peopleCount",
+    ufoCount: "ufoCount",
+    ufoSpeed: "ufoSpeed",
+    liftSpeed: "liftSpeed",
+  });
   soundEnabledToggle.checked = soundEnabled;
   trainingPausedToggle.checked = trainingPaused;
   [4, 5, 6].forEach((level, idx) => {
@@ -1283,6 +1329,19 @@ async function saveTask1Settings() {
       })
     )
     : null;
+  const hasMartianInputs = martianLevelInputs.some((inputs) =>
+    Boolean(inputs.peopleCount || inputs.ufoCount || inputs.ufoSpeed || inputs.liftSpeed)
+  );
+  const martianLevels = hasMartianInputs
+    ? normalizeMartianLevels(
+      readGameLevelsFromInputs(martianLevelInputs, {
+        peopleCount: "peopleCount",
+        ufoCount: "ufoCount",
+        ufoSpeed: "ufoSpeed",
+        liftSpeed: "liftSpeed",
+      })
+    )
+    : null;
   const soundEnabled = Boolean(soundEnabledToggle.checked);
   const trainingPaused = Boolean(trainingPausedToggle.checked);
   const jackFlameRainSettingsToSave = [4, 5, 6].map((level, idx) => {
@@ -1366,6 +1425,9 @@ async function saveTask1Settings() {
   if (fireLevels) {
     saveStoredFireLevels(fireLevels);
   }
+  if (martianLevels) {
+    saveStoredMartianLevels(martianLevels);
+  }
   applyGameLevelsToInputs(lightTapLevels, lightTapLevelInputs, {
     lives: "lives",
     time: "time",
@@ -1401,6 +1463,14 @@ async function saveTask1Settings() {
       goal: "goal",
       spawnIntervalSeconds: "spawnIntervalSeconds",
       flameDurationSeconds: "flameDurationSeconds",
+    });
+  }
+  if (martianLevels) {
+    applyGameLevelsToInputs(martianLevels, martianLevelInputs, {
+      peopleCount: "peopleCount",
+      ufoCount: "ufoCount",
+      ufoSpeed: "ufoSpeed",
+      liftSpeed: "liftSpeed",
     });
   }
   localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
@@ -1539,6 +1609,12 @@ const allInputs = [
     inputs.goal,
     inputs.spawnIntervalSeconds,
     inputs.flameDurationSeconds,
+  ]),
+  ...martianLevelInputs.flatMap((inputs) => [
+    inputs.peopleCount,
+    inputs.ufoCount,
+    inputs.ufoSpeed,
+    inputs.liftSpeed,
   ]),
   ...dragonLevelInputs.flatMap((inputs) => [
     inputs.dragonCount,

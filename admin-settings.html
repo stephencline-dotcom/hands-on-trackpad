@@ -45,6 +45,9 @@
             <button class="admin-tab-button" type="button" role="tab" id="tabFire" aria-controls="panelFire" aria-selected="false" data-tab="fire">
               Firefighter Rescue
             </button>
+            <button class="admin-tab-button" type="button" role="tab" id="tabMartian" aria-controls="panelMartian" aria-selected="false" data-tab="martian">
+              Martian Madness
+            </button>
             <button class="admin-tab-button" type="button" role="tab" id="tabAdvanced" aria-controls="panelAdvanced" aria-selected="false" data-tab="advanced">
               Jumping Jack
             </button>
@@ -427,6 +430,45 @@
                 <input id="adminFireSpawnIntervalL3" class="admin-task-input" type="number" min="0.2" max="4" step="0.05" />
                 <label class="admin-task-label" for="adminFireFlameDurationL3">Flame duration (seconds)</label>
                 <input id="adminFireFlameDurationL3" class="admin-task-input" type="number" min="0.3" max="6" step="0.05" />
+              </article>
+            </div>
+          </section>
+
+          <section class="admin-tab-content" id="panelMartian" role="tabpanel" aria-labelledby="tabMartian" aria-hidden="true">
+            <p class="admin-panel-note">Adjust Martian Madness level crowd and ship settings.</p>
+            <div class="admin-level-grid">
+              <article class="admin-level-card">
+                <h3>Level 1</h3>
+                <label class="admin-task-label" for="adminMartianPeopleCountL1">People on screen</label>
+                <input id="adminMartianPeopleCountL1" class="admin-task-input" type="number" min="1" max="9" step="1" />
+                <label class="admin-task-label" for="adminMartianUfoCountL1">Spaceships on screen</label>
+                <input id="adminMartianUfoCountL1" class="admin-task-input" type="number" min="1" max="12" step="1" />
+                <label class="admin-task-label" for="adminMartianUfoSpeedL1">Spaceship speed</label>
+                <input id="adminMartianUfoSpeedL1" class="admin-task-input" type="number" min="20" max="300" step="5" />
+                <label class="admin-task-label" for="adminMartianLiftSpeedL1">Beam lift speed</label>
+                <input id="adminMartianLiftSpeedL1" class="admin-task-input" type="number" min="40" max="600" step="5" />
+              </article>
+              <article class="admin-level-card">
+                <h3>Level 2</h3>
+                <label class="admin-task-label" for="adminMartianPeopleCountL2">People on screen</label>
+                <input id="adminMartianPeopleCountL2" class="admin-task-input" type="number" min="1" max="9" step="1" />
+                <label class="admin-task-label" for="adminMartianUfoCountL2">Spaceships on screen</label>
+                <input id="adminMartianUfoCountL2" class="admin-task-input" type="number" min="1" max="12" step="1" />
+                <label class="admin-task-label" for="adminMartianUfoSpeedL2">Spaceship speed</label>
+                <input id="adminMartianUfoSpeedL2" class="admin-task-input" type="number" min="20" max="300" step="5" />
+                <label class="admin-task-label" for="adminMartianLiftSpeedL2">Beam lift speed</label>
+                <input id="adminMartianLiftSpeedL2" class="admin-task-input" type="number" min="40" max="600" step="5" />
+              </article>
+              <article class="admin-level-card">
+                <h3>Level 3</h3>
+                <label class="admin-task-label" for="adminMartianPeopleCountL3">People on screen</label>
+                <input id="adminMartianPeopleCountL3" class="admin-task-input" type="number" min="1" max="9" step="1" />
+                <label class="admin-task-label" for="adminMartianUfoCountL3">Spaceships on screen</label>
+                <input id="adminMartianUfoCountL3" class="admin-task-input" type="number" min="1" max="12" step="1" />
+                <label class="admin-task-label" for="adminMartianUfoSpeedL3">Spaceship speed</label>
+                <input id="adminMartianUfoSpeedL3" class="admin-task-input" type="number" min="20" max="300" step="5" />
+                <label class="admin-task-label" for="adminMartianLiftSpeedL3">Beam lift speed</label>
+                <input id="adminMartianLiftSpeedL3" class="admin-task-input" type="number" min="40" max="600" step="5" />
               </article>
             </div>
           </section>
