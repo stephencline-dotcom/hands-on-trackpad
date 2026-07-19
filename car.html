@@ -7,27 +7,39 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body class="car-page" data-game-active-key="carGameActive">
-    <main class="page">
-      <section class="top-row">
-        <section class="playfield" aria-label="Car game area">
+    <main class="page game-shell">
+      <header class="game-header">
+        <a class="home-btn" href="index.html" aria-label="Return to home page">
+          <img class="home-btn-icon" src="images/home-icon.svg" alt="" aria-hidden="true" />
+          <span>Home</span>
+        </a>
+        <div class="game-heading">
+          <h1 class="game-title">Road Dash</h1>
+        </div>
+        <button id="carVolumeToggle" class="car-volume-toggle" type="button" aria-label="Mute sound">&#128266;</button>
+      </header>
+
+      <p class="game-instructions">Click START, then steer your car to avoid crashes and survive each level.</p>
+
+      <section class="game-stats" aria-live="polite">
+        <div class="game-stat">
+          <span class="label">Level</span>
+          <span id="carLevelBadge" class="value car-level-badge">Level 1 of 6</span>
+        </div>
+        <div class="game-stat">
+          <span class="label">Hits</span>
+          <span id="carHitsBadge" class="value car-hits-badge">Hits 0/3</span>
+        </div>
+        <div class="game-stat">
+          <span class="label">Dodged</span>
+          <span id="carDodgedBadge" class="value car-dodged-badge">Dodged 0</span>
+        </div>
+      </section>
+      <div id="carToast" class="car-toast game-preserve-only" role="status" aria-live="polite" hidden></div>
+
+      <section class="game-stage" aria-label="Car game area">
+        <section class="playfield" aria-label="Road board play area">
           <div class="car-ui">
-            <div class="car-header">
-              <span class="car-title">Road Dash</span>
-              <span id="carLevelBadge" class="car-level-badge">Level 1 of 6</span>
-              <span id="carHitsBadge" class="car-hits-badge">Hits 0/3</span>
-              <span id="carDodgedBadge" class="car-dodged-badge">Dodged 0</span>
-              <button id="carVolumeToggle" class="car-volume-toggle" type="button" aria-label="Mute sound">&#128266;</button>
-              <div id="carToast" class="car-toast" role="status" aria-live="polite" hidden></div>
-            </div>
-            <p class="car-directions">Click START, then steer with your cursor to survive each level without crashing.</p>
-
-            <div class="maze-nav">
-              <a class="home-btn" href="index.html" aria-label="Return to home page">
-                <img class="home-btn-icon" src="images/home-icon.svg" alt="" aria-hidden="true" />
-                <span>Home</span>
-              </a>
-            </div>
-
             <div id="carBoard" class="car-board" aria-label="Road board" tabindex="0">
               <div id="carFuelBadge" class="car-fuel-badge" role="status" aria-live="polite" aria-label="Fuel level">
                 <span class="car-fuel-label">Fuel</span>
@@ -58,8 +70,8 @@
         </section>
       </section>
 
-      <section class="pad-dock" aria-label="Trackpad practice box">
-        <p class="pad-label">Trackpad practice box</p>
+      <section class="pad-dock game-guide" aria-label="Trackpad Guide">
+        <p class="pad-label">Trackpad Guide</p>
         <section id="scene" class="scene" aria-label="Interactive trackpad trainer">
           <img class="trackpad" src="images/trackpad.png" alt="Trackpad" draggable="false" />
           <img id="leftHand" class="hand left-hand" src="images/left-hand-transparent.png" alt="Left hand" draggable="false" />
@@ -71,6 +83,7 @@
 
     <script src="game-access.js"></script>
     <script src="movement-mode.js"></script>
+    <script src="trackpad-guide.js"></script>
     <script src="car-game.js"></script>
   </body>
 </html>

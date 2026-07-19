@@ -41,6 +41,17 @@ let mazeTokenRunTimer = null;
 // This reads the teacher setting that switches between hover-follow and click-and-drag movement.
 const MAZE_REQUIRE_CLICK_AND_DRAG_KEY = "mazeRequireClickAndDrag";
 const movementGate = window.trackpadMovementSettings.createClickAndDragGate(MAZE_REQUIRE_CLICK_AND_DRAG_KEY);
+const trackpadGuideController = window.trackpadGuide.create({
+  scene,
+  leftHand,
+  rightHand,
+  sceneWidth: LAYOUT.scene.width,
+  sceneHeight: LAYOUT.scene.height,
+  trackpadScale: LAYOUT.trackpadScale,
+  leftStart: LAYOUT.leftStart,
+  rightStart: LAYOUT.rightStart,
+  pointerSpace: "viewport",
+});
 
 const GHOST_LEVEL_ENABLED_KEYS = [
   "mazeGhostLevel1Enabled",
@@ -978,80 +989,27 @@ function updateMazeFromPointer(event) {
   }
 }
 
-function applyLeftPosition(x, y) {
-  leftHand.style.left = `${(x / LAYOUT.scene.width) * 100}%`;
-  leftHand.style.top = `${(y / LAYOUT.scene.height) * 100}%`;
-}
-
-function applyRightPosition(x, y) {
-  rightHand.style.left = `${(x / LAYOUT.scene.width) * 100}%`;
-  rightHand.style.top = `${(y / LAYOUT.scene.height) * 100}%`;
-}
-
-function getTrackpadArea() {
-  const scale = LAYOUT.trackpadScale;
-  const width = LAYOUT.scene.width * scale;
-  const height = LAYOUT.scene.height * scale;
-  return {
-    x: (LAYOUT.scene.width - width) / 2,
-    y: (LAYOUT.scene.height - height) / 2,
-    width,
-    height,
-  };
-}
-
-function getRightHandRange() {
-  const area = getTrackpadArea();
-  return {
-    // Looser lane with more upward travel while staying right of the left hand.
-    minX: area.x + area.width * 0.20,
-    maxX: area.x + area.width * 0.62,
-    minY: area.y + area.height * 0.10,
-    maxY: area.y + area.height * 0.80,
-  };
-}
-
-function mapPointerToRightPosition(pointerX, pointerY) {
-  const a = getTrackpadArea();
-  const r = getRightHandRange();
-
-  const nx = clamp((pointerX - a.x) / a.width, 0, 1);
-  const ny = clamp((pointerY - a.y) / a.height, 0, 1);
-
-  return {
-    x: r.minX + nx * (r.maxX - r.minX),
-    y: r.minY + ny * (r.maxY - r.minY),
-  };
-}
-
-function pointerToViewportNormalized(event) {
-  const width = Math.max(window.innerWidth || 0, 1);
-  const height = Math.max(window.innerHeight || 0, 1);
-  return {
-    x: clamp(event.clientX / width, 0, 1),
-    y: clamp(event.clientY / height, 0, 1),
-  };
-}
-
 function updateRightFromPointer(event) {
-  const p = pointerToViewportNormalized(event);
-  const a = getTrackpadArea();
-  const scenePos = {
-    x: a.x + p.x * a.width,
-    y: a.y + p.y * a.height,
-  };
-  const pos = mapPointerToRightPosition(scenePos.x, scenePos.y);
-  applyRightPosition(pos.x, pos.y);
+  if (!trackpadGuideController) {
+    return;
+  }
+
+  trackpadGuideController.updateFromPointerEvent(event);
 }
 
 function setPressedState(pressed) {
   isPressed = pressed;
-  leftHand.classList.toggle("pressed", pressed);
-  scene.classList.toggle("is-pressed", pressed);
+
+  if (!trackpadGuideController) {
+    return;
+  }
+
+  trackpadGuideController.setPressed(pressed);
 }
 
-applyLeftPosition(LAYOUT.leftStart.x, LAYOUT.leftStart.y);
-applyRightPosition(LAYOUT.rightStart.x, LAYOUT.rightStart.y);
+if (trackpadGuideController) {
+  trackpadGuideController.initialize();
+}
 updateLevelBadge();
 updateHitsBadge();
 buildMazeWalls();

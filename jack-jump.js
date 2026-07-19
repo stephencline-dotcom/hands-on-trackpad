@@ -41,6 +41,19 @@ const JACK_TRACKPAD_LAYOUT = {
 // This gate reads the saved teacher setting from localStorage and decides whether hover movement is allowed.
 const JACK_REQUIRE_CLICK_AND_DRAG_KEY = "jackRequireClickAndDrag";
 const jackTrackpadMovementGate = window.trackpadMovementSettings.createClickAndDragGate(JACK_REQUIRE_CLICK_AND_DRAG_KEY);
+const jackTrackpadGuideController = window.trackpadGuide.create({
+  scene: jackTrackpadScene,
+  leftHand: jackTrackpadLeftHand,
+  rightHand: jackTrackpadRightHand,
+  pressIndicator: jackTrackpadPressIndicator,
+  sceneWidth: JACK_TRACKPAD_LAYOUT.scene.width,
+  sceneHeight: JACK_TRACKPAD_LAYOUT.scene.height,
+  trackpadScale: JACK_TRACKPAD_LAYOUT.trackpadScale,
+  leftStart: JACK_TRACKPAD_LAYOUT.leftStart,
+  rightStart: JACK_TRACKPAD_LAYOUT.rightStart,
+  pointerSpace: "scene",
+  togglePressIndicator: true,
+});
 const DEFAULT_FLAME_RAIN_SETTINGS = {
   4: {
     enabled: true,
@@ -1149,85 +1162,64 @@ function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
 
-function applyJackTrackpadLeftPosition(x, y) {
-  if (!jackTrackpadLeftHand) {
-    return;
-  }
-
-  jackTrackpadLeftHand.style.left = `${(x / JACK_TRACKPAD_LAYOUT.scene.width) * 100}%`;
-  jackTrackpadLeftHand.style.top = `${(y / JACK_TRACKPAD_LAYOUT.scene.height) * 100}%`;
-}
-
-function applyJackTrackpadRightPosition(x, y) {
-  if (!jackTrackpadRightHand) {
-    return;
-  }
-
-  jackTrackpadRightHand.style.left = `${(x / JACK_TRACKPAD_LAYOUT.scene.width) * 100}%`;
-  jackTrackpadRightHand.style.top = `${(y / JACK_TRACKPAD_LAYOUT.scene.height) * 100}%`;
-}
-
 function getJackTrackpadArea() {
-  const scale = JACK_TRACKPAD_LAYOUT.trackpadScale;
-  const width = JACK_TRACKPAD_LAYOUT.scene.width * scale;
-  const height = JACK_TRACKPAD_LAYOUT.scene.height * scale;
+  if (!jackTrackpadGuideController) {
+    return {
+      x: JACK_TRACKPAD_LAYOUT.scene.width * 0.08,
+      y: JACK_TRACKPAD_LAYOUT.scene.height * 0.08,
+      width: JACK_TRACKPAD_LAYOUT.scene.width * JACK_TRACKPAD_LAYOUT.trackpadScale,
+      height: JACK_TRACKPAD_LAYOUT.scene.height * JACK_TRACKPAD_LAYOUT.trackpadScale,
+    };
+  }
 
-  return {
-    x: (JACK_TRACKPAD_LAYOUT.scene.width - width) / 2,
-    y: (JACK_TRACKPAD_LAYOUT.scene.height - height) / 2,
-    width,
-    height,
-  };
+  return jackTrackpadGuideController.getTrackpadArea();
 }
 
 function getJackTrackpadRightRange() {
-  const area = getJackTrackpadArea();
+  if (!jackTrackpadGuideController) {
+    const area = getJackTrackpadArea();
+    return {
+      minX: area.x + area.width * 0.2,
+      maxX: area.x + area.width * 0.62,
+      minY: area.y + area.height * 0.1,
+      maxY: area.y + area.height * 0.8,
+    };
+  }
 
-  return {
-    minX: area.x + area.width * 0.2,
-    maxX: area.x + area.width * 0.62,
-    minY: area.y + area.height * 0.1,
-    maxY: area.y + area.height * 0.8,
-  };
+  return jackTrackpadGuideController.getRightHandRange();
 }
 
 function pointerToJackTrackpadPoint(event) {
-  if (!jackTrackpadScene) {
+  if (!jackTrackpadGuideController) {
     return {
       x: JACK_TRACKPAD_LAYOUT.scene.width * 0.5,
       y: JACK_TRACKPAD_LAYOUT.scene.height * 0.5,
     };
   }
 
-  const rect = jackTrackpadScene.getBoundingClientRect();
-  const width = Math.max(rect.width, 1);
-  const height = Math.max(rect.height, 1);
-
-  return {
-    x: clamp((event.clientX - rect.left) * (JACK_TRACKPAD_LAYOUT.scene.width / width), 0, JACK_TRACKPAD_LAYOUT.scene.width),
-    y: clamp((event.clientY - rect.top) * (JACK_TRACKPAD_LAYOUT.scene.height / height), 0, JACK_TRACKPAD_LAYOUT.scene.height),
-  };
+  return jackTrackpadGuideController.pointerToScenePoint(event);
 }
 
 function mapJackTrackpadPointToRightPosition(point) {
-  const area = getJackTrackpadArea();
-  const range = getJackTrackpadRightRange();
-  const nx = clamp((point.x - area.x) / area.width, 0, 1);
-  const ny = clamp((point.y - area.y) / area.height, 0, 1);
+  if (!jackTrackpadGuideController) {
+    const area = getJackTrackpadArea();
+    const range = getJackTrackpadRightRange();
+    const nx = clamp((point.x - area.x) / area.width, 0, 1);
+    const ny = clamp((point.y - area.y) / area.height, 0, 1);
 
-  return {
-    x: range.minX + nx * (range.maxX - range.minX),
-    y: range.minY + ny * (range.maxY - range.minY),
-  };
+    return {
+      x: range.minX + nx * (range.maxX - range.minX),
+      y: range.minY + ny * (range.maxY - range.minY),
+    };
+  }
+
+  return jackTrackpadGuideController.mapPointToRightPosition(point.x, point.y);
 }
 
 function setJackTrackpadPressState(pressed) {
-  if (jackTrackpadLeftHand) {
-    jackTrackpadLeftHand.classList.toggle("pressed", pressed);
-  }
-
-  if (jackTrackpadScene) {
-    jackTrackpadScene.classList.toggle("is-pressed", pressed);
+  if (jackTrackpadGuideController) {
+    jackTrackpadGuideController.setPressed(pressed);
+    return;
   }
 
   if (jackTrackpadPressIndicator) {
@@ -1237,7 +1229,9 @@ function setJackTrackpadPressState(pressed) {
 
 function updateJackTrackpadHandsFromPoint(point) {
   const rightPosition = mapJackTrackpadPointToRightPosition(point);
-  applyJackTrackpadRightPosition(rightPosition.x, rightPosition.y);
+  if (jackTrackpadGuideController) {
+    jackTrackpadGuideController.applyRightPosition(rightPosition.x, rightPosition.y);
+  }
 }
 
 function nudgeJackTrackpadHandsFromWheel(event) {
@@ -1260,12 +1254,15 @@ function nudgeJackTrackpadHandsFromWheel(event) {
     y: range.minY + ((nextPoint.y - area.y) / area.height) * (range.maxY - range.minY),
   };
 
-  applyJackTrackpadRightPosition(mapped.x, mapped.y);
+  if (jackTrackpadGuideController) {
+    jackTrackpadGuideController.applyRightPosition(mapped.x, mapped.y);
+  }
 }
 
 function initializeJackTrackpadHands() {
-  applyJackTrackpadLeftPosition(JACK_TRACKPAD_LAYOUT.leftStart.x, JACK_TRACKPAD_LAYOUT.leftStart.y);
-  applyJackTrackpadRightPosition(JACK_TRACKPAD_LAYOUT.rightStart.x, JACK_TRACKPAD_LAYOUT.rightStart.y);
+  if (jackTrackpadGuideController) {
+    jackTrackpadGuideController.initialize();
+  }
   setJackTrackpadPressState(false);
 
   if (!jackTrackpadScene) {

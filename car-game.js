@@ -189,6 +189,17 @@ let carLevelFuelDrainPerSec = [...DEFAULT_CAR_LEVEL_FUEL_DRAIN];
 // Read the teacher-controlled movement mode once and reuse it everywhere on this page.
 const CAR_REQUIRE_CLICK_AND_DRAG_KEY = "carRequireClickAndDrag";
 const carMovementGate = window.trackpadMovementSettings.createClickAndDragGate(CAR_REQUIRE_CLICK_AND_DRAG_KEY);
+const trackpadGuideController = window.trackpadGuide.create({
+  scene,
+  leftHand,
+  rightHand,
+  sceneWidth: LAYOUT.scene.width,
+  sceneHeight: LAYOUT.scene.height,
+  trackpadScale: LAYOUT.trackpadScale,
+  leftStart: LAYOUT.leftStart,
+  rightStart: LAYOUT.rightStart,
+  pointerSpace: "viewport",
+});
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
@@ -825,87 +836,19 @@ function updateCarPosition(dtMs) {
   playerCar.style.left = `${carX}px`;
 }
 
-function applyLeftPosition(x, y) {
-  if (!leftHand) {
-    return;
-  }
-
-  leftHand.style.left = `${(x / LAYOUT.scene.width) * 100}%`;
-  leftHand.style.top = `${(y / LAYOUT.scene.height) * 100}%`;
-}
-
-function applyRightPosition(x, y) {
-  if (!rightHand) {
-    return;
-  }
-
-  rightHand.style.left = `${(x / LAYOUT.scene.width) * 100}%`;
-  rightHand.style.top = `${(y / LAYOUT.scene.height) * 100}%`;
-}
-
-function getTrackpadArea() {
-  const scale = LAYOUT.trackpadScale;
-  const width = LAYOUT.scene.width * scale;
-  const height = LAYOUT.scene.height * scale;
-  return {
-    x: (LAYOUT.scene.width - width) / 2,
-    y: (LAYOUT.scene.height - height) / 2,
-    width,
-    height,
-  };
-}
-
-function getRightHandRange() {
-  const area = getTrackpadArea();
-  return {
-    minX: area.x + area.width * 0.2,
-    maxX: area.x + area.width * 0.62,
-    minY: area.y + area.height * 0.1,
-    maxY: area.y + area.height * 0.8,
-  };
-}
-
-function mapPointerToRightPosition(pointerX, pointerY) {
-  const a = getTrackpadArea();
-  const r = getRightHandRange();
-  const nx = clamp((pointerX - a.x) / a.width, 0, 1);
-  const ny = clamp((pointerY - a.y) / a.height, 0, 1);
-
-  return {
-    x: r.minX + nx * (r.maxX - r.minX),
-    y: r.minY + ny * (r.maxY - r.minY),
-  };
-}
-
-function pointerToViewportNormalized(event) {
-  const width = Math.max(window.innerWidth || 0, 1);
-  const height = Math.max(window.innerHeight || 0, 1);
-  return {
-    x: clamp(event.clientX / width, 0, 1),
-    y: clamp(event.clientY / height, 0, 1),
-  };
-}
-
 function updateRightFromPointer(event) {
-  const p = pointerToViewportNormalized(event);
-  const a = getTrackpadArea();
-  const scenePos = {
-    x: a.x + p.x * a.width,
-    y: a.y + p.y * a.height,
-  };
-  const pos = mapPointerToRightPosition(scenePos.x, scenePos.y);
-  applyRightPosition(pos.x, pos.y);
+  if (!trackpadGuideController) {
+    return;
+  }
+
+  trackpadGuideController.updateFromPointerEvent(event);
 }
 
 function setPressedState(pressed) {
   isPressed = pressed;
 
-  if (leftHand) {
-    leftHand.classList.toggle("pressed", pressed);
-  }
-
-  if (scene) {
-    scene.classList.toggle("is-pressed", pressed);
+  if (trackpadGuideController) {
+    trackpadGuideController.setPressed(pressed);
   }
 }
 
@@ -1585,8 +1528,9 @@ function initializeCar() {
   carLevelOverlay.setAttribute("aria-live", "polite");
   carBoard.appendChild(carLevelOverlay);
 
-  applyLeftPosition(LAYOUT.leftStart.x, LAYOUT.leftStart.y);
-  applyRightPosition(LAYOUT.rightStart.x, LAYOUT.rightStart.y);
+  if (trackpadGuideController) {
+    trackpadGuideController.initialize();
+  }
 
   const bounds = getRoadBoundsAtBottom();
   carX = (bounds.left + bounds.right) / 2;

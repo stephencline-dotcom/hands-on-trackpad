@@ -180,6 +180,38 @@ const adminMartianLiftSpeedL3Input = document.getElementById('adminMartianLiftSp
 const adminApplyButton = document.getElementById('adminApply');
 const adminMessage = document.getElementById('adminMessage');
 const soundToggleButtons = Array.from(document.querySelectorAll('.sound-toggle-button'));
+const importedTrackpadGuideDefinitions = [
+  {
+    screen: gameScreen,
+    scene: document.getElementById('lightTrackpadScene'),
+    leftHand: document.getElementById('lightTrackpadLeftHand'),
+    rightHand: document.getElementById('lightTrackpadRightHand'),
+  },
+  {
+    screen: carGameScreen,
+    scene: document.getElementById('streetTrackpadScene'),
+    leftHand: document.getElementById('streetTrackpadLeftHand'),
+    rightHand: document.getElementById('streetTrackpadRightHand'),
+  },
+  {
+    screen: dragonGameScreen,
+    scene: document.getElementById('dragonTrackpadScene'),
+    leftHand: document.getElementById('dragonTrackpadLeftHand'),
+    rightHand: document.getElementById('dragonTrackpadRightHand'),
+  },
+  {
+    screen: fireGameScreen,
+    scene: document.getElementById('fireTrackpadScene'),
+    leftHand: document.getElementById('fireTrackpadLeftHand'),
+    rightHand: document.getElementById('fireTrackpadRightHand'),
+  },
+  {
+    screen: martianGameScreen,
+    scene: document.getElementById('martianTrackpadScene'),
+    leftHand: document.getElementById('martianTrackpadLeftHand'),
+    rightHand: document.getElementById('martianTrackpadRightHand'),
+  },
+];
 
 const ADMIN_PASSWORD = 'typing1';
 const ADMIN_SETTINGS_STORAGE_KEY = 'moving-sound-admin-settings-v1';
@@ -196,6 +228,52 @@ const selectedGameKey = (selectedGame || '').trim().toLowerCase();
 const openedFromPortalGameLink = selectedGame !== null;
 
 let soundEnabled = true;
+const importedTrackpadGuides = [];
+
+function initImportedTrackpadGuides() {
+  if (!window.trackpadGuide || typeof window.trackpadGuide.create !== 'function') {
+    return;
+  }
+
+  for (const definition of importedTrackpadGuideDefinitions) {
+    if (!definition.scene || !definition.leftHand || !definition.rightHand || !definition.screen) {
+      continue;
+    }
+
+    const guide = window.trackpadGuide.create({
+      scene: definition.scene,
+      leftHand: definition.leftHand,
+      rightHand: definition.rightHand,
+      sceneWidth: 626,
+      sceneHeight: 437,
+      trackpadScale: 0.84,
+      leftStart: { x: -34, y: 178 },
+      rightStart: { x: 230, y: 158 },
+      pointerSpace: 'viewport',
+    });
+
+    if (!guide) {
+      continue;
+    }
+
+    importedTrackpadGuides.push({
+      screen: definition.screen,
+      guide,
+    });
+  }
+}
+
+function getActiveImportedTrackpadGuide() {
+  for (const entry of importedTrackpadGuides) {
+    if (entry.screen.hasAttribute('hidden')) {
+      continue;
+    }
+
+    return entry.guide;
+  }
+
+  return null;
+}
 
 const homeMenuState = {
   showLightGame: true,
@@ -4516,7 +4594,45 @@ window.addEventListener('resize', () => {
 });
 window.addEventListener('blur', stopAudio);
 
+document.addEventListener('pointermove', (event) => {
+  const activeGuide = getActiveImportedTrackpadGuide();
+  if (!activeGuide) {
+    return;
+  }
+
+  activeGuide.updateFromPointerEvent(event);
+});
+
+document.addEventListener('pointerdown', (event) => {
+  const activeGuide = getActiveImportedTrackpadGuide();
+  if (!activeGuide) {
+    return;
+  }
+
+  activeGuide.setPressed(true);
+  activeGuide.updateFromPointerEvent(event);
+});
+
+document.addEventListener('pointerup', () => {
+  const activeGuide = getActiveImportedTrackpadGuide();
+  if (!activeGuide) {
+    return;
+  }
+
+  activeGuide.setPressed(false);
+});
+
+document.addEventListener('pointercancel', () => {
+  const activeGuide = getActiveImportedTrackpadGuide();
+  if (!activeGuide) {
+    return;
+  }
+
+  activeGuide.setPressed(false);
+});
+
 lockAdmin();
+initImportedTrackpadGuides();
 loadSoundPreference();
 syncAdminInputsFromState();
 applyHomeMenuVisibility();

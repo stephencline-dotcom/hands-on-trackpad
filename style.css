@@ -1979,7 +1979,7 @@ body {
 
 .jack-jump-shell {
   width: min(100%, 980px);
-  padding: 22px;
+  padding: 14px;
 }
 
 .jack-jump-card {
@@ -1989,15 +1989,15 @@ body {
     linear-gradient(155deg, rgba(255, 255, 255, 0.92), rgba(247, 252, 255, 0.92)),
     radial-gradient(circle at 10% 0%, rgba(133, 199, 255, 0.24), transparent 45%);
   box-shadow: 0 18px 44px rgba(48, 95, 134, 0.2);
-  padding: 16px;
+  padding: 12px;
 }
 
 .jack-jump-header {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 12px;
+  gap: 10px;
   align-items: start;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .jack-jump-home {
@@ -2021,15 +2021,15 @@ body {
 }
 
 .jack-jump-header h1 {
-  margin: 3px 0 4px;
-  font-size: clamp(1.45rem, 3vw, 2rem);
+  margin: 2px 0 3px;
+  font-size: clamp(1.25rem, 2.6vw, 1.75rem);
   color: #1e3f59;
 }
 
 .jack-jump-copy {
   margin: 0;
   color: #4c6c86;
-  font-size: 0.9rem;
+  font-size: 0.84rem;
 }
 
 .jack-level-badge {
@@ -2049,8 +2049,10 @@ body {
 
 .jack-jump-scene {
   position: relative;
-  width: 100%;
+  width: min(100%, 740px);
+  margin: 0 auto;
   aspect-ratio: 16 / 9;
+  max-height: clamp(250px, 42vh, 400px);
   border-radius: 18px;
   border: 1px solid rgba(136, 184, 219, 0.36);
   overflow: hidden;
@@ -2204,16 +2206,16 @@ body {
 }
 
 .jack-shadow {
-  position: absolute;
+  margin: 7px 0 0;
   left: 50%;
-  bottom: 3px;
+  font-size: 0.8rem;
   width: 170px;
   height: 34px;
   transform: translateX(-50%);
   border-radius: 50%;
   background: rgba(25, 40, 52, 0.26);
-  filter: blur(0.5px);
-}
+  margin-top: 8px;
+  width: min(100%, 360px);
 
 .jack-character-wrap.is-running .jack-character {
   animation: jackRun 220ms ease-in-out infinite;
@@ -2924,5 +2926,185 @@ body {
     right: 12px;
     bottom: 12px;
     padding: 8px 10px;
+  }
+}
+
+/* Unified Game Shell Contract shared with imported styles.css. */
+.game-shell {
+  width: min(100%, 1080px);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 10px 12px 12px;
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+  gap: 8px;
+  align-content: stretch;
+}
+
+.game-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid rgba(188, 222, 247, 0.34);
+  border-radius: 12px;
+  background: linear-gradient(155deg, rgba(20, 32, 44, 0.94), rgba(11, 18, 28, 0.94));
+}
+
+.game-heading {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.game-title {
+  margin: 0;
+  font-size: clamp(1rem, 1.55vw, 1.2rem);
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.game-instructions {
+  margin: 0;
+  padding: 0 2px;
+  color: #d5e7f8;
+  font-size: 0.8rem;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.game-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  min-height: 34px;
+}
+
+.game-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(167, 213, 245, 0.42);
+  background: linear-gradient(180deg, rgba(33, 48, 63, 0.95), rgba(20, 30, 41, 0.95));
+  color: #eaf5ff;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.game-stat .label {
+  opacity: 0.82;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.66rem;
+}
+
+.game-stage {
+  min-height: clamp(280px, 52vh, 460px);
+  display: grid;
+  align-items: stretch;
+  align-content: stretch;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.game-guide {
+  width: 100%;
+  margin: 0;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid rgba(188, 222, 247, 0.34);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(17, 24, 34, 0.92), rgba(12, 18, 28, 0.95));
+}
+
+.game-guide .pad-label,
+.game-guide .imported-trackpad-guide-label {
+  margin: 0;
+  text-align: center;
+  color: #c8d9ea;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+}
+
+.game-guide .scene,
+.game-guide .imported-trackpad-scene {
+  max-width: 100%;
+  margin: 0;
+}
+
+.game-preserve-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  border: 0 !important;
+  white-space: nowrap !important;
+}
+
+.game-header-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.game-header-button,
+.game-shell .back-button,
+.game-shell .sound-toggle-button,
+.game-shell .home-btn,
+.game-shell .jack-jump-home,
+.game-shell .trackpad-home-link,
+.game-shell .car-volume-toggle {
+  position: static;
+  inset: auto;
+  margin: 0;
+  min-height: 30px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+}
+
+.game-shell .pad-dock,
+.game-shell .imported-trackpad-guide {
+  margin: 0;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .game-header {
+    grid-template-columns: 1fr;
+  }
+
+  .game-instructions {
+    white-space: normal;
+  }
+}
+
+@media (max-height: 820px) {
+  .game-shell {
+    padding: 8px 10px 10px;
+    gap: 6px;
+  }
+
+  .game-title {
+    font-size: clamp(0.96rem, 1.4vw, 1.1rem);
+  }
+
+  .game-stage {
+    min-height: clamp(250px, 48vh, 390px);
   }
 }

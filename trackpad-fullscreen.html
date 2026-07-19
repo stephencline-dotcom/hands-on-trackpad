@@ -49,13 +49,25 @@
       <div class="training-paused-card">Training is paused by admin.</div>
     </div>
 
-    <main class="trackpad-full-shell">
-      <header class="trackpad-full-header">
+    <main class="trackpad-full-shell game-shell">
+      <header class="trackpad-full-header game-header">
         <a class="trackpad-home-link" href="index.html" aria-label="Return to home page">Home</a>
+        <div class="game-heading">
+          <p class="game-category">Training</p>
+          <h1 class="game-title">Fullscreen Trackpad Trainer</h1>
+        </div>
       </header>
 
-      <section class="trackpad-stage" aria-label="Fullscreen trackpad interaction area">
-        <div id="activeTaskPrompt" class="active-task-prompt" role="status" aria-live="polite">Task: Slide</div>
+      <p class="game-instructions">Follow the active task and complete each trackpad challenge.</p>
+
+      <section class="game-stats" aria-live="polite">
+        <div class="game-stat">
+          <span class="label">Active Task</span>
+          <span id="activeTaskPrompt" class="value active-task-prompt" role="status">Task: Slide</span>
+        </div>
+      </section>
+
+      <section class="trackpad-stage game-stage" aria-label="Fullscreen trackpad interaction area">
         <section id="scene" class="scene scene-fullscreen" aria-label="Interactive trackpad trainer">
           <img class="trackpad" src="images/trackpad.png" alt="Trackpad" draggable="false" />
           <img id="task3Present" class="task3-present" src="images/present.svg" alt="Present" draggable="false" hidden />
@@ -65,10 +77,21 @@
           <div id="pressIndicator" class="press-indicator" aria-hidden="true"></div>
         </section>
       </section>
+
+      <section class="game-guide" aria-label="Trackpad Guide">
+        <p class="pad-label">Trackpad Guide</p>
+        <section class="scene" aria-label="Trackpad hand position reference">
+          <img class="trackpad" src="images/trackpad.png" alt="Trackpad" draggable="false" />
+          <img class="hand left-hand" src="images/left-hand-transparent.png" alt="Left hand" draggable="false" />
+          <img class="hand right-hand" src="images/right-hand-transparent.png" alt="Right hand" draggable="false" />
+          <div class="press-indicator" aria-hidden="true"></div>
+        </section>
+      </section>
     </main>
 
     <script src="game-access.js"></script>
     <script src="movement-mode.js"></script>
+    <script src="trackpad-guide.js"></script>
     <script src="trackpad-fullscreen.js"></script>
   </body>
 </html>

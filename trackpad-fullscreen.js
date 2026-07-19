@@ -54,41 +54,36 @@ const LAYOUT = {
   bunnyX: 312,
   bunnyStartY: 218,
 };
+const trackpadGuideController = window.trackpadGuide.create({
+  scene,
+  leftHand,
+  rightHand,
+  sceneWidth: LAYOUT.scene.width,
+  sceneHeight: LAYOUT.scene.height,
+  trackpadScale: LAYOUT.trackpadScale,
+  leftStart: LAYOUT.leftStart,
+  rightStart: LAYOUT.rightStart,
+  pointerSpace: "viewport",
+});
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
 
-function applyLeftPosition(x, y) {
-  leftHand.style.left = `${(x / LAYOUT.scene.width) * 100}%`;
-  leftHand.style.top = `${(y / LAYOUT.scene.height) * 100}%`;
-}
-
-function applyRightPosition(x, y) {
-  rightHand.style.left = `${(x / LAYOUT.scene.width) * 100}%`;
-  rightHand.style.top = `${(y / LAYOUT.scene.height) * 100}%`;
-}
-
 function getTrackpadArea() {
-  const scale = LAYOUT.trackpadScale;
-  const width = LAYOUT.scene.width * scale;
-  const height = LAYOUT.scene.height * scale;
-  return {
-    x: (LAYOUT.scene.width - width) / 2,
-    y: (LAYOUT.scene.height - height) / 2,
-    width,
-    height,
-  };
-}
+  if (!trackpadGuideController) {
+    const scale = LAYOUT.trackpadScale;
+    const width = LAYOUT.scene.width * scale;
+    const height = LAYOUT.scene.height * scale;
+    return {
+      x: (LAYOUT.scene.width - width) / 2,
+      y: (LAYOUT.scene.height - height) / 2,
+      width,
+      height,
+    };
+  }
 
-function getRightHandRange() {
-  const area = getTrackpadArea();
-  return {
-    minX: area.x + area.width * 0.2,
-    maxX: area.x + area.width * 0.62,
-    minY: area.y + area.height * 0.1,
-    maxY: area.y + area.height * 0.8,
-  };
+  return trackpadGuideController.getTrackpadArea();
 }
 
 function pointerToViewportNormalized(event) {
@@ -100,28 +95,12 @@ function pointerToViewportNormalized(event) {
   };
 }
 
-function mapPointerToRightPosition(pointerX, pointerY) {
-  const area = getTrackpadArea();
-  const range = getRightHandRange();
-
-  const nx = clamp((pointerX - area.x) / area.width, 0, 1);
-  const ny = clamp((pointerY - area.y) / area.height, 0, 1);
-
-  return {
-    x: range.minX + nx * (range.maxX - range.minX),
-    y: range.minY + ny * (range.maxY - range.minY),
-  };
-}
-
 function updateRightFromPointer(event) {
-  const normalized = pointerToViewportNormalized(event);
-  const area = getTrackpadArea();
-  const scenePos = {
-    x: area.x + normalized.x * area.width,
-    y: area.y + normalized.y * area.height,
-  };
-  const pos = mapPointerToRightPosition(scenePos.x, scenePos.y);
-  applyRightPosition(pos.x, pos.y);
+  if (!trackpadGuideController) {
+    return;
+  }
+
+  trackpadGuideController.updateFromPointerEvent(event);
 }
 
 function applyBunnyPosition(y) {
@@ -142,8 +121,11 @@ function getBunnyRange() {
 }
 
 function setPressedState(pressed) {
-  leftHand.classList.toggle("pressed", pressed);
-  scene.classList.toggle("is-pressed", pressed);
+  if (!trackpadGuideController) {
+    return;
+  }
+
+  trackpadGuideController.setPressed(pressed);
 }
 
 function playHoldAudio() {
@@ -1182,8 +1164,9 @@ function endTrackpadPress() {
 }
 
 loadTaskRequirements();
-applyLeftPosition(LAYOUT.leftStart.x, LAYOUT.leftStart.y);
-applyRightPosition(LAYOUT.rightStart.x, LAYOUT.rightStart.y);
+if (trackpadGuideController) {
+  trackpadGuideController.initialize();
+}
 applyBunnyPosition(bunnyY);
 applyTask3PresentPosition(task3PresentX, task3PresentY);
 buildBunnyRain();

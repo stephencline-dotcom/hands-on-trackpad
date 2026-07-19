@@ -599,39 +599,48 @@
     </section>
 
     <section id="gameScreen" hidden>
-      <main class="shell">
-        <section class="panel">
-          <div class="copy">
-            <p class="eyebrow">Mini Game</p>
-            <h1>Tap the glowing lights</h1>
-            <p class="description">Tap the glowing lights to get points. Press play when you are ready.</p>
+      <main class="shell game-shell">
+        <header class="panel game-header">
+          <div class="copy game-heading">
+            <p class="eyebrow game-category">Mini Game</p>
+            <h1 class="game-title">Tap the glowing lights</h1>
           </div>
+          <div class="game-header-controls">
+            <button id="backToMenuButton" class="back-button game-header-button" type="button">Home</button>
+            <button class="sound-toggle-button game-header-button" type="button" aria-pressed="false">Sound: On</button>
+          </div>
+        </header>
 
-          <div class="hud" aria-live="polite">
-            <div class="stat">
-              <span class="label">Score</span>
-              <span class="value" id="score">0</span>
-            </div>
-            <div class="stat">
-              <span class="label">Lives</span>
-              <span class="value" id="lives">3</span>
-            </div>
-            <div class="stat">
+        <p class="description game-instructions">Tap the glowing lights to score points before time runs out.</p>
+
+        <section class="hud game-stats" aria-live="polite">
+          <div class="hud-main-stats game-stats-row" role="group" aria-label="Light Tap stats">
+            <div class="stat game-stat">
               <span class="label">Level</span>
               <span class="value" id="level">1</span>
             </div>
-            <div class="stat">
+            <div class="stat game-stat">
               <span class="label">Goal</span>
               <span class="value" id="goal">0/10</span>
             </div>
-            <div class="stat">
+            <div class="stat game-stat">
+              <span class="label">Lives</span>
+              <span class="value" id="lives">3</span>
+            </div>
+            <div class="stat game-stat game-preserve-only" aria-label="Light Tap score">
+              <span class="label">Score</span>
+              <span class="value" id="score">0</span>
+            </div>
+          </div>
+          <div class="hud-status-row game-preserve-only" role="group" aria-label="Light Tap status">
+            <div class="stat game-stat hud-stat-status">
               <span class="label">Status</span>
               <span class="value" id="status">Ready</span>
             </div>
           </div>
         </section>
 
-        <section class="arena-wrap">
+        <section class="arena-wrap game-stage game-stage-wrap">
           <div class="arena-frame">
             <div id="arena" class="arena" aria-label="Game area" role="application">
               <div class="arena-timer" aria-live="polite">
@@ -648,50 +657,66 @@
             </div>
           </div>
         </section>
-      </main>
 
-      <button id="backToMenuButton" class="back-button" type="button">Home</button>
-      <button class="sound-toggle-button" type="button" aria-pressed="false">Sound: On</button>
+        <section class="imported-trackpad-guide game-guide" aria-label="Trackpad Guide">
+          <p class="imported-trackpad-guide-label">Trackpad Guide</p>
+          <section id="lightTrackpadScene" class="imported-trackpad-scene" aria-label="Trackpad guide animation">
+            <img class="imported-trackpad-image" src="../../images/trackpad.png" alt="Trackpad" draggable="false" />
+            <img id="lightTrackpadLeftHand" class="imported-trackpad-hand imported-trackpad-left-hand" src="../../images/left-hand-transparent.png" alt="Left hand" draggable="false" />
+            <img id="lightTrackpadRightHand" class="imported-trackpad-hand imported-trackpad-right-hand" src="../../images/right-hand-transparent.png" alt="Right hand" draggable="false" />
+            <div class="imported-trackpad-press-indicator" aria-hidden="true"></div>
+          </section>
+        </section>
+      </main>
     </section>
 
     <section id="carGameScreen" hidden>
-      <main class="shell">
-        <section class="panel">
-          <div class="copy">
-            <p class="eyebrow">Mini Game</p>
-            <h1>Tap the Cars</h1>
-            <p class="description">Tap the matching cars before time runs out.</p>
+      <main class="shell game-shell">
+        <header class="panel game-header">
+          <div class="copy game-heading">
+            <p class="eyebrow game-category">Mini Game</p>
+            <h1 class="game-title">Tap the Cars</h1>
           </div>
+          <div class="game-header-controls">
+            <button id="backToMenuFromCarButton" class="back-button game-header-button" type="button">Home</button>
+            <button class="sound-toggle-button game-header-button" type="button" aria-pressed="false">Sound: On</button>
+          </div>
+        </header>
 
-          <div class="hud" aria-live="polite">
-            <div class="stat">
-              <span class="label">Score</span>
-              <span class="value" id="carScore">0</span>
-            </div>
-            <div class="stat">
-              <span class="label">Look for</span>
-              <span class="value" id="carTarget">Blue</span>
-            </div>
-            <div class="stat">
+        <p class="description game-instructions">Tap matching cars before time runs out.</p>
+
+        <section class="hud game-stats" aria-live="polite">
+          <div class="hud-main-stats game-stats-row" role="group" aria-label="Street Car stats">
+            <div class="stat game-stat">
               <span class="label">Level</span>
               <span class="value" id="carLevel">1</span>
             </div>
-            <div class="stat">
+            <div class="stat game-stat">
               <span class="label">Goal</span>
               <span class="value" id="carGoal">0/8</span>
             </div>
-            <div class="stat">
+            <div class="stat game-stat">
               <span class="label">Misses</span>
               <span class="value" id="carMisses">3</span>
             </div>
-            <div class="stat">
+            <div class="stat game-stat game-preserve-only" aria-label="Street Car score">
+              <span class="label">Score</span>
+              <span class="value" id="carScore">0</span>
+            </div>
+            <div class="stat game-stat game-preserve-only" aria-label="Street Car target">
+              <span class="label">Look for</span>
+              <span class="value" id="carTarget">Blue</span>
+            </div>
+          </div>
+          <div class="hud-status-row game-preserve-only" role="group" aria-label="Street Car status">
+            <div class="stat game-stat hud-stat-status">
               <span class="label">Status</span>
               <span class="value" id="carStatus">Ready</span>
             </div>
           </div>
         </section>
 
-        <section class="arena-wrap">
+        <section class="arena-wrap game-stage game-stage-wrap">
           <div class="arena-frame street-frame">
             <div id="streetArena" class="street-arena" aria-label="Street game area" role="application">
               <div class="arena-timer" aria-live="polite">
@@ -708,47 +733,63 @@
             </div>
           </div>
         </section>
-      </main>
 
-      <button id="backToMenuFromCarButton" class="back-button" type="button">Home</button>
-      <button class="sound-toggle-button" type="button" aria-pressed="false">Sound: On</button>
+        <section class="imported-trackpad-guide game-guide" aria-label="Trackpad Guide">
+          <p class="imported-trackpad-guide-label">Trackpad Guide</p>
+          <section id="streetTrackpadScene" class="imported-trackpad-scene" aria-label="Trackpad guide animation">
+            <img class="imported-trackpad-image" src="../../images/trackpad.png" alt="Trackpad" draggable="false" />
+            <img id="streetTrackpadLeftHand" class="imported-trackpad-hand imported-trackpad-left-hand" src="../../images/left-hand-transparent.png" alt="Left hand" draggable="false" />
+            <img id="streetTrackpadRightHand" class="imported-trackpad-hand imported-trackpad-right-hand" src="../../images/right-hand-transparent.png" alt="Right hand" draggable="false" />
+            <div class="imported-trackpad-press-indicator" aria-hidden="true"></div>
+          </section>
+        </section>
+      </main>
     </section>
 
     <section id="dragonGameScreen" hidden>
-      <main class="shell">
-        <section class="panel">
-          <div class="copy">
-            <p class="eyebrow">Mini Game</p>
-            <h1>Dragon Dodge</h1>
-            <p class="description">Click the dragon fast when fire appears to stop the flames.</p>
+      <main class="shell game-shell">
+        <section class="panel game-header">
+          <div class="copy game-heading">
+            <p class="eyebrow game-category">Mini Game</p>
+            <h1 class="game-title">Dragon Dodge</h1>
           </div>
+          <div class="game-header-controls">
+            <button id="backToMenuFromDragonButton" class="back-button game-header-button" type="button">Home</button>
+            <button class="sound-toggle-button game-header-button" type="button" aria-pressed="false">Sound: On</button>
+          </div>
+        </section>
 
-          <div class="hud" aria-live="polite">
-            <div class="stat">
-              <span class="label">Score</span>
-              <span class="value" id="dragonScore">0</span>
-            </div>
-            <div class="stat">
-              <span class="label">Misses</span>
-              <span class="value" id="dragonMisses">3</span>
-            </div>
-            <div class="stat">
+        <p class="description game-instructions">Click the dragon fast when fire appears to stop the flames.</p>
+
+        <section class="hud game-stats" aria-live="polite">
+          <div class="hud-main-stats game-stats-row" role="group" aria-label="Dragon Dodge stats">
+            <div class="stat game-stat">
               <span class="label">Level</span>
               <span class="value" id="dragonLevel">1</span>
             </div>
-            <div class="stat">
+            <div class="stat game-stat">
               <span class="label">Goal</span>
               <span class="value" id="dragonGoal">0/6</span>
             </div>
-            <div class="stat">
+            <div class="stat game-stat">
+              <span class="label">Misses</span>
+              <span class="value" id="dragonMisses">3</span>
+            </div>
+            <div class="stat game-stat game-preserve-only" aria-label="Dragon Dodge score">
+              <span class="label">Score</span>
+              <span class="value" id="dragonScore">0</span>
+            </div>
+          </div>
+          <div class="hud-status-row game-preserve-only" role="group" aria-label="Dragon Dodge status">
+            <div class="stat game-stat hud-stat-status">
               <span class="label">Status</span>
               <span class="value" id="dragonStatus">Ready</span>
             </div>
           </div>
         </section>
 
-        <section class="arena-wrap">
-          <div class="arena-frame dragon-frame">
+        <section class="arena-wrap game-stage-wrap">
+          <div class="arena-frame dragon-frame game-stage">
             <div id="dragonArena" class="dragon-arena" aria-label="Dragon game area" role="application">
               <div class="arena-timer" aria-live="polite">
                 <span class="label">Time</span>
@@ -793,47 +834,63 @@
             </div>
           </div>
         </section>
-      </main>
 
-      <button id="backToMenuFromDragonButton" class="back-button" type="button">Home</button>
-      <button class="sound-toggle-button" type="button" aria-pressed="false">Sound: On</button>
+        <section class="imported-trackpad-guide game-guide" aria-label="Trackpad Guide">
+          <p class="imported-trackpad-guide-label">Trackpad Guide</p>
+          <section id="dragonTrackpadScene" class="imported-trackpad-scene" aria-label="Trackpad guide animation">
+            <img class="imported-trackpad-image" src="../../images/trackpad.png" alt="Trackpad" draggable="false" />
+            <img id="dragonTrackpadLeftHand" class="imported-trackpad-hand imported-trackpad-left-hand" src="../../images/left-hand-transparent.png" alt="Left hand" draggable="false" />
+            <img id="dragonTrackpadRightHand" class="imported-trackpad-hand imported-trackpad-right-hand" src="../../images/right-hand-transparent.png" alt="Right hand" draggable="false" />
+            <div class="imported-trackpad-press-indicator" aria-hidden="true"></div>
+          </section>
+        </section>
+      </main>
     </section>
 
     <section id="fireGameScreen" hidden>
-      <main class="shell">
-        <section class="panel">
-          <div class="copy">
-            <p class="eyebrow">Mini Game</p>
-            <h1>Firefighter Rescue</h1>
-            <p class="description">Flames pop out of windows. Click the burning windows to spray water and put them out.</p>
+      <main class="shell game-shell">
+        <section class="panel game-header">
+          <div class="copy game-heading">
+            <p class="eyebrow game-category">Mini Game</p>
+            <h1 class="game-title">Firefighter Rescue</h1>
           </div>
+          <div class="game-header-controls">
+            <button id="backToMenuFromFireButton" class="back-button game-header-button" type="button">Home</button>
+            <button class="sound-toggle-button game-header-button" type="button" aria-pressed="false">Sound: On</button>
+          </div>
+        </section>
 
-          <div class="hud" aria-live="polite">
-            <div class="stat">
-              <span class="label">Score</span>
-              <span class="value" id="fireScore">0</span>
-            </div>
-            <div class="stat">
+        <p class="description game-instructions">Flames pop out of windows. Click the burning windows to spray water and put them out.</p>
+
+        <section class="hud game-stats" aria-live="polite">
+          <div class="hud-main-stats game-stats-row" role="group" aria-label="Firefighter Rescue stats">
+            <div class="stat game-stat">
               <span class="label">Level</span>
               <span class="value" id="fireLevel">1</span>
             </div>
-            <div class="stat">
+            <div class="stat game-stat">
               <span class="label">Goal</span>
               <span class="value" id="fireGoal">0/8</span>
             </div>
-            <div class="stat">
+            <div class="stat game-stat">
               <span class="label">Misses</span>
               <span class="value" id="fireMisses">3</span>
             </div>
-            <div class="stat">
+            <div class="stat game-stat game-preserve-only" aria-label="Firefighter Rescue score">
+              <span class="label">Score</span>
+              <span class="value" id="fireScore">0</span>
+            </div>
+          </div>
+          <div class="hud-status-row game-preserve-only" role="group" aria-label="Firefighter Rescue status">
+            <div class="stat game-stat hud-stat-status">
               <span class="label">Status</span>
               <span class="value" id="fireStatus">Ready</span>
             </div>
           </div>
         </section>
 
-        <section class="arena-wrap">
-          <div class="arena-frame fire-frame">
+        <section class="arena-wrap game-stage-wrap">
+          <div class="arena-frame fire-frame game-stage">
             <div id="fireArena" class="fire-arena" aria-label="Fire rescue game area" role="application">
               <div class="arena-timer" aria-live="polite">
                 <span class="label">Time</span>
@@ -863,46 +920,62 @@
             </div>
           </div>
         </section>
-      </main>
 
-      <button id="backToMenuFromFireButton" class="back-button" type="button">Home</button>
-      <button class="sound-toggle-button" type="button" aria-pressed="false">Sound: On</button>
+        <section class="imported-trackpad-guide game-guide" aria-label="Trackpad Guide">
+          <p class="imported-trackpad-guide-label">Trackpad Guide</p>
+          <section id="fireTrackpadScene" class="imported-trackpad-scene" aria-label="Trackpad guide animation">
+            <img class="imported-trackpad-image" src="../../images/trackpad.png" alt="Trackpad" draggable="false" />
+            <img id="fireTrackpadLeftHand" class="imported-trackpad-hand imported-trackpad-left-hand" src="../../images/left-hand-transparent.png" alt="Left hand" draggable="false" />
+            <img id="fireTrackpadRightHand" class="imported-trackpad-hand imported-trackpad-right-hand" src="../../images/right-hand-transparent.png" alt="Right hand" draggable="false" />
+            <div class="imported-trackpad-press-indicator" aria-hidden="true"></div>
+          </section>
+        </section>
+      </main>
     </section>
 
     <section id="martianGameScreen" hidden>
-      <main class="shell">
-        <section class="panel">
-          <div class="copy">
-            <p class="eyebrow">Mini Game</p>
-            <h1>Martian Madness</h1>
-            <p class="description">Aliens shine tractor beams over the city. Click the floating person before the spaceship pulls them away.</p>
+      <main class="shell game-shell">
+        <header class="panel game-header">
+          <div class="copy game-heading">
+            <p class="eyebrow game-category">Mini Game</p>
+            <h1 class="game-title">Martian Madness</h1>
           </div>
+          <div class="game-header-controls">
+            <button id="backToMenuFromMartianButton" class="back-button game-header-button" type="button">Home</button>
+            <button class="sound-toggle-button game-header-button" type="button" aria-pressed="false">Sound: On</button>
+          </div>
+        </header>
 
-          <div class="hud" aria-live="polite">
-            <div class="stat">
-              <span class="label">Score</span>
-              <span class="value" id="martianScore">0</span>
-            </div>
-            <div class="stat">
+        <p class="description game-instructions">Click the floating person before the spaceship pulls them away.</p>
+
+        <section class="hud game-stats" aria-live="polite">
+          <div class="hud-main-stats game-stats-row" role="group" aria-label="Martian Madness stats">
+            <div class="stat game-stat">
               <span class="label">Level</span>
               <span class="value" id="martianLevel">1</span>
             </div>
-            <div class="stat">
+            <div class="stat game-stat">
               <span class="label">Goal</span>
               <span class="value" id="martianGoal">0/6</span>
             </div>
-            <div class="stat">
+            <div class="stat game-stat">
               <span class="label">Misses</span>
               <span class="value" id="martianMisses">3</span>
             </div>
-            <div class="stat">
+            <div class="stat game-stat game-preserve-only" aria-label="Martian Madness score">
+              <span class="label">Score</span>
+              <span class="value" id="martianScore">0</span>
+            </div>
+          </div>
+          <div class="hud-status-row game-preserve-only" role="group" aria-label="Martian Madness status">
+            <div class="stat game-stat hud-stat-status">
               <span class="label">Status</span>
               <span class="value" id="martianStatus">Ready</span>
             </div>
           </div>
         </section>
 
-        <section class="arena-wrap">
+        <section class="arena-wrap game-stage game-stage-wrap">
           <div class="arena-frame martian-frame">
             <div id="martianArena" class="martian-arena" aria-label="Martian Madness game area" role="application">
               <div class="arena-timer" aria-live="polite">
@@ -925,12 +998,20 @@
             </div>
           </div>
         </section>
-      </main>
 
-      <button id="backToMenuFromMartianButton" class="back-button" type="button">Home</button>
-      <button class="sound-toggle-button" type="button" aria-pressed="false">Sound: On</button>
+        <section class="imported-trackpad-guide game-guide" aria-label="Trackpad Guide">
+          <p class="imported-trackpad-guide-label">Trackpad Guide</p>
+          <section id="martianTrackpadScene" class="imported-trackpad-scene" aria-label="Trackpad guide animation">
+            <img class="imported-trackpad-image" src="../../images/trackpad.png" alt="Trackpad" draggable="false" />
+            <img id="martianTrackpadLeftHand" class="imported-trackpad-hand imported-trackpad-left-hand" src="../../images/left-hand-transparent.png" alt="Left hand" draggable="false" />
+            <img id="martianTrackpadRightHand" class="imported-trackpad-hand imported-trackpad-right-hand" src="../../images/right-hand-transparent.png" alt="Right hand" draggable="false" />
+            <div class="imported-trackpad-press-indicator" aria-hidden="true"></div>
+          </section>
+        </section>
+      </main>
     </section>
 
+    <script defer src="../../trackpad-guide.js"></script>
     <script defer src="script.js"></script>
     <script type="module">
   // Import the functions you need from the SDKs you need

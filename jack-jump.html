@@ -7,19 +7,26 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body class="jack-jump-page" data-game-active-key="jackGameActive">
-    <main class="jack-jump-shell">
+    <main class="jack-jump-shell game-shell">
       <section class="jack-jump-card" aria-label="Jack jump game">
-        <header class="jack-jump-header">
-          <a class="jack-jump-home" href="index.html" aria-label="Back to home">Back To Home</a>
-          <div>
-            <p class="jack-jump-eyebrow">Drag Challenge</p>
-            <h1>Guide Jack To Safety</h1>
-            <p class="jack-jump-copy">Drag Jack along the dotted path, make him jump over the candle, and land on the glowing target.</p>
-            <p id="jackLevelBadge" class="jack-level-badge">Level 1 of 6</p>
+        <header class="jack-jump-header game-header">
+          <a class="jack-jump-home" href="index.html" aria-label="Back to home">Home</a>
+          <div class="game-heading">
+            <p class="jack-jump-eyebrow game-category">Drag Challenge</p>
+            <h1 class="game-title">Guide Jack To Safety</h1>
           </div>
         </header>
 
-        <section class="jack-jump-scene" id="jackScene" aria-label="Play area">
+        <p class="jack-jump-copy game-instructions">Drag Jack along the path, jump over the candle, and land on the glowing target.</p>
+
+        <section class="game-stats" aria-live="polite">
+          <div class="game-stat">
+            <span class="label">Level</span>
+            <span id="jackLevelBadge" class="value jack-level-badge">Level 1 of 6</span>
+          </div>
+        </section>
+
+        <section class="jack-jump-scene game-stage" id="jackScene" aria-label="Play area">
           <div class="jack-room-windows" aria-hidden="true">
             <span class="jack-window"></span>
             <span class="jack-window"></span>
@@ -43,10 +50,10 @@
           </div>
         </section>
 
-        <p id="jackStatus" class="jack-status">Move your cursor to Jack's start point.</p>
+        <p id="jackStatus" class="jack-status game-preserve-only">Move your cursor to Jack's start point.</p>
 
-        <section class="pad-dock jack-trackpad-dock" aria-label="Trackpad practice box">
-          <p class="pad-label">Trackpad practice box</p>
+        <section class="pad-dock jack-trackpad-dock game-guide" aria-label="Trackpad Guide">
+          <p class="pad-label">Trackpad Guide</p>
           <section id="scene" class="scene" aria-label="Interactive trackpad trainer">
             <img class="trackpad" src="images/trackpad.png" alt="Trackpad" draggable="false" />
             <img id="leftHand" class="hand left-hand" src="images/left-hand-transparent.png" alt="Left hand" draggable="false" />
@@ -59,6 +66,7 @@
 
     <script src="game-access.js"></script>
     <script src="movement-mode.js"></script>
+    <script src="trackpad-guide.js"></script>
     <script src="jack-jump.js"></script>
   </body>
 </html>

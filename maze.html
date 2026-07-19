@@ -12,30 +12,34 @@
     <audio id="mazeFinishAudio" src="sounds/Maze finish.mp3" preload="auto"></audio>
     <audio id="mazeGhostAudio" src="sounds/ghost.mp3" preload="auto" loop></audio>
 
-    <main class="page">
-      <section class="top-row">
-        <section class="playfield" aria-label="Mini game area">
-          <div class="maze-ui">
-            <div class="maze-header">
-              <span class="maze-title">Maze Mission</span>
-              <span id="mazeLevelBadge" class="maze-level-badge">Level 1 of 6</span>
-              <span id="mazeHitsBadge" class="maze-hits-badge">Hits 0/3</span>
-              <div id="mazeToast" class="maze-toast" role="status" aria-live="polite" hidden></div>
-            </div>
-            <p class="maze-directions">
-              Click
-              <span class="maze-inline-badge maze-inline-start" aria-hidden="true">START</span>
-              and get to
-              <span class="maze-inline-badge maze-inline-finish" aria-hidden="true">FINISH</span>
-              without hitting the walls or ghosts.
-            </p>
-            <div class="maze-nav">
-              <a class="home-btn" href="index.html" aria-label="Return to home page">
-                <img class="home-btn-icon" src="images/home-icon.svg" alt="" aria-hidden="true" />
-                <span>Home</span>
-              </a>
-            </div>
+    <main class="page game-shell">
+      <header class="game-header">
+        <a class="home-btn" href="index.html" aria-label="Return to home page">
+          <img class="home-btn-icon" src="images/home-icon.svg" alt="" aria-hidden="true" />
+          <span>Home</span>
+        </a>
+        <div class="game-heading">
+          <h1 class="game-title">Maze Mission</h1>
+        </div>
+      </header>
 
+      <p class="game-instructions">Click START and reach FINISH without hitting walls or ghosts.</p>
+
+      <section class="game-stats" aria-live="polite">
+        <div class="game-stat">
+          <span class="label">Level</span>
+          <span id="mazeLevelBadge" class="value maze-level-badge">Level 1 of 6</span>
+        </div>
+        <div class="game-stat">
+          <span class="label">Hits</span>
+          <span id="mazeHitsBadge" class="value maze-hits-badge">Hits 0/3</span>
+        </div>
+      </section>
+      <div id="mazeToast" class="maze-toast game-preserve-only" role="status" aria-live="polite" hidden></div>
+
+      <section class="game-stage" aria-label="Mini game area">
+        <section class="playfield" aria-label="Maze game board area">
+          <div class="maze-ui">
             <div id="mazeBoard" class="maze-board" aria-label="Maze board">
               <div id="mazeStart" class="maze-block maze-start" role="button" tabindex="0">START</div>
               <div id="mazeFinish" class="maze-block maze-finish">FINISH</div>
@@ -43,11 +47,10 @@
             </div>
           </div>
         </section>
-
       </section>
 
-      <section class="pad-dock" aria-label="Trackpad practice box">
-        <p class="pad-label">Trackpad practice box</p>
+      <section class="pad-dock game-guide" aria-label="Trackpad Guide">
+        <p class="pad-label">Trackpad Guide</p>
         <section id="scene" class="scene" aria-label="Interactive trackpad trainer">
           <img class="trackpad" src="images/trackpad.png" alt="Trackpad" draggable="false" />
           <img id="leftHand" class="hand left-hand" src="images/left-hand-transparent.png" alt="Left hand" draggable="false" />
@@ -59,6 +62,7 @@
 
     <script src="game-access.js"></script>
     <script src="movement-mode.js"></script>
+    <script src="trackpad-guide.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
