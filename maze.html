@@ -12,27 +12,30 @@
     <audio id="mazeFinishAudio" src="sounds/Maze finish.mp3" preload="auto"></audio>
     <audio id="mazeGhostAudio" src="sounds/ghost.mp3" preload="auto" loop></audio>
 
-    <main class="page game-shell">
+    <main class="game-shell maze-game-shell">
       <header class="game-header">
-        <a class="home-btn" href="index.html" aria-label="Return to home page">
-          <img class="home-btn-icon" src="images/home-icon.svg" alt="" aria-hidden="true" />
-          <span>Home</span>
-        </a>
         <div class="game-heading">
+          <div class="game-category">MINI GAME</div>
           <h1 class="game-title">Maze Mission</h1>
+        </div>
+        <div class="game-header-controls">
+          <a class="home-btn back-button game-header-button" href="index.html" aria-label="Home" title="Home">
+            <img class="home-btn-icon" src="images/home-icon.svg" alt="" aria-hidden="true" />
+          </a>
+          <button class="sound-toggle-button game-header-button" type="button" aria-pressed="false" aria-label="Sound on" title="Sound on">🔊</button>
         </div>
       </header>
 
       <p class="game-instructions">Click START and reach FINISH without hitting walls or ghosts.</p>
 
       <section class="game-stats" aria-live="polite">
-        <div class="game-stat">
-          <span class="label">Level</span>
-          <span id="mazeLevelBadge" class="value maze-level-badge">Level 1 of 6</span>
-        </div>
-        <div class="game-stat">
-          <span class="label">Hits</span>
-          <span id="mazeHitsBadge" class="value maze-hits-badge">Hits 0/3</span>
+        <div class="game-stats-row" role="group" aria-label="Maze Mission stats">
+          <div class="game-stat">
+            <span id="mazeLevelBadge" class="value maze-level-badge">Level 1 of 6</span>
+          </div>
+          <div class="game-stat">
+            <span id="mazeHitsBadge" class="value maze-hits-badge">Hits 0/3</span>
+          </div>
         </div>
       </section>
       <div id="mazeToast" class="maze-toast game-preserve-only" role="status" aria-live="polite" hidden></div>

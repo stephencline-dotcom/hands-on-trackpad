@@ -570,10 +570,15 @@ h1 {
 
 .back-button,
 .sound-toggle-button {
-  border-radius: 12px;
-  padding: 0.48rem 0.6rem;
-  min-width: 84px;
-  font-size: 0.82rem;
+  border-radius: 10px;
+  padding: 0;
+  width: 38px;
+  height: 34px;
+  min-width: 38px;
+  font-size: 17px;
+  line-height: 1;
+  display: inline-grid;
+  place-items: center;
 }
 
 .back-button:focus-visible,
@@ -581,6 +586,23 @@ h1 {
 .start-button:focus-visible {
   outline: 2px solid rgba(124, 247, 255, 0.78);
   outline-offset: 2px;
+}
+
+.back-button,
+.sound-toggle-button {
+  border: 1px solid rgba(195, 222, 244, 0.32);
+  background: linear-gradient(180deg, rgba(24, 35, 48, 0.98), rgba(14, 24, 34, 0.98));
+  color: #eaf5ff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.back-button:hover,
+.back-button:focus-visible,
+.sound-toggle-button:hover,
+.sound-toggle-button:focus-visible {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .hud-status-row {
@@ -673,7 +695,6 @@ h1 {
   top: 1rem;
   left: 1rem;
   z-index: 20;
-  min-width: 92px;
 }
 
 .sound-toggle-button {
@@ -681,7 +702,6 @@ h1 {
   top: 1rem;
   right: 1rem;
   z-index: 20;
-  min-width: 126px;
 }
 
 .admin-toggle:hover,
@@ -3090,16 +3110,16 @@ h1 {
 
 /* Light Tap migration to approved Dragon+Fire shell reference (scoped only). */
 #gameScreen .game-shell {
-  --lt-column-width: min(100%, 920px);
-  width: min(100%, 940px);
+  --lt-column-width: min(100%, 940px);
+  width: min(100%, 960px);
   min-height: 100svh;
   margin-inline: auto;
-  padding: 0.38rem 0.55rem 0.55rem;
+  padding: 0.4rem 0.62rem 0.6rem;
   display: grid;
   grid-template-columns: 1fr;
   justify-items: center;
   align-content: start;
-  gap: 0.36rem;
+  gap: 0.4rem;
 }
 
 #gameScreen .game-header,
@@ -3116,7 +3136,7 @@ h1 {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.4rem 0.5rem;
+  padding: 0.44rem 0.54rem;
 }
 
 #gameScreen .game-header-controls {
@@ -3167,8 +3187,8 @@ h1 {
 }
 
 #gameScreen .game-stage {
-  height: clamp(340px, 56svh, 470px);
-  max-height: clamp(340px, 56svh, 470px);
+  height: clamp(360px, 58svh, 500px);
+  max-height: clamp(360px, 58svh, 500px);
 }
 
 #gameScreen .game-guide {
@@ -3181,7 +3201,8 @@ h1 {
 }
 
 #gameScreen .game-guide .imported-trackpad-scene {
-  width: min(100%, 186px);
+  width: 300px;
+  max-width: 100%;
   border-radius: 8px;
 }
 
@@ -3215,16 +3236,16 @@ h1 {
 
 /* Street Car migration to approved Dragon+Fire+Light shell reference (scoped only). */
 #carGameScreen .game-shell {
-  --car-column-width: min(100%, 920px);
-  width: min(100%, 940px);
+  --car-column-width: min(100%, 940px);
+  width: min(100%, 960px);
   min-height: 100svh;
   margin-inline: auto;
-  padding: 0.38rem 0.55rem 0.55rem;
+  padding: 0.4rem 0.62rem 0.6rem;
   display: grid;
   grid-template-columns: 1fr;
   justify-items: center;
   align-content: start;
-  gap: 0.36rem;
+  gap: 0.4rem;
 }
 
 #carGameScreen .game-header,
@@ -3292,8 +3313,8 @@ h1 {
 }
 
 #carGameScreen .game-stage {
-  height: clamp(340px, 56svh, 470px);
-  max-height: clamp(340px, 56svh, 470px);
+  height: clamp(360px, 58svh, 500px);
+  max-height: clamp(360px, 58svh, 500px);
 }
 
 #carGameScreen .game-guide {
@@ -3306,7 +3327,8 @@ h1 {
 }
 
 #carGameScreen .game-guide .imported-trackpad-scene {
-  width: min(100%, 186px);
+  width: 300px;
+  max-width: 100%;
   border-radius: 8px;
 }
 
@@ -3329,27 +3351,28 @@ h1 {
   }
 
   #carGameScreen .game-stage {
-    height: clamp(320px, 54svh, 430px);
-    max-height: clamp(320px, 54svh, 430px);
+    height: clamp(340px, 56svh, 470px);
+    max-height: clamp(340px, 56svh, 470px);
   }
 
   #carGameScreen .game-guide .imported-trackpad-scene {
-    width: min(100%, 176px);
+    width: 300px;
+    max-width: 100%;
   }
 }
 
 /* Martian Madness migration to approved Dragon+Fire+Light+Street shell reference (scoped only). */
 #martianGameScreen .game-shell {
-  --martian-column-width: min(100%, 920px);
-  width: min(100%, 940px);
+  --martian-column-width: min(100%, 940px);
+  width: min(100%, 960px);
   min-height: 100svh;
   margin-inline: auto;
-  padding: 0.38rem 0.55rem 0.55rem;
+  padding: 0.4rem 0.62rem 0.6rem;
   display: grid;
   grid-template-columns: 1fr;
   justify-items: center;
   align-content: start;
-  gap: 0.36rem;
+  gap: 0.4rem;
 }
 
 #martianGameScreen .game-header,
@@ -3417,8 +3440,8 @@ h1 {
 }
 
 #martianGameScreen .game-stage {
-  height: clamp(340px, 56svh, 470px);
-  max-height: clamp(340px, 56svh, 470px);
+  height: clamp(360px, 58svh, 500px);
+  max-height: clamp(360px, 58svh, 500px);
 }
 
 #martianGameScreen .game-guide {
@@ -3431,7 +3454,8 @@ h1 {
 }
 
 #martianGameScreen .game-guide .imported-trackpad-scene {
-  width: min(100%, 186px);
+  width: 300px;
+  max-width: 100%;
   border-radius: 8px;
 }
 
@@ -3454,12 +3478,13 @@ h1 {
   }
 
   #martianGameScreen .game-stage {
-    height: clamp(320px, 54svh, 430px);
-    max-height: clamp(320px, 54svh, 430px);
+    height: clamp(340px, 56svh, 470px);
+    max-height: clamp(340px, 56svh, 470px);
   }
 
   #martianGameScreen .game-guide .imported-trackpad-scene {
-    width: min(100%, 176px);
+    width: 300px;
+    max-width: 100%;
   }
 }
 
@@ -3470,36 +3495,59 @@ h1 {
   Any edits here require explicit sign-off after visual verification.
   ============================================================================ */
 /* Shared centered column restoration for Dragon Dodge and Firefighter Rescue. */
-#dragonGameScreen .game-shell,
-#fireGameScreen .game-shell {
-  --df-column-width: min(100%, 920px);
-  width: min(100%, 940px);
+#dragonGameScreen .game-shell {
+  --df-column-width: min(100%, 940px);
+  width: min(100%, 960px);
   min-height: 100svh;
   margin-inline: auto;
-  padding: 0.38rem 0.55rem 0.55rem;
+  padding: 0.4rem 0.62rem 0.6rem;
   display: grid;
   grid-template-columns: 1fr;
   justify-items: center;
   align-content: start;
-  gap: 0.36rem;
+  gap: 0.4rem;
+}
+
+#fireGameScreen .game-shell {
+  --df-column-width: min(100%, 940px);
+  width: min(100%, 960px);
+  min-height: 100svh;
+  margin-inline: auto;
+  padding: 0.4rem 0.62rem 0.6rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  align-content: start;
+  gap: 0.4rem;
 }
 
 #dragonGameScreen .game-header,
-#fireGameScreen .game-header,
 #dragonGameScreen .game-instructions,
-#fireGameScreen .game-instructions,
 #dragonGameScreen .game-stats,
-#fireGameScreen .game-stats,
 #dragonGameScreen .game-stage,
+#dragonGameScreen .game-guide {
+  width: var(--df-column-width);
+  max-width: var(--df-column-width);
+  margin-inline: auto;
+}
+
+#fireGameScreen .game-header,
+#fireGameScreen .game-instructions,
+#fireGameScreen .game-stats,
 #fireGameScreen .game-stage,
-#dragonGameScreen .game-guide,
 #fireGameScreen .game-guide {
   width: var(--df-column-width);
   max-width: var(--df-column-width);
   margin-inline: auto;
 }
 
-#dragonGameScreen .game-header,
+#dragonGameScreen .game-header {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.5rem;
+}
+
 #fireGameScreen .game-header {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
@@ -3507,7 +3555,12 @@ h1 {
   padding: 0.4rem 0.5rem;
 }
 
-#dragonGameScreen .game-header-controls,
+#dragonGameScreen .game-header-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.34rem;
+}
+
 #fireGameScreen .game-header-controls {
   display: inline-flex;
   align-items: center;
@@ -3515,7 +3568,16 @@ h1 {
 }
 
 #dragonGameScreen .game-header .back-button,
-#dragonGameScreen .game-header .sound-toggle-button,
+#dragonGameScreen .game-header .sound-toggle-button {
+  position: static;
+  inset: auto;
+  margin: 0;
+  padding: 0.4rem 0.52rem;
+  min-width: 76px;
+  border-radius: 10px;
+  font-size: 0.78rem;
+}
+
 #fireGameScreen .game-header .back-button,
 #fireGameScreen .game-header .sound-toggle-button {
   position: static;
@@ -3527,13 +3589,26 @@ h1 {
   font-size: 0.78rem;
 }
 
-#dragonGameScreen .game-title,
+#dragonGameScreen .game-title {
+  font-size: clamp(1rem, 1.5vw, 1.16rem);
+  line-height: 1.04;
+}
+
 #fireGameScreen .game-title {
   font-size: clamp(1rem, 1.5vw, 1.16rem);
   line-height: 1.04;
 }
 
-#dragonGameScreen .game-instructions,
+#dragonGameScreen .game-instructions {
+  padding-inline: 0.12rem;
+  max-width: 52ch;
+  font-size: 0.76rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 #fireGameScreen .game-instructions {
   padding-inline: 0.12rem;
   max-width: 52ch;
@@ -3544,96 +3619,157 @@ h1 {
   text-overflow: ellipsis;
 }
 
-#dragonGameScreen .game-stats,
+#dragonGameScreen .game-stats {
+  min-height: 0;
+  justify-content: flex-start;
+}
+
 #fireGameScreen .game-stats {
   min-height: 0;
   justify-content: flex-start;
 }
 
-#dragonGameScreen .game-stats-row,
+#dragonGameScreen .game-stats-row {
+  justify-content: flex-start;
+  gap: 0.2rem;
+}
+
 #fireGameScreen .game-stats-row {
   justify-content: flex-start;
   gap: 0.2rem;
 }
 
-#dragonGameScreen .game-stat,
+#dragonGameScreen .game-stat {
+  min-height: 26px;
+  padding: 0.16rem 0.42rem;
+}
+
 #fireGameScreen .game-stat {
   min-height: 26px;
   padding: 0.16rem 0.42rem;
 }
 
-#dragonGameScreen .game-stage,
-#fireGameScreen .game-stage {
-  height: clamp(340px, 56svh, 470px);
-  max-height: clamp(340px, 56svh, 470px);
+#dragonGameScreen .game-stage {
+  height: clamp(360px, 58svh, 500px);
+  max-height: clamp(360px, 58svh, 500px);
 }
 
-#dragonGameScreen .game-guide,
+#fireGameScreen .game-stage {
+  height: clamp(360px, 58svh, 500px);
+  max-height: clamp(360px, 58svh, 500px);
+}
+
+#dragonGameScreen .game-guide {
+  padding: 0.16rem;
+  border-radius: 10px;
+}
+
 #fireGameScreen .game-guide {
   padding: 0.16rem;
   border-radius: 10px;
 }
 
-#dragonGameScreen .game-guide .imported-trackpad-guide-label,
+#dragonGameScreen .game-guide .imported-trackpad-guide-label {
+  font-size: 0.74rem;
+}
+
 #fireGameScreen .game-guide .imported-trackpad-guide-label {
   font-size: 0.74rem;
 }
 
-#dragonGameScreen .game-guide .imported-trackpad-scene,
+#dragonGameScreen .game-guide .imported-trackpad-scene {
+  width: 300px;
+  max-width: 100%;
+  border-radius: 8px;
+}
+
 #fireGameScreen .game-guide .imported-trackpad-scene {
-  width: min(100%, 186px);
+  width: 300px;
+  max-width: 100%;
   border-radius: 8px;
 }
 
 @media (max-width: 900px) {
-  #dragonGameScreen .game-shell,
+  #dragonGameScreen .game-shell {
+    --df-column-width: 100%;
+  }
+
   #fireGameScreen .game-shell {
     --df-column-width: 100%;
   }
 
-  #dragonGameScreen .game-header,
+  #dragonGameScreen .game-header {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+
   #fireGameScreen .game-header {
     grid-template-columns: 1fr;
     justify-items: start;
   }
 
-  #dragonGameScreen .game-instructions,
+  #dragonGameScreen .game-instructions {
+    white-space: normal;
+  }
+
   #fireGameScreen .game-instructions {
     white-space: normal;
   }
 }
 
 @media (max-height: 820px) {
-  #dragonGameScreen .game-shell,
+  #dragonGameScreen .game-shell {
+    gap: 0.3rem;
+    padding: 0.32rem 0.5rem 0.45rem;
+  }
+
   #fireGameScreen .game-shell {
     gap: 0.3rem;
     padding: 0.32rem 0.5rem 0.45rem;
   }
 
-  #dragonGameScreen .game-header,
+  #dragonGameScreen .game-header {
+    padding: 0.34rem 0.46rem;
+  }
+
   #fireGameScreen .game-header {
     padding: 0.34rem 0.46rem;
   }
 
-  #dragonGameScreen .game-title,
+  #dragonGameScreen .game-title {
+    font-size: clamp(0.96rem, 1.42vw, 1.1rem);
+  }
+
   #fireGameScreen .game-title {
     font-size: clamp(0.96rem, 1.42vw, 1.1rem);
   }
 
-  #dragonGameScreen .game-instructions,
+  #dragonGameScreen .game-instructions {
+    font-size: 0.72rem;
+  }
+
   #fireGameScreen .game-instructions {
     font-size: 0.72rem;
   }
 
-  #dragonGameScreen .game-stage,
-  #fireGameScreen .game-stage {
-    height: clamp(320px, 54svh, 430px);
-    max-height: clamp(320px, 54svh, 430px);
+  #dragonGameScreen .game-stage {
+    height: clamp(340px, 56svh, 470px);
+    max-height: clamp(340px, 56svh, 470px);
   }
 
-  #dragonGameScreen .game-guide .imported-trackpad-scene,
+  #fireGameScreen .game-stage {
+    height: clamp(340px, 56svh, 470px);
+    max-height: clamp(340px, 56svh, 470px);
+  }
+
+  #dragonGameScreen .game-guide .imported-trackpad-scene {
+    width: 300px;
+    max-width: 100%;
+  }
+
   #fireGameScreen .game-guide .imported-trackpad-scene {
-    width: min(100%, 176px);
+    width: 300px;
+    max-width: 100%;
   }
 }
 /* ============================== END APPROVED REFERENCE ============================== */

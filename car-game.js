@@ -758,8 +758,9 @@ function applyVolumeState() {
   });
   const btn = document.getElementById("carVolumeToggle");
   if (btn) {
-    btn.textContent = volumeOn ? "\uD83D\uDD0A" : "\uD83D\uDD07";
-    btn.setAttribute("aria-label", volumeOn ? "Mute sound" : "Unmute sound");
+    btn.textContent = volumeOn ? "🔊" : "🔇";
+    btn.setAttribute("aria-label", volumeOn ? "Sound on" : "Sound off");
+    btn.setAttribute("title", volumeOn ? "Sound on" : "Sound off");
   }
 }
 

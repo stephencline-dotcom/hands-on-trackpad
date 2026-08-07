@@ -7,16 +7,19 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body class="car-page" data-game-active-key="carGameActive">
-    <main class="page game-shell">
+    <main class="page game-shell car-game-shell">
       <header class="game-header">
-        <a class="home-btn" href="index.html" aria-label="Return to home page">
-          <img class="home-btn-icon" src="images/home-icon.svg" alt="" aria-hidden="true" />
-          <span>Home</span>
-        </a>
         <div class="game-heading">
+          <p class="game-category">Car Game</p>
           <h1 class="game-title">Road Dash</h1>
         </div>
-        <button id="carVolumeToggle" class="car-volume-toggle" type="button" aria-label="Mute sound">&#128266;</button>
+        <div class="car-header-controls">
+          <a class="home-btn" href="index.html" aria-label="Home" title="Home">
+            <img class="home-btn-icon" src="images/home-icon.svg" alt="" aria-hidden="true" />
+            <span class="home-btn-label">Home</span>
+          </a>
+          <button id="carVolumeToggle" class="car-volume-toggle" type="button" aria-label="Sound on" title="Sound on">🔊</button>
+        </div>
       </header>
 
       <p class="game-instructions">Click START, then steer your car to avoid crashes and survive each level.</p>
@@ -61,7 +64,9 @@
                   <p class="car-finish-copy">You finished every level on Road Dash.</p>
                   <div class="car-finish-actions">
                     <button id="carPlayAgainBtn" class="car-finish-btn" type="button">Play Again</button>
-                    <a class="car-finish-home" href="index.html" aria-label="Go to home page">Home</a>
+                    <a class="car-finish-home" href="index.html" aria-label="Home" title="Home">
+                      <img class="home-btn-icon" src="images/home-icon.svg" alt="" aria-hidden="true" />
+                    </a>
                   </div>
                 </div>
               </div>

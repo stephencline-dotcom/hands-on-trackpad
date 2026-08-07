@@ -534,11 +534,15 @@ function setMartianStatus(text) {
 }
 
 function updateSoundToggleButtons() {
-  const label = soundEnabled ? 'Sound: On' : 'Sound: Off';
+  const isOn = soundEnabled;
+  const icon = isOn ? '🔊' : '🔇';
+  const label = isOn ? 'Sound on' : 'Sound off';
 
   for (const button of soundToggleButtons) {
-    button.textContent = label;
-    button.setAttribute('aria-pressed', String(!soundEnabled));
+    button.textContent = icon;
+    button.setAttribute('aria-label', label);
+    button.setAttribute('title', label);
+    button.setAttribute('aria-pressed', String(!isOn));
   }
 }
 
