@@ -77,6 +77,8 @@ const dragonLevelInputs = [1, 2, 3, 4].map((level) => ({
   fireDurationSeconds: document.getElementById(`adminDragonFireDurationL${level}`),
   speedMin: document.getElementById(`adminDragonSpeedMinL${level}`),
   speedMax: document.getElementById(`adminDragonSpeedMaxL${level}`),
+  princess: document.getElementById(`adminDragonPrincessL${level}`),
+  knight: document.getElementById(`adminDragonKnightL${level}`),
 }));
 const fireLevelInputs = [1, 2, 3].map((level) => ({
   timeLimit: document.getElementById(`adminFireTimeL${level}`),
@@ -644,6 +646,14 @@ function ensureMovingSoundSettingsShape(existingSettings) {
     next.dragonLevels = JSON.parse(JSON.stringify(DEFAULT_MOVING_SOUND_DRAGON_LEVELS));
   }
 
+  if (!Array.isArray(next.dragonPrincessEnabledByLevel) || next.dragonPrincessEnabledByLevel.length < 4) {
+    next.dragonPrincessEnabledByLevel = [false, false, true, true];
+  }
+
+  if (!Array.isArray(next.dragonKnightEnabledByLevel) || next.dragonKnightEnabledByLevel.length < 4) {
+    next.dragonKnightEnabledByLevel = [false, false, false, true];
+  }
+
   if (!Array.isArray(next.fireLevels) || next.fireLevels.length < 3) {
     next.fireLevels = JSON.parse(JSON.stringify(DEFAULT_MOVING_SOUND_FIRE_LEVELS));
   }
@@ -653,6 +663,70 @@ function ensureMovingSoundSettingsShape(existingSettings) {
   }
 
   return next;
+}
+
+function loadDragonCharacterSettings() {
+  const defaults = {
+    princess: [false, false, true, true],
+    knight: [false, false, false, true],
+  };
+
+  try {
+    const raw = localStorage.getItem(MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    const settings = ensureMovingSoundSettingsShape(parsed);
+
+    return {
+      princess: [...settings.dragonPrincessEnabledByLevel],
+      knight: [...settings.dragonKnightEnabledByLevel],
+    };
+  } catch {
+    return defaults;
+  }
+}
+
+function saveDragonCharacterSettings(princessByLevel, knightByLevel) {
+  try {
+    const raw = localStorage.getItem(MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    const next = ensureMovingSoundSettingsShape(parsed);
+
+    next.dragonPrincessEnabledByLevel = princessByLevel.map((value) => value === true);
+    next.dragonKnightEnabledByLevel = knightByLevel.map((value) => value === true);
+
+    localStorage.setItem(
+      MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY,
+      JSON.stringify(next)
+    );
+  } catch {
+    const fallback = ensureMovingSoundSettingsShape({});
+    fallback.dragonPrincessEnabledByLevel = princessByLevel.map((value) => value === true);
+    fallback.dragonKnightEnabledByLevel = knightByLevel.map((value) => value === true);
+
+    localStorage.setItem(
+      MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY,
+      JSON.stringify(fallback)
+    );
+  }
+}
+
+function applyDragonCharacterSettingsToInputs(settings) {
+  dragonLevelInputs.forEach((inputs, index) => {
+    if (inputs.princess) {
+      inputs.princess.checked = settings.princess[index] === true;
+    }
+
+    if (inputs.knight) {
+      inputs.knight.checked = settings.knight[index] === true;
+    }
+  });
+}
+
+function readDragonCharacterSettingsFromInputs() {
+  return {
+    princess: dragonLevelInputs.map((inputs) => Boolean(inputs.princess && inputs.princess.checked)),
+    knight: dragonLevelInputs.map((inputs) => Boolean(inputs.knight && inputs.knight.checked)),
+  };
 }
 
 function saveGameLevelsToStorage(storageField, levels, normalizeLevels) {
@@ -1309,6 +1383,18 @@ function resetDragonToDefaults() {
 
   const defaultDragonLevels = normalizeDragonLevels(DEFAULT_MOVING_SOUND_DRAGON_LEVELS);
   saveStoredDragonLevels(defaultDragonLevels);
+
+  dragonCharacterSettings = {
+    princess: [false, false, true, true],
+    knight: [false, false, false, true],
+  };
+
+  saveDragonCharacterSettings(
+    dragonCharacterSettings.princess,
+    dragonCharacterSettings.knight
+  );
+
+  applyDragonCharacterSettingsToInputs(dragonCharacterSettings);
   applyGameLevelsToInputs(defaultDragonLevels, dragonLevelInputs, {
     dragonCount: "dragonCount",
     timeLimit: "timeLimit",
@@ -1388,6 +1474,7 @@ async function loadTask1Settings() {
   let lightTapLevels = loadStoredLightTapLevels();
   let streetCarLevels = loadStoredStreetCarLevels();
   let dragonLevels = loadStoredDragonLevels();
+  let dragonCharacterSettings = loadDragonCharacterSettings();
   let fireLevels = loadStoredFireLevels();
   let martianLevels = loadStoredMartianLevels();
   let soundEnabled = parseTaskEnabled(localStorage.getItem(SOUND_ENABLED_KEY), true);
@@ -1610,6 +1697,7 @@ async function loadTask1Settings() {
     speedMin: "speedMin",
     speedMax: "speedMax",
   });
+  applyDragonCharacterSettingsToInputs(dragonCharacterSettings);
   applyGameLevelsToInputs(fireLevels, fireLevelInputs, {
     timeLimit: "timeLimit",
     missesAllowed: "missesAllowed",
@@ -1740,6 +1828,8 @@ async function saveTask1Settings() {
       })
     )
     : null;
+  const dragonCharacterSettingsToSave = readDragonCharacterSettingsFromInputs();
+
   const hasFireInputs = fireLevelInputs.some((inputs) =>
     Boolean(inputs.timeLimit || inputs.missesAllowed || inputs.goal || inputs.spawnIntervalSeconds || inputs.flameDurationSeconds)
   );
@@ -1847,6 +1937,16 @@ async function saveTask1Settings() {
   if (dragonLevels) {
     saveStoredDragonLevels(dragonLevels);
   }
+
+  saveDragonCharacterSettings(
+    dragonCharacterSettingsToSave.princess,
+    dragonCharacterSettingsToSave.knight
+  );
+
+  dragonCharacterSettings = {
+    princess: [...dragonCharacterSettingsToSave.princess],
+    knight: [...dragonCharacterSettingsToSave.knight],
+  };
   if (fireLevels) {
     saveStoredFireLevels(fireLevels);
   }

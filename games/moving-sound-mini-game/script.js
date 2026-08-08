@@ -232,6 +232,7 @@ let soundEnabled = true;
 let lightTapLevelResult = null;
 let streetCarLevelResult = null;
 let dragonLevelResult = null;
+let fireLevelResult = null;
 const importedTrackpadGuides = [];
 
 function initImportedTrackpadGuides() {
@@ -1925,15 +1926,17 @@ function applyAdminSettingsSnapshot(snapshot) {
     ? snapshot.dragonKnightEnabledByLevel
     : null;
 
-  dragonGameState.princessEnabledByLevel[0] = princessByLevel ? princessByLevel[0] === true : false;
-  dragonGameState.princessEnabledByLevel[1] = princessByLevel ? princessByLevel[1] === true : false;
-  dragonGameState.princessEnabledByLevel[2] = princessByLevel ? princessByLevel[2] === true : legacyPrincessLevel3 !== false;
-  dragonGameState.princessEnabledByLevel[3] = princessByLevel ? princessByLevel[3] === true : dragonGameState.princessEnabledByLevel[3] === true;
-  dragonGameState.knightEnabledByLevel[0] = knightByLevel ? knightByLevel[0] === true : false;
-  dragonGameState.knightEnabledByLevel[1] = knightByLevel ? knightByLevel[1] === true : false;
-  dragonGameState.knightEnabledByLevel[2] = knightByLevel ? knightByLevel[2] === true : false;
-  dragonGameState.knightEnabledByLevel[3] = knightByLevel ? knightByLevel[3] === true : false;
+  if (princessByLevel) {
+  dragonGameState.princessEnabledByLevel = princessByLevel.map((value) => value === true);
+} else {
+  dragonGameState.princessEnabledByLevel = [false, false, true, true];
+}
 
+if (knightByLevel) {
+  dragonGameState.knightEnabledByLevel = knightByLevel.map((value) => value === true);
+} else {
+  dragonGameState.knightEnabledByLevel = [false, false, false, true];
+}
   for (let index = 0; index < dragonGameState.levels.length; index += 1) {
     const arenaLevel = snapshot.arenaLevels[index] || {};
     const carLevel = snapshot.carLevels[index] || {};
@@ -2577,6 +2580,7 @@ function resumeDragonLevel(index) {
   startDragonLevel(index);
 
   dragonGameState.running = true;
+  applyDragonKnightVisibility();
   dragonGameState.lastTime = 0;
   dragonArena.classList.add('is-active');
   setDragonStartButtonVisible(false);
@@ -2588,6 +2592,74 @@ function resumeDragonLevel(index) {
 
 function restartCurrentDragonLevel() {
   resumeDragonLevel(dragonGameState.currentLevelIndex);
+}
+
+function pauseFireGameplayForResult() {
+  fireGameState.running = false;
+  fireArena.classList.remove('is-active');
+
+  window.cancelAnimationFrame(fireGameState.animationId);
+  window.clearTimeout(fireGameState.waterTimeoutId);
+
+  stopFireBurningLoop();
+  stopFireSirenLoop();
+  hideWaterStream();
+}
+
+function resumeFireLevel(index) {
+  startFireLevel(index);
+
+  fireGameState.running = true;
+  fireGameState.lastTime = 0;
+  fireArena.classList.add('is-active');
+  setFireStartButtonVisible(false);
+
+  startFireBurningLoop();
+  startFireSirenLoop();
+
+  window.cancelAnimationFrame(fireGameState.animationId);
+  fireGameState.animationId = window.requestAnimationFrame(stepFireGame);
+}
+
+function restartCurrentFireLevel() {
+  resumeFireLevel(fireGameState.currentLevelIndex);
+}
+
+function showFireSuccessResult() {
+  pauseFireGameplayForResult();
+
+  const completedLevel = fireGameState.currentLevelIndex + 1;
+  const hasNextLevel =
+    fireGameState.currentLevelIndex < fireGameState.levels.length - 1;
+
+  saveCompletedGameResult(
+    'Firefighter Rescue',
+    fireGameState,
+    completedLevel
+  );
+
+  if (!fireLevelResult) {
+    if (hasNextLevel) {
+      resumeFireLevel(fireGameState.currentLevelIndex + 1);
+    } else {
+      endFireGame(
+        `All fire levels complete. Final score: ${fireGameState.score}`
+      );
+    }
+    return;
+  }
+
+  if (hasNextLevel) {
+    fireLevelResult.showSuccess({
+      title: 'Level Complete!',
+      message: `Great job! Tap Level Up for Level ${completedLevel + 1}.`,
+    });
+  } else {
+    fireLevelResult.showFinal({
+      title: 'You Did It!',
+      message: `All Firefighter Rescue levels complete! Final score: ${fireGameState.score}`,
+    });
+  }
 }
 
 function showDragonSuccessResult() {
@@ -3961,7 +4033,17 @@ function applyFireMiss(message) {
   updateFireMisses(fireGameState.missesLeft - 1);
 
   if (fireGameState.missesLeft <= 0) {
-    endFireGame('Too many fires!');
+    pauseFireGameplayForResult();
+
+    if (fireLevelResult) {
+      fireLevelResult.showFailure({
+        title: 'Try Again!',
+        message: `Level ${fireGameState.currentLevelIndex + 1} failed: too many fires.`,
+      });
+    } else {
+      endFireGame('Too many fires!');
+    }
+
     return true;
   }
 
@@ -4011,7 +4093,19 @@ function stepFireGame(timestamp) {
   updateFireTime(fireGameState.timeLeft - delta);
 
   if (fireGameState.timeLeft <= 0) {
-    endFireGame(`Fire level ${fireGameState.currentLevelIndex + 1} failed: goal not reached`);
+    pauseFireGameplayForResult();
+
+    if (fireLevelResult) {
+      fireLevelResult.showFailure({
+        title: 'Try Again!',
+        message: `Level ${fireGameState.currentLevelIndex + 1} failed: goal not reached.`,
+      });
+    } else {
+      endFireGame(
+        `Fire level ${fireGameState.currentLevelIndex + 1} failed: goal not reached`
+      );
+    }
+
     return;
   }
 
@@ -4105,8 +4199,7 @@ function handleFireArenaPointerDown(event) {
   setFireStatus('Flame out!');
 
   if (fireGameState.levelHits >= fireGameState.levelGoal) {
-    saveCompletedGameResult('Firefighter Rescue', fireGameState, fireGameState.currentLevelIndex + 1);
-    startFireLevel(fireGameState.currentLevelIndex + 1);
+    showFireSuccessResult();
   }
 }
 
@@ -4870,6 +4963,20 @@ if (window.LevelResultController && dragonArena) {
     onRetry: restartCurrentDragonLevel,
     onPlayAgain: startDragonGame,
     onHome: backToMenuFromDragon,
+  });
+}
+
+if (window.LevelResultController && fireArena) {
+  fireLevelResult = new window.LevelResultController({
+    host: fireArena,
+    canPlaySound: () => soundEnabled,
+    pauseGame: pauseFireGameplayForResult,
+    onNextLevel: () => {
+      resumeFireLevel(fireGameState.currentLevelIndex + 1);
+    },
+    onRetry: restartCurrentFireLevel,
+    onPlayAgain: startFireGame,
+    onHome: backToMenuFromFire,
   });
 }
 startButton.addEventListener('click', startGame);
