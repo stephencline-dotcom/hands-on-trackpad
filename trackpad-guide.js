@@ -14,6 +14,8 @@
   };
 
   const RIGHT_HAND_BOTTOM_MARGIN_PX = 10;
+  const RIGHT_HAND_X_MOVEMENT_SCALE = 1.25;
+  const RIGHT_HAND_Y_MOVEMENT_SCALE = 1.4;
 
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
@@ -90,34 +92,49 @@
       };
     }
 
-    function mapPointToRightPosition(pointX, pointY) {
-      const area = getTrackpadArea();
+    function getScaledRightHandRange() {
       const range = getRightHandRange();
-      const nx = clamp((pointX - area.x) / area.width, 0, 1);
-      const ny = clamp((pointY - area.y) / area.height, 0, 1);
+      const centerX = (range.minX + range.maxX) / 2;
+      const centerY = (range.minY + range.maxY) / 2;
+      const halfRangeX = ((range.maxX - range.minX) / 2) * RIGHT_HAND_X_MOVEMENT_SCALE;
+      const halfRangeY = ((range.maxY - range.minY) / 2) * RIGHT_HAND_Y_MOVEMENT_SCALE;
 
       return {
-        x: range.minX + nx * (range.maxX - range.minX),
-        y: range.minY + ny * (range.maxY - range.minY),
+        minX: clamp(centerX - halfRangeX, 0, sceneWidth),
+        maxX: clamp(centerX + halfRangeX, 0, sceneWidth),
+        minY: clamp(centerY - halfRangeY, 0, sceneHeight),
+        maxY: clamp(centerY + halfRangeY, 0, sceneHeight),
       };
     }
 
-    function clampRightHandYToVisibleBoundary(yPosition) {
+    function mapPointToRightPosition(pointX, pointY) {
+      const area = getTrackpadArea();
+      const range = getScaledRightHandRange();
+      const nx = clamp((pointX - area.x) / area.width, 0, 1);
+      const ny = clamp((pointY - area.y) / area.height, 0, 1);
+      const maxVisibleTop = getRightHandVisibleMaxTop();
+      const safeMaxY = Math.max(range.minY, Math.min(range.maxY, maxVisibleTop));
+
+      return {
+        x: range.minX + nx * (range.maxX - range.minX),
+        y: range.minY + ny * (safeMaxY - range.minY),
+      };
+    }
+
+    function getRightHandVisibleMaxTop() {
       const sceneRect = scene.getBoundingClientRect();
       const rightRect = rightHand.getBoundingClientRect();
       const scaleY = sceneRect.height > 0 ? sceneRect.height / sceneHeight : 0;
 
       if (!Number.isFinite(scaleY) || scaleY <= 0) {
-        return yPosition;
+        return sceneHeight;
       }
 
       const rightHeightLocal = rightRect.height / scaleY;
       const bottomMarginLocal = RIGHT_HAND_BOTTOM_MARGIN_PX / scaleY;
       const transformYRendered = getTranslateYFromTransform(getComputedStyle(rightHand).transform);
       const transformYLocal = transformYRendered / scaleY;
-      const maxVisibleTop = sceneHeight - rightHeightLocal - bottomMarginLocal - transformYLocal;
-
-      return Math.min(yPosition, maxVisibleTop);
+      return sceneHeight - rightHeightLocal - bottomMarginLocal - transformYLocal;
     }
 
     function pointerToScenePoint(event) {
@@ -146,8 +163,7 @@
     function updateFromPointerEvent(event) {
       const point = pointerToScenePoint(event);
       const rightPosition = mapPointToRightPosition(point.x, point.y);
-      const safeY = clampRightHandYToVisibleBoundary(rightPosition.y);
-      applyRightPosition(rightPosition.x, safeY);
+      applyRightPosition(rightPosition.x, rightPosition.y);
     }
 
     function setPressed(pressed) {
@@ -176,6 +192,7 @@
       applyRightPosition,
       getTrackpadArea,
       getRightHandRange,
+      getScaledRightHandRange,
       mapPointToRightPosition,
       pointerToScenePoint,
       updateFromPointerEvent,
