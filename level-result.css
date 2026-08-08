@@ -1,0 +1,230 @@
+/* Reusable Level Result overlay styles. Scoped to .level-result-* classes only. */
+
+.level-result-overlay {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(12px, 2.2vw, 24px);
+  background: rgba(7, 15, 28, 0.56);
+  backdrop-filter: blur(2px);
+  z-index: 60;
+}
+
+.level-result-overlay.is-visible {
+  display: flex;
+}
+
+.level-result-panel {
+  position: relative;
+  width: min(92%, 560px);
+  max-height: calc(100% - 20px);
+  overflow: auto;
+  padding: clamp(16px, 2.8vw, 30px);
+  border-radius: 22px;
+  border: 2px solid rgba(120, 194, 255, 0.52);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(73, 153, 242, 0.18), rgba(10, 19, 35, 0) 46%),
+    linear-gradient(180deg, rgba(16, 28, 49, 0.98), rgba(9, 18, 34, 0.98));
+  color: #eaf4ff;
+  box-shadow:
+    0 26px 70px rgba(2, 8, 18, 0.62),
+    inset 0 0 0 1px rgba(164, 221, 255, 0.2);
+  text-align: center;
+}
+
+.level-result-title,
+.level-result-message,
+.level-result-actions {
+  position: relative;
+  z-index: 2;
+}
+
+.level-result-overlay[data-mode="final"] .level-result-panel {
+  width: min(95%, 620px);
+  border-color: rgba(178, 231, 255, 0.72);
+  background:
+    radial-gradient(circle at 16% 0%, rgba(48, 189, 255, 0.28), rgba(10, 19, 35, 0) 42%),
+    radial-gradient(circle at 90% 10%, rgba(130, 87, 255, 0.16), rgba(10, 19, 35, 0) 40%),
+    linear-gradient(180deg, rgba(12, 31, 54, 0.98), rgba(8, 20, 38, 0.99));
+}
+
+.level-result-title {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.1vw, 2rem);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  color: #ffffff;
+}
+
+.level-result-overlay[data-mode="final"] .level-result-title {
+  font-size: clamp(1.65rem, 2.6vw, 2.4rem);
+  color: #f4fbff;
+}
+
+.level-result-message {
+  margin: 10px auto 0;
+  max-width: 38ch;
+  font-size: clamp(0.98rem, 1.3vw, 1.12rem);
+  line-height: 1.45;
+  color: rgba(220, 238, 255, 0.95);
+}
+
+.level-result-actions {
+  margin-top: clamp(14px, 2.4vh, 22px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.level-result-button {
+  min-width: 154px;
+  min-height: 48px;
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 13px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #072343;
+  background: linear-gradient(180deg, #7fd2ff, #45b6ff);
+  box-shadow: 0 10px 22px rgba(34, 160, 255, 0.35);
+  cursor: pointer;
+  transition: transform 120ms ease, filter 120ms ease, opacity 120ms ease;
+}
+
+.level-result-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.level-result-button:active {
+  transform: translateY(0);
+  filter: brightness(0.97);
+}
+
+.level-result-button:focus-visible,
+.level-result-home:focus-visible {
+  outline: 3px solid rgba(155, 219, 255, 0.95);
+  outline-offset: 2px;
+}
+
+.level-result-button:disabled,
+.level-result-home:disabled {
+  opacity: 0.62;
+  cursor: default;
+  transform: none;
+  filter: none;
+}
+
+.level-result-home {
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 13px;
+  background: rgba(143, 205, 255, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(190, 228, 255, 0.38);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 120ms ease, background-color 120ms ease;
+}
+
+.level-result-home:hover {
+  transform: translateY(-1px);
+  background: rgba(164, 220, 255, 0.26);
+}
+
+.level-result-home-icon {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+.level-result-balloons {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.level-result-balloon {
+  position: absolute;
+  left: var(--balloon-left, 50%);
+  bottom: -18%;
+  width: var(--balloon-size, 34px);
+  height: calc(var(--balloon-size, 34px) * 1.28);
+  border-radius: 52% 52% 48% 48%;
+  background: hsl(var(--balloon-hue, 198), 88%, 64%);
+  box-shadow: inset -8px -12px 16px rgba(0, 0, 0, 0.12);
+  opacity: 0.92;
+  transform: translateX(-50%);
+  animation: level-result-balloon-rise var(--balloon-dur, 6.2s) linear infinite;
+  animation-delay: var(--balloon-delay, 0s);
+}
+
+.level-result-balloon::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 1.6px;
+  height: calc(var(--balloon-size, 34px) * 1.1);
+  background: rgba(219, 244, 255, 0.72);
+  transform: translateX(-50%);
+}
+
+@keyframes level-result-balloon-rise {
+  0% {
+    transform: translateX(-50%) translateY(10%) rotate(-2deg);
+    opacity: 0;
+  }
+
+  12% {
+    opacity: 0.95;
+  }
+
+  100% {
+    transform: translateX(calc(-50% + var(--balloon-drift, 22px))) translateY(-128%) rotate(6deg);
+    opacity: 0;
+  }
+}
+
+@media (max-height: 600px) {
+  .level-result-overlay {
+    align-items: flex-start;
+  }
+
+  .level-result-panel {
+    margin-top: 8px;
+    max-height: calc(100% - 16px);
+    padding: 14px 14px 16px;
+    border-radius: 16px;
+  }
+
+  .level-result-title {
+    font-size: 1.34rem;
+  }
+
+  .level-result-message {
+    margin-top: 8px;
+    font-size: 0.94rem;
+    line-height: 1.35;
+  }
+
+  .level-result-actions {
+    margin-top: 12px;
+    gap: 10px;
+  }
+
+  .level-result-button {
+    min-width: 140px;
+    min-height: 44px;
+    padding: 10px 16px;
+  }
+}

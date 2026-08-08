@@ -66,6 +66,7 @@ const martianStatusElement = document.getElementById('martianStatus');
 const martianStartButton = document.getElementById('martianStartButton');
 const martianUfoLayer = document.getElementById('martianUfoLayer');
 const martianPeopleLayer = document.getElementById('martianPeopleLayer');
+const martianShipAudio = document.getElementById('martianShipAudio');
 const backToMenuButton = document.getElementById('backToMenuButton');
 const backToMenuFromCarButton = document.getElementById('backToMenuFromCarButton');
 const backToMenuFromDragonButton = document.getElementById('backToMenuFromDragonButton');
@@ -228,6 +229,7 @@ const selectedGameKey = (selectedGame || '').trim().toLowerCase();
 const openedFromPortalGameLink = selectedGame !== null;
 
 let soundEnabled = true;
+let lightTapLevelResult = null;
 const importedTrackpadGuides = [];
 
 function initImportedTrackpadGuides() {
@@ -568,6 +570,11 @@ function setSoundEnabled(isEnabled, persist = true) {
     if (fireGameState.running) {
       startFireBurningLoop();
       startFireSirenLoop();
+    }
+
+    if (martianGameState.running) {
+      startMartianShipLoop();
+      resumeAllActiveMartianRayAudio();
     }
   }
 
@@ -1324,9 +1331,66 @@ function ensureMartianEntities() {
         direction: Math.random() < 0.5 ? -1 : 1,
         active: false,
         personIndex: -1,
+        rayAudio: null,
         pauseUntil: 0,
         nextDecisionAt: 0,
       });
+  }
+}
+
+function startMartianRayAudio(ufo) {
+  if (!ufo || !ufo.active || !soundEnabled) {
+    return;
+  }
+
+  if (!ufo.rayAudio) {
+    const sound = new Audio('../../sounds/alienray.mp3');
+    sound.preload = 'auto';
+    sound.loop = true;
+    sound.volume = 0.45;
+    ufo.rayAudio = sound;
+  }
+
+  if (!ufo.rayAudio.paused) {
+    return;
+  }
+
+  ufo.rayAudio.play().catch(() => {});
+}
+
+function stopMartianRayAudio(ufo, resetTime = true, clearReference = true) {
+  if (!ufo || !ufo.rayAudio) {
+    return;
+  }
+
+  ufo.rayAudio.pause();
+
+  if (resetTime) {
+    ufo.rayAudio.currentTime = 0;
+  }
+
+  if (clearReference) {
+    ufo.rayAudio = null;
+  }
+}
+
+function pauseAllMartianRayAudio(resetTime = false, clearReference = false) {
+  for (const ufo of martianGameState.ufos) {
+    stopMartianRayAudio(ufo, resetTime, clearReference);
+  }
+}
+
+function resumeAllActiveMartianRayAudio() {
+  if (!martianGameState.running) {
+    return;
+  }
+
+  for (const ufo of martianGameState.ufos) {
+    if (!ufo.active || ufo.element.hidden || !ufo.element.classList.contains('is-beaming')) {
+      continue;
+    }
+
+    startMartianRayAudio(ufo);
   }
 }
 
@@ -1380,6 +1444,7 @@ function resetMartianUfo(ufo) {
   ufo.direction = Math.random() < 0.5 ? -1 : 1;
   ufo.active = false;
   ufo.personIndex = -1;
+  stopMartianRayAudio(ufo);
   ufo.pauseUntil = now + randomBetween(220, 720);
   ufo.nextDecisionAt = now + randomBetween(900, 2000);
   ufo.element.hidden = false;
@@ -1395,6 +1460,7 @@ function resumeMartianUfoRoaming(ufo, keepPosition = true) {
 
   ufo.active = false;
   ufo.personIndex = -1;
+  stopMartianRayAudio(ufo);
   ufo.direction = Math.random() < 0.5 ? -1 : 1;
   ufo.speed = martianGameState.ufoSpeed * randomBetween(0.92, 1.12);
   ufo.x = keepPosition ? Math.min(maxX, Math.max(minX, ufo.x)) : randomBetween(minX, maxX);
@@ -1584,6 +1650,7 @@ function tryStartAbduction() {
   ufo.element.hidden = false;
   ufo.element.classList.add('is-beaming');
   positionMartianUfo(ufo);
+  startMartianRayAudio(ufo);
 
   person.abducted = true;
   person.ufoIndex = martianGameState.ufos.indexOf(ufo);
@@ -1658,6 +1725,7 @@ function stepMartianGame(timestamp) {
     const maxX = Math.max(minX, width - ufo.width - 12);
 
     if (!shouldBeVisible) {
+      stopMartianRayAudio(ufo);
       ufo.element.hidden = true;
       ufo.element.classList.remove('is-beaming');
       ufo.active = false;
@@ -1724,12 +1792,14 @@ function handleMartianArenaPointerDown(event) {
 function endMartianGame(message) {
   const wasRunning = martianGameState.running;
   martianGameState.running = false;
+  pauseMartianShipLoop(true);
   setMartianStartButtonVisible(true);
   setMartianStatus(message);
   martianArena.classList.remove('is-active');
   window.cancelAnimationFrame(martianGameState.animationId);
 
   for (const ufo of martianGameState.ufos) {
+    stopMartianRayAudio(ufo);
     ufo.active = false;
     ufo.personIndex = -1;
     ufo.element.hidden = true;
@@ -1744,6 +1814,7 @@ function endMartianGame(message) {
 function startMartianGame() {
   resizeMartianArena();
   ensureMartianEntities();
+  pauseMartianShipLoop(true);
   resetTrackedStats(martianGameState);
   updateMartianScore(0);
   updateMartianTime(martianGameState.timeLimit);
@@ -1757,6 +1828,7 @@ function startMartianGame() {
   martianGameState.currentLevelIndex = 0;
   martianGameState.levelHits = 0;
   startMartianLevel(0);
+  startMartianShipLoop();
 
   window.cancelAnimationFrame(martianGameState.animationId);
   martianGameState.animationId = window.requestAnimationFrame(stepMartianGame);
@@ -2384,7 +2456,7 @@ function createTarget() {
 
     if (arenaState.levelHits >= arenaState.levelGoal) {
       saveCompletedGameResult('Light Tap Game', arenaState, arenaState.currentLevelIndex + 1);
-      startLevel(arenaState.currentLevelIndex + 1);
+      showLightTapSuccessResult();
       return;
     }
 
@@ -2441,6 +2513,80 @@ function startLevel(index) {
   for (const target of arenaState.targets) {
     resetTarget(target, false);
   }
+}
+
+function pauseLightTapGameplayForResult() {
+  if (!arenaState.running) {
+    return;
+  }
+
+  arenaState.running = false;
+  window.cancelAnimationFrame(arenaState.animationId);
+}
+
+function runLightTapLevel(index) {
+  resizeArena();
+  arenaState.running = true;
+  arenaState.lastTime = 0;
+  arena.classList.add('is-active');
+  setStartButtonVisible(false);
+  startAudio();
+  startLevel(index);
+
+  if (!arenaState.running) {
+    return;
+  }
+
+  window.cancelAnimationFrame(arenaState.animationId);
+  arenaState.animationId = window.requestAnimationFrame(step);
+}
+
+function restartCurrentLightTapLevel() {
+  runLightTapLevel(arenaState.currentLevelIndex);
+}
+
+function showLightTapFailureResult(message = '') {
+  pauseLightTapGameplayForResult();
+
+  if (!lightTapLevelResult) {
+    endGame(message || `Level ${arenaState.currentLevelIndex + 1} failed`);
+    return;
+  }
+
+  lightTapLevelResult.showFailure({
+    title: 'Try Again!',
+    message,
+  });
+}
+
+function showLightTapSuccessResult() {
+  pauseLightTapGameplayForResult();
+
+  const completedLevel = arenaState.currentLevelIndex + 1;
+  const hasNextLevel = arenaState.currentLevelIndex < arenaState.levels.length - 1;
+
+  if (!lightTapLevelResult) {
+    if (hasNextLevel) {
+      runLightTapLevel(arenaState.currentLevelIndex + 1);
+      return;
+    }
+
+    endGame(`All levels complete. Final score: ${arenaState.score}`);
+    return;
+  }
+
+  if (hasNextLevel) {
+    lightTapLevelResult.showSuccess({
+      title: 'Level Complete!',
+      message: `Great job! Tap Level Up for Level ${completedLevel + 1}.`,
+    });
+    return;
+  }
+
+  lightTapLevelResult.showFinal({
+    title: 'You Did It!',
+    message: `All Light Tap levels complete! Final score: ${arenaState.score}`,
+  });
 }
 
 function createAudio() {
@@ -2790,6 +2936,32 @@ function stopFireSirenLoop() {
   fireGameState.sirenIntervalId = 0;
 }
 
+function startMartianShipLoop() {
+  if (!soundEnabled || !martianGameState.running || !martianShipAudio) {
+    return;
+  }
+
+  martianShipAudio.loop = true;
+
+  if (!martianShipAudio.paused) {
+    return;
+  }
+
+  martianShipAudio.play().catch(() => {});
+}
+
+function pauseMartianShipLoop(resetTime = false) {
+  if (!martianShipAudio) {
+    return;
+  }
+
+  martianShipAudio.pause();
+
+  if (resetTime) {
+    martianShipAudio.currentTime = 0;
+  }
+}
+
 function startAudio() {
   if (!soundEnabled) {
     return;
@@ -2818,6 +2990,8 @@ function stopAudio() {
   stopDragonKnightGallop();
   stopFireBurningLoop();
   stopFireSirenLoop();
+  pauseAllMartianRayAudio();
+  pauseMartianShipLoop();
 }
 
 function playHitSpark() {
@@ -2909,17 +3083,11 @@ function step(timestamp) {
 
   if (arenaState.timeLeft <= 0) {
     if (arenaState.levelHits < arenaState.levelGoal) {
-      endGame(`Level ${arenaState.currentLevelIndex + 1} failed: goal not reached`);
+      showLightTapFailureResult(`Level ${arenaState.currentLevelIndex + 1} failed: goal not reached`);
       return;
     }
 
-    startLevel(arenaState.currentLevelIndex + 1);
-
-    if (arenaState.running) {
-      arenaState.lastTime = timestamp;
-      arenaState.animationId = window.requestAnimationFrame(step);
-    }
-
+    showLightTapSuccessResult();
     return;
   }
 
@@ -4124,6 +4292,10 @@ function startCarGame() {
 }
 
 function startGame() {
+  if (lightTapLevelResult) {
+    lightTapLevelResult.hide();
+  }
+
   resizeArena();
   updateScore(0);
   resetTrackedStats(arenaState);
@@ -4165,7 +4337,7 @@ function handleArenaMiss(event) {
   updateLives(arenaState.lives - 1);
 
   if (arenaState.lives <= 0) {
-    endGame('Out of lives');
+    showLightTapFailureResult('Out of lives');
     return;
   }
 
@@ -4511,6 +4683,20 @@ function backToMenuFromMartian() {
   setMartianStartButtonVisible(true);
   setMartianStatus('Ready');
   resetAllMartianEntities();
+}
+
+if (window.LevelResultController && arena) {
+  lightTapLevelResult = new window.LevelResultController({
+    host: arena,
+    canPlaySound: () => soundEnabled,
+    pauseGame: pauseLightTapGameplayForResult,
+    onNextLevel: () => {
+      runLightTapLevel(arenaState.currentLevelIndex + 1);
+    },
+    onRetry: restartCurrentLightTapLevel,
+    onPlayAgain: startGame,
+    onHome: backToMenu,
+  });
 }
 
 startButton.addEventListener('click', startGame);

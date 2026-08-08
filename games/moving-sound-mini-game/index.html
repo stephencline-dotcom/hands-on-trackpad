@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Moving Sound Mini Game</title>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="../../level-result.css" />
     <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
     <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
     <script defer src="../../firebase-config.js"></script>
@@ -1021,7 +1022,10 @@
       </main>
     </section>
 
+    <audio id="martianShipAudio" src="../../sounds/Alienship.mp3" preload="auto" loop></audio>
+
     <script defer src="../../trackpad-guide.js"></script>
+  <script defer src="../../level-result.js"></script>
     <script defer src="script.js"></script>
     <script type="module">
   // Import the functions you need from the SDKs you need
