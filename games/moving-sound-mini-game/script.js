@@ -231,6 +231,7 @@ const openedFromPortalGameLink = selectedGame !== null;
 let soundEnabled = true;
 let lightTapLevelResult = null;
 let streetCarLevelResult = null;
+let dragonLevelResult = null;
 const importedTrackpadGuides = [];
 
 function initImportedTrackpadGuides() {
@@ -2565,7 +2566,66 @@ function resumeStreetCarLevel(index) {
 function restartCurrentStreetCarLevel() {
   resumeStreetCarLevel(carGameState.currentLevelIndex);
 }
+function pauseDragonGameplayForResult() {
+  dragonGameState.running = false;
+  dragonArena.classList.remove('is-active');
+  stopDragonFlapLoop();
+  window.cancelAnimationFrame(dragonGameState.animationId);
+}
 
+function resumeDragonLevel(index) {
+  startDragonLevel(index);
+
+  dragonGameState.running = true;
+  dragonGameState.lastTime = 0;
+  dragonArena.classList.add('is-active');
+  setDragonStartButtonVisible(false);
+  startDragonFlapLoop();
+
+  window.cancelAnimationFrame(dragonGameState.animationId);
+  dragonGameState.animationId = window.requestAnimationFrame(stepDragonGame);
+}
+
+function restartCurrentDragonLevel() {
+  resumeDragonLevel(dragonGameState.currentLevelIndex);
+}
+
+function showDragonSuccessResult() {
+  pauseDragonGameplayForResult();
+
+  const completedLevel = dragonGameState.currentLevelIndex + 1;
+  const hasNextLevel =
+    dragonGameState.currentLevelIndex < dragonGameState.levels.length - 1;
+
+  saveCompletedGameResult(
+    'Dragon Dodge',
+    dragonGameState,
+    completedLevel
+  );
+
+  if (!dragonLevelResult) {
+    if (hasNextLevel) {
+      resumeDragonLevel(dragonGameState.currentLevelIndex + 1);
+    } else {
+      endDragonGame(
+        `All dragon levels complete. Final score: ${dragonGameState.score}`
+      );
+    }
+    return;
+  }
+
+  if (hasNextLevel) {
+    dragonLevelResult.showSuccess({
+      title: 'Level Complete!',
+      message: `Great job! Tap Level Up for Level ${completedLevel + 1}.`,
+    });
+  } else {
+    dragonLevelResult.showFinal({
+      title: 'You Did It!',
+      message: `All Dragon Dodge levels complete! Final score: ${dragonGameState.score}`,
+    });
+  }
+}
 function showLightTapFailureResult(message = '') {
   pauseLightTapGameplayForResult();
 
@@ -3673,9 +3733,19 @@ function applyDragonMiss(message = 'Too slow!') {
   updateDragonMisses(dragonGameState.missesLeft - 1);
 
   if (dragonGameState.missesLeft <= 0) {
+  pauseDragonGameplayForResult();
+
+  if (dragonLevelResult) {
+    dragonLevelResult.showFailure({
+      title: 'Try Again!',
+      message: `Level ${dragonGameState.currentLevelIndex + 1} failed: too much fire.`,
+    });
+  } else {
     endDragonGame('Too much fire!');
-    return true;
   }
+
+  return true;
+}
 
   setDragonStatus(message);
   return false;
@@ -4077,9 +4147,21 @@ function stepDragonGame(timestamp) {
   updateDragonTime(dragonGameState.timeLeft - delta);
 
   if (dragonGameState.timeLeft <= 0) {
-    endDragonGame(`Dragon level ${dragonGameState.currentLevelIndex + 1} failed: goal not reached`);
-    return;
+  pauseDragonGameplayForResult();
+
+  if (dragonLevelResult) {
+    dragonLevelResult.showFailure({
+      title: 'Try Again!',
+      message: `Level ${dragonGameState.currentLevelIndex + 1} failed: goal not reached.`,
+    });
+  } else {
+    endDragonGame(
+      `Dragon level ${dragonGameState.currentLevelIndex + 1} failed: goal not reached`
+    );
   }
+
+  return;
+}
 
   const marginX = 70;
   const minY = 70;
@@ -4132,14 +4214,11 @@ function stepDragonGame(timestamp) {
   checkGileadFireHit(timestamp);
 
   if (dragonGameState.levelHits >= dragonGameState.levelGoal) {
-    startDragonLevel(dragonGameState.currentLevelIndex + 1);
-
-    if (!dragonGameState.running) {
-      return;
-    }
-  } else if (anyFiring) {
-    setDragonStatus('Fire breath! Tap the dragons!');
-  }
+  showDragonSuccessResult();
+  return;
+} else if (anyFiring) {
+  setDragonStatus('Fire breath! Tap the dragons!');
+}
 
   dragonGameState.animationId = window.requestAnimationFrame(stepDragonGame);
 }
@@ -4214,9 +4293,8 @@ function handleDragonArenaPointerDown(event) {
     calmDragonFire(dragon, true);
 
     if (dragonGameState.levelHits >= dragonGameState.levelGoal) {
-      saveCompletedGameResult('Dragon Dodge', dragonGameState, dragonGameState.currentLevelIndex + 1);
-      startDragonLevel(dragonGameState.currentLevelIndex + 1);
-    }
+  showDragonSuccessResult();
+}
 
     return;
   }
@@ -4781,7 +4859,19 @@ if (window.LevelResultController && arena) {
     onHome: backToMenuFromCar,
   });
 }
-
+if (window.LevelResultController && dragonArena) {
+  dragonLevelResult = new window.LevelResultController({
+    host: dragonArena,
+    canPlaySound: () => soundEnabled,
+    pauseGame: pauseDragonGameplayForResult,
+    onNextLevel: () => {
+      resumeDragonLevel(dragonGameState.currentLevelIndex + 1);
+    },
+    onRetry: restartCurrentDragonLevel,
+    onPlayAgain: startDragonGame,
+    onHome: backToMenuFromDragon,
+  });
+}
 startButton.addEventListener('click', startGame);
 enterGameButton.addEventListener('click', () => {
   enterGame();
