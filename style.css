@@ -1907,7 +1907,8 @@ body {
     linear-gradient(180deg, #2d3c4d, #192635);
 }
 
-.game-card-body {
+@media (max-width: 680px) {
+  .game-card-body {
     padding: 12px;
   }
 
