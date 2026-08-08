@@ -198,32 +198,32 @@ body {
 }
 
 .home-btn {
-  display: inline-grid;
-  place-items: center;
-  width: 38px;
-  height: 34px;
-  min-width: 38px;
-  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   text-decoration: none;
-  border-radius: 10px;
-  border: 1px solid rgba(195, 222, 244, 0.32);
-  background: linear-gradient(180deg, rgba(24, 35, 48, 0.98), rgba(14, 24, 34, 0.98));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  transition: transform 120ms ease, filter 120ms ease, box-shadow 120ms ease;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #0c2335;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(168, 222, 255, 0.75);
+  background: linear-gradient(180deg, #9ad8ff, #73bde8);
+  transition: transform 130ms ease, box-shadow 130ms ease, filter 130ms ease;
 }
 
 .home-btn-icon {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   display: block;
-  filter: brightness(1.12) saturate(1.2) drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
 }
 
 .home-btn:hover,
 .home-btn:focus-visible {
   transform: translateY(-1px);
-  filter: brightness(1.06);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  filter: brightness(1.03);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.24);
 }
 
 @media (max-width: 680px) {
@@ -364,281 +364,6 @@ body {
 
 .maze-ghost.active {
   opacity: 0.95;
-}
-
-body.car-page {
-  margin: 0;
-  min-height: 100svh;
-}
-
-body.car-page .page {
-  display: block;
-  width: auto;
-  min-height: 0;
-  padding: 0;
-}
-
-body.car-page .game-shell {
-  width: min(100%, 940px);
-  min-height: 100svh;
-  margin-inline: auto;
-  padding: 0.38rem 0.55rem 0.55rem;
-  display: grid;
-  grid-template-columns: 1fr;
-  justify-items: center;
-  align-content: start;
-  gap: 0.36rem;
-}
-
-body.car-page .game-header,
-body.car-page .game-instructions,
-body.car-page .game-stats,
-body.car-page .game-stage,
-body.car-page .game-guide {
-  width: min(100%, 920px);
-  max-width: min(100%, 920px);
-  margin-inline: auto;
-}
-
-body.car-page .game-header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.4rem 0.5rem;
-}
-
-body.car-page .game-heading {
-  min-width: 0;
-  display: grid;
-  gap: 0.1rem;
-}
-
-body.car-page .game-category {
-  margin: 0;
-  color: #9eb4c8;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-}
-
-body.car-page .game-title {
-  margin: 0;
-  font-size: clamp(1rem, 1.5vw, 1.16rem);
-  line-height: 1.04;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-body.car-page .car-header-controls {
-  display: inline-flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-body.car-page .game-header .home-btn,
-body.car-page .game-header .car-volume-toggle {
-  position: static;
-  inset: auto;
-  margin: 0;
-  width: 42px;
-  height: 36px;
-  min-width: 42px;
-  padding: 0;
-  border-radius: 10px;
-  font-size: 20px;
-  line-height: 1;
-  display: inline-grid;
-  place-items: center;
-  box-sizing: border-box;
-  flex: 0 0 auto;
-}
-
-body.car-page .game-header .home-btn {
-  text-decoration: none;
-  color: #eaf5ff;
-  border: 1px solid rgba(167, 213, 245, 0.42);
-  background: linear-gradient(180deg, rgba(33, 48, 63, 0.98), rgba(20, 30, 41, 0.98));
-}
-
-body.car-page .game-header .home-btn-icon {
-  width: 19px;
-  height: 19px;
-  display: block;
-  filter: brightness(0) invert(1);
-}
-
-body.car-page .game-header .home-btn-label {
-  display: none;
-}
-
-body.car-page .game-header .car-volume-toggle {
-  border: 1px solid rgba(167, 213, 245, 0.42);
-  background: linear-gradient(180deg, rgba(33, 48, 63, 0.98), rgba(20, 30, 41, 0.98));
-  color: #eaf5ff;
-}
-
-body.car-page .game-instructions {
-  margin: 0;
-  padding-inline: 0.12rem;
-  max-width: 52ch;
-  font-size: 0.76rem;
-  line-height: 1.2;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-body.car-page .game-stats {
-  min-height: 0;
-  margin: 0;
-}
-
-body.car-page .game-stat {
-  min-height: 26px;
-  padding: 0.16rem 0.42rem;
-}
-
-body.car-page .game-stage {
-  height: clamp(340px, 56svh, 470px);
-  max-height: clamp(340px, 56svh, 470px);
-  padding: 0.55rem;
-  display: grid;
-  place-items: center;
-  overflow: visible;
-}
-
-body.car-page .game-stage .playfield {
-  width: min(100%, 920px);
-  min-height: clamp(220px, 42vh, 380px);
-  margin: 0;
-  padding: 12px;
-  display: block;
-  border: 1px dashed rgba(210, 228, 246, 0.4);
-  border-radius: 12px;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(132, 171, 196, 0.15), transparent 50%),
-    linear-gradient(180deg, rgba(13, 20, 29, 0.84), rgba(8, 15, 22, 0.88));
-}
-
-body.car-page .game-stage .car-ui {
-  width: 100%;
-  padding: 12px;
-  display: block;
-}
-
-body.car-page .game-guide,
-body.car-page .pad-dock {
-  min-height: 0;
-  height: auto;
-  margin: 0;
-  padding: 0.16rem;
-  display: grid;
-  justify-items: center;
-  gap: 0.12rem;
-  border-radius: 10px;
-  flex: 0 0 auto;
-}
-
-body.car-page .game-guide .scene,
-body.car-page .scene {
-  width: 300px;
-  max-width: 100%;
-  height: auto;
-  min-height: 0;
-  margin: 0;
-  border-radius: 8px;
-}
-
-@media (max-height: 820px) {
-  body.car-page .game-shell {
-    gap: 0.3rem;
-    padding: 0.32rem 0.5rem 0.45rem;
-  }
-
-  body.car-page .game-header {
-    padding: 0.34rem 0.46rem;
-  }
-
-  body.car-page .game-title {
-    font-size: clamp(0.96rem, 1.42vw, 1.1rem);
-  }
-
-  body.car-page .game-instructions {
-    font-size: 0.72rem;
-  }
-
-  body.car-page .game-stats {
-    gap: 0.16rem;
-  }
-
-  body.car-page .game-stat {
-    min-height: 24px;
-    padding: 0.14rem 0.38rem;
-  }
-
-  body.car-page .game-stage {
-    height: clamp(320px, 54svh, 430px);
-    max-height: clamp(320px, 54svh, 430px);
-  }
-
-  body.car-page .game-guide,
-  body.car-page .pad-dock {
-    padding: 0.12rem;
-    gap: 0.1rem;
-  }
-
-  body.car-page .game-guide .scene,
-  body.car-page .scene {
-    width: 300px;
-    max-width: 100%;
-  }
-}
-
-@media (max-height: 600px) {
-  body.car-page .game-shell {
-    gap: 0.2rem;
-    padding: 0.24rem 0.44rem 0.28rem;
-  }
-
-  body.car-page .game-header {
-    padding: 0.24rem 0.38rem;
-  }
-
-  body.car-page .game-instructions {
-    margin: 0;
-    font-size: 0.69rem;
-  }
-
-  body.car-page .game-stats {
-    gap: 0.14rem;
-  }
-
-  body.car-page .game-stat {
-    min-height: 24px;
-    padding: 0.12rem 0.34rem;
-  }
-
-  body.car-page .game-stage {
-    height: clamp(286px, 50svh, 360px);
-    max-height: clamp(286px, 50svh, 360px);
-  }
-
-  body.car-page .game-guide,
-  body.car-page .pad-dock {
-    padding: 0.08rem;
-    gap: 0.08rem;
-  }
-
-  body.car-page .game-guide .scene,
-  body.car-page .scene {
-    width: 300px;
-    max-width: 100%;
-  }
 }
 
 .car-ui {
@@ -789,28 +514,20 @@ body.car-page .scene {
 }
 
 .car-volume-toggle {
-  width: 38px;
-  height: 34px;
-  min-width: 38px;
-  padding: 0;
-  border-radius: 10px;
-  border: 1px solid rgba(195, 222, 244, 0.32);
-  background: linear-gradient(180deg, rgba(24, 35, 48, 0.98), rgba(14, 24, 34, 0.98));
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.1);
   color: #fff;
-  font-size: 17px;
+  font-size: 1rem;
   line-height: 1;
   cursor: pointer;
-  transition: background 150ms, transform 120ms ease, box-shadow 120ms ease;
+  transition: background 150ms;
   flex-shrink: 0;
-  display: inline-grid;
-  place-items: center;
 }
 
-.car-volume-toggle:hover,
-.car-volume-toggle:focus-visible {
-  background: linear-gradient(180deg, rgba(30, 42, 56, 0.98), rgba(18, 28, 38, 0.98));
-  transform: translateY(-1px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.24);
+.car-volume-toggle:hover {
+  background: rgba(255, 255, 255, 0.22);
 }
 
 .car-badge-flash {
@@ -855,9 +572,6 @@ body.car-page .scene {
 
 .car-board {
   position: relative;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
   height: clamp(250px, 40vh, 370px);
   border-radius: 12px;
   border: 1px solid rgba(217, 235, 252, 0.28);
@@ -1510,55 +1224,38 @@ body.car-page .scene {
   font-size: 0.87rem;
 }
 
-.admin-availability-section {
-  margin-top: 14px;
+.admin-quick-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
 }
 
-.admin-mini-card--availability {
-  margin-top: 0;
-  border-color: rgba(101, 165, 214, 0.4);
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.94), rgba(245, 251, 255, 0.94));
-}
-
-.admin-inline-toggles--availability {
-  margin-top: 10px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px 14px;
-}
-
-.admin-inline-toggles--availability .admin-toggle-row {
-  margin-top: 0;
+.admin-stat-pill {
+  margin: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(127, 181, 224, 0.45);
+  background: rgba(233, 246, 255, 0.9);
+  color: #32506a;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 5px 10px;
 }
 
 .admin-tabs {
   margin-top: 14px;
-  display: grid;
-  gap: 10px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(133, 184, 224, 0.35);
-}
-
-.admin-games-title {
-  margin: 0;
-  font-size: 0.76rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #5a7792;
-}
-
-.admin-tab-group-buttons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(133, 184, 224, 0.35);
 }
 
 .admin-tab-button {
   border: 1px solid rgba(126, 180, 222, 0.44);
-  border-radius: 12px;
-  min-height: 42px;
-  width: 100%;
-  text-align: left;
-  padding: 10px 12px;
+  border-radius: 999px;
+  padding: 8px 12px;
   font-size: 0.8rem;
   font-weight: 700;
   color: #43637e;
@@ -1578,34 +1275,11 @@ body.car-page .scene {
   color: #143653;
   border-color: rgba(87, 149, 198, 0.8);
   background: linear-gradient(180deg, #d9f0ff, #c9e8ff);
-  box-shadow: 0 8px 16px rgba(77, 126, 163, 0.18);
-}
-
-.admin-back-availability {
-  margin-top: 10px;
-  border: 0;
-  background: transparent;
-  color: #2e78a8;
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
-  padding: 0;
-}
-
-.admin-back-availability:hover,
-.admin-back-availability:focus-visible {
-  color: #1e5f89;
 }
 
 .admin-tab-content {
   margin-top: 14px;
   display: none;
-  border: 1px solid rgba(133, 184, 224, 0.3);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.7);
-  padding: 14px;
   animation: adminPanelReveal 170ms ease;
 }
 
@@ -1649,10 +1323,6 @@ body.car-page .scene {
 }
 
 .admin-mini-card--wide {
-  margin-top: 12px;
-}
-
-.admin-tab-content > .admin-reset-action {
   margin-top: 12px;
 }
 
@@ -1724,20 +1394,18 @@ body.car-page .scene {
   margin-top: 14px;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
 }
 
 .admin-task-actions--sticky {
   position: sticky;
   bottom: 8px;
-  z-index: 10;
-  padding: 10px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(125, 179, 219, 0.4);
+  padding: 8px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(125, 179, 219, 0.28);
   backdrop-filter: blur(3px);
-  box-shadow: 0 10px 22px rgba(79, 124, 160, 0.14);
 }
 
 .admin-task-save,
@@ -1763,11 +1431,9 @@ body.car-page .scene {
 }
 
 .admin-task-save {
-  background: linear-gradient(180deg, #4da9e3, #2e8fcb);
-  border-color: rgba(27, 118, 177, 0.7);
-  color: #ffffff;
+  background: linear-gradient(180deg, #95d4ff, #67b4e6);
+  color: #082239;
   cursor: pointer;
-  box-shadow: 0 9px 18px rgba(42, 125, 181, 0.28);
 }
 
 .admin-task-open,
@@ -1784,25 +1450,8 @@ body.car-page .scene {
 }
 
 .admin-back-home {
-  display: inline-flex;
-}
-
-.admin-reset-action {
-  border: 1px solid rgba(206, 151, 120, 0.7);
-  border-radius: 10px;
-  min-height: 40px;
-  padding: 9px 12px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #7c3b1f;
-  background: linear-gradient(180deg, #fff2ea, #ffe4d4);
-  cursor: pointer;
-}
-
-.admin-reset-action:hover,
-.admin-reset-action:focus-visible {
-  border-color: rgba(190, 124, 86, 0.9);
-  box-shadow: 0 7px 14px rgba(173, 116, 83, 0.2);
+  display: inline-block;
+  margin-top: 12px;
 }
 
 @media (max-width: 980px) {
@@ -1813,16 +1462,16 @@ body.car-page .scene {
   .admin-level-grid {
     grid-template-columns: 1fr;
   }
-
-  .admin-inline-toggles--availability {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (max-width: 680px) {
   .admin-panel-head {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .admin-quick-stats {
+    justify-content: flex-start;
   }
 
   .admin-form-grid--three,
@@ -1832,18 +1481,6 @@ body.car-page .scene {
 
   .admin-task-actions--sticky {
     bottom: 0;
-  }
-
-  .admin-task-actions {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-
-  .admin-task-save,
-  .admin-task-open,
-  .admin-back-home {
-    text-align: center;
-    justify-content: center;
   }
 }
 
@@ -1863,12 +1500,14 @@ body.car-page .scene {
 }
 
 .home-hero-top {
-  display: block;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
 }
 
 .home-hero-text {
   min-width: 0;
-  text-align: center;
 }
 
 .home-eyebrow {
@@ -1880,23 +1519,21 @@ body.car-page .scene {
 }
 
 .home-hero h1 {
-  margin: 4px 0 8px;
+  margin: 8px 0 8px;
   font-size: clamp(1.6rem, 4.4vw, 2.7rem);
   line-height: 1.1;
   color: #eef6ff;
-  font-family: "Comic Sans MS", "Chalkboard SE", "Marker Felt", "Trebuchet MS", sans-serif;
 }
 
 .home-copy {
-  margin: 0 auto 18px;
+  margin: 0 0 18px;
   max-width: 62ch;
   color: #c9daea;
 }
 
 .training-tool-link {
-  position: relative;
-  width: 172px;
-  margin: 0 auto 12px;
+  width: 164px;
+  flex: 0 0 164px;
   text-decoration: none;
   color: inherit;
   border: 1px solid rgba(175, 221, 251, 0.36);
@@ -1914,39 +1551,6 @@ body.car-page .scene {
   transform: translateY(-1px);
   border-color: rgba(143, 210, 255, 0.72);
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.36);
-}
-
-.training-tool-link.activity-disabled,
-.game-card.activity-disabled {
-  opacity: 0.42;
-  filter: saturate(0.35);
-  cursor: not-allowed;
-  transform: none;
-}
-
-.training-tool-link.activity-disabled:hover,
-.training-tool-link.activity-disabled:focus-visible,
-.game-card.activity-disabled:hover,
-.game-card.activity-disabled:focus-visible {
-  transform: none;
-  border-color: rgba(191, 223, 249, 0.32);
-  box-shadow: none;
-}
-
-.training-tool-link.activity-disabled::after,
-.game-card.activity-disabled::after {
-  content: "INACTIVE";
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  padding: 3px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.38);
-  background: rgba(18, 24, 34, 0.82);
-  color: #d6e8f8;
-  font-size: 0.66rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
 }
 
 .training-tool-thumb {
@@ -1970,13 +1574,14 @@ body.car-page .scene {
 
 .game-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 170px));
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   justify-content: start;
   gap: 10px;
 }
 
 .game-card {
-  position: relative;
+  width: 100%;
+  max-width: none;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 88px 1fr;
@@ -1988,7 +1593,6 @@ body.car-page .scene {
   background: linear-gradient(160deg, rgba(18, 27, 37, 0.96), rgba(10, 15, 23, 0.96));
   overflow: hidden;
   aspect-ratio: 1 / 1;
-  max-width: 170px;
   transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 
@@ -2000,11 +1604,29 @@ body.car-page .scene {
 }
 
 .game-card-thumb {
-  display: block;
   width: 100%;
   height: 100%;
   min-height: 0;
   object-fit: cover;
+}
+
+.game-card-body {
+  display: grid;
+  align-content: start;
+  gap: 3px;
+  padding: 8px 8px 8px;
+}
+
+.game-card-title {
+  font-size: clamp(0.88rem, 1.4vw, 1.02rem);
+  font-weight: 700;
+  color: #e9f4ff;
+}
+
+.game-card-subtitle {
+  font-size: 0.72rem;
+  color: #c6dbef;
+  line-height: 1.32;
 }
 
 .game-thumb-light {
@@ -2286,47 +1908,6 @@ body.car-page .scene {
 }
 
 .game-card-body {
-  display: grid;
-  align-content: start;
-  gap: 3px;
-  padding: 8px 8px 8px;
-}
-
-.game-card-title {
-  font-size: clamp(0.88rem, 1.4vw, 1.02rem);
-  font-weight: 700;
-  color: #e9f4ff;
-}
-
-.game-card-subtitle {
-  font-size: 0.72rem;
-  color: #c6dbef;
-  line-height: 1.32;
-}
-
-.game-card-cta {
-  margin-top: 2px;
-  display: inline-grid;
-  place-items: center;
-  width: fit-content;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, #8fd0ff, #69b8ef);
-  color: #0a2337;
-  font-weight: 700;
-  font-size: 0.68rem;
-}
-
-@media (max-width: 680px) {
-  .home-shell {
-    padding: 14px;
-  }
-
-  .training-tool-link {
-    width: min(100%, 210px);
-  }
-
-  .game-card-body {
     padding: 12px;
   }
 
@@ -2390,153 +1971,79 @@ body.car-page .scene {
   filter: saturate(1.25) blur(0.4px);
 }
 
-body.jack-jump-page {
+.jack-jump-page {
   margin: 0;
-  min-height: 100svh;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 14% 10%, rgba(255, 197, 130, 0.3), transparent 32%),
+    radial-gradient(circle at 90% 84%, rgba(115, 177, 233, 0.28), transparent 38%),
+    linear-gradient(165deg, #f0f7ff 0%, #e6f0fb 48%, #dceaf7 100%);
+  color: #19344a;
+  font: 500 16px/1.4 "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 
 .jack-jump-shell {
-  width: min(100%, 940px);
-  min-height: 100svh;
-  margin-inline: auto;
-  padding: 0.38rem 0.55rem 0.55rem;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: none;
-  grid-auto-rows: max-content;
-  justify-items: center;
-  align-content: start;
-  gap: 0.36rem;
+  width: min(100%, 980px);
+  padding: 22px;
 }
 
 .jack-jump-card {
-  width: min(100%, 920px);
-  max-width: min(100%, 920px);
-  margin-inline: auto;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: none;
-  grid-auto-rows: max-content;
-  gap: 0.36rem;
-}
-
-body.jack-jump-page .game-header,
-body.jack-jump-page .game-instructions,
-body.jack-jump-page .game-stats,
-body.jack-jump-page .game-stage,
-body.jack-jump-page .game-guide {
-  width: min(100%, 920px);
-  max-width: min(100%, 920px);
-  margin-inline: auto;
+  border: 1px solid rgba(120, 172, 210, 0.38);
+  border-radius: 20px;
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.92), rgba(247, 252, 255, 0.92)),
+    radial-gradient(circle at 10% 0%, rgba(133, 199, 255, 0.24), transparent 45%);
+  box-shadow: 0 18px 44px rgba(48, 95, 134, 0.2);
+  padding: 16px;
 }
 
 .jack-jump-header {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.4rem 0.5rem;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 12px;
 }
 
-body.jack-jump-page .jack-jump-header-controls {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.jack-jump-home,
-.jack-jump-sound-toggle {
-  position: static;
-  inset: auto;
-  margin: 0;
-  width: 42px;
-  height: 36px;
-  min-width: 42px;
-  padding: 0;
-  border-radius: 10px;
-  font-size: 20px;
-  line-height: 1;
-  display: inline-grid;
-  place-items: center;
-  box-sizing: border-box;
-  flex: 0 0 auto;
-}
-
-.jack-jump-sound-toggle {
-  cursor: pointer;
-}
-
-body.jack-jump-page .jack-jump-home {
+.jack-jump-home {
   text-decoration: none;
-  color: #eaf5ff;
-  border: 1px solid rgba(167, 213, 245, 0.42);
-  background: linear-gradient(180deg, rgba(33, 48, 63, 0.98), rgba(20, 30, 41, 0.98));
-}
-
-body.jack-jump-page .jack-jump-home .home-btn-icon {
-  width: 19px;
-  height: 19px;
-  display: block;
-  filter: brightness(0) invert(1);
-}
-
-body.jack-jump-page .jack-jump-sound-toggle {
-  border: 1px solid rgba(167, 213, 245, 0.42);
-  background: linear-gradient(180deg, rgba(33, 48, 63, 0.98), rgba(20, 30, 41, 0.98));
-  color: #eaf5ff;
-}
-
-.jack-jump-header .game-heading {
-  min-width: 0;
-  display: grid;
-  gap: 0.1rem;
+  border: 1px solid rgba(125, 179, 218, 0.58);
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #335067;
+  background: rgba(255, 255, 255, 0.86);
 }
 
 .jack-jump-eyebrow {
   margin: 0;
-  color: #9eb4c8;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.09em;
+  color: #5e7d96;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .jack-jump-header h1 {
-  margin: 0;
-  font-size: clamp(1rem, 1.5vw, 1.16rem);
-  line-height: 1.04;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  margin: 3px 0 4px;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  color: #1e3f59;
 }
 
 .jack-jump-copy {
   margin: 0;
-  padding-inline: 0.12rem;
-  max-width: 52ch;
-  font-size: 0.76rem;
-  line-height: 1.2;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.jack-jump-page .game-stats {
-  min-height: 0;
-  margin: 0;
-}
-
-.jack-jump-page .game-stat {
-  min-height: 26px;
-  padding: 0.16rem 0.42rem;
+  color: #4c6c86;
+  font-size: 0.9rem;
 }
 
 .jack-level-badge {
-  margin: 0;
+  margin: 7px 0 0;
   display: inline-flex;
   align-items: center;
-  padding: 0.16rem 0.42rem;
+  padding: 5px 11px;
   border-radius: 999px;
   border: 1px solid rgba(99, 153, 196, 0.55);
   background: rgba(244, 251, 255, 0.88);
@@ -2549,11 +2056,8 @@ body.jack-jump-page .jack-jump-sound-toggle {
 
 .jack-jump-scene {
   position: relative;
-  width: min(100%, 820px);
-  max-width: min(100%, 820px);
-  margin: 0 auto;
+  width: 100%;
   aspect-ratio: 16 / 9;
-  max-height: clamp(320px, 48vh, 500px);
   border-radius: 18px;
   border: 1px solid rgba(136, 184, 219, 0.36);
   overflow: hidden;
@@ -2570,11 +2074,6 @@ body.jack-jump-page .jack-jump-sound-toggle {
   inset: 0;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(12, 18, 30, 0.08) 58%, rgba(12, 18, 30, 0.12));
   pointer-events: none;
-}
-
-.jack-jump-scene img {
-  -webkit-user-drag: none;
-  user-select: none;
 }
 
 .jack-room-windows {
@@ -2686,6 +2185,18 @@ body.jack-jump-page .jack-jump-sound-toggle {
   pointer-events: none;
 }
 
+.jack-falling-flame {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.24));
+  pointer-events: none;
+  user-select: none;
+  z-index: 4;
+}
+
 .jack-character-wrap {
   position: absolute;
   width: 260px;
@@ -2707,16 +2218,15 @@ body.jack-jump-page .jack-jump-sound-toggle {
 }
 
 .jack-shadow {
-  margin: 7px 0 0;
+  position: absolute;
   left: 50%;
-  font-size: 0.8rem;
+  bottom: 3px;
   width: 170px;
   height: 34px;
   transform: translateX(-50%);
   border-radius: 50%;
   background: rgba(25, 40, 52, 0.26);
-  margin-top: 8px;
-  width: min(100%, 360px);
+  filter: blur(0.5px);
 }
 
 .jack-character-wrap.is-running .jack-character {
@@ -2737,10 +2247,6 @@ body.jack-jump-page .jack-jump-sound-toggle {
 
 .jack-character-wrap.is-success .jack-character {
   animation: jackCelebrate 300ms ease-in-out 3;
-}
-
-.jack-character-wrap.is-celebrating .jack-character {
-  animation: jackCelebrate 300ms ease-in-out infinite;
 }
 
 @keyframes jackRun {
@@ -2804,9 +2310,9 @@ body.jack-jump-page .jack-jump-sound-toggle {
 }
 
 .jack-status {
-  margin: 0;
-  min-height: 0;
-  font-size: 0.74rem;
+  margin: 10px 0 0;
+  min-height: 24px;
+  font-size: 0.84rem;
   font-weight: 700;
   color: #3f637f;
 }
@@ -2823,32 +2329,6 @@ body.jack-jump-page .jack-jump-sound-toggle {
   color: #2f8f62;
 }
 
-.jack-trackpad-dock {
-  min-height: 0;
-  height: auto;
-  margin: 0;
-  padding: 0.16rem;
-  display: grid;
-  justify-items: center;
-  gap: 0.12rem;
-  border-radius: 10px;
-  flex: 0 0 auto;
-}
-
-.jack-trackpad-dock .pad-label {
-  margin: 0;
-  font-size: 0.74rem;
-}
-
-.jack-jump-page .jack-trackpad-dock .scene {
-  width: 300px;
-  max-width: 100%;
-  height: auto;
-  min-height: 0;
-  margin: 0;
-  border-radius: 8px;
-}
-
 @media (max-width: 760px) {
   .jack-jump-shell {
     padding: 14px;
@@ -2860,10 +2340,6 @@ body.jack-jump-page .jack-jump-sound-toggle {
 
   .jack-window {
     height: 70px;
-  }
-
-  .jack-trackpad-dock {
-    width: 100%;
   }
 
 }
@@ -2973,14 +2449,14 @@ body.jack-jump-page .jack-jump-sound-toggle {
   text-decoration: none;
   display: inline-grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  padding: 0;
+  min-width: 64px;
+  padding: 6px 12px;
   border-radius: 999px;
   border: 1px solid rgba(166, 221, 255, 0.6);
   background: linear-gradient(180deg, #93d4ff, #6bb9ea);
   color: #082136;
+  font-weight: 700;
+  font-size: 0.82rem;
 }
 
 .trackpad-stage {
@@ -3445,621 +2921,5 @@ body.jack-jump-page .jack-jump-sound-toggle {
     right: 12px;
     bottom: 12px;
     padding: 8px 10px;
-  }
-}
-
-/* Unified Game Shell Contract shared with imported styles.css. */
-.game-shell {
-  width: min(100%, 1080px);
-  min-height: 100vh;
-  margin: 0 auto;
-  padding: 10px 12px 12px;
-  display: grid;
-  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
-  gap: 8px;
-  align-content: stretch;
-}
-
-.game-header {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  border: 1px solid rgba(188, 222, 247, 0.34);
-  border-radius: 12px;
-  background: linear-gradient(155deg, rgba(20, 32, 44, 0.94), rgba(11, 18, 28, 0.94));
-}
-
-.game-heading {
-  min-width: 0;
-  display: grid;
-  gap: 2px;
-}
-
-.game-title {
-  margin: 0;
-  font-size: clamp(1rem, 1.55vw, 1.2rem);
-  line-height: 1.15;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.game-instructions {
-  margin: 0;
-  padding: 0 2px;
-  color: #d5e7f8;
-  font-size: 0.8rem;
-  line-height: 1.25;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.game-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-  min-height: 34px;
-}
-
-.game-stat {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 28px;
-  padding: 4px 9px;
-  border-radius: 999px;
-  border: 1px solid rgba(167, 213, 245, 0.42);
-  background: linear-gradient(180deg, rgba(33, 48, 63, 0.95), rgba(20, 30, 41, 0.95));
-  color: #eaf5ff;
-  font-size: 0.76rem;
-  font-weight: 700;
-}
-
-.game-stat .label {
-  opacity: 0.82;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-size: 0.66rem;
-}
-
-.game-stage {
-  min-height: clamp(280px, 52vh, 460px);
-  display: grid;
-  align-items: stretch;
-  align-content: stretch;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.game-guide {
-  width: 100%;
-  margin: 0;
-  display: grid;
-  justify-items: center;
-  gap: 6px;
-  padding: 8px;
-  border: 1px solid rgba(188, 222, 247, 0.34);
-  border-radius: 12px;
-  background: linear-gradient(180deg, rgba(17, 24, 34, 0.92), rgba(12, 18, 28, 0.95));
-}
-
-.game-guide .pad-label,
-.game-guide .imported-trackpad-guide-label {
-  margin: 0;
-  text-align: center;
-  color: #c8d9ea;
-  font-size: 0.82rem;
-  letter-spacing: 0.02em;
-}
-
-.game-guide .scene,
-.game-guide .imported-trackpad-scene {
-  max-width: 100%;
-  margin: 0;
-}
-
-.game-preserve-only {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0 0 0 0) !important;
-  clip-path: inset(50%) !important;
-  border: 0 !important;
-  white-space: nowrap !important;
-}
-
-.game-header-controls {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.game-header-button,
-.game-shell .back-button,
-.game-shell .sound-toggle-button,
-.game-shell .home-btn,
-.game-shell .jack-jump-home,
-.game-shell .trackpad-home-link,
-.game-shell .car-volume-toggle {
-  position: static;
-  inset: auto;
-  margin: 0;
-  min-height: 30px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-size: 0.76rem;
-}
-
-.game-shell .pad-dock,
-.game-shell .imported-trackpad-guide {
-  margin: 0;
-  width: 100%;
-}
-
-@media (max-width: 900px) {
-  .game-header {
-    grid-template-columns: 1fr;
-  }
-
-  .game-instructions {
-    white-space: normal;
-  }
-}
-
-@media (max-height: 820px) {
-  .game-shell {
-    padding: 6px 10px 8px;
-    gap: 5px;
-  }
-
-  .game-header {
-    padding: 0.34rem 0.46rem;
-  }
-
-  .game-title {
-    font-size: clamp(0.96rem, 1.4vw, 1.1rem);
-  }
-
-  .game-instructions {
-    margin: 0;
-    font-size: 0.72rem;
-  }
-
-  .game-stats {
-    min-height: 0;
-    gap: 4px;
-  }
-
-  .game-stat {
-    min-height: 24px;
-    padding: 3px 8px;
-  }
-
-  .game-guide,
-  .pad-dock {
-    padding: 0.14rem;
-    gap: 0.12rem;
-  }
-
-  .game-stage {
-    min-height: clamp(250px, 48vh, 390px);
-  }
-
-  body.jack-jump-page .jack-jump-shell {
-    gap: 0.3rem;
-    padding: 0.32rem 0.5rem 0.45rem;
-  }
-
-  .trackpad-full-header {
-    gap: 10px;
-    padding: 10px 12px;
-  }
-
-  .trackpad-stage {
-    padding: 0 8px 8px;
-    gap: 8px;
-  }
-
-  .active-task-prompt {
-    padding: 6px 12px;
-  }
-}
-
-@media (max-height: 600px) {
-  .game-shell {
-    padding: 0.22rem 0.44rem 0.26rem;
-    gap: 0.18rem;
-  }
-
-  .game-header {
-    padding: 0.24rem 0.38rem;
-  }
-
-  .game-title {
-    font-size: clamp(0.92rem, 1.36vw, 1.04rem);
-  }
-
-  .game-instructions {
-    margin: 0;
-    font-size: 0.69rem;
-    line-height: 1.15;
-  }
-
-  .game-stats {
-    min-height: 0;
-    gap: 3px;
-  }
-
-  .game-stat {
-    min-height: 24px;
-    padding: 2px 7px;
-  }
-
-  .game-guide,
-  .pad-dock {
-    padding: 0.02rem 0.08rem;
-    gap: 0.04rem;
-  }
-
-  .game-guide .pad-label,
-  .game-guide .imported-trackpad-guide-label {
-    margin: 0;
-    line-height: 1;
-  }
-
-  .game-guide .scene {
-    height: 170px;
-    max-height: 170px;
-  }
-
-  .game-stage {
-    min-height: clamp(220px, 44vh, 320px);
-  }
-
-  body.jack-jump-page .jack-jump-shell {
-    gap: 0.2rem;
-    padding: 0.24rem 0.44rem 0.28rem;
-  }
-
-  body.jack-jump-page .jack-jump-scene {
-    max-height: clamp(260px, 46svh, 340px);
-  }
-
-  .trackpad-full-header {
-    gap: 8px;
-    padding: 8px 10px;
-  }
-
-  .trackpad-stage {
-    padding: 0 6px 6px;
-    gap: 6px;
-  }
-
-  .active-task-prompt {
-    padding: 5px 10px;
-    font-size: clamp(0.76rem, 1.8vw, 0.9rem);
-  }
-
-  .scene .right-hand {
-    transform: translateY(-12px);
-  }
-}
-
-/* Maze-only migration to approved imported game shell reference. */
-body.maze-page {
-  margin: 0;
-  min-height: 100svh;
-}
-
-body.maze-page .maze-game-shell {
-  width: min(100%, 940px);
-  min-height: 100svh;
-  margin-inline: auto;
-  padding: 0.38rem 0.55rem 0.55rem;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: none;
-  grid-auto-rows: max-content;
-  justify-items: center;
-  align-content: start;
-  gap: 0.36rem;
-}
-
-body.maze-page .game-header,
-body.maze-page .game-instructions,
-body.maze-page .game-stats,
-body.maze-page .game-stage,
-body.maze-page .game-guide {
-  width: min(100%, 920px);
-  max-width: min(100%, 920px);
-  margin-inline: auto;
-}
-
-body.maze-page .game-header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.4rem 0.5rem;
-}
-
-body.maze-page .game-heading {
-  min-width: 0;
-  display: grid;
-  gap: 0.1rem;
-}
-
-body.maze-page .game-category {
-  margin: 0;
-  color: #9eb4c8;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-}
-
-body.maze-page .game-title {
-  font-size: clamp(1rem, 1.5vw, 1.16rem);
-  line-height: 1.04;
-}
-
-body.maze-page .game-header-controls {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-body.maze-page .game-header .home-btn,
-body.maze-page .game-header .sound-toggle-button {
-  position: static;
-  inset: auto;
-  margin: 0;
-  width: 42px;
-  height: 36px;
-  min-width: 42px;
-  padding: 0;
-  border-radius: 10px;
-  display: inline-grid;
-  place-items: center;
-  box-sizing: border-box;
-  font-size: 20px;
-  line-height: 1;
-}
-
-body.maze-page .game-header .home-btn {
-  text-decoration: none;
-  color: #eaf5ff;
-  border: 1px solid rgba(167, 213, 245, 0.42);
-  background: linear-gradient(180deg, rgba(33, 48, 63, 0.98), rgba(20, 30, 41, 0.98));
-}
-
-body.maze-page .game-header .home-btn-icon {
-  width: 19px;
-  height: 19px;
-  display: block;
-  filter: brightness(0) invert(1);
-}
-
-body.maze-page .game-header .sound-toggle-button {
-  border: 1px solid rgba(167, 213, 245, 0.42);
-  background: linear-gradient(180deg, rgba(33, 48, 63, 0.98), rgba(20, 30, 41, 0.98));
-  color: #eaf5ff;
-}
-
-body.maze-page .game-instructions {
-  margin: 0;
-  padding-inline: 0.12rem;
-  max-width: 52ch;
-  font-size: 0.76rem;
-  line-height: 1.2;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-body.maze-page .game-stats {
-  min-height: 0;
-  margin: 0;
-}
-
-body.maze-page .game-stats-row {
-  display: flex;
-  justify-content: flex-start;
-  gap: 0.2rem;
-}
-
-body.maze-page .game-stat {
-  min-height: 26px;
-  padding: 0.16rem 0.42rem;
-}
-
-body.maze-page .game-stage {
-  height: clamp(340px, 56svh, 470px);
-  max-height: clamp(340px, 56svh, 470px);
-  padding: 0.55rem;
-  display: grid;
-  place-items: center;
-  overflow: visible;
-}
-
-body.maze-page .game-stage .playfield,
-body.maze-page .game-stage .maze-ui {
-  width: 100%;
-  height: 100%;
-  min-height: 0;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  place-items: center;
-}
-
-body.maze-page .game-stage .playfield {
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  display: grid;
-  place-items: center;
-}
-
-body.maze-page .game-stage .maze-ui {
-  display: grid;
-  place-items: center;
-}
-
-body.maze-page .game-stage .maze-board,
-body.maze-page .game-stage #mazeBoard {
-  width: min(100%, 896px);
-  height: min(100%, 360px);
-  min-height: 300px;
-  margin: 0;
-  position: relative;
-}
-
-body.maze-page .game-guide,
-body.maze-page .pad-dock {
-  min-height: 0;
-  height: auto;
-  margin: 0;
-  padding: 0.16rem;
-  display: grid;
-  justify-items: center;
-  gap: 0.12rem;
-  border-radius: 10px;
-  flex: 0 0 auto;
-}
-
-body.maze-page .game-guide .pad-label {
-  margin: 0;
-  font-size: 0.74rem;
-}
-
-body.maze-page .game-guide .scene,
-body.maze-page .scene {
-  width: 300px;
-  max-width: 100%;
-  height: auto;
-  min-height: 0;
-  margin: 0;
-  border-radius: 8px;
-}
-
-body.maze-page .game-guide .trackpad,
-body.maze-page .trackpad {
-  left: 50%;
-  top: 50%;
-  width: min(100%, 260px);
-  height: auto;
-  transform: translate(-50%, -50%);
-}
-
-body.maze-page .game-guide .hand,
-body.maze-page .hand {
-  max-width: 320px;
-}
-
-body.maze-page .game-guide .right-hand,
-body.maze-page .right-hand {
-  left: calc(300 / 626 * 100%);
-  top: calc(158 / 437 * 100%);
-}
-
-body.maze-page #mazeToast {
-  position: absolute;
-}
-
-@media (max-height: 820px) {
-  body.maze-page .maze-game-shell {
-    gap: 0.3rem;
-    padding: 0.32rem 0.5rem 0.45rem;
-  }
-
-  body.maze-page .game-header {
-    padding: 0.34rem 0.46rem;
-  }
-
-  body.maze-page .game-title {
-    font-size: clamp(0.96rem, 1.42vw, 1.1rem);
-  }
-
-  body.maze-page .game-instructions {
-    font-size: 0.72rem;
-  }
-
-  body.maze-page .game-stats-row {
-    gap: 0.16rem;
-  }
-
-  body.maze-page .game-stat {
-    min-height: 24px;
-    padding: 0.14rem 0.38rem;
-  }
-
-  body.maze-page .game-stage {
-    height: clamp(320px, 54svh, 430px);
-    max-height: clamp(320px, 54svh, 430px);
-  }
-
-  body.maze-page .game-guide,
-  body.maze-page .pad-dock {
-    padding: 0.12rem;
-    gap: 0.1rem;
-  }
-
-  body.maze-page .game-guide .scene,
-  body.maze-page .scene {
-    width: 300px;
-    max-width: 100%;
-  }
-}
-
-@media (max-height: 600px) {
-  body.maze-page .maze-game-shell {
-    gap: 0.2rem;
-    padding: 0.24rem 0.44rem 0.28rem;
-  }
-
-  body.maze-page .game-header {
-    padding: 0.24rem 0.38rem;
-  }
-
-  body.maze-page .game-instructions {
-    margin: 0;
-    font-size: 0.69rem;
-  }
-
-  body.maze-page .game-stats-row {
-    gap: 0.14rem;
-  }
-
-  body.maze-page .game-stat {
-    min-height: 24px;
-    padding: 0.12rem 0.34rem;
-  }
-
-  body.maze-page .game-stage {
-    height: clamp(286px, 50svh, 360px);
-    max-height: clamp(286px, 50svh, 360px);
-  }
-
-  body.maze-page .game-guide,
-  body.maze-page .pad-dock {
-    padding: 0.02rem 0.08rem;
-    gap: 0.04rem;
-  }
-
-  body.maze-page .game-guide .scene,
-  body.maze-page .scene {
-    width: 300px;
-    max-width: 100%;
-    height: 170px;
-    max-height: 170px;
   }
 }
