@@ -2060,36 +2060,176 @@ body.car-page .scene {
 
 .game-thumb-dragon {
   position: relative;
+  overflow: hidden;
   background:
-    linear-gradient(180deg, #9ed4ff 0 56%, #5a9a50 56% 100%);
+    radial-gradient(circle at 78% 18%, #ffe17a 0 10px, rgba(255, 225, 122, 0.3) 11px 20px, transparent 21px),
+    linear-gradient(180deg, #9ed4ff 0 62%, #73b56f 62% 100%);
 }
 
 .game-thumb-dragon::before {
-  content: "";
-  position: absolute;
-  left: 8px;
-  right: 8px;
-  top: 16px;
-  height: 24px;
-  border-radius: 6px 6px 2px 2px;
-  background:
-    linear-gradient(180deg, #b8ad99, #8d816f 62%, #7a6f5e),
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.14) 0 2px, transparent 2px 12px);
-  box-shadow:
-    inset 0 0 0 2px rgba(71, 59, 47, 0.32),
-    -12px -10px 0 -7px #cfc6b4,
-    12px -10px 0 -7px #cfc6b4;
+  content: none;
 }
 
 .game-thumb-dragon::after {
-  content: "";
+  content: none;
+}
+
+.game-thumb-dragon .thumb-dragon-target {
   position: absolute;
+  left: 40%;
+  top: 45%;
+  width: 104px;
+  height: 62px;
+  transform: translate(-50%, -50%) rotate(-4deg);
+  z-index: 4;
+  pointer-events: none;
+}
+
+.game-thumb-dragon .dragon-body {
+  position: absolute;
+  left: 26px;
+  top: 14px;
+  width: 52px;
+  height: 30px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #6d3ec2, #3d2278);
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.game-thumb-dragon .dragon-tail {
+  position: absolute;
+  left: 2px;
+  top: 24px;
+  width: 38px;
+  height: 10px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #5a33aa, #2f1a61);
+}
+
+.game-thumb-dragon .tail-spike {
+  position: absolute;
+  width: 6px;
+  height: 7px;
+  background: linear-gradient(180deg, #e7ddff, #b5a6dd);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.game-thumb-dragon .tail-spike-a {
+  left: 2px;
+  top: -6px;
+}
+
+.game-thumb-dragon .tail-spike-b {
+  left: 10px;
+  top: -8px;
+}
+
+.game-thumb-dragon .tail-spike-c {
   left: 18px;
-  right: 18px;
-  bottom: 8px;
-  height: 14px;
-  border-radius: 8px 8px 3px 3px;
-  background: linear-gradient(180deg, #7a5642, #553c2d);
+  top: -6px;
+}
+
+.game-thumb-dragon .tail-spike-d {
+  left: 26px;
+  top: -7px;
+}
+
+.game-thumb-dragon .dragon-wing {
+  position: absolute;
+  top: 7px;
+  width: 40px;
+  height: 28px;
+  background: linear-gradient(180deg, #9e7be6, #56319f);
+  clip-path: polygon(0 100%, 100% 50%, 0 0);
+  border-radius: 0;
+  box-shadow: inset -2px 0 0 rgba(0, 0, 0, 0.18);
+}
+
+.game-thumb-dragon .dragon-wing-a {
+  left: -8px;
+  transform-origin: right center;
+  transform: rotate(-26deg);
+}
+
+.game-thumb-dragon .dragon-wing-b {
+  right: 14px;
+  transform-origin: left center;
+  transform: rotate(28deg);
+}
+
+.game-thumb-dragon .dragon-head {
+  position: absolute;
+  right: 7px;
+  top: 11px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #8357d7, #4a2b90);
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.game-thumb-dragon .dragon-ear {
+  position: absolute;
+  top: -6px;
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(180deg, #9c74e3, #5f36aa);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.game-thumb-dragon .dragon-ear-a {
+  left: 1px;
+  transform: rotate(-8deg);
+}
+
+.game-thumb-dragon .dragon-eye {
+  position: absolute;
+  right: 5px;
+  top: 8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #f2f2ff;
+}
+
+.game-thumb-dragon .dragon-fire {
+  position: absolute;
+  right: -15px;
+  top: 9px;
+  width: 24px;
+  height: 12px;
+  border-radius: 8px;
+  background: radial-gradient(circle at 30% 50%, #fff3bf, #ffa838 58%, #ff6a1d 100%);
+  box-shadow: 0 0 8px rgba(255, 146, 54, 0.75);
+  transform: scaleX(1.4);
+  transform-origin: left center;
+}
+
+.game-thumb-dragon .thumb-dragon-castle {
+  position: absolute;
+  left: 48%;
+  bottom: 26px;
+  width: 40px;
+  height: 56px;
+  transform: translateX(-50%);
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 2px 2px rgba(42, 30, 24, 0.45));
+  image-rendering: pixelated;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.game-thumb-dragon .thumb-dragon-hero {
+  position: absolute;
+  right: 6px;
+  bottom: 10px;
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.38));
+  z-index: 3;
+  pointer-events: none;
 }
 
 .game-thumb-fire {
