@@ -4093,3 +4093,78 @@ h1 {
   }
 }
 /* ============================== END APPROVED REFERENCE ============================== */
+
+/* Imported games only: Home button aligned to approved Maze/Car standard. */
+#gameScreen .game-header .back-button,
+#carGameScreen .game-header .back-button,
+#dragonGameScreen .game-header .back-button,
+#fireGameScreen .game-header .back-button,
+#martianGameScreen .game-header .back-button {
+  width: 42px;
+  height: 36px;
+  min-width: 42px;
+  padding: 0;
+  border-radius: 10px;
+  display: inline-grid;
+  place-items: center;
+  box-sizing: border-box;
+  border: 1px solid rgba(167, 213, 245, 0.42);
+  background: linear-gradient(180deg, rgba(33, 48, 63, 0.98), rgba(20, 30, 41, 0.98));
+  color: #eaf5ff;
+}
+
+#gameScreen .game-header .back-button .home-btn-icon,
+#carGameScreen .game-header .back-button .home-btn-icon,
+#dragonGameScreen .game-header .back-button .home-btn-icon,
+#fireGameScreen .game-header .back-button .home-btn-icon,
+#martianGameScreen .game-header .back-button .home-btn-icon {
+  width: 19px;
+  height: 19px;
+  display: block;
+  filter: brightness(0) invert(1);
+  pointer-events: none;
+}
+
+#gameScreen .game-header .back-button .home-btn-label,
+#carGameScreen .game-header .back-button .home-btn-label,
+#dragonGameScreen .game-header .back-button .home-btn-label,
+#fireGameScreen .game-header .back-button .home-btn-label,
+#martianGameScreen .game-header .back-button .home-btn-label {
+  display: none;
+}
+
+#backToMenuFromCarButton,
+#backToMenuFromDragonButton,
+#backToMenuFromFireButton,
+#backToMenuFromMartianButton {
+  width: 42px;
+  height: 36px;
+  min-width: 42px;
+  padding: 0;
+  border-radius: 10px;
+  display: inline-grid;
+  place-items: center;
+  box-sizing: border-box;
+  border: 1px solid rgba(167, 213, 245, 0.42);
+  background: linear-gradient(180deg, rgba(33, 48, 63, 0.98), rgba(20, 30, 41, 0.98));
+  color: #eaf5ff;
+}
+
+#backToMenuFromCarButton .home-btn-icon,
+#backToMenuFromDragonButton .home-btn-icon,
+#backToMenuFromFireButton .home-btn-icon,
+#backToMenuFromMartianButton .home-btn-icon {
+  width: 19px;
+  height: 19px;
+  display: block;
+  filter: brightness(0) invert(1);
+  pointer-events: none;
+}
+
+.imported-home-icon {
+  width: 19px;
+  height: 19px;
+  display: block;
+  filter: brightness(0) invert(1);
+  pointer-events: none;
+}

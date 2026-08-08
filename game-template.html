@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hands-On Trackpad Game Template</title>
+    <!-- REPLACE stylesheet path for your new game's location if needed. -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <!-- REPLACE this screen/page ID by adding a page-specific body class such as: future-game-page -->
+  <body class="future-game-page" data-game-active-key="futureGameActive">
+    <section id="futureGameScreen">
+      <!-- KEEP shell structure -->
+      <main class="shell game-shell future-game-shell">
+        <header class="panel game-header">
+          <div class="copy game-heading">
+            <p class="eyebrow game-category">Mini Game</p>
+            <!-- REPLACE game title -->
+            <h1 class="game-title">GAME TITLE</h1>
+          </div>
+
+          <div class="game-header-controls">
+            <!-- KEEP Home/Sound accessibility -->
+            <button id="backToMenuFromFutureButton" class="back-button game-header-button" type="button" aria-label="Home" title="Home">
+              <img class="home-btn-icon" src="images/home-icon.svg" alt="" aria-hidden="true" />
+            </button>
+
+            <button
+              id="futureSoundButton"
+              class="sound-toggle-button game-header-button"
+              type="button"
+              aria-pressed="false"
+              aria-label="Sound on"
+              title="Sound on"
+            >
+              🔊
+            </button>
+          </div>
+        </header>
+
+        <!-- REPLACE instruction -->
+        <p class="description game-instructions">ONE SHORT INSTRUCTION LINE.</p>
+
+        <section class="hud game-stats" aria-live="polite">
+          <div class="hud-main-stats game-stats-row" role="group" aria-label="Game stats">
+            <!-- REPLACE stat IDs -->
+            <div class="stat game-stat">
+              <span class="label">Level</span>
+              <span class="value" id="futureLevel">1</span>
+            </div>
+            <div class="stat game-stat">
+              <span class="label">Goal</span>
+              <span class="value" id="futureGoal">0/8</span>
+            </div>
+            <div class="stat game-stat">
+              <span class="label">Lives</span>
+              <span class="value" id="futureLives">3</span>
+            </div>
+
+            <!-- Preserve-only pattern: keep required IDs without consuming layout space. -->
+            <div class="stat game-stat game-preserve-only" aria-label="Hidden score mirror">
+              <span class="label">Score</span>
+              <span class="value" id="futureScore">0</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="arena-wrap game-stage-wrap">
+          <div class="arena-frame game-stage">
+            <!-- ADD gameplay here -->
+            <!-- DO NOT force gameplay internals to fill stage -->
+            <div id="futureArena" class="future-arena" aria-label="Game area" role="application">
+              <!-- Replace with game-specific elements, preserving IDs used by JS. -->
+            </div>
+          </div>
+        </section>
+
+        <!-- KEEP Trackpad Guide below gameplay -->
+        <section class="imported-trackpad-guide game-guide" aria-label="Trackpad Guide">
+          <p class="imported-trackpad-guide-label">Trackpad Guide</p>
+          <section id="futureTrackpadScene" class="imported-trackpad-scene" aria-label="Trackpad guide animation">
+            <img class="imported-trackpad-image" src="images/trackpad.png" alt="Trackpad" draggable="false" />
+            <img
+              id="futureTrackpadLeftHand"
+              class="imported-trackpad-hand imported-trackpad-left-hand"
+              src="images/left-hand-transparent.png"
+              alt="Left hand"
+              draggable="false"
+            />
+            <img
+              id="futureTrackpadRightHand"
+              class="imported-trackpad-hand imported-trackpad-right-hand"
+              src="images/right-hand-transparent.png"
+              alt="Right hand"
+              draggable="false"
+            />
+            <div class="imported-trackpad-press-indicator" aria-hidden="true"></div>
+          </section>
+        </section>
+
+        <!-- TEST 1366x768 and <=600px height -->
+      </main>
+    </section>
+
+    <!-- Shared systems: wire these in your real game page. -->
+    <script src="game-access.js"></script>
+    <script src="trackpad-guide.js"></script>
+  </body>
+</html>

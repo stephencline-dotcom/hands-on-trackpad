@@ -54,6 +54,11 @@ const LAYOUT = {
   bunnyX: 312,
   bunnyStartY: 218,
 };
+const FULLSCREEN_RIGHT_FINGERTIP_ANCHOR = {
+  // Measured anchor within images/right-hand-transparent.png (524x370).
+  xFraction: 225.57394366197184 / 524,
+  yFraction: 91.83802816901408 / 370,
+};
 const trackpadGuideController = window.trackpadGuide.create({
   scene,
   leftHand,
@@ -95,12 +100,77 @@ function pointerToViewportNormalized(event) {
   };
 }
 
+function pointerToTrackpadNormalized(event) {
+  if (!trackpad) {
+    return pointerToViewportNormalized(event);
+  }
+
+  const trackpadRect = trackpad.getBoundingClientRect();
+  const width = Math.max(trackpadRect.width, 1);
+  const height = Math.max(trackpadRect.height, 1);
+  const localX = event.clientX - trackpadRect.left;
+  const localY = event.clientY - trackpadRect.top;
+
+  return {
+    x: clamp(localX / width, 0, 1),
+    y: clamp(localY / height, 0, 1),
+  };
+}
+
+function getTransformTranslateAxis(transformValue, axis) {
+  if (!transformValue || transformValue === "none") {
+    return 0;
+  }
+
+  const match2d = transformValue.match(/^matrix\(([^)]+)\)$/);
+  if (match2d) {
+    const parts = match2d[1].split(",").map((value) => Number.parseFloat(value.trim()));
+    const index = axis === "x" ? 4 : 5;
+    return Number.isFinite(parts[index]) ? parts[index] : 0;
+  }
+
+  const match3d = transformValue.match(/^matrix3d\(([^)]+)\)$/);
+  if (match3d) {
+    const parts = match3d[1].split(",").map((value) => Number.parseFloat(value.trim()));
+    const index = axis === "x" ? 12 : 13;
+    return Number.isFinite(parts[index]) ? parts[index] : 0;
+  }
+
+  return 0;
+}
+
 function updateRightFromPointer(event) {
   if (!trackpadGuideController) {
     return;
   }
 
-  trackpadGuideController.updateFromPointerEvent(event);
+  if (!trackpad || !scene || !rightHand) {
+    trackpadGuideController.updateFromPointerEvent(event);
+    return;
+  }
+
+  const trackpadRect = trackpad.getBoundingClientRect();
+  const sceneRect = scene.getBoundingClientRect();
+  const sceneWidth = Math.max(sceneRect.width, 1);
+  const sceneHeight = Math.max(sceneRect.height, 1);
+  const rightRect = rightHand.getBoundingClientRect();
+  const localPerRenderX = LAYOUT.scene.width / sceneWidth;
+  const localPerRenderY = LAYOUT.scene.height / sceneHeight;
+  const handWidthLocal = rightRect.width * localPerRenderX;
+  const handHeightLocal = rightRect.height * localPerRenderY;
+  const anchorXLocal = handWidthLocal * FULLSCREEN_RIGHT_FINGERTIP_ANCHOR.xFraction;
+  const anchorYLocal = handHeightLocal * FULLSCREEN_RIGHT_FINGERTIP_ANCHOR.yFraction;
+  const transform = getComputedStyle(rightHand).transform;
+  const translateXLocal = getTransformTranslateAxis(transform, "x") * localPerRenderX;
+  const translateYLocal = getTransformTranslateAxis(transform, "y") * localPerRenderY;
+  const clampedClientX = clamp(event.clientX, trackpadRect.left, trackpadRect.right);
+  const clampedClientY = clamp(event.clientY, trackpadRect.top, trackpadRect.bottom);
+  const cursorLocalX = (clampedClientX - sceneRect.left) * localPerRenderX;
+  const cursorLocalY = (clampedClientY - sceneRect.top) * localPerRenderY;
+  const handLeft = cursorLocalX - anchorXLocal - translateXLocal;
+  const handTop = cursorLocalY - anchorYLocal - translateYLocal;
+
+  trackpadGuideController.applyRightPosition(handLeft, handTop);
 }
 
 function applyBunnyPosition(y) {
