@@ -2906,8 +2906,13 @@ h1 {
 }
 
 @media (max-height: 820px) {
+  .game-shell {
+    gap: 0.3rem;
+    padding: 0.32rem 0.5rem 0.45rem;
+  }
+
   .game-shell .game-header {
-    padding: 0.36rem 0.5rem;
+    padding: 0.34rem 0.46rem;
   }
 
   .game-shell .game-title {
@@ -2915,7 +2920,22 @@ h1 {
   }
 
   .game-shell .game-instructions {
+    margin: 0;
     font-size: 0.72rem;
+  }
+
+  .game-shell .game-stats-row {
+    gap: 0.16rem;
+  }
+
+  .game-shell .game-stat {
+    min-height: 24px;
+    padding: 0.14rem 0.38rem;
+  }
+
+  .game-shell .game-guide {
+    padding: 0.12rem;
+    gap: 0.1rem;
   }
 
   .game-shell .game-stage {
@@ -2924,7 +2944,66 @@ h1 {
   }
 
   .imported-trackpad-guide.game-guide .imported-trackpad-scene {
-    width: min(100%, 176px);
+    width: min(100%, 260px);
+  }
+}
+
+@media (max-height: 600px) {
+  .game-shell {
+    gap: 0.2rem;
+    padding: 0.24rem 0.44rem 0.28rem;
+  }
+
+  .game-shell .game-header {
+    padding: 0.24rem 0.38rem;
+  }
+
+  .game-shell .game-title {
+    font-size: clamp(0.92rem, 1.38vw, 1.04rem);
+  }
+
+  .game-shell .game-instructions {
+    margin: 0;
+    font-size: 0.69rem;
+    line-height: 1.15;
+  }
+
+  .game-shell .game-stats-row {
+    gap: 0.14rem;
+  }
+
+  .game-shell .game-stat {
+    min-height: 24px;
+    padding: 0.12rem 0.34rem;
+  }
+
+  .game-shell .game-guide {
+    padding: 0.02rem 0.08rem;
+    gap: 0.04rem;
+  }
+
+  .game-shell .game-guide .imported-trackpad-guide-label,
+  .game-shell .game-guide .pad-label {
+    margin: 0;
+    line-height: 1;
+  }
+
+  .game-shell .game-guide .imported-trackpad-scene {
+    height: 170px;
+    max-height: 170px;
+  }
+
+  .game-shell .game-stage {
+    height: clamp(286px, 50svh, 360px);
+    max-height: clamp(286px, 50svh, 360px);
+  }
+
+  .imported-trackpad-guide.game-guide .imported-trackpad-scene {
+    width: min(100%, 260px);
+  }
+
+  .imported-trackpad-scene .imported-trackpad-right-hand {
+    transform: translateY(-12px);
   }
 }
 
@@ -3224,13 +3303,68 @@ h1 {
     font-size: 0.72rem;
   }
 
+  #gameScreen .game-stats-row {
+    gap: 0.16rem;
+  }
+
+  #gameScreen .game-stat {
+    min-height: 24px;
+    padding: 0.14rem 0.38rem;
+  }
+
+  #gameScreen .game-guide {
+    padding: 0.12rem;
+    gap: 0.1rem;
+  }
+
   #gameScreen .game-stage {
     height: clamp(320px, 54svh, 430px);
     max-height: clamp(320px, 54svh, 430px);
   }
 
   #gameScreen .game-guide .imported-trackpad-scene {
-    width: min(100%, 176px);
+    width: min(100%, 260px);
+  }
+}
+
+@media (max-height: 600px) {
+  #gameScreen .game-shell {
+    gap: 0.2rem;
+    padding: 0.24rem 0.44rem 0.28rem;
+  }
+
+  #gameScreen .game-header {
+    padding: 0.24rem 0.38rem;
+  }
+
+  #gameScreen .game-instructions {
+    margin: 0;
+    font-size: 0.69rem;
+  }
+
+  #gameScreen .game-stats-row {
+    gap: 0.14rem;
+  }
+
+  #gameScreen .game-stat {
+    min-height: 24px;
+    padding: 0.12rem 0.34rem;
+  }
+
+  #gameScreen .game-guide {
+    padding: 0.02rem 0.08rem;
+    gap: 0.04rem;
+  }
+
+  #gameScreen .game-stage {
+    height: clamp(286px, 50svh, 360px);
+    max-height: clamp(286px, 50svh, 360px);
+  }
+
+  #gameScreen .game-guide .imported-trackpad-scene {
+    width: min(100%, 260px);
+    height: 170px;
+    max-height: 170px;
   }
 }
 
@@ -3350,14 +3484,70 @@ h1 {
     font-size: 0.72rem;
   }
 
+  #carGameScreen .game-stats-row {
+    gap: 0.16rem;
+  }
+
+  #carGameScreen .game-stat {
+    min-height: 24px;
+    padding: 0.14rem 0.38rem;
+  }
+
+  #carGameScreen .game-guide {
+    padding: 0.12rem;
+    gap: 0.1rem;
+  }
+
   #carGameScreen .game-stage {
-    height: clamp(340px, 56svh, 470px);
-    max-height: clamp(340px, 56svh, 470px);
+    height: clamp(320px, 54svh, 430px);
+    max-height: clamp(320px, 54svh, 430px);
   }
 
   #carGameScreen .game-guide .imported-trackpad-scene {
     width: 300px;
     max-width: 100%;
+  }
+}
+
+@media (max-height: 600px) {
+  #carGameScreen .game-shell {
+    gap: 0.2rem;
+    padding: 0.24rem 0.44rem 0.28rem;
+  }
+
+  #carGameScreen .game-header {
+    padding: 0.24rem 0.38rem;
+  }
+
+  #carGameScreen .game-instructions {
+    margin: 0;
+    font-size: 0.69rem;
+  }
+
+  #carGameScreen .game-stats-row {
+    gap: 0.14rem;
+  }
+
+  #carGameScreen .game-stat {
+    min-height: 24px;
+    padding: 0.12rem 0.34rem;
+  }
+
+  #carGameScreen .game-guide {
+    padding: 0.02rem 0.08rem;
+    gap: 0.04rem;
+  }
+
+  #carGameScreen .game-stage {
+    height: clamp(286px, 50svh, 360px);
+    max-height: clamp(286px, 50svh, 360px);
+  }
+
+  #carGameScreen .game-guide .imported-trackpad-scene {
+    width: 300px;
+    max-width: 100%;
+    height: 170px;
+    max-height: 170px;
   }
 }
 
@@ -3477,14 +3667,70 @@ h1 {
     font-size: 0.72rem;
   }
 
+  #martianGameScreen .game-stats-row {
+    gap: 0.16rem;
+  }
+
+  #martianGameScreen .game-stat {
+    min-height: 24px;
+    padding: 0.14rem 0.38rem;
+  }
+
+  #martianGameScreen .game-guide {
+    padding: 0.12rem;
+    gap: 0.1rem;
+  }
+
   #martianGameScreen .game-stage {
-    height: clamp(340px, 56svh, 470px);
-    max-height: clamp(340px, 56svh, 470px);
+    height: clamp(320px, 54svh, 430px);
+    max-height: clamp(320px, 54svh, 430px);
   }
 
   #martianGameScreen .game-guide .imported-trackpad-scene {
     width: 300px;
     max-width: 100%;
+  }
+}
+
+@media (max-height: 600px) {
+  #martianGameScreen .game-shell {
+    gap: 0.2rem;
+    padding: 0.24rem 0.44rem 0.28rem;
+  }
+
+  #martianGameScreen .game-header {
+    padding: 0.24rem 0.38rem;
+  }
+
+  #martianGameScreen .game-instructions {
+    margin: 0;
+    font-size: 0.69rem;
+  }
+
+  #martianGameScreen .game-stats-row {
+    gap: 0.14rem;
+  }
+
+  #martianGameScreen .game-stat {
+    min-height: 24px;
+    padding: 0.12rem 0.34rem;
+  }
+
+  #martianGameScreen .game-guide {
+    padding: 0.02rem 0.08rem;
+    gap: 0.04rem;
+  }
+
+  #martianGameScreen .game-stage {
+    height: clamp(286px, 50svh, 360px);
+    max-height: clamp(286px, 50svh, 360px);
+  }
+
+  #martianGameScreen .game-guide .imported-trackpad-scene {
+    width: 300px;
+    max-width: 100%;
+    height: 170px;
+    max-height: 170px;
   }
 }
 
@@ -3752,14 +3998,38 @@ h1 {
     font-size: 0.72rem;
   }
 
+  #dragonGameScreen .game-stats-row {
+    gap: 0.16rem;
+  }
+
+  #fireGameScreen .game-stats-row {
+    gap: 0.16rem;
+  }
+
+  #dragonGameScreen .game-stat {
+    min-height: 24px;
+    padding: 0.14rem 0.38rem;
+  }
+
+  #fireGameScreen .game-stat {
+    min-height: 24px;
+    padding: 0.14rem 0.38rem;
+  }
+
+  #dragonGameScreen .game-guide,
+  #fireGameScreen .game-guide {
+    padding: 0.12rem;
+    gap: 0.1rem;
+  }
+
   #dragonGameScreen .game-stage {
-    height: clamp(340px, 56svh, 470px);
-    max-height: clamp(340px, 56svh, 470px);
+    height: clamp(320px, 54svh, 430px);
+    max-height: clamp(320px, 54svh, 430px);
   }
 
   #fireGameScreen .game-stage {
-    height: clamp(340px, 56svh, 470px);
-    max-height: clamp(340px, 56svh, 470px);
+    height: clamp(320px, 54svh, 430px);
+    max-height: clamp(320px, 54svh, 430px);
   }
 
   #dragonGameScreen .game-guide .imported-trackpad-scene {
@@ -3770,6 +4040,56 @@ h1 {
   #fireGameScreen .game-guide .imported-trackpad-scene {
     width: 300px;
     max-width: 100%;
+  }
+}
+
+@media (max-height: 600px) {
+  #dragonGameScreen .game-shell,
+  #fireGameScreen .game-shell {
+    gap: 0.2rem;
+    padding: 0.24rem 0.44rem 0.28rem;
+  }
+
+  #dragonGameScreen .game-header,
+  #fireGameScreen .game-header {
+    padding: 0.24rem 0.38rem;
+  }
+
+  #dragonGameScreen .game-instructions,
+  #fireGameScreen .game-instructions {
+    margin: 0;
+    font-size: 0.69rem;
+  }
+
+  #dragonGameScreen .game-stats-row,
+  #fireGameScreen .game-stats-row {
+    gap: 0.14rem;
+  }
+
+  #dragonGameScreen .game-stat,
+  #fireGameScreen .game-stat {
+    min-height: 24px;
+    padding: 0.12rem 0.34rem;
+  }
+
+  #dragonGameScreen .game-guide,
+  #fireGameScreen .game-guide {
+    padding: 0.02rem 0.08rem;
+    gap: 0.04rem;
+  }
+
+  #dragonGameScreen .game-stage,
+  #fireGameScreen .game-stage {
+    height: clamp(286px, 50svh, 360px);
+    max-height: clamp(286px, 50svh, 360px);
+  }
+
+  #dragonGameScreen .game-guide .imported-trackpad-scene,
+  #fireGameScreen .game-guide .imported-trackpad-scene {
+    width: 300px;
+    max-width: 100%;
+    height: 170px;
+    max-height: 170px;
   }
 }
 /* ============================== END APPROVED REFERENCE ============================== */

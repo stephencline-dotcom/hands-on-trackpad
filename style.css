@@ -572,6 +572,68 @@ body.car-page .scene {
     font-size: 0.72rem;
   }
 
+  body.car-page .game-stats {
+    gap: 0.16rem;
+  }
+
+  body.car-page .game-stat {
+    min-height: 24px;
+    padding: 0.14rem 0.38rem;
+  }
+
+  body.car-page .game-stage {
+    height: clamp(320px, 54svh, 430px);
+    max-height: clamp(320px, 54svh, 430px);
+  }
+
+  body.car-page .game-guide,
+  body.car-page .pad-dock {
+    padding: 0.12rem;
+    gap: 0.1rem;
+  }
+
+  body.car-page .game-guide .scene,
+  body.car-page .scene {
+    width: 300px;
+    max-width: 100%;
+  }
+}
+
+@media (max-height: 600px) {
+  body.car-page .game-shell {
+    gap: 0.2rem;
+    padding: 0.24rem 0.44rem 0.28rem;
+  }
+
+  body.car-page .game-header {
+    padding: 0.24rem 0.38rem;
+  }
+
+  body.car-page .game-instructions {
+    margin: 0;
+    font-size: 0.69rem;
+  }
+
+  body.car-page .game-stats {
+    gap: 0.14rem;
+  }
+
+  body.car-page .game-stat {
+    min-height: 24px;
+    padding: 0.12rem 0.34rem;
+  }
+
+  body.car-page .game-stage {
+    height: clamp(286px, 50svh, 360px);
+    max-height: clamp(286px, 50svh, 360px);
+  }
+
+  body.car-page .game-guide,
+  body.car-page .pad-dock {
+    padding: 0.08rem;
+    gap: 0.08rem;
+  }
+
   body.car-page .game-guide .scene,
   body.car-page .scene {
     width: 300px;
@@ -2188,17 +2250,9 @@ body.car-page .scene {
   filter: saturate(1.25) blur(0.4px);
 }
 
-.jack-jump-page {
+body.jack-jump-page {
   margin: 0;
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  background:
-    radial-gradient(circle at 14% 10%, rgba(255, 197, 130, 0.3), transparent 32%),
-    radial-gradient(circle at 90% 84%, rgba(115, 177, 233, 0.28), transparent 38%),
-    linear-gradient(165deg, #f0f7ff 0%, #e6f0fb 48%, #dceaf7 100%);
-  color: #19344a;
-  font: 500 16px/1.4 "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  min-height: 100svh;
 }
 
 .jack-jump-shell {
@@ -2207,6 +2261,9 @@ body.car-page .scene {
   margin-inline: auto;
   padding: 0.38rem 0.55rem 0.55rem;
   display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: none;
+  grid-auto-rows: max-content;
   justify-items: center;
   align-content: start;
   gap: 0.36rem;
@@ -2217,42 +2274,76 @@ body.car-page .scene {
   max-width: min(100%, 920px);
   margin-inline: auto;
   display: grid;
-  gap: 0.42rem;
-  border: 1px solid rgba(120, 172, 210, 0.38);
-  border-radius: 20px;
-  background:
-    linear-gradient(155deg, rgba(255, 255, 255, 0.92), rgba(247, 252, 255, 0.92)),
-    radial-gradient(circle at 10% 0%, rgba(133, 199, 255, 0.24), transparent 45%);
-  box-shadow: 0 18px 44px rgba(48, 95, 134, 0.2);
-  padding: 0.62rem 0.7rem 0.74rem;
+  grid-template-columns: 1fr;
+  grid-template-rows: none;
+  grid-auto-rows: max-content;
+  gap: 0.36rem;
+}
+
+body.jack-jump-page .game-header,
+body.jack-jump-page .game-instructions,
+body.jack-jump-page .game-stats,
+body.jack-jump-page .game-stage,
+body.jack-jump-page .game-guide {
+  width: min(100%, 920px);
+  max-width: min(100%, 920px);
+  margin-inline: auto;
 }
 
 .jack-jump-header {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.4rem;
   padding: 0.4rem 0.5rem;
 }
 
-.jack-jump-home,
-.jack-jump-sound-toggle {
+body.jack-jump-page .jack-jump-header-controls {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  border: 1px solid rgba(125, 179, 218, 0.58);
+  gap: 0.35rem;
+}
+
+.jack-jump-home,
+.jack-jump-sound-toggle {
+  position: static;
+  inset: auto;
+  margin: 0;
+  width: 42px;
+  height: 36px;
+  min-width: 42px;
+  padding: 0;
   border-radius: 10px;
-  padding: 0.4rem 0.52rem;
-  min-width: 76px;
-  font-size: 0.78rem;
-  font-weight: 800;
-  color: #335067;
-  background: rgba(255, 255, 255, 0.86);
+  font-size: 20px;
+  line-height: 1;
+  display: inline-grid;
+  place-items: center;
+  box-sizing: border-box;
+  flex: 0 0 auto;
 }
 
 .jack-jump-sound-toggle {
   cursor: pointer;
+}
+
+body.jack-jump-page .jack-jump-home {
+  text-decoration: none;
+  color: #eaf5ff;
+  border: 1px solid rgba(167, 213, 245, 0.42);
+  background: linear-gradient(180deg, rgba(33, 48, 63, 0.98), rgba(20, 30, 41, 0.98));
+}
+
+body.jack-jump-page .jack-jump-home .home-btn-icon {
+  width: 19px;
+  height: 19px;
+  display: block;
+  filter: brightness(0) invert(1);
+}
+
+body.jack-jump-page .jack-jump-sound-toggle {
+  border: 1px solid rgba(167, 213, 245, 0.42);
+  background: linear-gradient(180deg, rgba(33, 48, 63, 0.98), rgba(20, 30, 41, 0.98));
+  color: #eaf5ff;
 }
 
 .jack-jump-header .game-heading {
@@ -2263,9 +2354,9 @@ body.car-page .scene {
 
 .jack-jump-eyebrow {
   margin: 0;
-  color: #5e7d96;
+  color: #9eb4c8;
   font-size: 0.68rem;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.09em;
   text-transform: uppercase;
 }
@@ -2274,7 +2365,6 @@ body.car-page .scene {
   margin: 0;
   font-size: clamp(1rem, 1.5vw, 1.16rem);
   line-height: 1.04;
-  color: #1e3f59;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2284,7 +2374,6 @@ body.car-page .scene {
   margin: 0;
   padding-inline: 0.12rem;
   max-width: 52ch;
-  color: #4c6c86;
   font-size: 0.76rem;
   line-height: 1.2;
   text-align: center;
@@ -2595,13 +2684,20 @@ body.car-page .scene {
 }
 
 .jack-trackpad-dock {
-  margin-top: 0;
-  width: min(100%, 420px);
+  min-height: 0;
+  height: auto;
+  margin: 0;
+  padding: 0.16rem;
+  display: grid;
+  justify-items: center;
+  gap: 0.12rem;
+  border-radius: 10px;
+  flex: 0 0 auto;
 }
 
 .jack-trackpad-dock .pad-label {
-  margin: 0 0 4px;
-  color: #2f5979;
+  margin: 0;
+  font-size: 0.74rem;
 }
 
 .jack-jump-page .jack-trackpad-dock .scene {
@@ -3379,16 +3475,140 @@ body.car-page .scene {
 
 @media (max-height: 820px) {
   .game-shell {
-    padding: 8px 10px 10px;
-    gap: 6px;
+    padding: 6px 10px 8px;
+    gap: 5px;
+  }
+
+  .game-header {
+    padding: 0.34rem 0.46rem;
   }
 
   .game-title {
     font-size: clamp(0.96rem, 1.4vw, 1.1rem);
   }
 
+  .game-instructions {
+    margin: 0;
+    font-size: 0.72rem;
+  }
+
+  .game-stats {
+    min-height: 0;
+    gap: 4px;
+  }
+
+  .game-stat {
+    min-height: 24px;
+    padding: 3px 8px;
+  }
+
+  .game-guide,
+  .pad-dock {
+    padding: 0.14rem;
+    gap: 0.12rem;
+  }
+
   .game-stage {
     min-height: clamp(250px, 48vh, 390px);
+  }
+
+  body.jack-jump-page .jack-jump-shell {
+    gap: 0.3rem;
+    padding: 0.32rem 0.5rem 0.45rem;
+  }
+
+  .trackpad-full-header {
+    gap: 10px;
+    padding: 10px 12px;
+  }
+
+  .trackpad-stage {
+    padding: 0 8px 8px;
+    gap: 8px;
+  }
+
+  .active-task-prompt {
+    padding: 6px 12px;
+  }
+}
+
+@media (max-height: 600px) {
+  .game-shell {
+    padding: 0.22rem 0.44rem 0.26rem;
+    gap: 0.18rem;
+  }
+
+  .game-header {
+    padding: 0.24rem 0.38rem;
+  }
+
+  .game-title {
+    font-size: clamp(0.92rem, 1.36vw, 1.04rem);
+  }
+
+  .game-instructions {
+    margin: 0;
+    font-size: 0.69rem;
+    line-height: 1.15;
+  }
+
+  .game-stats {
+    min-height: 0;
+    gap: 3px;
+  }
+
+  .game-stat {
+    min-height: 24px;
+    padding: 2px 7px;
+  }
+
+  .game-guide,
+  .pad-dock {
+    padding: 0.02rem 0.08rem;
+    gap: 0.04rem;
+  }
+
+  .game-guide .pad-label,
+  .game-guide .imported-trackpad-guide-label {
+    margin: 0;
+    line-height: 1;
+  }
+
+  .game-guide .scene {
+    height: 170px;
+    max-height: 170px;
+  }
+
+  .game-stage {
+    min-height: clamp(220px, 44vh, 320px);
+  }
+
+  body.jack-jump-page .jack-jump-shell {
+    gap: 0.2rem;
+    padding: 0.24rem 0.44rem 0.28rem;
+  }
+
+  body.jack-jump-page .jack-jump-scene {
+    max-height: clamp(260px, 46svh, 340px);
+  }
+
+  .trackpad-full-header {
+    gap: 8px;
+    padding: 8px 10px;
+  }
+
+  .trackpad-stage {
+    padding: 0 6px 6px;
+    gap: 6px;
+  }
+
+  .active-task-prompt {
+    padding: 5px 10px;
+    font-size: clamp(0.76rem, 1.8vw, 0.9rem);
+  }
+
+  .scene .right-hand {
+    transform: translateY(-12px);
   }
 }
 
@@ -3633,14 +3853,73 @@ body.maze-page #mazeToast {
     font-size: 0.72rem;
   }
 
+  body.maze-page .game-stats-row {
+    gap: 0.16rem;
+  }
+
+  body.maze-page .game-stat {
+    min-height: 24px;
+    padding: 0.14rem 0.38rem;
+  }
+
   body.maze-page .game-stage {
     height: clamp(320px, 54svh, 430px);
     max-height: clamp(320px, 54svh, 430px);
+  }
+
+  body.maze-page .game-guide,
+  body.maze-page .pad-dock {
+    padding: 0.12rem;
+    gap: 0.1rem;
   }
 
   body.maze-page .game-guide .scene,
   body.maze-page .scene {
     width: 300px;
     max-width: 100%;
+  }
+}
+
+@media (max-height: 600px) {
+  body.maze-page .maze-game-shell {
+    gap: 0.2rem;
+    padding: 0.24rem 0.44rem 0.28rem;
+  }
+
+  body.maze-page .game-header {
+    padding: 0.24rem 0.38rem;
+  }
+
+  body.maze-page .game-instructions {
+    margin: 0;
+    font-size: 0.69rem;
+  }
+
+  body.maze-page .game-stats-row {
+    gap: 0.14rem;
+  }
+
+  body.maze-page .game-stat {
+    min-height: 24px;
+    padding: 0.12rem 0.34rem;
+  }
+
+  body.maze-page .game-stage {
+    height: clamp(286px, 50svh, 360px);
+    max-height: clamp(286px, 50svh, 360px);
+  }
+
+  body.maze-page .game-guide,
+  body.maze-page .pad-dock {
+    padding: 0.02rem 0.08rem;
+    gap: 0.04rem;
+  }
+
+  body.maze-page .game-guide .scene,
+  body.maze-page .scene {
+    width: 300px;
+    max-width: 100%;
+    height: 170px;
+    max-height: 170px;
   }
 }

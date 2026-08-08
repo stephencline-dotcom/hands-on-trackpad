@@ -10,12 +10,16 @@
     <main class="jack-jump-shell game-shell">
       <section class="jack-jump-card" aria-label="Jack jump game">
         <header class="jack-jump-header game-header">
-          <a class="jack-jump-home" href="index.html" aria-label="Back to home">Home</a>
           <div class="game-heading">
             <p class="jack-jump-eyebrow game-category">MINI GAME</p>
             <h1 class="game-title">Guide Jack To Safety</h1>
           </div>
-          <button class="jack-jump-sound-toggle" type="button" aria-label="Mute sound">🔊</button>
+          <div class="jack-jump-header-controls game-header-controls">
+            <a class="jack-jump-home home-btn game-header-button" href="index.html" aria-label="Home" title="Home">
+              <img class="home-btn-icon" src="images/home-icon.svg" alt="" aria-hidden="true" />
+            </a>
+            <button class="jack-jump-sound-toggle sound-toggle-button game-header-button" type="button" aria-label="Sound on" title="Sound on" aria-pressed="false">🔊</button>
+          </div>
         </header>
 
         <p class="jack-jump-copy game-instructions">Drag Jack along the path, jump over the candle, and land on the glowing target.</p>

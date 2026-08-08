@@ -13,6 +13,8 @@
     },
   };
 
+  const RIGHT_HAND_BOTTOM_MARGIN_PX = 10;
+
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
   }
@@ -45,6 +47,26 @@
     function applyRightPosition(x, y) {
       rightHand.style.left = `${(x / sceneWidth) * 100}%`;
       rightHand.style.top = `${(y / sceneHeight) * 100}%`;
+    }
+
+    function getTranslateYFromTransform(transformValue) {
+      if (!transformValue || transformValue === "none") {
+        return 0;
+      }
+
+      const match = transformValue.match(/^matrix\(([^)]+)\)$/);
+      if (match) {
+        const parts = match[1].split(",").map((value) => Number.parseFloat(value.trim()));
+        return Number.isFinite(parts[5]) ? parts[5] : 0;
+      }
+
+      const match3d = transformValue.match(/^matrix3d\(([^)]+)\)$/);
+      if (match3d) {
+        const parts = match3d[1].split(",").map((value) => Number.parseFloat(value.trim()));
+        return Number.isFinite(parts[13]) ? parts[13] : 0;
+      }
+
+      return 0;
     }
 
     function getTrackpadArea() {
@@ -80,6 +102,24 @@
       };
     }
 
+    function clampRightHandYToVisibleBoundary(yPosition) {
+      const sceneRect = scene.getBoundingClientRect();
+      const rightRect = rightHand.getBoundingClientRect();
+      const scaleY = sceneRect.height > 0 ? sceneRect.height / sceneHeight : 0;
+
+      if (!Number.isFinite(scaleY) || scaleY <= 0) {
+        return yPosition;
+      }
+
+      const rightHeightLocal = rightRect.height / scaleY;
+      const bottomMarginLocal = RIGHT_HAND_BOTTOM_MARGIN_PX / scaleY;
+      const transformYRendered = getTranslateYFromTransform(getComputedStyle(rightHand).transform);
+      const transformYLocal = transformYRendered / scaleY;
+      const maxVisibleTop = sceneHeight - rightHeightLocal - bottomMarginLocal - transformYLocal;
+
+      return Math.min(yPosition, maxVisibleTop);
+    }
+
     function pointerToScenePoint(event) {
       if (pointerSpace === "scene") {
         const rect = scene.getBoundingClientRect();
@@ -106,7 +146,8 @@
     function updateFromPointerEvent(event) {
       const point = pointerToScenePoint(event);
       const rightPosition = mapPointToRightPosition(point.x, point.y);
-      applyRightPosition(rightPosition.x, rightPosition.y);
+      const safeY = clampRightHandYToVisibleBoundary(rightPosition.y);
+      applyRightPosition(rightPosition.x, safeY);
     }
 
     function setPressed(pressed) {
