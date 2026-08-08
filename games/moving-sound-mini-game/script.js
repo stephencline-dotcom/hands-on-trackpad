@@ -230,6 +230,7 @@ const openedFromPortalGameLink = selectedGame !== null;
 
 let soundEnabled = true;
 let lightTapLevelResult = null;
+let streetCarLevelResult = null;
 const importedTrackpadGuides = [];
 
 function initImportedTrackpadGuides() {
@@ -2543,6 +2544,26 @@ function runLightTapLevel(index) {
 
 function restartCurrentLightTapLevel() {
   runLightTapLevel(arenaState.currentLevelIndex);
+}function pauseStreetCarGameplayForResult() {
+  carGameState.running = false;
+  streetArena.classList.remove('is-active');
+  window.cancelAnimationFrame(carGameState.animationId);
+}
+
+function resumeStreetCarLevel(index) {
+  startCarLevel(index);
+
+  carGameState.running = true;
+  carGameState.lastTime = 0;
+  streetArena.classList.add('is-active');
+  setCarStartButtonVisible(false);
+
+  window.cancelAnimationFrame(carGameState.animationId);
+  carGameState.animationId = window.requestAnimationFrame(stepCarGame);
+}
+
+function restartCurrentStreetCarLevel() {
+  resumeStreetCarLevel(carGameState.currentLevelIndex);
 }
 
 function showLightTapFailureResult(message = '') {
@@ -3063,9 +3084,19 @@ function applyCarMiss(message) {
   updateCarMisses(carGameState.missesLeft - 1);
 
   if (carGameState.missesLeft <= 0) {
+  pauseStreetCarGameplayForResult();
+
+  if (streetCarLevelResult) {
+    streetCarLevelResult.showFailure({
+      title: 'Try Again!',
+      message: `Level ${carGameState.currentLevelIndex + 1} failed: out of misses.`,
+    });
+  } else {
     endCarGame('Out of misses');
-    return true;
   }
+
+  return true;
+}
 
   setCarStatus(message);
   return false;
@@ -3304,16 +3335,36 @@ function createCar() {
     updateCarGoal(carGameState.levelHits, carGameState.levelGoal);
     setCarStatus('Great click');
     carElement.classList.add('hit');
+if (carGameState.levelHits >= carGameState.levelGoal) {
+  const completedLevel = carGameState.currentLevelIndex + 1;
+  const hasNextLevel = carGameState.currentLevelIndex < carGameState.levels.length - 1;
 
-    if (carGameState.levelHits >= carGameState.levelGoal) {
-      const nextLevelIndex = carGameState.currentLevelIndex + 1;
-      setCarStatus(`Car level ${carGameState.currentLevelIndex + 1} complete`);
+  setCarStatus(`Car level ${completedLevel} complete`);
+  saveCompletedGameResult('Street Car Game', carGameState, completedLevel);
 
-      saveCompletedGameResult('Street Car Game', carGameState, carGameState.currentLevelIndex + 1);
-      startCarLevel(nextLevelIndex);
-
-      return;
+  if (!streetCarLevelResult) {
+    if (hasNextLevel) {
+      startCarLevel(carGameState.currentLevelIndex + 1);
+    } else {
+      endCarGame(`All car levels complete. Final score: ${carGameState.score}`);
     }
+    return;
+  }
+
+  if (hasNextLevel) {
+    streetCarLevelResult.showSuccess({
+      title: 'Level Complete!',
+      message: `Great job! Tap Level Up for Level ${completedLevel + 1}.`,
+    });
+  } else {
+    streetCarLevelResult.showFinal({
+      title: 'You Did It!',
+      message: `All Street Car levels complete! Final score: ${carGameState.score}`,
+    });
+  }
+
+  return;
+}
 
     window.setTimeout(() => {
       deactivateCar(car);
@@ -4212,9 +4263,19 @@ function stepCarGame(timestamp) {
   updateCarTime(carGameState.timeLeft - delta);
 
   if (carGameState.timeLeft <= 0) {
+  pauseStreetCarGameplayForResult();
+
+  if (streetCarLevelResult) {
+    streetCarLevelResult.showFailure({
+      title: 'Try Again!',
+      message: `Level ${carGameState.currentLevelIndex + 1} failed: goal not reached.`,
+    });
+  } else {
     endCarGame(`Car level ${carGameState.currentLevelIndex + 1} failed: goal not reached`);
-    return;
   }
+
+  return;
+}
 
   for (const car of carGameState.cars) {
     if (!car.active && car.respawnAt > 0 && timestamp >= car.respawnAt && countActiveCars() < carGameState.carCount) {
@@ -4361,9 +4422,19 @@ function handleStreetArenaMiss(event) {
   updateCarMisses(carGameState.missesLeft - 1);
 
   if (carGameState.missesLeft <= 0) {
+  pauseStreetCarGameplayForResult();
+
+  if (streetCarLevelResult) {
+    streetCarLevelResult.showFailure({
+      title: 'Try Again!',
+      message: `Level ${carGameState.currentLevelIndex + 1} failed: out of misses.`,
+    });
+  } else {
     endCarGame('Out of misses');
-    return;
   }
+
+  return;
+}
 
   setCarStatus('Miss click');
 }
@@ -4696,6 +4767,18 @@ if (window.LevelResultController && arena) {
     onRetry: restartCurrentLightTapLevel,
     onPlayAgain: startGame,
     onHome: backToMenu,
+  });
+}if (window.LevelResultController && streetArena) {
+  streetCarLevelResult = new window.LevelResultController({
+    host: streetArena,
+    canPlaySound: () => soundEnabled,
+    pauseGame: pauseStreetCarGameplayForResult,
+    onNextLevel: () => {
+  resumeStreetCarLevel(carGameState.currentLevelIndex + 1);
+},
+    onRetry: restartCurrentStreetCarLevel,
+    onPlayAgain: startCarGame,
+    onHome: backToMenuFromCar,
   });
 }
 
