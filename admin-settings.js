@@ -88,6 +88,9 @@ const fireLevelInputs = [1, 2, 3].map((level) => ({
   flameDurationSeconds: document.getElementById(`adminFireFlameDurationL${level}`),
 }));
 const martianLevelInputs = [1, 2, 3].map((level) => ({
+  timeLimit: document.getElementById(`adminMartianTimeL${level}`),
+  missesAllowed: document.getElementById(`adminMartianMissesL${level}`),
+  goal: document.getElementById(`adminMartianGoalL${level}`),
   peopleCount: document.getElementById(`adminMartianPeopleCountL${level}`),
   ufoCount: document.getElementById(`adminMartianUfoCountL${level}`),
   ufoSpeed: document.getElementById(`adminMartianUfoSpeedL${level}`),
@@ -1440,6 +1443,9 @@ function resetMartianToDefaults() {
   const defaultMartianLevels = normalizeMartianLevels(DEFAULT_MOVING_SOUND_MARTIAN_LEVELS);
   saveStoredMartianLevels(defaultMartianLevels);
   applyGameLevelsToInputs(defaultMartianLevels, martianLevelInputs, {
+    timeLimit: "timeLimit",
+    missesAllowed: "missesAllowed",
+    goal: "goal",
     peopleCount: "peopleCount",
     ufoCount: "ufoCount",
     ufoSpeed: "ufoSpeed",
@@ -1706,6 +1712,9 @@ async function loadTask1Settings() {
     flameDurationSeconds: "flameDurationSeconds",
   });
   applyGameLevelsToInputs(martianLevels, martianLevelInputs, {
+    timeLimit: "timeLimit",
+    missesAllowed: "missesAllowed",
+    goal: "goal",
     peopleCount: "peopleCount",
     ufoCount: "ufoCount",
     ufoSpeed: "ufoSpeed",
@@ -1845,11 +1854,14 @@ async function saveTask1Settings() {
     )
     : null;
   const hasMartianInputs = martianLevelInputs.some((inputs) =>
-    Boolean(inputs.peopleCount || inputs.ufoCount || inputs.ufoSpeed || inputs.liftSpeed)
+    Boolean(inputs.timeLimit || inputs.missesAllowed || inputs.goal || inputs.peopleCount || inputs.ufoCount || inputs.ufoSpeed || inputs.liftSpeed)
   );
   const martianLevels = hasMartianInputs
     ? normalizeMartianLevels(
       readGameLevelsFromInputs(martianLevelInputs, {
+        timeLimit: "timeLimit",
+        missesAllowed: "missesAllowed",
+        goal: "goal",
         peopleCount: "peopleCount",
         ufoCount: "ufoCount",
         ufoSpeed: "ufoSpeed",
@@ -1992,6 +2004,9 @@ async function saveTask1Settings() {
   }
   if (martianLevels) {
     applyGameLevelsToInputs(martianLevels, martianLevelInputs, {
+      timeLimit: "timeLimit",
+      missesAllowed: "missesAllowed",
+      goal: "goal",
       peopleCount: "peopleCount",
       ufoCount: "ufoCount",
       ufoSpeed: "ufoSpeed",

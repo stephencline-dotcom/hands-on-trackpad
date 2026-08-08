@@ -233,6 +233,7 @@ let lightTapLevelResult = null;
 let streetCarLevelResult = null;
 let dragonLevelResult = null;
 let fireLevelResult = null;
+let martianLevelResult = null;
 const importedTrackpadGuides = [];
 
 function initImportedTrackpadGuides() {
@@ -1576,8 +1577,7 @@ function releaseMartianPerson(person, freedByPlayer) {
     setMartianStatus('Person saved!');
 
     if (martianGameState.levelHits >= martianGameState.levelGoal) {
-      saveCompletedGameResult('Martian Madness', martianGameState, martianGameState.currentLevelIndex + 1);
-      startMartianLevel(martianGameState.currentLevelIndex + 1);
+      showMartianSuccessResult();
       return;
     }
   }
@@ -1598,7 +1598,17 @@ function applyMartianMiss(message) {
   updateMartianMisses(martianGameState.missesLeft - 1);
 
   if (martianGameState.missesLeft <= 0) {
-    endMartianGame('Too many people were captured');
+    pauseMartianGameplayForResult();
+
+    if (martianLevelResult) {
+      martianLevelResult.showFailure({
+        title: 'Try Again!',
+        message: `Level ${martianGameState.currentLevelIndex + 1} failed: too many people were captured.`,
+      });
+    } else {
+      endMartianGame('Too many people were captured');
+    }
+
     return true;
   }
 
@@ -1671,7 +1681,19 @@ function stepMartianGame(timestamp) {
   updateMartianTime(martianGameState.timeLeft - delta);
 
   if (martianGameState.timeLeft <= 0) {
-    endMartianGame(`Martian level ${martianGameState.currentLevelIndex + 1} failed: goal not reached`);
+    pauseMartianGameplayForResult();
+
+    if (martianLevelResult) {
+      martianLevelResult.showFailure({
+        title: 'Try Again!',
+        message: `Level ${martianGameState.currentLevelIndex + 1} failed: goal not reached.`,
+      });
+    } else {
+      endMartianGame(
+        `Martian level ${martianGameState.currentLevelIndex + 1} failed: goal not reached`
+      );
+    }
+
     return;
   }
 
@@ -2592,6 +2614,73 @@ function resumeDragonLevel(index) {
 
 function restartCurrentDragonLevel() {
   resumeDragonLevel(dragonGameState.currentLevelIndex);
+}
+
+function pauseMartianGameplayForResult() {
+  martianGameState.running = false;
+  martianArena.classList.remove('is-active');
+  window.cancelAnimationFrame(martianGameState.animationId);
+
+  pauseMartianShipLoop(true);
+
+  for (const ufo of martianGameState.ufos) {
+    stopMartianRayAudio(ufo);
+  }
+}
+
+function resumeMartianLevel(index) {
+  startMartianLevel(index);
+
+  martianGameState.running = true;
+  martianGameState.lastTime = 0;
+  martianArena.classList.add('is-active');
+  setMartianStartButtonVisible(false);
+
+  startMartianShipLoop();
+
+  window.cancelAnimationFrame(martianGameState.animationId);
+  martianGameState.animationId = window.requestAnimationFrame(stepMartianGame);
+}
+
+function restartCurrentMartianLevel() {
+  resumeMartianLevel(martianGameState.currentLevelIndex);
+}
+
+function showMartianSuccessResult() {
+  pauseMartianGameplayForResult();
+
+  const completedLevel = martianGameState.currentLevelIndex + 1;
+  const hasNextLevel =
+    martianGameState.currentLevelIndex < martianGameState.levels.length - 1;
+
+  saveCompletedGameResult(
+    'Martian Madness',
+    martianGameState,
+    completedLevel
+  );
+
+  if (!martianLevelResult) {
+    if (hasNextLevel) {
+      resumeMartianLevel(martianGameState.currentLevelIndex + 1);
+    } else {
+      endMartianGame(
+        `All Martian levels complete. Final score: ${martianGameState.score}`
+      );
+    }
+    return;
+  }
+
+  if (hasNextLevel) {
+    martianLevelResult.showSuccess({
+      title: 'Level Complete!',
+      message: `Great job! Tap Level Up for Level ${completedLevel + 1}.`,
+    });
+  } else {
+    martianLevelResult.showFinal({
+      title: 'You Did It!',
+      message: `All Martian Madness levels complete! Final score: ${martianGameState.score}`,
+    });
+  }
 }
 
 function pauseFireGameplayForResult() {
@@ -4977,6 +5066,20 @@ if (window.LevelResultController && fireArena) {
     onRetry: restartCurrentFireLevel,
     onPlayAgain: startFireGame,
     onHome: backToMenuFromFire,
+  });
+}
+
+if (window.LevelResultController && martianArena) {
+  martianLevelResult = new window.LevelResultController({
+    host: martianArena,
+    canPlaySound: () => soundEnabled,
+    pauseGame: pauseMartianGameplayForResult,
+    onNextLevel: () => {
+      resumeMartianLevel(martianGameState.currentLevelIndex + 1);
+    },
+    onRetry: restartCurrentMartianLevel,
+    onPlayAgain: startMartianGame,
+    onHome: backToMenuFromMartian,
   });
 }
 startButton.addEventListener('click', startGame);
