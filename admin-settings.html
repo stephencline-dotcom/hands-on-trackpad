@@ -294,7 +294,17 @@
 
           <section class="admin-tab-content" id="panelStreetCar" role="tabpanel" aria-labelledby="tabStreetCar" aria-hidden="true">
             <p class="admin-panel-note">Adjust Street Car level goals and timing.</p>
-            <div class="admin-level-grid">
+
+            <article class="admin-mini-card admin-mini-card--wide">
+              <h3>Street Car Input</h3>
+              <div class="admin-inline-toggles">
+                <label class="admin-toggle-row" for="streetCarRequireClickToggle">
+                  <input id="streetCarRequireClickToggle" type="checkbox" checked />
+                  <span>Require click/tap on cars</span>
+                </label>
+              </div>
+              <p class="admin-panel-note">Turn this off to let cursor touch activate a car.</p>
+            </article>            <div class="admin-level-grid">
               <article class="admin-level-card">
                 <h3>Level 1</h3>
                 <label class="admin-task-label" for="adminCarSpawnIntervalL1">Spawn interval (seconds)</label>
@@ -379,6 +389,18 @@
 
           <section class="admin-tab-content" id="panelLightTap" role="tabpanel" aria-labelledby="tabLightTap" aria-hidden="true">
             <p class="admin-panel-note">Adjust Light Tap level goals and timing.</p>
+
+            <article class="admin-mini-card admin-mini-card--wide">
+              <h3>Light Tap Input</h3>
+              <div class="admin-inline-toggles">
+                <label class="admin-toggle-row" for="lightTapRequireClickToggle">
+                  <input id="lightTapRequireClickToggle" type="checkbox" checked />
+                  <span>Require click/tap on lights</span>
+                </label>
+              </div>
+              <p class="admin-panel-note">Turn this off to let cursor touch activate a light.</p>
+            </article>
+
             <div class="admin-level-grid">
               <article class="admin-level-card">
                 <h3>Level 1</h3>
@@ -413,6 +435,16 @@
 
           <section class="admin-tab-content" id="panelDragon" role="tabpanel" aria-labelledby="tabDragon" aria-hidden="true">
             <p class="admin-panel-note">Adjust Dragon Dodge level goals and timing.</p>
+            <article class="admin-mini-card admin-mini-card--wide">
+              <h3>Dragon Dodge Input</h3>
+              <div class="admin-inline-toggles">
+                <label class="admin-toggle-row" for="dragonRequireClickToggle">
+                  <input id="dragonRequireClickToggle" type="checkbox" checked />
+                  <span>Require click/tap on dragons and Princess</span>
+                </label>
+              </div>
+              <p class="admin-panel-note">Turn this off to let cursor touch activate a dragon or rescue the Princess.</p>
+            </article>
             <div class="admin-level-grid">
               <article class="admin-level-card">
                 <h3>Level 1</h3>
@@ -520,7 +552,17 @@
 
           <section class="admin-tab-content" id="panelFire" role="tabpanel" aria-labelledby="tabFire" aria-hidden="true">
             <p class="admin-panel-note">Adjust Firefighter Rescue level goals and timing.</p>
-            <div class="admin-level-grid">
+
+            <article class="admin-mini-card admin-mini-card--wide">
+              <h3>Firefighter Rescue Input</h3>
+              <div class="admin-inline-toggles">
+                <label class="admin-toggle-row" for="fireRequireClickToggle">
+                  <input id="fireRequireClickToggle" type="checkbox" checked />
+                  <span>Require click/tap on burning windows</span>
+                </label>
+              </div>
+              <p class="admin-panel-note">Turn this off to let cursor touch extinguish burning windows.</p>
+            </article>            <div class="admin-level-grid">
               <article class="admin-level-card">
                 <h3>Level 1</h3>
                 <label class="admin-task-label" for="adminFireTimeL1">Time (seconds)</label>
@@ -566,7 +608,17 @@
 
           <section class="admin-tab-content" id="panelMartian" role="tabpanel" aria-labelledby="tabMartian" aria-hidden="true">
             <p class="admin-panel-note">Adjust Martian Madness level crowd and ship settings.</p>
-            <div class="admin-level-grid">
+
+            <article class="admin-mini-card admin-mini-card--wide">
+              <h3>Martian Madness Input</h3>
+              <div class="admin-inline-toggles">
+                <label class="admin-toggle-row" for="martianRequireClickToggle">
+                  <input id="martianRequireClickToggle" type="checkbox" checked />
+                  <span>Require click/tap on abducted people</span>
+                </label>
+              </div>
+              <p class="admin-panel-note">Turn this off to let cursor touch rescue a person in the beam.</p>
+            </article>            <div class="admin-level-grid">
               <article class="admin-level-card">
                 <h3>Level 1</h3>
                 <label class="admin-task-label" for="adminMartianTimeL1">Time limit (seconds)</label>

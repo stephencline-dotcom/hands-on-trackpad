@@ -19,6 +19,11 @@ const firefighterRescueGameActiveToggle = document.getElementById("firefighterRe
 const martianMadnessGameActiveToggle = document.getElementById("martianMadnessGameActive");
 const soundEnabledToggle = document.getElementById("soundEnabledToggle");
 const trainingPausedToggle = document.getElementById("trainingPausedToggle");
+const lightTapRequireClickToggle = document.getElementById("lightTapRequireClickToggle");
+const streetCarRequireClickToggle = document.getElementById("streetCarRequireClickToggle");
+const dragonRequireClickToggle = document.getElementById("dragonRequireClickToggle");
+const fireRequireClickToggle = document.getElementById("fireRequireClickToggle");
+const martianRequireClickToggle = document.getElementById("martianRequireClickToggle");
 const jackFlameRainInputs = [4, 5, 6].map((level) => ({
   enabled: document.getElementById(`jackFlameRain${level}EnabledToggle`),
   size: document.getElementById(`jackFlameRain${level}Size`),
@@ -136,6 +141,11 @@ const MARTIAN_MADNESS_GAME_ACTIVE_KEY = "martianMadnessGameActive";
 const SOUND_ENABLED_KEY = "trackpadSoundEnabled";
 const TRAINING_PAUSED_KEY = "trackpadTrainingPaused";
 const MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY = "moving-sound-admin-settings-v1";
+const LIGHT_TAP_REQUIRE_CLICK_KEY = "lightTapRequireClick";
+const STREET_CAR_REQUIRE_CLICK_KEY = "streetCarRequireClick";
+const DRAGON_REQUIRE_CLICK_KEY = "dragonRequireClick";
+const FIRE_REQUIRE_CLICK_KEY = "fireRequireClick";
+const MARTIAN_REQUIRE_CLICK_KEY = "martianRequireClick";
 const JACK_FLAME_RAIN_KEYS = [4, 5, 6].map((level) => ({
   enabled: `jackFlameRain${level}Enabled`,
   size: `jackFlameRain${level}SizePx`,
@@ -1260,6 +1270,11 @@ async function resetFullscreenToDefaults() {
   }
   if (trainingPausedToggle) {
     trainingPausedToggle.checked = trainingPaused;
+  lightTapRequireClickToggle.checked = lightTapRequireClick;
+  streetCarRequireClickToggle.checked = streetCarRequireClick;
+  dragonRequireClickToggle.checked = dragonRequireClick;
+  fireRequireClickToggle.checked = fireRequireClick;
+  martianRequireClickToggle.checked = martianRequireClick;
   }
 
   localStorage.setItem(TASK1_STORAGE_KEY, String(task1RequiredSeconds));
@@ -1272,6 +1287,11 @@ async function resetFullscreenToDefaults() {
   localStorage.setItem(FULLSCREEN_GAME_ACTIVE_KEY, String(fullscreenGameActive));
   localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
   localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
+  localStorage.setItem(LIGHT_TAP_REQUIRE_CLICK_KEY, String(lightTapRequireClick));
+      localStorage.setItem(STREET_CAR_REQUIRE_CLICK_KEY, String(streetCarRequireClick));
+      localStorage.setItem(DRAGON_REQUIRE_CLICK_KEY, String(dragonRequireClick));
+      localStorage.setItem(FIRE_REQUIRE_CLICK_KEY, String(fireRequireClick));
+      localStorage.setItem(MARTIAN_REQUIRE_CLICK_KEY, String(martianRequireClick));
 
   try {
     const response = await fetch(SETTINGS_API_PATH, {
@@ -1290,6 +1310,11 @@ async function resetFullscreenToDefaults() {
         fullscreenGameActive,
         soundEnabled,
         trainingPaused,
+        lightTapRequireClick,
+        streetCarRequireClick,
+        dragonRequireClick,
+        fireRequireClick,
+        martianRequireClick,
       }),
     });
 
@@ -1485,6 +1510,26 @@ async function loadTask1Settings() {
   let martianLevels = loadStoredMartianLevels();
   let soundEnabled = parseTaskEnabled(localStorage.getItem(SOUND_ENABLED_KEY), true);
   let trainingPaused = parseTrainingPaused(localStorage.getItem(TRAINING_PAUSED_KEY));
+  let lightTapRequireClick = parseTaskEnabled(
+    localStorage.getItem(LIGHT_TAP_REQUIRE_CLICK_KEY),
+    true
+  );
+  let streetCarRequireClick = parseTaskEnabled(
+    localStorage.getItem(STREET_CAR_REQUIRE_CLICK_KEY),
+    true
+  );
+  let dragonRequireClick = parseTaskEnabled(
+    localStorage.getItem(DRAGON_REQUIRE_CLICK_KEY),
+    true
+  );
+  let fireRequireClick = parseTaskEnabled(
+    localStorage.getItem(FIRE_REQUIRE_CLICK_KEY),
+    true
+  );
+  let martianRequireClick = parseTaskEnabled(
+    localStorage.getItem(MARTIAN_REQUIRE_CLICK_KEY),
+    true
+  );
   const jackFlameRainSettings = [4, 5, 6].map((level, idx) => {
     const keys = JACK_FLAME_RAIN_KEYS[idx];
     const defaults = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[idx];
@@ -1553,6 +1598,26 @@ async function loadTask1Settings() {
       martianMadnessGameActive = parseTaskEnabled(data.martianMadnessGameActive, martianMadnessGameActive);
       soundEnabled = parseTaskEnabled(data.soundEnabled, true);
       trainingPaused = parseTrainingPaused(data.trainingPaused);
+      lightTapRequireClick = parseTaskEnabled(
+        data.lightTapRequireClick,
+        lightTapRequireClick
+      );
+      streetCarRequireClick = parseTaskEnabled(
+        data.streetCarRequireClick,
+        streetCarRequireClick
+      );
+      dragonRequireClick = parseTaskEnabled(
+        data.dragonRequireClick,
+        dragonRequireClick
+      );
+      fireRequireClick = parseTaskEnabled(
+        data.fireRequireClick,
+        fireRequireClick
+      );
+      martianRequireClick = parseTaskEnabled(
+        data.martianRequireClick,
+        martianRequireClick
+      );
       [4, 5, 6].forEach((level, idx) => {
         const keys = JACK_FLAME_RAIN_KEYS[idx];
         const defaults = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[idx];
@@ -1618,6 +1683,11 @@ async function loadTask1Settings() {
       localStorage.setItem(MARTIAN_MADNESS_GAME_ACTIVE_KEY, String(martianMadnessGameActive));
       localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
       localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
+      localStorage.setItem(LIGHT_TAP_REQUIRE_CLICK_KEY, String(lightTapRequireClick));
+  localStorage.setItem(STREET_CAR_REQUIRE_CLICK_KEY, String(streetCarRequireClick));
+  localStorage.setItem(DRAGON_REQUIRE_CLICK_KEY, String(dragonRequireClick));
+  localStorage.setItem(FIRE_REQUIRE_CLICK_KEY, String(fireRequireClick));
+  localStorage.setItem(MARTIAN_REQUIRE_CLICK_KEY, String(martianRequireClick));
       [4, 5, 6].forEach((level, idx) => {
         const keys = JACK_FLAME_RAIN_KEYS[idx];
         const s = jackFlameRainSettings[idx];
@@ -1871,6 +1941,21 @@ async function saveTask1Settings() {
     : null;
   const soundEnabled = Boolean(soundEnabledToggle.checked);
   const trainingPaused = Boolean(trainingPausedToggle.checked);
+  const lightTapRequireClick = Boolean(
+    lightTapRequireClickToggle && lightTapRequireClickToggle.checked
+  );
+  const streetCarRequireClick = Boolean(
+    streetCarRequireClickToggle && streetCarRequireClickToggle.checked
+  );
+  const dragonRequireClick = Boolean(
+    dragonRequireClickToggle && dragonRequireClickToggle.checked
+  );
+  const fireRequireClick = Boolean(
+    fireRequireClickToggle && fireRequireClickToggle.checked
+  );
+  const martianRequireClick = Boolean(
+    martianRequireClickToggle && martianRequireClickToggle.checked
+  );
   const jackFlameRainSettingsToSave = [4, 5, 6].map((level, idx) => {
     const inputs = jackFlameRainInputs[idx];
     const defaults = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[idx];
@@ -2220,6 +2305,11 @@ const allToggles = [
   task3EnabledToggle,
   soundEnabledToggle,
   trainingPausedToggle,
+  lightTapRequireClickToggle,
+  streetCarRequireClickToggle,
+  dragonRequireClickToggle,
+  fireRequireClickToggle,
+  martianRequireClickToggle,
   ...mazeGhostLevelToggles,
   ...carGameLevelToggles,
 ];
@@ -2247,6 +2337,11 @@ allToggles.forEach((toggleEl) => {
 });
 
 [
+  [lightTapRequireClickToggle, LIGHT_TAP_REQUIRE_CLICK_KEY],
+  [streetCarRequireClickToggle, STREET_CAR_REQUIRE_CLICK_KEY],
+  [dragonRequireClickToggle, DRAGON_REQUIRE_CLICK_KEY],
+  [fireRequireClickToggle, FIRE_REQUIRE_CLICK_KEY],
+  [martianRequireClickToggle, MARTIAN_REQUIRE_CLICK_KEY],
   [fullscreenRequireClickAndDragToggle, FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY],
   [mazeRequireClickAndDragToggle, MAZE_REQUIRE_CLICK_AND_DRAG_KEY],
   [carRequireClickAndDragToggle, CAR_REQUIRE_CLICK_AND_DRAG_KEY],

@@ -1269,6 +1269,16 @@ function applyFireAdminSettings() {
   }
 }
 
+const MARTIAN_REQUIRE_CLICK_KEY = 'martianRequireClick';
+
+function martianRequiresClick() {
+  try {
+    return localStorage.getItem(MARTIAN_REQUIRE_CLICK_KEY) !== 'false';
+  } catch {
+    return true;
+  }
+}
+
 function ensureMartianEntities() {
   if (martianGameState.people.length === 0) {
     for (let index = 0; index < 9; index += 1) {
@@ -1300,13 +1310,33 @@ function ensureMartianEntities() {
         ufoIndex: -1,
       };
 
+      const activateMartianPerson = () => {
+        if (!martianGameState.running || !person.active || !person.abducted) {
+          return;
+        }
+
+        releaseMartianPerson(person, true);
+      };
+
       personElement.addEventListener('pointerdown', (event) => {
+        if (!martianRequiresClick()) {
+          return;
+        }
+
         if (!martianGameState.running || !person.active || !person.abducted) {
           return;
         }
 
         event.stopPropagation();
-        releaseMartianPerson(person, true);
+        activateMartianPerson();
+      });
+
+      personElement.addEventListener('pointerenter', () => {
+        if (martianRequiresClick()) {
+          return;
+        }
+
+        activateMartianPerson();
       });
 
       martianPeopleLayer.appendChild(personElement);
@@ -1799,7 +1829,7 @@ function stepMartianGame(timestamp) {
 }
 
 function handleMartianArenaPointerDown(event) {
-  if (!martianGameState.running) {
+  if (!martianGameState.running || !martianRequiresClick()) {
     return;
   }
 
@@ -2446,6 +2476,16 @@ function randomVelocity(preserveDirection = false) {
   };
 }
 
+const LIGHT_TAP_REQUIRE_CLICK_KEY = 'lightTapRequireClick';
+
+function lightTapRequiresClick() {
+  try {
+    return localStorage.getItem(LIGHT_TAP_REQUIRE_CLICK_KEY) !== 'false';
+  } catch {
+    return true;
+  }
+}
+
 function createTarget() {
   const button = document.createElement('button');
   button.type = 'button';
@@ -2462,16 +2502,10 @@ function createTarget() {
     size: 52,
   };
 
-  button.addEventListener('pointerdown', (event) => {
-    if (!arenaState.running) {
+  const activateTarget = () => {
+    if (!arenaState.running || target.respawning) {
       return;
     }
-
-    if (target.respawning) {
-      return;
-    }
-
-    event.stopPropagation();
 
     recordCorrectAttempt(arenaState);
     updateScore(arenaState.score + 1);
@@ -2482,7 +2516,11 @@ function createTarget() {
     playHitSpark();
 
     if (arenaState.levelHits >= arenaState.levelGoal) {
-      saveCompletedGameResult('Light Tap Game', arenaState, arenaState.currentLevelIndex + 1);
+      saveCompletedGameResult(
+        'Light Tap Game',
+        arenaState,
+        arenaState.currentLevelIndex + 1
+      );
       showLightTapSuccessResult();
       return;
     }
@@ -2495,6 +2533,23 @@ function createTarget() {
       button.classList.remove('hit');
       target.respawning = false;
     }, 140);
+  };
+
+  button.addEventListener('pointerdown', (event) => {
+    if (!lightTapRequiresClick()) {
+      return;
+    }
+
+    event.stopPropagation();
+    activateTarget();
+  });
+
+  button.addEventListener('pointerenter', () => {
+    if (lightTapRequiresClick()) {
+      return;
+    }
+
+    activateTarget();
   });
 
   arena.appendChild(button);
@@ -3490,6 +3545,16 @@ function enforceLaneSpacing(cars, direction) {
   }
 }
 
+const STREET_CAR_REQUIRE_CLICK_KEY = 'streetCarRequireClick';
+
+function streetCarRequiresClick() {
+  try {
+    return localStorage.getItem(STREET_CAR_REQUIRE_CLICK_KEY) !== 'false';
+  } catch {
+    return true;
+  }
+}
+
 function createCar() {
   const carElement = document.createElement('button');
   carElement.type = 'button';
@@ -3530,18 +3595,18 @@ function createCar() {
     respawnAt: 0,
   };
 
-  carElement.addEventListener('pointerdown', (event) => {
+  const activateCar = () => {
     if (!carGameState.running || car.hit || !car.active) {
       return;
     }
-
-    event.stopPropagation();
 
     if (car.color !== carGameState.targetColor) {
       recordMissedAttempt(carGameState);
       deactivateCar(car);
 
-      if (!applyCarMiss(`Wrong car. Click the ${carGameState.targetColorLabel.toLowerCase()} cars`)) {
+      if (!applyCarMiss(
+        `Wrong car. Click the ${carGameState.targetColorLabel.toLowerCase()} cars`
+      )) {
         return;
       }
 
@@ -3556,40 +3621,65 @@ function createCar() {
     updateCarGoal(carGameState.levelHits, carGameState.levelGoal);
     setCarStatus('Great click');
     carElement.classList.add('hit');
-if (carGameState.levelHits >= carGameState.levelGoal) {
-  const completedLevel = carGameState.currentLevelIndex + 1;
-  const hasNextLevel = carGameState.currentLevelIndex < carGameState.levels.length - 1;
 
-  setCarStatus(`Car level ${completedLevel} complete`);
-  saveCompletedGameResult('Street Car Game', carGameState, completedLevel);
+    if (carGameState.levelHits >= carGameState.levelGoal) {
+      const completedLevel = carGameState.currentLevelIndex + 1;
+      const hasNextLevel =
+        carGameState.currentLevelIndex < carGameState.levels.length - 1;
 
-  if (!streetCarLevelResult) {
-    if (hasNextLevel) {
-      startCarLevel(carGameState.currentLevelIndex + 1);
-    } else {
-      endCarGame(`All car levels complete. Final score: ${carGameState.score}`);
+      setCarStatus(`Car level ${completedLevel} complete`);
+      saveCompletedGameResult(
+        'Street Car Game',
+        carGameState,
+        completedLevel
+      );
+
+      if (!streetCarLevelResult) {
+        if (hasNextLevel) {
+          startCarLevel(carGameState.currentLevelIndex + 1);
+        } else {
+          endCarGame(
+            `All car levels complete. Final score: ${carGameState.score}`
+          );
+        }
+        return;
+      }
+
+      if (hasNextLevel) {
+        streetCarLevelResult.showSuccess({
+          title: 'Level Complete!',
+          message: `Great job! Tap Level Up for Level ${completedLevel + 1}.`,
+        });
+      } else {
+        streetCarLevelResult.showFinal({
+          title: 'You Did It!',
+          message: `All Street Car levels complete! Final score: ${carGameState.score}`,
+        });
+      }
+
+      return;
     }
-    return;
-  }
-
-  if (hasNextLevel) {
-    streetCarLevelResult.showSuccess({
-      title: 'Level Complete!',
-      message: `Great job! Tap Level Up for Level ${completedLevel + 1}.`,
-    });
-  } else {
-    streetCarLevelResult.showFinal({
-      title: 'You Did It!',
-      message: `All Street Car levels complete! Final score: ${carGameState.score}`,
-    });
-  }
-
-  return;
-}
 
     window.setTimeout(() => {
       deactivateCar(car);
     }, 140);
+  };
+
+  carElement.addEventListener('pointerdown', (event) => {
+    if (!streetCarRequiresClick()) {
+      return;
+    }
+
+    event.stopPropagation();
+    activateCar();
+  });
+
+  carElement.addEventListener('pointerenter', () => {
+    if (streetCarRequiresClick()) {
+      return;
+    }
+
+    activateCar();
   });
 
   streetArena.appendChild(carElement);
@@ -4237,29 +4327,29 @@ function stepFireGame(timestamp) {
   fireGameState.animationId = window.requestAnimationFrame(stepFireGame);
 }
 
-function handleFireArenaPointerDown(event) {
-  if (!fireGameState.running) {
+const FIRE_REQUIRE_CLICK_KEY = 'fireRequireClick';
+
+function fireRequiresClick() {
+  try {
+    return localStorage.getItem(FIRE_REQUIRE_CLICK_KEY) !== 'false';
+  } catch {
+    return true;
+  }
+}
+
+function activateFireWindow(targetWindow, cursorMode = false) {
+  if (!fireGameState.running || !targetWindow) {
     return;
   }
 
-  if (event.button !== 0 && event.pointerType !== 'touch') {
-    return;
+  // Cursor-touch mode is forgiving:
+  // only an actual burning window activates.
+  if (cursorMode) {
+    if (targetWindow.helpActive || !targetWindow.active) {
+      return;
+    }
   }
 
-  const clickedWindowElement = event.target.closest('.fire-window');
-
-  if (!clickedWindowElement) {
-    setFireStatus('Click a burning window');
-    return;
-  }
-
-  const targetWindow = fireGameState.windows.find((windowState) => windowState.element === clickedWindowElement);
-
-  if (!targetWindow) {
-    return;
-  }
-
-  event.stopPropagation();
   showWaterStream(targetWindow);
 
   if (targetWindow.helpActive) {
@@ -4290,6 +4380,56 @@ function handleFireArenaPointerDown(event) {
   if (fireGameState.levelHits >= fireGameState.levelGoal) {
     showFireSuccessResult();
   }
+}
+
+function handleFireArenaPointerDown(event) {
+  if (!fireGameState.running || !fireRequiresClick()) {
+    return;
+  }
+
+  if (event.button !== 0 && event.pointerType !== 'touch') {
+    return;
+  }
+
+  const clickedWindowElement = event.target.closest('.fire-window');
+
+  if (!clickedWindowElement) {
+    setFireStatus('Click a burning window');
+    return;
+  }
+
+  const targetWindow = fireGameState.windows.find(
+    (windowState) => windowState.element === clickedWindowElement
+  );
+
+  if (!targetWindow) {
+    return;
+  }
+
+  event.stopPropagation();
+  activateFireWindow(targetWindow, false);
+}
+
+function handleFireArenaPointerOver(event) {
+  if (!fireGameState.running || fireRequiresClick()) {
+    return;
+  }
+
+  const windowElement = event.target.closest('.fire-window');
+
+  if (!windowElement) {
+    return;
+  }
+
+  const targetWindow = fireGameState.windows.find(
+    (windowState) => windowState.element === windowElement
+  );
+
+  if (!targetWindow) {
+    return;
+  }
+
+  activateFireWindow(targetWindow, true);
 }
 
 function startFireGame() {
@@ -4433,19 +4573,24 @@ function startDragonGame() {
   dragonGameState.animationId = window.requestAnimationFrame(stepDragonGame);
 }
 
-function handleDragonArenaPointerDown(event) {
-  if (!dragonGameState.running) {
+const DRAGON_REQUIRE_CLICK_KEY = 'dragonRequireClick';
+
+function dragonRequiresClick() {
+  try {
+    return localStorage.getItem(DRAGON_REQUIRE_CLICK_KEY) !== 'false';
+  } catch {
+    return true;
+  }
+}
+
+function activateDragonTargetFromElement(targetElement) {
+  if (!dragonGameState.running || !targetElement) {
     return;
   }
 
-  if (event.button !== 0 && event.pointerType !== 'touch') {
-    return;
-  }
-
-  const princessElement = event.target.closest('.dragon-princess');
+  const princessElement = targetElement.closest('.dragon-princess');
 
   if (princessElement && dragonGameState.princess.active) {
-    event.stopPropagation();
     recordCorrectAttempt(dragonGameState);
     updateDragonScore(dragonGameState.score + 2);
     setDragonStatus('Princess rescued! +2 points');
@@ -4453,19 +4598,18 @@ function handleDragonArenaPointerDown(event) {
     return;
   }
 
-  const targetElement = event.target.closest('.dragon-target');
+  const dragonElement = targetElement.closest('.dragon-target');
 
-  if (!targetElement) {
+  if (!dragonElement) {
     if (dragonGameState.dragons.some((dragon) => dragon.isFiring)) {
       setDragonStatus('Tap the dragons!');
     }
-
     return;
   }
 
-  event.stopPropagation();
-
-  const dragon = dragonGameState.dragons.find((item) => item.element === targetElement);
+  const dragon = dragonGameState.dragons.find(
+    (item) => item.element === dragonElement
+  );
 
   if (!dragon) {
     return;
@@ -4475,9 +4619,15 @@ function handleDragonArenaPointerDown(event) {
     calmDragonFire(dragon, true);
 
     if (dragonGameState.levelHits >= dragonGameState.levelGoal) {
-  showDragonSuccessResult();
-}
+      showDragonSuccessResult();
+    }
 
+    return;
+  }
+
+  // In cursor-touch mode, simply passing over a non-firing dragon
+  // should not count as a miss.
+  if (!dragonRequiresClick()) {
     return;
   }
 
@@ -4486,6 +4636,38 @@ function handleDragonArenaPointerDown(event) {
   }
 
   setDragonStatus('Miss click. Wait for fire');
+}
+
+function handleDragonArenaPointerDown(event) {
+  if (!dragonGameState.running || !dragonRequiresClick()) {
+    return;
+  }
+
+  if (event.button !== 0 && event.pointerType !== 'touch') {
+    return;
+  }
+
+  const targetElement = event.target.closest('.dragon-princess, .dragon-target');
+
+  if (targetElement) {
+    event.stopPropagation();
+  }
+
+  activateDragonTargetFromElement(event.target);
+}
+
+function handleDragonArenaPointerEnter(event) {
+  if (!dragonGameState.running || dragonRequiresClick()) {
+    return;
+  }
+
+  const targetElement = event.target.closest('.dragon-princess, .dragon-target');
+
+  if (!targetElement) {
+    return;
+  }
+
+  activateDragonTargetFromElement(targetElement);
 }
 
 function startCarLevel(index) {
@@ -5101,6 +5283,7 @@ dragonStartButton.addEventListener('click', startDragonGame);
 fireStartButton.addEventListener('click', startFireGame);
 martianStartButton.addEventListener('click', startMartianGame);
 fireArena.addEventListener('pointerdown', handleFireArenaPointerDown);
+fireArena.addEventListener('pointerover', handleFireArenaPointerOver);
 martianArena.addEventListener('pointerdown', handleMartianArenaPointerDown);
 for (const button of soundToggleButtons) {
   button.addEventListener('click', toggleSoundEnabled);
@@ -5135,6 +5318,7 @@ adminApplyButton.addEventListener('click', applyAdminSettings);
 arena.addEventListener('pointerdown', handleArenaMiss);
 streetArena.addEventListener('pointerdown', handleStreetArenaMiss);
 dragonArena.addEventListener('pointerdown', handleDragonArenaPointerDown);
+dragonArena.addEventListener('pointerover', handleDragonArenaPointerEnter);
 window.addEventListener('storage', handleAdminSettingsStorageSync);
 window.addEventListener('resize', () => {
   resizeArena();
