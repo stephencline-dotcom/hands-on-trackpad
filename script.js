@@ -28,6 +28,7 @@ let hitCount = 0;
 let collisionLock = false;
 let audioPrimed = false;
 let currentLevelIndex = 0;
+let mazeLevelResult = null;
 let mazeGhostLevelsEnabled = [true, true, true, true, true, true];
 let mazeGhostLevelsPerLevelCounts = [1, 1, 1, 1, 1, 1];
 let mazeGhosts = [];
@@ -796,6 +797,83 @@ function moveTokenToward(targetX, targetY, boardRect, preferCollisionLock = fals
   return { x: tokenX, y: tokenY, blockedByWall: false };
 }
 
+function pauseMazeGameplayForResult() {
+  mazeActive = false;
+  resetMazeTokenRunState();
+  setGhostsVisible(false);
+  updateGhostAudioState();
+}
+
+function prepareNextMazeLevel() {
+  currentLevelIndex += 1;
+  updateLevelBadge();
+  hitCount = 0;
+  updateHitsBadge();
+  buildMazeWalls();
+  buildMazeGhosts();
+  mazeCompleted = false;
+  mazeActive = false;
+  collisionLock = false;
+  cursorWasOutsideBoard = false;
+  mazeStart.classList.remove("is-lit");
+  mazeFinish.classList.remove("is-lit");
+  mazeToken.classList.remove("active");
+  setGhostsVisible(false);
+  updateGhostAudioState();
+  updateStartPulseCue();
+  showMazeToast(
+    `Level ${currentLevelIndex + 1} ready! Click START when you're ready.`,
+    5000
+  );
+}
+
+function restartCurrentMazeLevel() {
+  startMaze();
+}
+
+function playMazeAgainFromLevel1() {
+  currentLevelIndex = 0;
+  updateLevelBadge();
+  hitCount = 0;
+  updateHitsBadge();
+  buildMazeWalls();
+  buildMazeGhosts();
+  mazeCompleted = false;
+  startMaze();
+}
+
+function showMazeSuccessResult(finishedHits) {
+  pauseMazeGameplayForResult();
+
+  const hasNextLevel = currentLevelIndex < MAZE_LEVELS.length - 1;
+
+  if (!mazeLevelResult) {
+    if (hasNextLevel) {
+      prepareNextMazeLevel();
+    } else {
+      mazeCompleted = true;
+      showMazeToast(
+        `Way to go! You beat all 6 levels with ${finishedHits} hit${finishedHits === 1 ? "" : "s"}!`,
+        5000
+      );
+    }
+    return;
+  }
+
+  if (hasNextLevel) {
+    mazeLevelResult.showSuccess({
+      title: "Level Complete!",
+      message: `Great job! Tap Level Up for Level ${currentLevelIndex + 2}.`,
+    });
+  } else {
+    mazeCompleted = true;
+    mazeLevelResult.showFinal({
+      title: "You Did It!",
+      message: `You beat all 6 Maze levels!`,
+    });
+  }
+}
+
 function startMaze() {
   hideMazeToast();
   const startRect = getBlockRectPx(mazeStart);
@@ -848,12 +926,20 @@ function resetMazeAfterThreeHits() {
   updateGhostAudioState();
   updateHitsBadge();
   updateStartPulseCue();
-  showMazeToast(`3 hits! Click START to try ${getCurrentLevel().name} again.`);
+
+  if (mazeLevelResult) {
+    mazeLevelResult.showFailure({
+      title: "Try Again!",
+      message: `3 hits! Try ${getCurrentLevel().name} again.`,
+    });
+  } else {
+    showMazeToast(`3 hits! Click START to try ${getCurrentLevel().name} again.`);
+  }
 }
 
 function finishMaze() {
-  const finishedLevel = getCurrentLevel().name;
   const finishedHits = hitCount;
+
   mazeActive = false;
   mazeStart.classList.remove("is-lit");
   mazeFinish.classList.add("is-lit");
@@ -861,28 +947,7 @@ function finishMaze() {
   playSound(mazeFinishAudio);
   updateGhostAudioState();
 
-  if (currentLevelIndex < MAZE_LEVELS.length - 1) {
-    currentLevelIndex += 1;
-    updateLevelBadge();
-    hitCount = 0;
-    updateHitsBadge();
-    buildMazeWalls();
-    buildMazeGhosts();
-    mazeCompleted = false;
-    showMazeToast("Way to go! Click START for the next level.", 5000);
-    mazeFinish.classList.remove("is-lit");
-    mazeToken.classList.remove("active");
-    setGhostsVisible(false);
-    updateGhostAudioState();
-    updateStartPulseCue();
-    return;
-  }
-
-  mazeCompleted = true;
-  updateLevelBadge();
-  updateGhostAudioState();
-  showMazeToast(`Way to go! You beat all 6 levels with ${finishedHits} hit${finishedHits === 1 ? "" : "s"}!`, 5000);
-  updateStartPulseCue();
+  showMazeSuccessResult(finishedHits);
 }
 
 function circleHitsRect(cx, cy, radius, rect) {
@@ -1082,3 +1147,17 @@ window.addEventListener("resize", () => {
   buildMazeWalls();
   buildMazeGhosts();
 });
+
+if (window.LevelResultController && mazeBoard) {
+  mazeLevelResult = new window.LevelResultController({
+    host: mazeBoard,
+    pauseGame: pauseMazeGameplayForResult,
+    onNextLevel: prepareNextMazeLevel,
+    onRetry: restartCurrentMazeLevel,
+    onPlayAgain: playMazeAgainFromLevel1,
+    onHome: () => {
+      window.location.href = "index.html";
+    },
+  });
+}
+

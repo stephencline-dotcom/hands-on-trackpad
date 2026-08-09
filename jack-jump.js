@@ -363,6 +363,7 @@ let flameResetTimer = null;
 let levelAdvanceTimer = null;
 let levelAdvanceDueAtMs = 0;
 let currentLevelIndex = 0;
+let jackLevelResult = null;
 let waitingNextLevel = false;
 let fireAudioPrimed = false;
 let runningFeetAudioPrimed = false;
@@ -679,7 +680,7 @@ function updateFallingFlames(deltaMs) {
       return;
     }
 
-    if (flame.y <= sceneHeight + flameRainSettings.sizePx) {
+    if (flame.y <= sceneHeight + flame.size) {
       active.push(flame);
       continue;
     }
@@ -1064,6 +1065,92 @@ function resetToStart(message, state = "neutral") {
   setStatus(message, state);
 }
 
+function pauseJackGameplayForResult() {
+  clearLevelAdvanceTimer();
+  waitingNextLevel = false;
+  started = false;
+  gameOver = true;
+
+  jackWrap.classList.remove("is-running");
+  runningFeetSound.pause();
+  runningFeetSound.currentTime = 0;
+  fireSound.pause();
+  stopFireLoopGuard();
+  clearFallingFlames();
+}
+
+function prepareNextJackLevel() {
+  currentLevelIndex = Math.min(currentLevelIndex + 1, JACK_LEVELS.length - 1);
+
+  updateLevelBadge();
+  applyLevelBackground();
+
+  rebuildLayoutAndReset(
+    `Level ${currentLevelIndex + 1} ready. Move to Jack's start point when you're ready.`,
+    "neutral"
+  );
+}
+
+function restartCurrentJackLevel() {
+  rebuildLayoutAndReset(
+    `Try Level ${currentLevelIndex + 1} again. Start from Jack's beginning point.`,
+    "warning"
+  );
+}
+
+function playJackAgainFromLevel1() {
+  currentLevelIndex = 0;
+  updateLevelBadge();
+  applyLevelBackground();
+
+  rebuildLayoutAndReset(
+    "Level 1 ready. Move to Jack's start point when you're ready.",
+    "neutral"
+  );
+}
+
+function showJackFailureResult(message) {
+  pauseJackGameplayForResult();
+
+  if (jackLevelResult) {
+    jackLevelResult.showFailure({
+      title: "Try Again!",
+      message,
+    });
+  } else {
+    restartCurrentJackLevel();
+  }
+}
+
+function showJackSuccessResult() {
+  pauseJackGameplayForResult();
+
+  const completedLevel = currentLevelIndex + 1;
+  const hasNextLevel = currentLevelIndex < JACK_LEVELS.length - 1;
+
+  if (!jackLevelResult) {
+    if (hasNextLevel) {
+      prepareNextJackLevel();
+    } else {
+      setStatus("Level complete! You finished all Jack Jump levels.", "success");
+      showLevelOverlay("All Levels Complete!");
+    }
+    return;
+  }
+
+  if (hasNextLevel) {
+    jackLevelResult.showSuccess({
+      title: "Level Complete!",
+      message: `Great job! Tap Level Up for Level ${completedLevel + 1}.`,
+    });
+  } else {
+    jackLevelResult.showFinal({
+      title: "You Did It!",
+      message: "You finished all Jack Jump levels!",
+    });
+  }
+}
+
 function triggerFlameFailure() {
   if (gameOver) {
     return;
@@ -1077,12 +1164,8 @@ function triggerFlameFailure() {
   runningFeetSound.currentTime = 0;
   clearFallingFlames();
   playFireSound();
-  setStatus("Jack touched the candle and burned. Returning to start...", "failed");
 
-  window.clearTimeout(flameResetTimer);
-  flameResetTimer = window.setTimeout(() => {
-    resetToStart("Try again: keep Jack high over the candle loop.", "warning");
-  }, FLAME_RESET_DELAY_MS);
+  showJackFailureResult("Jack touched the flame. Try this level again.");
 }
 
 function triggerSuccess() {
@@ -1098,30 +1181,7 @@ function triggerSuccess() {
   jackWrap.classList.add("is-success");
   jackGoal.classList.add("is-success");
 
-  const completedLevel = currentLevelIndex + 1;
-  const hasNextLevel = currentLevelIndex < JACK_LEVELS.length - 1;
-
-  if (!hasNextLevel) {
-    setStatus("Level complete! You finished all Jack Jump levels.", "success");
-    showLevelOverlay("All Levels Complete!");
-    return;
-  }
-
-  waitingNextLevel = true;
-  setStatus(`Level ${completedLevel} complete! Next level starting...`, "success");
-  showLevelOverlay("Way to go! On to the next level...");
-
-  clearLevelAdvanceTimer();
-  levelAdvanceDueAtMs = Date.now() + NEXT_LEVEL_DELAY_MS;
-  levelAdvanceTimer = window.setTimeout(() => {
-    levelAdvanceTimer = null;
-    levelAdvanceDueAtMs = 0;
-
-    currentLevelIndex += 1;
-    updateLevelBadge();
-    applyLevelBackground();
-    rebuildLayoutAndReset(`Level ${currentLevelIndex + 1}: follow the path and clear the candle.`, "neutral");
-  }, NEXT_LEVEL_DELAY_MS);
+  showJackSuccessResult();
 }
 
 function checkGameRules(metrics) {
@@ -1370,10 +1430,7 @@ function tick(nowMs = 0) {
 
   if (waitingNextLevel && levelAdvanceDueAtMs > 0 && Date.now() >= levelAdvanceDueAtMs) {
     clearLevelAdvanceTimer();
-    currentLevelIndex = Math.min(currentLevelIndex + 1, JACK_LEVELS.length - 1);
-    updateLevelBadge();
-    applyLevelBackground();
-    rebuildLayoutAndReset(`Level ${currentLevelIndex + 1}: follow the path and clear the candle.`, "neutral");
+    waitingNextLevel = false;
   }
 
   animationFrameId = window.requestAnimationFrame(tick);
@@ -1397,6 +1454,19 @@ function initialize() {
   updateLevelBadge();
   applyLevelBackground();
   rebuildLayoutAndReset();
+
+  if (window.LevelResultController && jackScene) {
+    jackLevelResult = new window.LevelResultController({
+      host: jackScene,
+      pauseGame: pauseJackGameplayForResult,
+      onNextLevel: prepareNextJackLevel,
+      onRetry: restartCurrentJackLevel,
+      onPlayAgain: playJackAgainFromLevel1,
+      onHome: () => {
+        window.location.href = "index.html";
+      },
+    });
+  }
 
   jackScene.addEventListener("pointermove", onScenePointerMove);
   jackScene.addEventListener("pointerdown", primeFireSound, { once: true });

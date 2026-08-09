@@ -152,6 +152,7 @@ let lastTimestamp = 0;
 
 let gameActive = false;
 let currentLevelIndex = 0;
+let carLevelResult = null;
 let crashCount = 0;
 let levelElapsedMs = 0;
 let score = 0;
@@ -1196,6 +1197,105 @@ function getCarSpawnIntervalMs() {
   return clamp(1350 - speed * 1700, 280, 1200);
 }
 
+function pauseCarGameplayForResult() {
+  clearLevelAdvanceTimer();
+  waitingNextLevel = false;
+  gameActive = false;
+
+  stopGasFillAudio();
+  stopDrivingAudio();
+  syncBirdAudio();
+  syncAirplaneAudio();
+
+  updateStartButtonVisibility();
+}
+
+function prepareNextCarLevel(nextLevelIndex) {
+  clearLevelAdvanceTimer();
+  waitingNextLevel = false;
+  gameActive = false;
+
+  currentLevelIndex = nextLevelIndex;
+  levelElapsedMs = 0;
+  crashCount = 0;
+  pendingFuelRefill = 0;
+
+  hideLevelOverlay();
+  hideFinalBanner();
+  hideToast();
+
+  clearObstacles();
+  setFuelLevel(FUEL_MAX);
+
+  updateLevelBadge();
+  updateCrashBadge();
+  updateTimeBadge();
+
+  if (carStart) {
+    carStart.textContent = "START";
+  }
+
+  updateStartButtonVisibility();
+  showToast(
+    `Level ${currentLevelIndex + 1} ready! Click START when you're ready.`,
+    5000
+  );
+}
+
+function restartCurrentCarLevel() {
+  startLevel();
+}
+
+function playCarAgainFromFirstEnabledLevel() {
+  const firstEnabled = getFirstEnabledLevelIndex();
+
+  if (firstEnabled < 0) {
+    showToast("Enable at least one Car Game level in Admin settings.", 5000);
+    return;
+  }
+
+  currentLevelIndex = firstEnabled;
+  startLevel();
+}
+
+function showCarFailureResult(message) {
+  pauseCarGameplayForResult();
+
+  if (carLevelResult) {
+    carLevelResult.showFailure({
+      title: "Try Again!",
+      message,
+    });
+  } else {
+    showToast(`${message} Click START to retry this level.`, 0);
+  }
+}
+
+function showCarSuccessResult(completedLevel, nextLevelIndex) {
+  pauseCarGameplayForResult();
+
+  if (!carLevelResult) {
+    if (nextLevelIndex >= 0) {
+      prepareNextCarLevel(nextLevelIndex);
+    } else {
+      showFinalBanner();
+    }
+    return;
+  }
+
+  if (nextLevelIndex >= 0) {
+    carLevelResult.showSuccess({
+      title: "Level Complete!",
+      message: `Great job! Tap Level Up for Level ${nextLevelIndex + 1}.`,
+    });
+  } else {
+    carLevelResult.showFinal({
+      title: "You Did It!",
+      message: `You finished all enabled Car Game levels!`,
+    });
+  }
+}
+
 function handleCrash() {
   clearLevelAdvanceTimer();
   waitingNextLevel = false;
@@ -1219,8 +1319,7 @@ function handleCrash() {
     carStart.textContent = "PLAY AGAIN";
   }
 
-  showToast("Crash! Click START to retry this level.", 0);
-  updateStartButtonVisibility();
+  showCarFailureResult("Crash! Retry this level.");
 }
 
 function handleOutOfGas() {
@@ -1239,8 +1338,7 @@ function handleOutOfGas() {
     carStart.textContent = "PLAY AGAIN";
   }
 
-  showToast("Out of gas! Grab gas pumps and click START to retry.", 0);
-  updateStartButtonVisibility();
+  showCarFailureResult("Out of gas! Grab gas pumps and retry this level.");
 }
 
 function handleLevelComplete() {
@@ -1253,33 +1351,8 @@ function handleLevelComplete() {
 
   const completedLevel = currentLevelIndex + 1;
   const nextLevel = getNextEnabledLevelIndex(currentLevelIndex);
-  if (nextLevel >= 0) {
-    currentLevelIndex = nextLevel;
-    levelElapsedMs = 0;
-    waitingNextLevel = true;
-    updateLevelBadge();
-    updateTimeBadge();
-    showToast(`Level ${completedLevel} complete! Next level starting...`, NEXT_LEVEL_DELAY_MS);
-    showLevelOverlay("Way to go! On to the next level...");
-    updateStartButtonVisibility();
 
-    levelAdvanceDueAtMs = Date.now() + NEXT_LEVEL_DELAY_MS;
-    levelAdvanceTimer = window.setTimeout(() => {
-      levelAdvanceTimer = null;
-      levelAdvanceDueAtMs = 0;
-      waitingNextLevel = false;
-      hideLevelOverlay();
-      startLevel();
-    }, NEXT_LEVEL_DELAY_MS);
-    return;
-  } else {
-    waitingNextLevel = false;
-    hideLevelOverlay();
-    showToast(`Level ${completedLevel} complete! You finished all enabled levels.`, 3500);
-    showFinalBanner();
-  }
-
-  updateStartButtonVisibility();
+  showCarSuccessResult(completedLevel, nextLevel);
 }
 
 function updateObstacles(dtMs) {
@@ -1531,6 +1604,25 @@ function initializeCar() {
 
   if (trackpadGuideController) {
     trackpadGuideController.initialize();
+  }
+
+  if (window.LevelResultController && carBoard) {
+    carLevelResult = new window.LevelResultController({
+      host: carBoard,
+      pauseGame: pauseCarGameplayForResult,
+      onNextLevel: () => {
+        const nextLevel = getNextEnabledLevelIndex(currentLevelIndex);
+
+        if (nextLevel >= 0) {
+          prepareNextCarLevel(nextLevel);
+        }
+      },
+      onRetry: restartCurrentCarLevel,
+      onPlayAgain: playCarAgainFromFirstEnabledLevel,
+      onHome: () => {
+        window.location.href = "index.html";
+      },
+    });
   }
 
   const bounds = getRoadBoundsAtBottom();
