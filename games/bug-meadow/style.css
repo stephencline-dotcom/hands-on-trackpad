@@ -1,0 +1,429 @@
+/* Bug Meadow game-specific visuals only.
+   Shared game shell/layout comes from:
+   ../moving-sound-mini-game/styles.css
+*/
+
+.bug-meadow-page {
+  margin: 0;
+  min-height: 100svh;
+}
+
+.bug-arena {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      180deg,
+      #8ed8ff 0%,
+      #bcecff 46%,
+      #7fd36d 47%,
+      #3f9e55 100%
+    );
+  user-select: none;
+}
+
+.bug-target-card {
+  position: absolute;
+  z-index: 20;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 220px;
+  padding: 7px 14px;
+  border: 2px solid rgba(255, 255, 255, 0.92);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #172033;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.18);
+}
+
+.bug-target-label {
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.bug-target-card strong {
+  font-size: 0.95rem;
+}
+
+.bug-target-preview {
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.bug-chooser {
+  position: absolute;
+  z-index: 30;
+  top: 72px;
+  left: 50%;
+  width: min(620px, calc(100% - 30px));
+  transform: translateX(-50%);
+  padding: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #172033;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.22);
+  text-align: center;
+}
+
+.bug-chooser p {
+  margin: 0 0 10px;
+  font-size: 0.92rem;
+  font-weight: 900;
+}
+
+.bug-choice-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.bug-choice {
+  min-height: 70px;
+  padding: 7px 5px;
+  border: 2px solid #cbd5e1;
+  border-radius: 12px;
+  background: #fff;
+  color: #172033;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.bug-choice span {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.bug-choice:hover,
+.bug-choice:focus-visible {
+  border-color: #38bdf8;
+}
+
+.bug-choice.is-selected {
+  border-color: #0f766e;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.18);
+}
+
+.bug-meadow {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.meadow-sky {
+  position: absolute;
+  inset: 0 0 52%;
+  background:
+    radial-gradient(
+      ellipse at 16% 25%,
+      rgba(255,255,255,.82) 0 28px,
+      transparent 29px
+    ),
+    radial-gradient(
+      ellipse at 21% 23%,
+      rgba(255,255,255,.76) 0 34px,
+      transparent 35px
+    ),
+    radial-gradient(
+      circle at 82% 20%,
+      rgba(255, 231, 120, .9) 0 25px,
+      transparent 26px
+    );
+}
+
+.meadow-ground {
+  position: absolute;
+  inset: 48% 0 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(131, 211, 104, 0.98),
+      rgba(53, 145, 75, 0.98)
+    );
+}
+
+.player-bug {
+  position: absolute;
+  z-index: 15;
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  transform: translate(-50%, -50%);
+  font-size: 2.6rem;
+  line-height: 1;
+  cursor: grab;
+  touch-action: none;
+  filter: drop-shadow(0 5px 5px rgba(15, 23, 42, 0.25));
+}
+
+.player-bug.is-dragging {
+  cursor: grabbing;
+}
+
+.bug-start-button {
+  position: absolute;
+  z-index: 25;
+  left: 50%;
+  bottom: 36px;
+  transform: translateX(-50%);
+  min-width: 140px;
+  padding: 9px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: #fbbf24;
+  color: #172033;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.2);
+}
+
+.bug-start-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.bug-status {
+  position: absolute;
+  z-index: 20;
+  left: 50%;
+  bottom: 7px;
+  transform: translateX(-50%);
+  width: min(92%, 650px);
+  margin: 0;
+  color: #102218;
+  text-align: center;
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+@media (max-width: 680px) {
+  .bug-choice-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .bug-choice {
+    min-height: 58px;
+  }
+}
+
+
+/* BUG MEADOW SHELL POLISH */
+
+/* Keep Home icon contained inside the standard header button. */
+.bug-meadow-page .game-header .back-button .home-btn-icon {
+  width: 19px;
+  height: 19px;
+  max-width: 19px;
+  max-height: 19px;
+  display: block;
+  object-fit: contain;
+}
+
+/* Keep the guide centered directly below the gameplay area. */
+.bug-meadow-page .imported-trackpad-guide.game-guide {
+  width: min(100%, 920px);
+  margin: 0 auto;
+  padding: 0.12rem;
+  display: grid;
+  justify-items: center;
+  gap: 0.1rem;
+}
+
+.bug-meadow-page .imported-trackpad-guide-label {
+  margin: 0;
+  text-align: center;
+}
+
+.bug-meadow-page .imported-trackpad-scene {
+  width: 390px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Reduce the unnecessary gap between meadow and guide. */
+.bug-meadow-page .game-shell {
+  align-content: start;
+  gap: 0.32rem;
+}
+
+.bug-meadow-page .game-stage-wrap {
+  margin-bottom: 0;
+}
+
+.bug-meadow-page .game-stage {
+  margin-bottom: 0;
+}
+
+
+/* BUG MEADOW PLANTS */
+
+.meadow-plants {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: auto;
+}
+
+.meadow-plant {
+  position: absolute;
+  width: 92px;
+  height: 112px;
+  transform: translate(-50%, -100%);
+  display: grid;
+  place-items: end center;
+}
+
+.plant-hitbox {
+  position: relative;
+  width: 82px;
+  height: 104px;
+}
+
+.plant-stem {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  width: 7px;
+  height: 58px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: #2f8f46;
+}
+
+.plant-leaf {
+  position: absolute;
+  bottom: 30px;
+  width: 28px;
+  height: 14px;
+  border-radius: 100% 0 100% 0;
+  background: #3fa75a;
+}
+
+.plant-leaf-a {
+  left: 16px;
+  transform: rotate(24deg);
+}
+
+.plant-leaf-b {
+  right: 16px;
+  transform: scaleX(-1) rotate(24deg);
+}
+
+.plant-bloom {
+  position: absolute;
+  left: 50%;
+  top: 7px;
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+}
+
+/* Tulip */
+.plant-red-tulip .plant-bloom {
+  width: 42px;
+  height: 42px;
+  border-radius: 48% 48% 58% 58%;
+  background: #ef4444;
+  clip-path: polygon(
+    0 22%,
+    18% 36%,
+    34% 10%,
+    50% 34%,
+    66% 10%,
+    82% 36%,
+    100% 22%,
+    92% 72%,
+    50% 100%,
+    8% 72%
+  );
+}
+
+/* Sunflower */
+.plant-sunflower .plant-bloom {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #713f12 0 28%, transparent 29%),
+    repeating-conic-gradient(#facc15 0 16deg, #f59e0b 16deg 32deg);
+}
+
+/* Daisy */
+.plant-daisy .plant-bloom {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #facc15 0 22%, transparent 23%),
+    repeating-conic-gradient(#ffffff 0 18deg, #e5e7eb 18deg 36deg);
+}
+
+/* Lavender */
+.plant-lavender .plant-stem {
+  height: 66px;
+}
+
+.plant-lavender .plant-bloom {
+  top: 0;
+  width: 34px;
+  height: 62px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 8%, #8b5cf6 0 6px, transparent 7px),
+    radial-gradient(circle at 30% 22%, #a78bfa 0 6px, transparent 7px),
+    radial-gradient(circle at 70% 24%, #7c3aed 0 6px, transparent 7px),
+    radial-gradient(circle at 40% 39%, #8b5cf6 0 6px, transparent 7px),
+    radial-gradient(circle at 65% 43%, #a78bfa 0 6px, transparent 7px),
+    radial-gradient(circle at 45% 58%, #7c3aed 0 6px, transparent 7px),
+    radial-gradient(circle at 58% 73%, #8b5cf6 0 6px, transparent 7px);
+}
+
+/* Pink flower */
+.plant-pink-flower .plant-bloom {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #facc15 0 18%, transparent 19%),
+    repeating-conic-gradient(#f472b6 0 24deg, #ec4899 24deg 48deg);
+}
+
+/* Clover */
+.plant-clover .plant-stem {
+  height: 48px;
+}
+
+.plant-clover .plant-bloom {
+  top: 17px;
+  width: 54px;
+  height: 44px;
+  background:
+    radial-gradient(circle at 30% 35%, #22c55e 0 14px, transparent 15px),
+    radial-gradient(circle at 70% 35%, #16a34a 0 14px, transparent 15px),
+    radial-gradient(circle at 50% 72%, #22c55e 0 14px, transparent 15px);
+}
+
+.meadow-plant.is-target .plant-hitbox {
+  filter:
+    drop-shadow(0 0 8px rgba(255, 255, 255, 0.95))
+    drop-shadow(0 0 14px rgba(250, 204, 21, 0.75));
+}

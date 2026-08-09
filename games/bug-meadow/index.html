@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bug Meadow | Hands-On Trackpad</title>
+    <link rel="stylesheet" href="../moving-sound-mini-game/styles.css" />
+    <link rel="stylesheet" href="../../level-result.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body class="bug-meadow-page" data-game-active-key="bugMeadowGameActive">
+    <main class="shell game-shell bug-meadow-shell">
+      <header class="panel game-header">
+        <div class="copy game-heading">
+          <p class="eyebrow game-category">Mini Game</p>
+          <h1 class="game-title">Bug Meadow</h1>
+        </div>
+
+        <div class="game-header-controls">
+          <a
+            class="back-button game-header-button"
+            href="../../index.html"
+            aria-label="Home"
+            title="Home"
+          >
+            <img
+              class="home-btn-icon"
+              src="../../images/home-icon.svg"
+              alt=""
+              aria-hidden="true"
+            />
+          </a>
+
+          <button
+            id="bugSoundButton"
+            class="sound-toggle-button game-header-button"
+            type="button"
+            aria-pressed="false"
+            aria-label="Sound on"
+            title="Sound on"
+          >
+            🔊
+          </button>
+        </div>
+      </header>
+
+      <p class="description game-instructions">
+        Move your bug to the flower or plant shown in the target card.
+      </p>
+
+      <section class="hud game-stats" aria-live="polite">
+        <div class="hud-main-stats game-stats-row" role="group" aria-label="Game stats">
+          <div class="stat game-stat">
+            <span class="label">Level</span>
+            <span class="value" id="bugLevel">1</span>
+          </div>
+
+          <div class="stat game-stat">
+            <span class="label">Goal</span>
+            <span class="value" id="bugGoal">0/6</span>
+          </div>
+
+          <div class="stat game-stat">
+            <span class="label">Misses</span>
+            <span class="value" id="bugMisses">0/3</span>
+          </div>
+
+          <div class="stat game-stat game-preserve-only">
+            <span class="label">Score</span>
+            <span class="value" id="bugScore">0</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="arena-wrap game-stage-wrap">
+        <div class="arena-frame game-stage">
+          <div id="bugArena" class="bug-arena" aria-label="Bug Meadow game area" role="application">
+
+            <div class="bug-target-card" aria-live="polite">
+              <span class="bug-target-label">Find</span>
+              <strong id="bugTargetName">Red Tulip</strong>
+              <span id="bugTargetPreview" class="bug-target-preview" aria-hidden="true">🌷</span>
+            </div>
+
+            <section id="bugChooser" class="bug-chooser" aria-label="Choose your bug">
+              <p>Pick your bug</p>
+
+              <div class="bug-choice-row">
+                <button type="button" class="bug-choice" data-bug="bumblebee">
+                  <span aria-hidden="true">🐝</span>
+                  Bumblebee
+                </button>
+
+                <button type="button" class="bug-choice" data-bug="ladybug">
+                  <span aria-hidden="true">🐞</span>
+                  Ladybug
+                </button>
+
+                <button type="button" class="bug-choice" data-bug="butterfly">
+                  <span aria-hidden="true">🦋</span>
+                  Butterfly
+                </button>
+
+                <button type="button" class="bug-choice" data-bug="wasp">
+                  <span aria-hidden="true">🐝</span>
+                  Wasp
+                </button>
+              </div>
+            </section>
+
+            <div id="bugMeadow" class="bug-meadow" aria-label="Flower meadow">
+              <div class="meadow-sky" aria-hidden="true"></div>
+              <div class="meadow-ground" aria-hidden="true"></div>
+              <div id="meadowPlants" class="meadow-plants" aria-label="Meadow plants"></div>
+            </div>
+
+            <div id="playerBug" class="player-bug" aria-label="Your bug" hidden>
+              🐝
+            </div>
+
+            <button id="bugStartButton" class="bug-start-button" type="button" disabled>
+              Choose a Bug
+            </button>
+
+            <p id="bugStatus" class="bug-status" aria-live="polite">
+              Choose a bug to begin.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="imported-trackpad-guide game-guide" aria-label="Trackpad Guide">
+        <p class="imported-trackpad-guide-label">Trackpad Guide</p>
+
+        <section
+          id="bugTrackpadScene"
+          class="imported-trackpad-scene"
+          aria-label="Trackpad guide animation"
+        >
+          <img
+            class="imported-trackpad-image"
+            src="../../images/trackpad.png"
+            alt="Trackpad"
+            draggable="false"
+          />
+
+          <img
+            id="bugTrackpadLeftHand"
+            class="imported-trackpad-hand imported-trackpad-left-hand"
+            src="../../images/left-hand-transparent.png"
+            alt="Left hand"
+            draggable="false"
+          />
+
+          <img
+            id="bugTrackpadRightHand"
+            class="imported-trackpad-hand imported-trackpad-right-hand"
+            src="../../images/right-hand-transparent.png"
+            alt="Right hand"
+            draggable="false"
+          />
+
+          <div class="imported-trackpad-press-indicator" aria-hidden="true"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="../../game-access.js"></script>
+    <script src="../../trackpad-guide.js"></script>
+    <script src="../../movement-mode.js"></script>
+    <script src="../../level-result.js"></script>
+    <script src="../../game-results-store.js"></script>
+    <script src="../../input-device-guard.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
