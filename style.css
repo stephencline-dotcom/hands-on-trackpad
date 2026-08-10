@@ -4702,3 +4702,39 @@ body.car-page .scene {
     --scene-width: min(94vw, 640px);
   }
 }
+
+/* BUG MEADOW HOME THUMBNAIL */
+
+.game-thumb-bug-meadow {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background:
+    linear-gradient(
+      180deg,
+      #8ed8ff 0%,
+      #bcecff 52%,
+      #7fd36d 53%,
+      #3f9e55 100%
+    );
+}
+
+.bug-meadow-thumb-sky {
+  position: absolute;
+  top: 24%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3.2rem;
+  line-height: 1;
+  filter: drop-shadow(0 4px 4px rgba(15, 23, 42, 0.2));
+}
+
+.bug-meadow-thumb-flowers {
+  position: absolute;
+  left: 50%;
+  bottom: 12%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 2rem;
+  line-height: 1;
+}
