@@ -76,6 +76,10 @@
       <section class="arena-wrap game-stage-wrap">
         <div class="arena-frame game-stage">
           <div id="bugArena" class="bug-arena" aria-label="Bug Meadow game area" role="application">
+            <div class="bug-arena-timer" aria-live="polite">
+              <span class="bug-arena-timer-label">Time</span>
+              <span id="bugTime" class="bug-arena-timer-value">35</span>
+            </div>
 
             <div class="bug-target-card" aria-live="polite">
               <span class="bug-target-label">Find</span>
@@ -102,9 +106,9 @@
                   Butterfly
                 </button>
 
-                <button type="button" class="bug-choice" data-bug="wasp">
-                  <span aria-hidden="true">🐝</span>
-                  Wasp
+                <button type="button" class="bug-choice" data-bug="beetle">
+                  <span aria-hidden="true">🪲</span>
+                  Beetle
                 </button>
               </div>
             </section>

@@ -62,6 +62,10 @@
                   <input id="martianMadnessGameActive" type="checkbox" checked />
                   <span>Martian Madness is active</span>
                 </label>
+                <label class="admin-toggle-row" for="bugMeadowGameActive">
+                  <input id="bugMeadowGameActive" type="checkbox" checked />
+                  <span>Bug Meadow is active</span>
+                </label>
               </div>
             </article>
           </section>
@@ -95,6 +99,9 @@
               </button>
               <button class="admin-tab-button" type="button" role="tab" id="tabMartian" aria-controls="panelMartian" aria-selected="false" data-tab="martian">
                 Martian Madness
+              </button>
+              <button class="admin-tab-button" type="button" role="tab" id="tabBugMeadow" aria-controls="panelBugMeadow" aria-selected="false" data-tab="bugmeadow">
+                Bug Meadow
               </button>
             </div>
           </nav>
@@ -672,6 +679,259 @@
               </article>
             </div>
             <button id="resetMartianDefaultsBtn" class="admin-apply admin-reset-action" type="button">Reset Martian Madness to Defaults</button>
+          </section>
+
+          <section class="admin-tab-content" id="panelBugMeadow" role="tabpanel" aria-labelledby="tabBugMeadow" aria-hidden="true">
+            <p class="admin-panel-note">
+              Adjust Bug Meadow movement, goals, time limits, misses, and bird obstacles.
+            </p>
+
+            <article class="admin-mini-card admin-mini-card--wide">
+              <h3>Bug Meadow Input</h3>
+              <div class="admin-inline-toggles">
+                <label class="admin-toggle-row" for="bugMeadowRequireClickAndDragToggle">
+                  <input id="bugMeadowRequireClickAndDragToggle" type="checkbox" />
+                  <span>Require click and drag</span>
+                </label>
+              </div>
+              <p class="admin-panel-note">
+                Turn this off to let the bug follow the cursor without clicking.
+              </p>
+            </article>
+
+            <div class="admin-level-grid">
+              <article class="admin-level-card">
+                <h3>Level 1</h3>
+
+                <label class="admin-task-label" for="adminBugMeadowGoalL1">
+                  Flowers to find
+                </label>
+                <input
+                  id="adminBugMeadowGoalL1"
+                  class="admin-task-input"
+                  type="number"
+                  min="1"
+                  max="100"
+                  step="1"
+                  value="5"
+                />
+
+                <label class="admin-task-label" for="adminBugMeadowTimeL1">
+                  Time limit (seconds)
+                </label>
+                <input
+                  id="adminBugMeadowTimeL1"
+                  class="admin-task-input"
+                  type="number"
+                  min="10"
+                  max="300"
+                  step="1"
+                  value="35"
+                />
+
+                <label class="admin-task-label" for="adminBugMeadowMissesL1">
+                  Misses allowed
+                </label>
+                <input
+                  id="adminBugMeadowMissesL1"
+                  class="admin-task-input"
+                  type="number"
+                  min="1"
+                  max="20"
+                  step="1"
+                  value="3"
+                />
+
+                <label class="admin-task-label" for="adminBugMeadowBirdsL1">
+                  Birds on screen
+                </label>
+                <input
+                  id="adminBugMeadowBirdsL1"
+                  class="admin-task-input"
+                  type="number"
+                  min="0"
+                  max="8"
+                  step="1"
+                  value="0"
+                />
+              </article>
+
+              <article class="admin-level-card">
+                <h3>Level 2</h3>
+
+                <label class="admin-task-label" for="adminBugMeadowGoalL2">
+                  Flowers to find
+                </label>
+                <input
+                  id="adminBugMeadowGoalL2"
+                  class="admin-task-input"
+                  type="number"
+                  min="1"
+                  max="100"
+                  step="1"
+                  value="7"
+                />
+
+                <label class="admin-task-label" for="adminBugMeadowTimeL2">
+                  Time limit (seconds)
+                </label>
+                <input
+                  id="adminBugMeadowTimeL2"
+                  class="admin-task-input"
+                  type="number"
+                  min="10"
+                  max="300"
+                  step="1"
+                  value="35"
+                />
+
+                <label class="admin-task-label" for="adminBugMeadowMissesL2">
+                  Misses allowed
+                </label>
+                <input
+                  id="adminBugMeadowMissesL2"
+                  class="admin-task-input"
+                  type="number"
+                  min="1"
+                  max="20"
+                  step="1"
+                  value="3"
+                />
+
+                <label class="admin-task-label" for="adminBugMeadowBirdsL2">
+                  Birds on screen
+                </label>
+                <input
+                  id="adminBugMeadowBirdsL2"
+                  class="admin-task-input"
+                  type="number"
+                  min="0"
+                  max="8"
+                  step="1"
+                  value="1"
+                />
+              </article>
+
+              <article class="admin-level-card">
+                <h3>Level 3</h3>
+
+                <label class="admin-task-label" for="adminBugMeadowGoalL3">
+                  Flowers to find
+                </label>
+                <input
+                  id="adminBugMeadowGoalL3"
+                  class="admin-task-input"
+                  type="number"
+                  min="1"
+                  max="100"
+                  step="1"
+                  value="9"
+                />
+
+                <label class="admin-task-label" for="adminBugMeadowTimeL3">
+                  Time limit (seconds)
+                </label>
+                <input
+                  id="adminBugMeadowTimeL3"
+                  class="admin-task-input"
+                  type="number"
+                  min="10"
+                  max="300"
+                  step="1"
+                  value="30"
+                />
+
+                <label class="admin-task-label" for="adminBugMeadowMissesL3">
+                  Misses allowed
+                </label>
+                <input
+                  id="adminBugMeadowMissesL3"
+                  class="admin-task-input"
+                  type="number"
+                  min="1"
+                  max="20"
+                  step="1"
+                  value="3"
+                />
+
+                <label class="admin-task-label" for="adminBugMeadowBirdsL3">
+                  Birds on screen
+                </label>
+                <input
+                  id="adminBugMeadowBirdsL3"
+                  class="admin-task-input"
+                  type="number"
+                  min="0"
+                  max="8"
+                  step="1"
+                  value="2"
+                />
+              </article>
+
+              <article class="admin-level-card">
+                <h3>Level 4</h3>
+
+                <label class="admin-task-label" for="adminBugMeadowGoalL4">
+                  Flowers to find
+                </label>
+                <input
+                  id="adminBugMeadowGoalL4"
+                  class="admin-task-input"
+                  type="number"
+                  min="1"
+                  max="100"
+                  step="1"
+                  value="12"
+                />
+
+                <label class="admin-task-label" for="adminBugMeadowTimeL4">
+                  Time limit (seconds)
+                </label>
+                <input
+                  id="adminBugMeadowTimeL4"
+                  class="admin-task-input"
+                  type="number"
+                  min="10"
+                  max="300"
+                  step="1"
+                  value="30"
+                />
+
+                <label class="admin-task-label" for="adminBugMeadowMissesL4">
+                  Misses allowed
+                </label>
+                <input
+                  id="adminBugMeadowMissesL4"
+                  class="admin-task-input"
+                  type="number"
+                  min="1"
+                  max="20"
+                  step="1"
+                  value="4"
+                />
+
+                <label class="admin-task-label" for="adminBugMeadowBirdsL4">
+                  Birds on screen
+                </label>
+                <input
+                  id="adminBugMeadowBirdsL4"
+                  class="admin-task-input"
+                  type="number"
+                  min="0"
+                  max="8"
+                  step="1"
+                  value="3"
+                />
+              </article>
+            </div>
+
+            <button
+              id="resetBugMeadowDefaultsBtn"
+              class="admin-apply admin-reset-action"
+              type="button"
+            >
+              Reset Bug Meadow to Defaults
+            </button>
           </section>
 
           <section class="admin-tab-content" id="panelAdvanced" role="tabpanel" aria-labelledby="tabAdvanced" aria-hidden="true">

@@ -17,6 +17,7 @@ const streetCarGameActiveToggle = document.getElementById("streetCarGameActive")
 const dragonDodgeGameActiveToggle = document.getElementById("dragonDodgeGameActive");
 const firefighterRescueGameActiveToggle = document.getElementById("firefighterRescueGameActive");
 const martianMadnessGameActiveToggle = document.getElementById("martianMadnessGameActive");
+const bugMeadowGameActiveToggle = document.getElementById("bugMeadowGameActive");
 const soundEnabledToggle = document.getElementById("soundEnabledToggle");
 const trainingPausedToggle = document.getElementById("trainingPausedToggle");
 const lightTapRequireClickToggle = document.getElementById("lightTapRequireClickToggle");
@@ -24,6 +25,7 @@ const streetCarRequireClickToggle = document.getElementById("streetCarRequireCli
 const dragonRequireClickToggle = document.getElementById("dragonRequireClickToggle");
 const fireRequireClickToggle = document.getElementById("fireRequireClickToggle");
 const martianRequireClickToggle = document.getElementById("martianRequireClickToggle");
+const bugMeadowRequireClickAndDragToggle = document.getElementById("bugMeadowRequireClickAndDragToggle");
 const jackFlameRainInputs = [4, 5, 6].map((level) => ({
   enabled: document.getElementById(`jackFlameRain${level}EnabledToggle`),
   size: document.getElementById(`jackFlameRain${level}Size`),
@@ -101,6 +103,12 @@ const martianLevelInputs = [1, 2, 3].map((level) => ({
   ufoSpeed: document.getElementById(`adminMartianUfoSpeedL${level}`),
   liftSpeed: document.getElementById(`adminMartianLiftSpeedL${level}`),
 }));
+const bugMeadowLevelInputs = [1, 2, 3, 4].map((level) => ({
+  goal: document.getElementById(`adminBugMeadowGoalL${level}`),
+  timeLimit: document.getElementById(`adminBugMeadowTimeL${level}`),
+  missesAllowed: document.getElementById(`adminBugMeadowMissesL${level}`),
+  birdCount: document.getElementById(`adminBugMeadowBirdsL${level}`),
+}));
 const adminTaskCard = document.querySelector(".admin-task-card");
 const adminAvailabilitySection = document.getElementById("adminAvailabilitySection");
 const backToAvailabilityBtn = document.getElementById("backToAvailabilityBtn");
@@ -114,6 +122,7 @@ const resetLightTapDefaultsBtn = document.getElementById("resetLightTapDefaultsB
 const resetDragonDefaultsBtn = document.getElementById("resetDragonDefaultsBtn");
 const resetFireDefaultsBtn = document.getElementById("resetFireDefaultsBtn");
 const resetMartianDefaultsBtn = document.getElementById("resetMartianDefaultsBtn");
+const resetBugMeadowDefaultsBtn = document.getElementById("resetBugMeadowDefaultsBtn");
 const resetJackDefaultsBtn = document.getElementById("resetJackDefaultsBtn");
 const resetFullscreenDefaultsBtn = document.getElementById("resetFullscreenDefaultsBtn");
 const saveTask1Btn = document.getElementById("saveTask1Btn");
@@ -138,6 +147,7 @@ const STREET_CAR_GAME_ACTIVE_KEY = "streetCarGameActive";
 const DRAGON_DODGE_GAME_ACTIVE_KEY = "dragonDodgeGameActive";
 const FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY = "firefighterRescueGameActive";
 const MARTIAN_MADNESS_GAME_ACTIVE_KEY = "martianMadnessGameActive";
+const BUG_MEADOW_GAME_ACTIVE_KEY = "bugMeadowGameActive";
 const SOUND_ENABLED_KEY = "trackpadSoundEnabled";
 const TRAINING_PAUSED_KEY = "trackpadTrainingPaused";
 const MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY = "moving-sound-admin-settings-v1";
@@ -146,6 +156,7 @@ const STREET_CAR_REQUIRE_CLICK_KEY = "streetCarRequireClick";
 const DRAGON_REQUIRE_CLICK_KEY = "dragonRequireClick";
 const FIRE_REQUIRE_CLICK_KEY = "fireRequireClick";
 const MARTIAN_REQUIRE_CLICK_KEY = "martianRequireClick";
+const BUG_MEADOW_REQUIRE_CLICK_AND_DRAG_KEY = "bugMeadowRequireClickAndDrag";
 const JACK_FLAME_RAIN_KEYS = [4, 5, 6].map((level) => ({
   enabled: `jackFlameRain${level}Enabled`,
   size: `jackFlameRain${level}SizePx`,
@@ -256,6 +267,12 @@ const DEFAULT_MOVING_SOUND_MARTIAN_LEVELS = [
   { timeLimit: 30, missesAllowed: 3, goal: 6, peopleCount: 6, ufoCount: 1, walkerSpeedMin: 42, walkerSpeedMax: 68, ufoSpeed: 72, liftSpeed: 124 },
   { timeLimit: 26, missesAllowed: 3, goal: 9, peopleCount: 7, ufoCount: 2, walkerSpeedMin: 54, walkerSpeedMax: 82, ufoSpeed: 86, liftSpeed: 146 },
   { timeLimit: 22, missesAllowed: 4, goal: 12, peopleCount: 8, ufoCount: 3, walkerSpeedMin: 66, walkerSpeedMax: 96, ufoSpeed: 102, liftSpeed: 168 },
+];
+const DEFAULT_BUG_MEADOW_LEVELS = [
+  { goal: 5, timeLimit: 35, missesAllowed: 3, birdCount: 0 },
+  { goal: 7, timeLimit: 35, missesAllowed: 3, birdCount: 1 },
+  { goal: 9, timeLimit: 30, missesAllowed: 3, birdCount: 2 },
+  { goal: 12, timeLimit: 30, missesAllowed: 4, birdCount: 3 },
 ];
 const DEFAULT_JACK_FLAME_RAIN_BY_LEVEL = [
   {
@@ -878,6 +895,17 @@ function normalizeMartianLevels(levels) {
   });
 }
 
+function normalizeBugMeadowLevels(levels) {
+  return normalizeLevelArray(levels, DEFAULT_BUG_MEADOW_LEVELS, (level, defaults) => {
+    return {
+      goal: parseLightTapLevelValue(level.goal, 1, 100, defaults.goal),
+      timeLimit: parseLightTapLevelValue(level.timeLimit, 10, 300, defaults.timeLimit),
+      missesAllowed: parseLightTapLevelValue(level.missesAllowed, 1, 20, defaults.missesAllowed),
+      birdCount: parseLightTapLevelValue(level.birdCount, 0, 8, defaults.birdCount),
+    };
+  });
+}
+
 function loadStoredLightTapLevels() {
   return loadGameLevelsFromStorage("arenaLevels", DEFAULT_LIGHT_TAP_LEVELS, normalizeLightTapLevels);
 }
@@ -896,6 +924,14 @@ function loadStoredFireLevels() {
 
 function loadStoredMartianLevels() {
   return loadGameLevelsFromStorage("martianLevels", DEFAULT_MOVING_SOUND_MARTIAN_LEVELS, normalizeMartianLevels);
+}
+
+function loadStoredBugMeadowLevels() {
+  return loadGameLevelsFromStorage(
+    "bugMeadowLevels",
+    DEFAULT_BUG_MEADOW_LEVELS,
+    normalizeBugMeadowLevels
+  );
 }
 
 function saveStoredLightTapLevels(levels) {
@@ -918,6 +954,14 @@ function saveStoredFireLevels(levels) {
 
 function saveStoredMartianLevels(levels) {
   saveGameLevelsToStorage("martianLevels", levels, normalizeMartianLevels);
+}
+
+function saveStoredBugMeadowLevels(levels) {
+  saveGameLevelsToStorage(
+    "bugMeadowLevels",
+    levels,
+    normalizeBugMeadowLevels
+  );
 }
 
 function showSavedMessage(text) {
@@ -1285,6 +1329,11 @@ async function resetFullscreenToDefaults() {
   localStorage.setItem(TASK3_ENABLED_KEY, String(task3Enabled));
   localStorage.setItem(FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY, String(fullscreenRequireClickAndDrag));
   localStorage.setItem(FULLSCREEN_GAME_ACTIVE_KEY, String(fullscreenGameActive));
+  localStorage.setItem(BUG_MEADOW_GAME_ACTIVE_KEY, String(bugMeadowGameActive));
+  localStorage.setItem(
+    BUG_MEADOW_REQUIRE_CLICK_AND_DRAG_KEY,
+    String(bugMeadowRequireClickAndDrag)
+  );
   localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
   localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
   localStorage.setItem(LIGHT_TAP_REQUIRE_CLICK_KEY, String(lightTapRequireClick));
@@ -1482,6 +1531,35 @@ function resetMartianToDefaults() {
   showSavedMessage("Martian Madness reset to defaults.");
 }
 
+function resetBugMeadowToDefaults() {
+  const confirmed = window.confirm(
+    "Reset Bug Meadow to default values? This only affects Bug Meadow settings."
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  const defaultLevels = normalizeBugMeadowLevels(DEFAULT_BUG_MEADOW_LEVELS);
+  saveStoredBugMeadowLevels(defaultLevels);
+
+  applyGameLevelsToInputs(defaultLevels, bugMeadowLevelInputs, {
+    goal: "goal",
+    timeLimit: "timeLimit",
+    missesAllowed: "missesAllowed",
+    birdCount: "birdCount",
+  });
+
+  if (bugMeadowRequireClickAndDragToggle) {
+    bugMeadowRequireClickAndDragToggle.checked = false;
+    localStorage.setItem(BUG_MEADOW_REQUIRE_CLICK_AND_DRAG_KEY, "false");
+  }
+
+  setDirtyState(false);
+  updateQuickSummary();
+  showSavedMessage("Bug Meadow reset to defaults.");
+}
+
 async function loadTask1Settings() {
   let task1Seconds = parseTask1Seconds(localStorage.getItem(TASK1_STORAGE_KEY));
   let task1Enabled = parseTaskEnabled(localStorage.getItem(TASK1_ENABLED_KEY), true);
@@ -1502,12 +1580,17 @@ async function loadTask1Settings() {
   let dragonDodgeGameActive = parseTaskEnabled(localStorage.getItem(DRAGON_DODGE_GAME_ACTIVE_KEY), true);
   let firefighterRescueGameActive = parseTaskEnabled(localStorage.getItem(FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY), true);
   let martianMadnessGameActive = parseTaskEnabled(localStorage.getItem(MARTIAN_MADNESS_GAME_ACTIVE_KEY), true);
+  let bugMeadowGameActive = parseTaskEnabled(
+    localStorage.getItem(BUG_MEADOW_GAME_ACTIVE_KEY),
+    true
+  );
   let lightTapLevels = loadStoredLightTapLevels();
   let streetCarLevels = loadStoredStreetCarLevels();
   let dragonLevels = loadStoredDragonLevels();
   let dragonCharacterSettings = loadDragonCharacterSettings();
   let fireLevels = loadStoredFireLevels();
   let martianLevels = loadStoredMartianLevels();
+  let bugMeadowLevels = loadStoredBugMeadowLevels();
   let soundEnabled = parseTaskEnabled(localStorage.getItem(SOUND_ENABLED_KEY), true);
   let trainingPaused = parseTrainingPaused(localStorage.getItem(TRAINING_PAUSED_KEY));
   let lightTapRequireClick = parseTaskEnabled(
@@ -1529,6 +1612,10 @@ async function loadTask1Settings() {
   let martianRequireClick = parseTaskEnabled(
     localStorage.getItem(MARTIAN_REQUIRE_CLICK_KEY),
     true
+  );
+  let bugMeadowRequireClickAndDrag = parseTaskEnabled(
+    localStorage.getItem(BUG_MEADOW_REQUIRE_CLICK_AND_DRAG_KEY),
+    false
   );
   const jackFlameRainSettings = [4, 5, 6].map((level, idx) => {
     const keys = JACK_FLAME_RAIN_KEYS[idx];
@@ -1749,6 +1836,19 @@ async function loadTask1Settings() {
   if (dragonDodgeGameActiveToggle) dragonDodgeGameActiveToggle.checked = dragonDodgeGameActive;
   if (firefighterRescueGameActiveToggle) firefighterRescueGameActiveToggle.checked = firefighterRescueGameActive;
   if (martianMadnessGameActiveToggle) martianMadnessGameActiveToggle.checked = martianMadnessGameActive;
+  if (bugMeadowGameActiveToggle) {
+    bugMeadowGameActiveToggle.checked = bugMeadowGameActive;
+  }
+  if (bugMeadowRequireClickAndDragToggle) {
+    bugMeadowRequireClickAndDragToggle.checked = bugMeadowRequireClickAndDrag;
+  }
+
+  applyGameLevelsToInputs(bugMeadowLevels, bugMeadowLevelInputs, {
+    goal: "goal",
+    timeLimit: "timeLimit",
+    missesAllowed: "missesAllowed",
+    birdCount: "birdCount",
+  });
   applyGameLevelsToInputs(lightTapLevels, lightTapLevelInputs, {
     lives: "lives",
     time: "time",
@@ -1867,6 +1967,18 @@ async function saveTask1Settings() {
   const dragonDodgeGameActive = Boolean(dragonDodgeGameActiveToggle && dragonDodgeGameActiveToggle.checked);
   const firefighterRescueGameActive = Boolean(firefighterRescueGameActiveToggle && firefighterRescueGameActiveToggle.checked);
   const martianMadnessGameActive = Boolean(martianMadnessGameActiveToggle && martianMadnessGameActiveToggle.checked);
+  const bugMeadowGameActive = Boolean(
+    bugMeadowGameActiveToggle && bugMeadowGameActiveToggle.checked
+  );
+  const bugMeadowLevels = normalizeBugMeadowLevels(
+    readGameLevelsFromInputs(bugMeadowLevelInputs, {
+      goal: "goal",
+      timeLimit: "timeLimit",
+      missesAllowed: "missesAllowed",
+      birdCount: "birdCount",
+    })
+  );
+
   const lightTapLevels = normalizeLightTapLevels(
     readGameLevelsFromInputs(lightTapLevelInputs, {
       lives: "lives",
@@ -1955,6 +2067,10 @@ async function saveTask1Settings() {
   );
   const martianRequireClick = Boolean(
     martianRequireClickToggle && martianRequireClickToggle.checked
+  );
+  const bugMeadowRequireClickAndDrag = Boolean(
+    bugMeadowRequireClickAndDragToggle &&
+    bugMeadowRequireClickAndDragToggle.checked
   );
   const jackFlameRainSettingsToSave = [4, 5, 6].map((level, idx) => {
     const inputs = jackFlameRainInputs[idx];
@@ -2050,6 +2166,7 @@ async function saveTask1Settings() {
   if (martianLevels) {
     saveStoredMartianLevels(martianLevels);
   }
+  saveStoredBugMeadowLevels(bugMeadowLevels);
   applyGameLevelsToInputs(lightTapLevels, lightTapLevelInputs, {
     lives: "lives",
     time: "time",
@@ -2188,6 +2305,9 @@ async function saveTask1Settings() {
         dragonDodgeGameActive,
         firefighterRescueGameActive,
         martianMadnessGameActive,
+        bugMeadowGameActive,
+        bugMeadowRequireClickAndDrag,
+        bugMeadowLevels,
         soundEnabled,
         trainingPaused,
         jackFlameRain4: jackFlameRainSettingsToSave[0],
@@ -2242,6 +2362,12 @@ if (resetFireDefaultsBtn) {
 if (resetMartianDefaultsBtn) {
   resetMartianDefaultsBtn.addEventListener("click", resetMartianToDefaults);
 }
+if (resetBugMeadowDefaultsBtn) {
+  resetBugMeadowDefaultsBtn.addEventListener(
+    "click",
+    resetBugMeadowToDefaults
+  );
+}
 if (resetJackDefaultsBtn) {
   resetJackDefaultsBtn.addEventListener("click", resetJackToDefaults);
 }
@@ -2267,6 +2393,12 @@ const allInputs = [
     inputs.ufoCount,
     inputs.ufoSpeed,
     inputs.liftSpeed,
+  ]),
+  ...bugMeadowLevelInputs.flatMap((inputs) => [
+    inputs.goal,
+    inputs.timeLimit,
+    inputs.missesAllowed,
+    inputs.birdCount,
   ]),
   ...dragonLevelInputs.flatMap((inputs) => [
     inputs.dragonCount,
@@ -2300,6 +2432,7 @@ const allToggles = [
   dragonDodgeGameActiveToggle,
   firefighterRescueGameActiveToggle,
   martianMadnessGameActiveToggle,
+  bugMeadowGameActiveToggle,
   task1EnabledToggle,
   task2EnabledToggle,
   task3EnabledToggle,
@@ -2310,6 +2443,7 @@ const allToggles = [
   dragonRequireClickToggle,
   fireRequireClickToggle,
   martianRequireClickToggle,
+  bugMeadowRequireClickAndDragToggle,
   ...mazeGhostLevelToggles,
   ...carGameLevelToggles,
 ];
@@ -2342,6 +2476,7 @@ allToggles.forEach((toggleEl) => {
   [dragonRequireClickToggle, DRAGON_REQUIRE_CLICK_KEY],
   [fireRequireClickToggle, FIRE_REQUIRE_CLICK_KEY],
   [martianRequireClickToggle, MARTIAN_REQUIRE_CLICK_KEY],
+  [bugMeadowRequireClickAndDragToggle, BUG_MEADOW_REQUIRE_CLICK_AND_DRAG_KEY],
   [fullscreenRequireClickAndDragToggle, FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY],
   [mazeRequireClickAndDragToggle, MAZE_REQUIRE_CLICK_AND_DRAG_KEY],
   [carRequireClickAndDragToggle, CAR_REQUIRE_CLICK_AND_DRAG_KEY],
