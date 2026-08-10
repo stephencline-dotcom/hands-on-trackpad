@@ -108,6 +108,7 @@ const bugMeadowLevelInputs = [1, 2, 3, 4].map((level) => ({
   timeLimit: document.getElementById(`adminBugMeadowTimeL${level}`),
   missesAllowed: document.getElementById(`adminBugMeadowMissesL${level}`),
   birdCount: document.getElementById(`adminBugMeadowBirdsL${level}`),
+  birdSpeed: document.getElementById(`adminBugMeadowBirdSpeedL${level}`),
 }));
 const adminTaskCard = document.querySelector(".admin-task-card");
 const adminAvailabilitySection = document.getElementById("adminAvailabilitySection");
@@ -269,10 +270,10 @@ const DEFAULT_MOVING_SOUND_MARTIAN_LEVELS = [
   { timeLimit: 22, missesAllowed: 4, goal: 12, peopleCount: 8, ufoCount: 3, walkerSpeedMin: 66, walkerSpeedMax: 96, ufoSpeed: 102, liftSpeed: 168 },
 ];
 const DEFAULT_BUG_MEADOW_LEVELS = [
-  { goal: 5, timeLimit: 35, missesAllowed: 3, birdCount: 0 },
-  { goal: 7, timeLimit: 35, missesAllowed: 3, birdCount: 1 },
-  { goal: 9, timeLimit: 30, missesAllowed: 3, birdCount: 2 },
-  { goal: 12, timeLimit: 30, missesAllowed: 4, birdCount: 3 },
+  { goal: 5, timeLimit: 35, missesAllowed: 3, birdCount: 0, birdSpeed: 1 },
+  { goal: 7, timeLimit: 35, missesAllowed: 3, birdCount: 1, birdSpeed: 2 },
+  { goal: 9, timeLimit: 30, missesAllowed: 3, birdCount: 2, birdSpeed: 3 },
+  { goal: 12, timeLimit: 30, missesAllowed: 4, birdCount: 3, birdSpeed: 4 },
 ];
 const DEFAULT_JACK_FLAME_RAIN_BY_LEVEL = [
   {
@@ -902,6 +903,7 @@ function normalizeBugMeadowLevels(levels) {
       timeLimit: parseLightTapLevelValue(level.timeLimit, 10, 300, defaults.timeLimit),
       missesAllowed: parseLightTapLevelValue(level.missesAllowed, 1, 20, defaults.missesAllowed),
       birdCount: parseLightTapLevelValue(level.birdCount, 0, 8, defaults.birdCount),
+      birdSpeed: parseLightTapLevelValue(level.birdSpeed, 1, 5, defaults.birdSpeed),
     };
   });
 }
@@ -1548,6 +1550,7 @@ function resetBugMeadowToDefaults() {
     timeLimit: "timeLimit",
     missesAllowed: "missesAllowed",
     birdCount: "birdCount",
+    birdSpeed: "birdSpeed",
   });
 
   if (bugMeadowRequireClickAndDragToggle) {
@@ -1848,6 +1851,7 @@ async function loadTask1Settings() {
     timeLimit: "timeLimit",
     missesAllowed: "missesAllowed",
     birdCount: "birdCount",
+    birdSpeed: "birdSpeed",
   });
   applyGameLevelsToInputs(lightTapLevels, lightTapLevelInputs, {
     lives: "lives",
@@ -1976,6 +1980,7 @@ async function saveTask1Settings() {
       timeLimit: "timeLimit",
       missesAllowed: "missesAllowed",
       birdCount: "birdCount",
+    birdSpeed: "birdSpeed",
     })
   );
 
@@ -2399,6 +2404,7 @@ const allInputs = [
     inputs.timeLimit,
     inputs.missesAllowed,
     inputs.birdCount,
+    inputs.birdSpeed,
   ]),
   ...dragonLevelInputs.flatMap((inputs) => [
     inputs.dragonCount,

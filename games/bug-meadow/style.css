@@ -461,3 +461,43 @@
   font-weight: 900;
   line-height: 1.05;
 }
+
+/* BUG MEADOW BIRDS */
+
+.meadow-bird {
+  position: absolute;
+  z-index: 12;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  transform: translate(-50%, -50%);
+  font-size: 2.2rem;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 4px 4px rgba(15, 23, 42, 0.22));
+}
+
+
+.meadow-bird-visual {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  transform-origin: center;
+}
+
+.meadow-bird-image {
+  display: block;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.player-bug-icon {
+  display: block;
+  transform-origin: center;
+}

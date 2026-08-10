@@ -6,6 +6,10 @@ const bugChoices = Array.from(document.querySelectorAll('.bug-choice'));
 const playerBug = document.getElementById('playerBug');
 const bugStartButton = document.getElementById('bugStartButton');
 const bugStatus = document.getElementById('bugStatus');
+const bugSoundButton =
+  document.getElementById('bugSoundButton');
+
+let bugSoundEnabled = true;
 
 const bugLevelDisplay = document.getElementById('bugLevel');
 const bugGoal = document.getElementById('bugGoal');
@@ -24,10 +28,10 @@ const BUG_MEADOW_SETTINGS_KEY =
   'moving-sound-admin-settings-v1';
 
 const DEFAULT_BUG_MEADOW_LEVELS = [
-  { goal: 5, timeLimit: 35, missesAllowed: 3, birdCount: 0 },
-  { goal: 7, timeLimit: 35, missesAllowed: 3, birdCount: 1 },
-  { goal: 9, timeLimit: 30, missesAllowed: 3, birdCount: 2 },
-  { goal: 12, timeLimit: 30, missesAllowed: 4, birdCount: 3 },
+  { goal: 5, timeLimit: 35, missesAllowed: 3, birdCount: 0, birdSpeed: 1 },
+  { goal: 7, timeLimit: 35, missesAllowed: 3, birdCount: 1, birdSpeed: 2 },
+  { goal: 9, timeLimit: 30, missesAllowed: 3, birdCount: 2, birdSpeed: 3 },
+  { goal: 12, timeLimit: 30, missesAllowed: 4, birdCount: 3, birdSpeed: 4 },
 ];
 
 const bugIcons = {
@@ -36,6 +40,16 @@ const bugIcons = {
   butterfly: '🦋',
   beetle: '🪲',
 };
+
+// Bird artwork can be dropped into:
+// games/bug-meadow/assets/birds/
+//
+// Leave this array empty for the temporary emoji bird.
+// Later we will add the five final filenames here.
+const BUG_BIRD_IMAGE_FILES = [];
+
+const BUG_BIRD_COLLISION_RADIUS = 30;
+const BUG_BIRD_COLLISION_COOLDOWN_MS = 700;
 
 const PLANTS = [
   {
@@ -98,6 +112,7 @@ const bugMovementGate =
 
 let selectedBug = '';
 let currentPlantId = '';
+let lastBugMoveX = null;
 
 let bugLevels = loadBugMeadowLevels();
 let currentLevelIndex = 0;
@@ -113,7 +128,196 @@ let ignoredWrongPlantIds = new Set();
 let timerAnimationId = 0;
 let timerLastTimestamp = 0;
 
+function createCrossfadeLoop(src, overlapSeconds = 0.35) {
+  const tracks = [
+    new Audio(src),
+    new Audio(src),
+  ];
+
+  tracks.forEach((track) => {
+    track.preload = 'auto';
+    track.loop = false;
+    track.muted = !bugSoundEnabled;
+  });
+
+  let activeIndex = 0;
+  let running = false;
+  let crossfading = false;
+  let fadeAnimationId = 0;
+
+  function cancelFade() {
+    window.cancelAnimationFrame(fadeAnimationId);
+    fadeAnimationId = 0;
+    crossfading = false;
+  }
+
+  function stop() {
+    running = false;
+    cancelFade();
+
+    tracks.forEach((track) => {
+      track.pause();
+      track.currentTime = 0;
+      track.volume = 1;
+    });
+
+    activeIndex = 0;
+  }
+
+  function beginCrossfade() {
+    if (!running || crossfading) {
+      return;
+    }
+
+    const current = tracks[activeIndex];
+    const nextIndex = activeIndex === 0 ? 1 : 0;
+    const next = tracks[nextIndex];
+
+    crossfading = true;
+
+    next.pause();
+    next.currentTime = 0;
+    next.volume = 0;
+
+    next.play().catch(() => {
+      crossfading = false;
+    });
+
+    const fadeStart = performance.now();
+    const fadeDuration = overlapSeconds * 1000;
+
+    function stepFade(now) {
+      if (!running) {
+        return;
+      }
+
+      const progress = Math.min(
+        1,
+        (now - fadeStart) / fadeDuration
+      );
+
+      current.volume = 1 - progress;
+      next.volume = progress;
+
+      if (progress < 1) {
+        fadeAnimationId =
+          window.requestAnimationFrame(stepFade);
+        return;
+      }
+
+      current.pause();
+      current.currentTime = 0;
+      current.volume = 1;
+
+      next.volume = 1;
+
+      activeIndex = nextIndex;
+      crossfading = false;
+      fadeAnimationId = 0;
+    }
+
+    fadeAnimationId =
+      window.requestAnimationFrame(stepFade);
+  }
+
+  function monitorTrack(track) {
+    track.addEventListener('timeupdate', () => {
+      if (
+        !running ||
+        crossfading ||
+        track !== tracks[activeIndex] ||
+        !Number.isFinite(track.duration) ||
+        track.duration <= overlapSeconds
+      ) {
+        return;
+      }
+
+      const timeRemaining =
+        track.duration - track.currentTime;
+
+      if (timeRemaining <= overlapSeconds) {
+        beginCrossfade();
+      }
+    });
+
+    track.addEventListener('ended', () => {
+      if (
+        running &&
+        !crossfading &&
+        track === tracks[activeIndex]
+      ) {
+        beginCrossfade();
+      }
+    });
+  }
+
+  tracks.forEach(monitorTrack);
+
+  function start() {
+    stop();
+
+    running = true;
+
+    const track = tracks[activeIndex];
+
+    track.currentTime = 0;
+    track.volume = 1;
+
+    track.play().catch(() => {
+      running = false;
+    });
+  }
+
+  function setMuted(muted) {
+    tracks.forEach((track) => {
+      track.muted = muted;
+    });
+  }
+
+  return {
+    start,
+    stop,
+    setMuted,
+  };
+}
+
+function playBugSoundEffect(src) {
+  if (!bugSoundEnabled) {
+    return;
+  }
+
+  const sound = new Audio(src);
+
+  sound.play().catch(() => {
+    // Browser audio playback may require user interaction.
+  });
+}
+
+const BIRD_HIT_SOUND =
+  '../../sounds/birdyell.mp3';
+
+const CORRECT_FLOWER_SOUND =
+  '../../sounds/correctflower.mp3';
+
+const WRONG_FLOWER_SOUND =
+  '../../sounds/wrongflower.mp3';
+
+const bugStartSound =
+  createCrossfadeLoop(
+    '../../sounds/bugsound.mp3',
+    0.4
+  );
+
+const birdFlapSound =
+  createCrossfadeLoop(
+    '../../sounds/birdflap.mp3',
+    0.3
+  );
+
 let bugLevelResult = null;
+let activeBirds = [];
+let birdAnimationId = 0;
+let birdLastTimestamp = 0;
 
 function clampInteger(value, min, max, fallback) {
   const parsed = Number.parseInt(value, 10);
@@ -148,6 +352,12 @@ function normalizeBugLevel(level, defaults) {
       8,
       defaults.birdCount
     ),
+    birdSpeed: clampInteger(
+      source.birdSpeed,
+      1,
+      5,
+      defaults.birdSpeed
+    ),
   };
 }
 
@@ -167,6 +377,18 @@ function loadBugMeadowLevels() {
   }
 }
 
+function getBugBirdSpeedPixels(speedSetting) {
+  const speeds = {
+    1: 40,
+    2: 70,
+    3: 110,
+    4: 160,
+    5: 230,
+  };
+
+  return speeds[speedSetting] || speeds[2];
+}
+
 function getCurrentLevel() {
   return bugLevels[currentLevelIndex] || bugLevels[0];
 }
@@ -177,9 +399,55 @@ function selectBug(name) {
   }
 
   selectedBug = name;
-  playerBug.textContent = bugIcons[name];
+  playerBug.innerHTML =
+  `<span class="player-bug-icon">${bugIcons[name]}</span>`;
 
-  bugChoices.forEach((button) => {
+  function updateBugSoundButton() {
+  if (!bugSoundButton) {
+    return;
+  }
+
+  bugSoundButton.textContent =
+    bugSoundEnabled ? '🔊' : '🔇';
+
+  bugSoundButton.setAttribute(
+    'aria-pressed',
+    String(!bugSoundEnabled)
+  );
+
+  const label =
+    bugSoundEnabled ? 'Sound on' : 'Sound off';
+
+  bugSoundButton.setAttribute(
+    'aria-label',
+    label
+  );
+
+  bugSoundButton.setAttribute(
+    'title',
+    label
+  );
+}
+
+function toggleBugSound() {
+  bugSoundEnabled = !bugSoundEnabled;
+
+  bugStartSound.setMuted(!bugSoundEnabled);
+  birdFlapSound.setMuted(!bugSoundEnabled);
+
+  updateBugSoundButton();
+}
+
+if (bugSoundButton) {
+  bugSoundButton.addEventListener(
+    'click',
+    toggleBugSound
+  );
+}
+
+updateBugSoundButton();
+
+bugChoices.forEach((button) => {
     button.classList.toggle(
       'is-selected',
       button.dataset.bug === name
@@ -239,12 +507,37 @@ function getArenaPointerPosition(event) {
 }
 
 function movePlayerBugTo(x, y) {
+  const bugIcon =
+    playerBug.querySelector('.player-bug-icon');
+
+  if (
+    bugIcon &&
+    lastBugMoveX !== null &&
+    Math.abs(x - lastBugMoveX) > 1
+  ) {
+    const movingRight = x > lastBugMoveX;
+
+    if (selectedBug === 'bumblebee') {
+      bugIcon.style.transform =
+        `scaleX(${movingRight ? -1 : 1})`;
+    } else {
+      bugIcon.style.transform =
+        movingRight
+          ? 'rotate(90deg)'
+          : 'rotate(90deg) scaleY(-1)';
+    }
+  }
+
   playerBug.style.left = `${x}px`;
   playerBug.style.top = `${y}px`;
+
+  lastBugMoveX = x;
 }
 
 function resetPlayerBugPosition() {
   const rect = bugArena.getBoundingClientRect();
+
+  lastBugMoveX = null;
 
   movePlayerBugTo(
     rect.width * 0.5,
@@ -301,6 +594,9 @@ function pauseBugGameplay() {
   bugGameRunning = false;
   collisionLocked = true;
   stopBugTimer();
+  stopBugBirdAnimation();
+  bugStartSound.stop();
+  birdFlapSound.stop();
   playerBug.classList.remove('is-dragging');
 }
 
@@ -334,6 +630,7 @@ function prepareNextBugLevel() {
   bugTimeLeft = level.timeLimit;
   collisionLocked = false;
   ignoredWrongPlantIds.clear();
+  clearBugBirds();
   bugGameRunning = false;
 
   resetPlayerBugPosition();
@@ -481,6 +778,8 @@ function checkPlantCollision() {
     if (plantId === currentPlantId) {
       collisionLocked = true;
 
+      playBugSoundEffect(CORRECT_FLOWER_SOUND);
+
       bugScore += 1;
       bugGoalHits += 1;
 
@@ -521,6 +820,8 @@ function checkPlantCollision() {
 
     collisionLocked = true;
     ignoredWrongPlantIds.add(plantId);
+
+    playBugSoundEffect(WRONG_FLOWER_SOUND);
 
     const failed = applyBugMiss(
       'Oops — find the plant shown at the top.'
@@ -673,8 +974,260 @@ function chooseRandomTarget() {
     `Find the ${target.name}.`;
 }
 
+function stopBugBirdAnimation() {
+  window.cancelAnimationFrame(birdAnimationId);
+  birdAnimationId = 0;
+  birdLastTimestamp = 0;
+}
+
+function clearBugBirds() {
+  stopBugBirdAnimation();
+
+  activeBirds.forEach((bird) => {
+    bird.element.remove();
+  });
+
+  activeBirds = [];
+}
+
+function createBugBirdVisual(element) {
+  const visual = document.createElement('span');
+
+  visual.className = 'meadow-bird-visual';
+
+  if (BUG_BIRD_IMAGE_FILES.length > 0) {
+    const file =
+      BUG_BIRD_IMAGE_FILES[
+        Math.floor(Math.random() * BUG_BIRD_IMAGE_FILES.length)
+      ];
+
+    const image = document.createElement('img');
+
+    image.className = 'meadow-bird-image';
+    image.src = file;
+    image.alt = '';
+    image.draggable = false;
+
+    visual.appendChild(image);
+  } else {
+    visual.textContent = '🐦';
+  }
+
+  element.appendChild(visual);
+
+  return visual;
+}
+
+function setBugBirdFacing(bird) {
+  if (!bird.visual) {
+    return;
+  }
+
+  // Final bird artwork will be created facing right.
+  // Mirror only the visual, never the positioned wrapper.
+  bird.visual.style.transform =
+    `scaleX(${bird.vx > 0 ? -1 : 1})`;
+}
+
+function buildBugBirds(count) {
+  clearBugBirds();
+
+  const arenaRect = bugArena.getBoundingClientRect();
+
+  for (let index = 0; index < count; index += 1) {
+    const element = document.createElement('div');
+
+    element.className = 'meadow-bird';
+    element.setAttribute('aria-hidden', 'true');
+
+    const visual = createBugBirdVisual(element);
+    const direction = Math.random() < 0.5 ? -1 : 1;
+
+    const bird = {
+      element,
+      visual,
+      x:
+        arenaRect.width *
+        (0.18 + Math.random() * 0.64),
+      y:
+        arenaRect.height *
+        (0.16 + Math.random() * 0.30),
+      vx:
+        direction *
+        (
+          getBugBirdSpeedPixels(
+            getCurrentLevel().birdSpeed
+          ) +
+          Math.random() * 8
+        ),
+      vy: -18 + Math.random() * 36,
+      collisionCooldownUntil: 0,
+    };
+
+    element.style.left = `${bird.x}px`;
+    element.style.top = `${bird.y}px`;
+
+    setBugBirdFacing(bird);
+
+    bugArena.appendChild(element);
+    activeBirds.push(bird);
+  }
+}
+
+function resetBugBirdAfterHit(
+  bird,
+  arenaRect,
+  timestamp
+) {
+  const margin = 30;
+
+  // Move the bird well away from the bug after a hit.
+  // It re-enters from the side matching its travel direction.
+  if (bird.vx > 0) {
+    bird.x = margin;
+  } else {
+    bird.x = arenaRect.width - margin;
+  }
+
+  bird.y =
+    arenaRect.height *
+    (0.14 + Math.random() * 0.32);
+
+  bird.collisionCooldownUntil =
+    timestamp + BUG_BIRD_COLLISION_COOLDOWN_MS;
+
+  bird.element.style.left = `${bird.x}px`;
+  bird.element.style.top = `${bird.y}px`;
+
+  setBugBirdFacing(bird);
+}
+
+function checkBugBirdCollision(
+  bird,
+  arenaRect,
+  timestamp
+) {
+  if (
+    !bugGameRunning ||
+    playerBug.hidden ||
+    timestamp < bird.collisionCooldownUntil
+  ) {
+    return false;
+  }
+
+  const bug = getBugCenter();
+
+  const dx = bug.x - bird.x;
+  const dy = bug.y - bird.y;
+  const distance = Math.hypot(dx, dy);
+
+  if (distance > BUG_BIRD_COLLISION_RADIUS) {
+    return false;
+  }
+
+  // Reset first so one overlap can never drain
+  // multiple misses on consecutive animation frames.
+  resetBugBirdAfterHit(
+    bird,
+    arenaRect,
+    timestamp
+  );
+
+  playBugSoundEffect(BIRD_HIT_SOUND);
+
+  return applyBugMiss(
+    'Watch out for the birds!'
+  );
+}
+
+function stepBugBirds(timestamp) {
+  if (!bugGameRunning) {
+    return;
+  }
+
+  if (!birdLastTimestamp) {
+    birdLastTimestamp = timestamp;
+  }
+
+  const delta =
+    Math.min(
+      0.05,
+      (timestamp - birdLastTimestamp) / 1000
+    ) || 0;
+
+  birdLastTimestamp = timestamp;
+
+  const arenaRect =
+    bugArena.getBoundingClientRect();
+
+  const margin = 24;
+  const lowerFlightBoundary =
+    arenaRect.height * 0.62;
+
+  for (const bird of activeBirds) {
+    bird.x += bird.vx * delta;
+    bird.y += bird.vy * delta;
+
+    if (
+      bird.x <= margin ||
+      bird.x >= arenaRect.width - margin
+    ) {
+      bird.vx *= -1;
+
+      bird.x = Math.max(
+        margin,
+        Math.min(
+          arenaRect.width - margin,
+          bird.x
+        )
+      );
+    }
+
+    if (
+      bird.y <= margin ||
+      bird.y >= lowerFlightBoundary
+    ) {
+      bird.vy *= -1;
+
+      bird.y = Math.max(
+        margin,
+        Math.min(
+          lowerFlightBoundary,
+          bird.y
+        )
+      );
+    }
+
+    bird.element.style.left =
+      `${bird.x}px`;
+
+    bird.element.style.top =
+      `${bird.y}px`;
+
+    setBugBirdFacing(bird);
+
+    const failed =
+      checkBugBirdCollision(
+        bird,
+        arenaRect,
+        timestamp
+      );
+
+    if (failed || !bugGameRunning) {
+      return;
+    }
+  }
+
+  birdAnimationId =
+    window.requestAnimationFrame(
+      stepBugBirds
+    );
+}
+
 function startBugLevel(index) {
   bugLevels = loadBugMeadowLevels();
+
+  bugStartSound.start();
 
   currentLevelIndex = Math.max(
     0,
@@ -696,12 +1249,24 @@ function startBugLevel(index) {
   bugStartButton.hidden = true;
 
   resetPlayerBugPosition();
+  buildBugBirds(level.birdCount);
+
+  if (level.birdCount > 0) {
+    birdFlapSound.start();
+  } else {
+    birdFlapSound.stop();
+  }
+
   chooseRandomTarget();
   updateBugStats();
 
   stopBugTimer();
   timerAnimationId =
     window.requestAnimationFrame(stepBugTimer);
+
+  stopBugBirdAnimation();
+  birdAnimationId =
+    window.requestAnimationFrame(stepBugBirds);
 }
 
 bugChoices.forEach((button) => {
