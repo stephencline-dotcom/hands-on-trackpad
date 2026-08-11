@@ -27,6 +27,9 @@ const BUG_MEADOW_REQUIRE_CLICK_AND_DRAG_KEY =
 const BUG_MEADOW_SETTINGS_KEY =
   'moving-sound-admin-settings-v1';
 
+const BUG_MEADOW_STUDENT_NAME_KEY =
+  'moving-sound-student-name-v1';
+
 const DEFAULT_BUG_MEADOW_LEVELS = [
   { goal: 5, timeLimit: 35, missesAllowed: 3, birdCount: 0, birdSpeed: 1 },
   { goal: 7, timeLimit: 35, missesAllowed: 3, birdCount: 1, birdSpeed: 2 },
@@ -315,6 +318,7 @@ const birdFlapSound =
   );
 
 let bugLevelResult = null;
+let savedBugResultLevels = new Set();
 let activeBirds = [];
 let birdAnimationId = 0;
 let birdLastTimestamp = 0;
@@ -387,6 +391,64 @@ function getBugBirdSpeedPixels(speedSetting) {
   };
 
   return speeds[speedSetting] || speeds[2];
+}
+
+function getBugMeadowStudentName() {
+  try {
+    const saved =
+      localStorage.getItem(
+        BUG_MEADOW_STUDENT_NAME_KEY
+      ) || '';
+
+    const cleaned = saved.trim().slice(0, 60);
+
+    return cleaned || 'Student';
+  } catch {
+    return 'Student';
+  }
+}
+
+function saveBugMeadowLevelResult() {
+  const levelCompleted =
+    currentLevelIndex + 1;
+
+  if (
+    savedBugResultLevels.has(levelCompleted) ||
+    !window.gameResultsStore
+  ) {
+    return;
+  }
+
+  const correctClicks =
+    Math.max(0, bugGoalHits);
+
+  const missedClicks =
+    Math.max(0, bugMisses);
+
+  const totalClicks =
+    correctClicks + missedClicks;
+
+  const clickAccuracy =
+    totalClicks > 0
+      ? (correctClicks / totalClicks) * 100
+      : 0;
+
+  savedBugResultLevels.add(levelCompleted);
+
+  void window.gameResultsStore.saveResult({
+    id:
+      `${Date.now()}-${Math.random()
+        .toString(16)
+        .slice(2)}`,
+    gameName: 'Bug Meadow',
+    studentName: getBugMeadowStudentName(),
+    levelCompleted,
+    missedClicks,
+    totalClicks,
+    correctClicks,
+    clickAccuracy,
+    playedAtMs: Date.now(),
+  });
 }
 
 function getCurrentLevel() {
@@ -651,11 +713,13 @@ function retryCurrentBugLevel() {
 function playBugMeadowAgain() {
   currentLevelIndex = 0;
   bugScore = 0;
+  savedBugResultLevels.clear();
   startBugLevel(0);
 }
 
 function showBugLevelSuccess() {
   pauseBugGameplay();
+  saveBugMeadowLevelResult();
 
   const completedLevel = currentLevelIndex + 1;
   const hasNextLevel =
