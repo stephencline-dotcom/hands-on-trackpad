@@ -211,3 +211,130 @@
 .player-deer {
   transform: translate(-50%, 0) scaleX(-1);
 }
+
+.player-deer {
+  cursor: grab;
+}
+
+.player-deer.is-dragging {
+  cursor: grabbing;
+}
+
+/* DEER RUN FOREST SCROLL */
+
+.forest-trees-back,
+.forest-trees-front {
+  will-change: background-position;
+}
+
+.forest-trees-back.is-running {
+  animation:
+    deerForestBackScroll 7s linear infinite;
+}
+
+.forest-trees-front.is-running {
+  animation:
+    deerForestFrontScroll 4.2s linear infinite;
+}
+
+@keyframes deerForestBackScroll {
+  from {
+    background-position-x: 0;
+  }
+
+  to {
+    background-position-x: -250px;
+  }
+}
+
+@keyframes deerForestFrontScroll {
+  from {
+    background-position-x: 0;
+  }
+
+  to {
+    background-position-x: -380px;
+  }
+}
+
+/* DEER RUN FOREST OBSTACLES */
+
+.forest-obstacle {
+  position: absolute;
+  z-index: 12;
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  user-select: none;
+}
+
+.forest-obstacle-rabbit {
+  font-size: 3rem;
+  line-height: 1;
+  filter:
+    drop-shadow(
+      0 4px 4px rgba(15, 23, 42, 0.22)
+    );
+}
+
+.forest-obstacle-image {
+  display: block;
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.forest-obstacle-rabbit {
+  animation:
+    deerRabbitHop 0.55s ease-in-out infinite;
+}
+
+@keyframes deerRabbitHop {
+  0%,
+  100% {
+    transform:
+      translate(-50%, -50%)
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      translate(-50%, -50%)
+      translateY(-18px);
+  }
+}
+
+.forest-obstacle-falcon {
+  animation:
+    deerFalconGlide 0.8s ease-in-out infinite;
+}
+
+.forest-obstacle-falcon .forest-obstacle-image {
+  width: 82px;
+  height: 82px;
+}
+
+@keyframes deerFalconGlide {
+  0%,
+  100% {
+    transform:
+      translate(-50%, -50%)
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      translate(-50%, -50%)
+      translateY(-6px);
+  }
+}
+
+/* Falcon travels right-to-left, so face it into its flight path. */
+.forest-obstacle-falcon .forest-obstacle-image {
+  transform: scaleX(-1);
+}
