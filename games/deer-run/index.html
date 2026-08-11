@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deer Run | Hands-On Trackpad</title>
+
+    <link rel="stylesheet" href="../moving-sound-mini-game/styles.css" />
+    <link rel="stylesheet" href="../../level-result.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body
+    class="deer-run-page"
+    data-game-active-key="deerRunGameActive"
+  >
+    <main class="shell game-shell deer-run-shell">
+      <header class="panel game-header">
+        <div class="copy game-heading">
+          <p class="eyebrow game-category">Mini Game</p>
+          <h1 class="game-title">Deer Run</h1>
+        </div>
+
+        <div class="game-header-controls">
+          <a
+            class="back-button game-header-button"
+            href="../../index.html"
+            aria-label="Home"
+            title="Home"
+          >
+            <img
+              class="home-btn-icon"
+              src="../../images/home-icon.svg"
+              alt=""
+              aria-hidden="true"
+            />
+          </a>
+
+          <button
+            id="deerSoundButton"
+            class="sound-toggle-button game-header-button"
+            type="button"
+            aria-pressed="false"
+            aria-label="Sound on"
+            title="Sound on"
+          >
+            🔊
+          </button>
+        </div>
+      </header>
+
+      <p class="description game-instructions">
+        Move the deer up and down to jump over animals in the forest.
+      </p>
+
+      <section class="hud game-stats" aria-live="polite">
+        <div
+          class="hud-main-stats game-stats-row"
+          role="group"
+          aria-label="Game stats"
+        >
+          <div class="stat game-stat">
+            <span class="label">Level</span>
+            <span class="value" id="deerLevel">1 of 4</span>
+          </div>
+
+          <div class="stat game-stat">
+            <span class="label">Goal</span>
+            <span class="value" id="deerGoal">0/5</span>
+          </div>
+
+          <div class="stat game-stat">
+            <span class="label">Misses</span>
+            <span class="value" id="deerMisses">3</span>
+          </div>
+
+          <div class="stat game-stat game-preserve-only">
+            <span class="label">Score</span>
+            <span class="value" id="deerScore">0</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="arena-wrap game-stage-wrap">
+        <div class="arena-frame game-stage">
+          <div
+            id="deerArena"
+            class="deer-arena"
+            aria-label="Deer Run game area"
+            role="application"
+          >
+            <div class="deer-arena-timer" aria-live="polite">
+              <span class="deer-arena-timer-label">Time</span>
+              <span
+                id="deerTime"
+                class="deer-arena-timer-value"
+              >
+                30
+              </span>
+            </div>
+
+            <div
+              class="forest-background"
+              aria-hidden="true"
+            >
+              <div class="forest-sky"></div>
+              <div class="forest-trees forest-trees-back"></div>
+              <div class="forest-trees forest-trees-front"></div>
+              <div class="forest-ground"></div>
+            </div>
+
+            <div
+              id="playerDeer"
+              class="player-deer"
+              aria-label="Your deer"
+            >
+              🦌
+            </div>
+
+            <button
+              id="deerStartButton"
+              class="deer-start-button"
+              type="button"
+            >
+              Start
+            </button>
+
+            <p
+              id="deerStatus"
+              class="deer-status"
+              aria-live="polite"
+            >
+              Press Start when you are ready.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="imported-trackpad-guide game-guide"
+        aria-label="Trackpad Guide"
+      >
+        <p class="imported-trackpad-guide-label">
+          Trackpad Guide
+        </p>
+
+        <section
+          id="deerTrackpadScene"
+          class="imported-trackpad-scene"
+          aria-label="Trackpad guide animation"
+        >
+          <img
+            class="imported-trackpad-image"
+            src="../../images/trackpad.png"
+            alt="Trackpad"
+            draggable="false"
+          />
+
+          <img
+            id="deerTrackpadLeftHand"
+            class="imported-trackpad-hand imported-trackpad-left-hand"
+            src="../../images/left-hand-transparent.png"
+            alt="Left hand"
+            draggable="false"
+          />
+
+          <img
+            id="deerTrackpadRightHand"
+            class="imported-trackpad-hand imported-trackpad-right-hand"
+            src="../../images/right-hand-transparent.png"
+            alt="Right hand"
+            draggable="false"
+          />
+
+          <div
+            class="imported-trackpad-press-indicator"
+            aria-hidden="true"
+          ></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="../../game-access.js"></script>
+    <script src="../../trackpad-guide.js"></script>
+    <script src="../../movement-mode.js"></script>
+    <script src="../../level-result.js"></script>
+    <script src="../../game-results-store.js"></script>
+    <script src="../../input-device-guard.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

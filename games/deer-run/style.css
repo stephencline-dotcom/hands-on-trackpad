@@ -1,0 +1,213 @@
+/* Deer Run game-specific visuals only.
+   Shared game shell/layout comes from:
+   ../moving-sound-mini-game/styles.css
+*/
+
+.deer-run-page {
+  margin: 0;
+  min-height: 100svh;
+}
+
+.deer-arena {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #bde7ff;
+  user-select: none;
+}
+
+.forest-background {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.forest-sky {
+  position: absolute;
+  inset: 0 0 42%;
+  background:
+    linear-gradient(
+      180deg,
+      #8ed8ff 0%,
+      #d7f3ff 100%
+    );
+}
+
+.forest-trees {
+  position: absolute;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+}
+
+.forest-trees-back {
+  bottom: 31%;
+  height: 42%;
+  opacity: 0.75;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 55px,
+      #426b3c 56px 70px,
+      transparent 71px 125px
+    );
+}
+
+.forest-trees-front {
+  bottom: 25%;
+  height: 48%;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 95px,
+      #315c32 96px 114px,
+      transparent 115px 190px
+    );
+}
+
+.forest-ground {
+  position: absolute;
+  inset: 68% 0 0;
+  background:
+    linear-gradient(
+      180deg,
+      #6e9d4d 0%,
+      #466d35 55%,
+      #36552b 100%
+    );
+}
+
+.player-deer {
+  position: absolute;
+  z-index: 15;
+  left: 24%;
+  bottom: 22%;
+  width: 76px;
+  height: 76px;
+  display: grid;
+  place-items: center;
+  font-size: 4rem;
+  line-height: 1;
+  transform: translate(-50%, 0);
+  touch-action: none;
+  filter:
+    drop-shadow(
+      0 6px 5px rgba(15, 23, 42, 0.25)
+    );
+}
+
+.deer-start-button {
+  position: absolute;
+  z-index: 25;
+  left: 50%;
+  bottom: 36px;
+  transform: translateX(-50%);
+  min-width: 140px;
+  padding: 9px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: #fbbf24;
+  color: #172033;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow:
+    0 6px 14px rgba(15, 23, 42, 0.2);
+}
+
+.deer-status {
+  position: absolute;
+  z-index: 20;
+  left: 50%;
+  bottom: 7px;
+  transform: translateX(-50%);
+  width: min(92%, 650px);
+  margin: 0;
+  color: #f8fafc;
+  text-align: center;
+  font-size: 0.76rem;
+  font-weight: 900;
+  text-shadow:
+    0 1px 3px rgba(15, 23, 42, 0.8);
+}
+
+.deer-arena-timer {
+  position: absolute;
+  z-index: 20;
+  top: 10px;
+  right: 12px;
+  min-width: 64px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #172033;
+  text-align: center;
+  box-shadow:
+    0 5px 14px rgba(15, 23, 42, 0.16);
+}
+
+.deer-arena-timer-label {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.deer-arena-timer-value {
+  display: block;
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+/* Match the compact Bug Meadow shell. */
+
+.deer-run-page .game-header .back-button .home-btn-icon {
+  width: 19px;
+  height: 19px;
+  max-width: 19px;
+  max-height: 19px;
+  display: block;
+  object-fit: contain;
+}
+
+.deer-run-page .imported-trackpad-guide.game-guide {
+  width: min(100%, 920px);
+  margin: 0 auto;
+  padding: 0.12rem;
+  display: grid;
+  justify-items: center;
+  gap: 0.1rem;
+}
+
+.deer-run-page .imported-trackpad-guide-label {
+  margin: 0;
+  text-align: center;
+}
+
+.deer-run-page .imported-trackpad-scene {
+  width: 390px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.deer-run-page .game-shell {
+  align-content: start;
+  gap: 0.32rem;
+}
+
+.deer-run-page .game-stage-wrap,
+.deer-run-page .game-stage {
+  margin-bottom: 0;
+}
+
+/* Deer faces forward into the run. */
+.player-deer {
+  transform: translate(-50%, 0) scaleX(-1);
+}
