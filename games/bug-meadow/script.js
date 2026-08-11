@@ -49,7 +49,9 @@ const bugIcons = {
 //
 // Leave this array empty for the temporary emoji bird.
 // Later we will add the five final filenames here.
-const BUG_BIRD_IMAGE_FILES = [];
+const BUG_BIRD_IMAGE_FILES = [
+  '../../images/enemybird.png',
+];
 
 const BUG_BIRD_COLLISION_RADIUS = 30;
 const BUG_BIRD_COLLISION_COOLDOWN_MS = 700;
@@ -318,6 +320,7 @@ const birdFlapSound =
   );
 
 let bugLevelResult = null;
+let bugTrackpadGuide = null;
 let savedBugResultLevels = new Set();
 let activeBirds = [];
 let birdAnimationId = 0;
@@ -603,7 +606,7 @@ function resetPlayerBugPosition() {
 
   movePlayerBugTo(
     rect.width * 0.5,
-    rect.height * 0.7
+    rect.height * 0.42
   );
 }
 
@@ -1090,7 +1093,7 @@ function setBugBirdFacing(bird) {
   // Final bird artwork will be created facing right.
   // Mirror only the visual, never the positioned wrapper.
   bird.visual.style.transform =
-    `scaleX(${bird.vx > 0 ? -1 : 1})`;
+    `scaleX(${bird.vx < 0 ? -1 : 1})`;
 }
 
 function buildBugBirds(count) {
@@ -1393,7 +1396,7 @@ if (
   leftHand &&
   rightHand
 ) {
-  const guide =
+  bugTrackpadGuide =
     window.trackpadGuide.create({
       scene: trackpadScene,
       leftHand,
@@ -1402,12 +1405,46 @@ if (
     });
 
   if (
-    guide &&
-    typeof guide.initialize === 'function'
+    bugTrackpadGuide &&
+    typeof bugTrackpadGuide.initialize === 'function'
   ) {
-    guide.initialize();
+    bugTrackpadGuide.initialize();
   }
 }
+
+document.addEventListener('pointermove', (event) => {
+  if (!bugTrackpadGuide) {
+    return;
+  }
+
+  bugTrackpadGuide.updateFromPointerEvent(event);
+});
+
+document.addEventListener('pointerdown', (event) => {
+  if (!bugTrackpadGuide) {
+    return;
+  }
+
+  bugTrackpadGuide.updateFromPointerEvent(event);
+  bugTrackpadGuide.setPressed(true);
+});
+
+document.addEventListener('pointerup', (event) => {
+  if (!bugTrackpadGuide) {
+    return;
+  }
+
+  bugTrackpadGuide.updateFromPointerEvent(event);
+  bugTrackpadGuide.setPressed(false);
+});
+
+document.addEventListener('pointercancel', () => {
+  if (!bugTrackpadGuide) {
+    return;
+  }
+
+  bugTrackpadGuide.setPressed(false);
+});
 
 if (
   window.LevelResultController &&
