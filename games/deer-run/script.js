@@ -291,6 +291,314 @@ let deerTimeLeft = 0;
 let deerTimerAnimationId = 0;
 let deerTimerLastTimestamp = 0;
 
+function createDeerCrossfadeLoop(
+  src,
+  overlapSeconds = 0.35
+) {
+  const tracks = [
+    new Audio(src),
+    new Audio(src),
+  ];
+
+  tracks.forEach((track) => {
+    track.preload = 'auto';
+    track.loop = false;
+  });
+
+  let activeIndex = 0;
+  let running = false;
+  let crossfading = false;
+  let fadeAnimationId = 0;
+
+  function cancelFade() {
+    window.cancelAnimationFrame(
+      fadeAnimationId
+    );
+
+    fadeAnimationId = 0;
+    crossfading = false;
+  }
+
+  function stop() {
+    running = false;
+    cancelFade();
+
+    tracks.forEach((track) => {
+      track.pause();
+      track.currentTime = 0;
+      track.volume = 1;
+    });
+
+    activeIndex = 0;
+  }
+
+  function beginCrossfade() {
+    if (!running || crossfading) {
+      return;
+    }
+
+    const current =
+      tracks[activeIndex];
+
+    const nextIndex =
+      activeIndex === 0 ? 1 : 0;
+
+    const next =
+      tracks[nextIndex];
+
+    crossfading = true;
+
+    next.pause();
+    next.currentTime = 0;
+    next.volume = 0;
+
+    next.play().catch(() => {
+      crossfading = false;
+    });
+
+    const fadeStart =
+      performance.now();
+
+    const fadeDuration =
+      overlapSeconds * 1000;
+
+    function stepFade(now) {
+      if (!running) {
+        return;
+      }
+
+      const progress =
+        Math.min(
+          1,
+          (now - fadeStart) /
+            fadeDuration
+        );
+
+      current.volume =
+        1 - progress;
+
+      next.volume =
+        progress;
+
+      if (progress < 1) {
+        fadeAnimationId =
+          window.requestAnimationFrame(
+            stepFade
+          );
+
+        return;
+      }
+
+      current.pause();
+      current.currentTime = 0;
+      current.volume = 1;
+
+      next.volume = 1;
+
+      activeIndex = nextIndex;
+      crossfading = false;
+      fadeAnimationId = 0;
+    }
+
+    fadeAnimationId =
+      window.requestAnimationFrame(
+        stepFade
+      );
+  }
+
+  function monitorTrack(track) {
+    track.addEventListener(
+      'timeupdate',
+      () => {
+        if (
+          !running ||
+          crossfading ||
+          track !== tracks[activeIndex] ||
+          !Number.isFinite(
+            track.duration
+          ) ||
+          track.duration <=
+            overlapSeconds
+        ) {
+          return;
+        }
+
+        const timeRemaining =
+          track.duration -
+          track.currentTime;
+
+        if (
+          timeRemaining <=
+          overlapSeconds
+        ) {
+          beginCrossfade();
+        }
+      }
+    );
+
+    track.addEventListener(
+      'ended',
+      () => {
+        if (
+          running &&
+          !crossfading &&
+          track === tracks[activeIndex]
+        ) {
+          beginCrossfade();
+        }
+      }
+    );
+  }
+
+  tracks.forEach(monitorTrack);
+
+  function start() {
+    if (running) {
+      return;
+    }
+
+    stop();
+
+    running = true;
+
+    const track =
+      tracks[activeIndex];
+
+    track.currentTime = 0;
+    track.volume = 1;
+
+    track.play().catch(() => {
+      running = false;
+    });
+  }
+
+  return {
+    start,
+    stop,
+  };
+}
+
+const forestAmbientSound =
+  createDeerCrossfadeLoop(
+    '/games/moving-sound-mini-game/sounds/forestnoise.mp3',
+    0.5
+  );
+
+const falconFlightSound =
+  createDeerCrossfadeLoop(
+    '/games/moving-sound-mini-game/sounds/falconsound.mp3',
+    0.35
+  );
+
+const owlFlightSound =
+  createDeerCrossfadeLoop(
+    '/games/moving-sound-mini-game/sounds/owlhoot.mp3',
+    0.35
+  );
+
+const deerMoveSound =
+  createDeerCrossfadeLoop(
+    '/games/moving-sound-mini-game/sounds/deermove.mp3',
+    0.3
+  );
+
+let deerMoveSoundStopTimer = 0;
+let falconSoundPlaying = false;
+let owlSoundPlaying = false;
+
+function stopAllDeerSounds() {
+  window.clearTimeout(
+    deerMoveSoundStopTimer
+  );
+
+  deerMoveSoundStopTimer = 0;
+
+  forestAmbientSound.stop();
+  falconFlightSound.stop();
+  owlFlightSound.stop();
+  deerMoveSound.stop();
+
+  falconSoundPlaying = false;
+  owlSoundPlaying = false;
+}
+
+function updateForestAnimalSounds() {
+  if (!deerGameRunning) {
+    falconFlightSound.stop();
+    owlFlightSound.stop();
+
+    falconSoundPlaying = false;
+    owlSoundPlaying = false;
+
+    return;
+  }
+
+  const hasFalcon =
+    activeForestObstacles.some(
+      (obstacle) =>
+        obstacle.type === 'falcon'
+    );
+
+  const hasOwl =
+    activeForestObstacles.some(
+      (obstacle) =>
+        obstacle.type === 'owl'
+    );
+
+  if (
+    hasFalcon &&
+    !falconSoundPlaying
+  ) {
+    falconFlightSound.start();
+    falconSoundPlaying = true;
+  }
+
+  if (
+    !hasFalcon &&
+    falconSoundPlaying
+  ) {
+    falconFlightSound.stop();
+    falconSoundPlaying = false;
+  }
+
+  if (
+    hasOwl &&
+    !owlSoundPlaying
+  ) {
+    owlFlightSound.start();
+    owlSoundPlaying = true;
+  }
+
+  if (
+    !hasOwl &&
+    owlSoundPlaying
+  ) {
+    owlFlightSound.stop();
+    owlSoundPlaying = false;
+  }
+}
+
+function playDeerMovementSound() {
+  if (!deerGameRunning) {
+    return;
+  }
+
+  deerMoveSound.start();
+
+  window.clearTimeout(
+    deerMoveSoundStopTimer
+  );
+
+  deerMoveSoundStopTimer =
+    window.setTimeout(
+      () => {
+        deerMoveSound.stop();
+        deerMoveSoundStopTimer = 0;
+      },
+      180
+    );
+}
+
 let activeForestObstacles = [];
 let forestObstacleTypeBag = [];
 let forestObstacleAnimationId = 0;
@@ -307,6 +615,8 @@ function clearForestObstacles() {
   });
 
   activeForestObstacles = [];
+
+  updateForestAnimalSounds();
 }
 
 function getEnabledForestObstacleTypes() {
@@ -637,6 +947,8 @@ function stepDeerTimer(timestamp) {
 function pauseDeerGameplay() {
   deerGameRunning = false;
 
+  stopAllDeerSounds();
+
   stopForestObstacleAnimation();
   stopDeerTimer();
 
@@ -887,6 +1199,8 @@ function stepForestObstacles(timestamp) {
       }
     );
 
+  updateForestAnimalSounds();
+
   forestObstacleAnimationId =
     window.requestAnimationFrame(
       stepForestObstacles
@@ -1010,6 +1324,7 @@ function handleDeerPointerMove(event) {
     getArenaPointerPosition(event);
 
   moveDeerVertically(pos.y);
+  playDeerMovementSound();
 }
 
 function handleDeerPointerUp(event) {
@@ -1044,6 +1359,9 @@ function startDeerLevel(index) {
   }
 
   deerGameRunning = true;
+
+  stopAllDeerSounds();
+  forestAmbientSound.start();
 
   forestObstacleTypeBag = [];
 
