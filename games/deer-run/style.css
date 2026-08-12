@@ -338,3 +338,113 @@
 .forest-obstacle-falcon .forest-obstacle-image {
   transform: scaleX(-1);
 }
+
+/* DEER RUN FOX */
+
+.forest-obstacle-fox {
+  animation:
+    deerFoxRun 0.28s ease-in-out infinite;
+}
+
+.forest-obstacle-fox .forest-obstacle-image {
+  width: 82px;
+  height: 82px;
+}
+
+@keyframes deerFoxRun {
+  0%,
+  100% {
+    transform:
+      translate(-50%, -50%)
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      translate(-50%, -50%)
+      translateY(-4px);
+  }
+}
+
+/* DEER RUN OWL */
+
+.forest-obstacle-owl {
+  width: 30px;
+  height: 30px;
+  animation:
+    deerOwlFly 0.7s ease-in-out infinite;
+}
+
+.forest-obstacle-owl .forest-obstacle-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+@keyframes deerOwlFly {
+  0%,
+  100% {
+    transform:
+      translate(-50%, -50%)
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      translate(-50%, -50%)
+      translateY(-5px);
+  }
+}
+
+.forest-obstacle-fox {
+  animation:
+    deerFoxRun 0.28s ease-in-out infinite;
+}
+
+.forest-obstacle-fox .forest-obstacle-image {
+  width: 82px;
+  height: 82px;
+}
+
+@keyframes deerFoxRun {
+  0%,
+  100% {
+    transform:
+      translate(-50%, -50%)
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      translate(-50%, -50%)
+      translateY(-4px);
+  }
+}
+
+.forest-obstacle-owl {
+  width: 28px;
+  height: 28px;
+  animation:
+    deerOwlFly 0.7s ease-in-out infinite;
+}
+
+.forest-obstacle-owl .forest-obstacle-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+@keyframes deerOwlFly {
+  0%,
+  100% {
+    transform:
+      translate(-50%, -50%)
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      translate(-50%, -50%)
+      translateY(-5px);
+  }
+}

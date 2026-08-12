@@ -55,6 +55,7 @@ let deerMisses = 0;
 let deerGoalHits = 0;
 
 let activeForestObstacles = [];
+let forestObstacleTypeBag = [];
 let forestObstacleAnimationId = 0;
 let forestObstacleLastTimestamp = 0;
 let nextForestObstacleSpawnAt = 0;
@@ -71,14 +72,45 @@ function clearForestObstacles() {
   activeForestObstacles = [];
 }
 
+function getNextForestObstacleType() {
+  if (forestObstacleTypeBag.length === 0) {
+    forestObstacleTypeBag = [
+      'rabbit',
+      'fox',
+      'falcon',
+      'owl',
+    ];
+
+    for (
+      let index =
+        forestObstacleTypeBag.length - 1;
+      index > 0;
+      index -= 1
+    ) {
+      const swapIndex =
+        Math.floor(
+          Math.random() * (index + 1)
+        );
+
+      [
+        forestObstacleTypeBag[index],
+        forestObstacleTypeBag[swapIndex],
+      ] = [
+        forestObstacleTypeBag[swapIndex],
+        forestObstacleTypeBag[index],
+      ];
+    }
+  }
+
+  return forestObstacleTypeBag.pop();
+}
+
 function createForestObstacle() {
   const arenaRect =
     deerArena.getBoundingClientRect();
 
   const type =
-    Math.random() < 0.5
-      ? 'rabbit'
-      : 'falcon';
+    getNextForestObstacleType();
 
   const element =
     document.createElement('div');
@@ -92,22 +124,44 @@ function createForestObstacle() {
   image.className =
     'forest-obstacle-image';
 
+  let lane = 'ground';
+  let speed = 115;
+  let y = arenaRect.height * 0.72;
+  let label = 'Forest obstacle';
+
   if (type === 'rabbit') {
     image.src =
       '../../images/bunny.png';
 
-    element.setAttribute(
-      'aria-label',
-      'Rabbit obstacle'
-    );
-  } else {
+    label = 'Rabbit obstacle';
+  }
+
+  if (type === 'fox') {
+    image.src =
+      '../../images/foxedit.png';
+
+    label = 'Fox obstacle';
+    speed = 130;
+  }
+
+  if (type === 'falcon') {
     image.src =
       '../../images/falconedit.png';
 
-    element.setAttribute(
-      'aria-label',
-      'Falcon obstacle'
-    );
+    label = 'Falcon obstacle';
+    lane = 'air';
+    speed = 145;
+    y = arenaRect.height * 0.40;
+  }
+
+  if (type === 'owl') {
+    image.src =
+      '../../images/owledit.png';
+
+    label = 'Owl obstacle';
+    lane = 'air';
+    speed = 135;
+    y = arenaRect.height * 0.40;
   }
 
   image.alt = '';
@@ -115,19 +169,25 @@ function createForestObstacle() {
 
   element.appendChild(image);
 
+  element.setAttribute(
+    'aria-label',
+    label
+  );
+
+  const startX =
+    arenaRect.width + 70;
+
   const obstacle = {
     element,
     type,
-    x: arenaRect.width + 70,
-    y:
-      type === 'rabbit'
-        ? arenaRect.height * 0.72
-        : arenaRect.height * 0.40,
-    vx:
-      type === 'rabbit'
-        ? -115
-        : -145,
+    lane,
+    x: startX,
+    startX,
+    y,
+    vx: -speed,
     resolved: false,
+    perspective:
+      type === 'owl',
   };
 
   element.style.left =
@@ -142,7 +202,59 @@ function createForestObstacle() {
     obstacle
   );
 
+  if (obstacle.perspective) {
+    updateOwlPerspective(
+      obstacle,
+      arenaRect
+    );
+  }
+
   return obstacle;
+}
+
+function updateOwlPerspective(
+  obstacle,
+  arenaRect
+) {
+  if (!obstacle.perspective) {
+    return;
+  }
+
+  const deerX =
+    arenaRect.width * 0.24;
+
+  const travelDistance =
+    Math.max(
+      1,
+      obstacle.startX - deerX
+    );
+
+  const progress =
+    Math.max(
+      0,
+      Math.min(
+        1,
+        (
+          obstacle.startX -
+          obstacle.x
+        ) / travelDistance
+      )
+    );
+
+  const minSize = 28;
+  const maxSize = 96;
+
+  const size =
+    minSize +
+    (
+      maxSize - minSize
+    ) * progress;
+
+  obstacle.element.style.width =
+    `${size}px`;
+
+  obstacle.element.style.height =
+    `${size}px`;
 }
 
 function updateDeerStats() {
@@ -190,9 +302,9 @@ function checkForestObstacleResult(obstacle) {
     deerMisses += 1;
 
     deerStatus.textContent =
-      obstacle.type === 'falcon'
-        ? 'Oops! Stay under the falcon.'
-        : 'Oops! Jump over the bunny.';
+      obstacle.lane === 'air'
+        ? 'Oops! Stay under the flying animal.'
+        : 'Oops! Jump over the animal.';
 
     updateDeerStats();
     return;
@@ -208,7 +320,7 @@ function checkForestObstacleResult(obstacle) {
     deerScore += 1;
 
     deerStatus.textContent =
-      obstacle.type === 'falcon'
+      obstacle.lane === 'air'
         ? 'Nice duck!'
         : 'Great jump!';
 
@@ -266,6 +378,16 @@ function stepForestObstacles(timestamp) {
 
         obstacle.element.style.left =
           `${obstacle.x}px`;
+
+        if (obstacle.perspective) {
+          const arenaRect =
+            deerArena.getBoundingClientRect();
+
+          updateOwlPerspective(
+            obstacle,
+            arenaRect
+          );
+        }
 
         checkForestObstacleResult(
           obstacle
@@ -433,6 +555,9 @@ deerStartButton.addEventListener(
     resetDeerPosition();
 
     clearForestObstacles();
+
+    forestObstacleTypeBag = [];
+
     createForestObstacle();
 
     stopForestObstacleAnimation();
