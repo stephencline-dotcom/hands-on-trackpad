@@ -4738,3 +4738,16 @@ body.car-page .scene {
   font-size: 2rem;
   line-height: 1;
 }
+
+
+
+
+
+
+
+/* Deer Run: hide the baked-in title at the bottom of the thumbnail */
+.game-card[href="games/deer-run/index.html"] .deer-run-thumb-image {
+  height: 72px;
+  object-fit: cover;
+  object-position: center top;
+}
