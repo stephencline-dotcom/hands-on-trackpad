@@ -21,6 +21,9 @@ const forestTreesBack =
 const forestTreesFront =
   document.querySelector('.forest-trees-front');
 
+const forestDetails =
+  document.querySelector('.forest-details');
+
 const deerLevelDisplay =
   document.getElementById('deerLevel');
 
@@ -579,6 +582,12 @@ deerStartButton.addEventListener(
 
     if (forestTreesFront) {
       forestTreesFront.classList.add(
+        'is-running'
+      );
+    }
+
+    if (forestDetails) {
+      forestDetails.classList.add(
         'is-running'
       );
     }

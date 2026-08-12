@@ -30,10 +30,17 @@
   position: absolute;
   inset: 0 0 42%;
   background:
+    radial-gradient(
+      circle at 78% 18%,
+      rgba(255, 244, 174, 0.95) 0 28px,
+      rgba(255, 244, 174, 0.35) 29px 52px,
+      transparent 53px
+    ),
     linear-gradient(
       180deg,
-      #8ed8ff 0%,
-      #d7f3ff 100%
+      #7fcdf4 0%,
+      #bce7f3 62%,
+      #d9f0df 100%
     );
 }
 
@@ -46,38 +53,111 @@
 
 .forest-trees-back {
   bottom: 31%;
-  height: 42%;
-  opacity: 0.75;
+  height: 46%;
+  opacity: 0.76;
   background:
+    radial-gradient(
+      circle at 25px 42px,
+      #6d9855 0 34px,
+      transparent 35px
+    ),
+    radial-gradient(
+      circle at 92px 68px,
+      #5e8b49 0 42px,
+      transparent 43px
+    ),
+    radial-gradient(
+      circle at 155px 35px,
+      #769f5b 0 36px,
+      transparent 37px
+    ),
     repeating-linear-gradient(
       90deg,
-      transparent 0 55px,
-      #426b3c 56px 70px,
-      transparent 71px 125px
+      transparent 0 50px,
+      #765a3b 51px 63px,
+      transparent 64px 120px
     );
+  background-size:
+    190px 120px,
+    215px 130px,
+    225px 115px,
+    125px 100%;
+  background-repeat:
+    repeat-x,
+    repeat-x,
+    repeat-x,
+    repeat-x;
 }
 
 .forest-trees-front {
-  bottom: 25%;
-  height: 48%;
+  bottom: 24%;
+  height: 54%;
   background:
+    radial-gradient(
+      ellipse at 45px 58px,
+      #315f38 0 48px,
+      transparent 49px
+    ),
+    radial-gradient(
+      ellipse at 150px 84px,
+      #3b7040 0 58px,
+      transparent 59px
+    ),
+    radial-gradient(
+      ellipse at 250px 48px,
+      #285632 0 50px,
+      transparent 51px
+    ),
     repeating-linear-gradient(
       90deg,
-      transparent 0 95px,
-      #315c32 96px 114px,
-      transparent 115px 190px
+      transparent 0 88px,
+      #5b402b 89px 107px,
+      #704d30 108px 114px,
+      transparent 115px 188px
     );
+  background-size:
+    290px 150px,
+    330px 160px,
+    355px 145px,
+    190px 100%;
+  background-repeat:
+    repeat-x,
+    repeat-x,
+    repeat-x,
+    repeat-x;
 }
 
 .forest-ground {
   position: absolute;
   inset: 68% 0 0;
   background:
+    radial-gradient(
+      ellipse at 8% 18%,
+      #5f8f45 0 18px,
+      transparent 19px
+    ),
+    radial-gradient(
+      ellipse at 31% 12%,
+      #74a653 0 22px,
+      transparent 23px
+    ),
+    radial-gradient(
+      ellipse at 64% 20%,
+      #507f3d 0 20px,
+      transparent 21px
+    ),
+    radial-gradient(
+      ellipse at 88% 10%,
+      #6b9b4c 0 24px,
+      transparent 25px
+    ),
     linear-gradient(
       180deg,
-      #6e9d4d 0%,
-      #466d35 55%,
-      #36552b 100%
+      #67994b 0%,
+      #4f7a3c 28%,
+      #76593b 29%,
+      #8b6945 58%,
+      #6f5036 100%
     );
 }
 
@@ -446,5 +526,200 @@
     transform:
       translate(-50%, -50%)
       translateY(-5px);
+  }
+}
+
+/* FOREST DEPTH DETAILS */
+
+.forest-ground::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 34%;
+  background:
+    repeating-linear-gradient(
+      105deg,
+      transparent 0 15px,
+      rgba(44, 100, 49, 0.8) 16px 18px,
+      transparent 19px 34px
+    );
+  opacity: 0.8;
+}
+
+.forest-ground::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 7%;
+  height: 10px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(66, 45, 29, 0.26) 0 14px,
+      transparent 15px 31px
+    );
+  border-radius: 50%;
+}
+
+/* SCROLLING FOREST FLOOR DETAILS */
+
+.forest-details {
+  position: absolute;
+  z-index: 5;
+  left: 0;
+  right: 0;
+  bottom: 7%;
+  height: 28%;
+  pointer-events: none;
+
+  background:
+    /* flowers */
+    radial-gradient(
+      circle at 38px 72%,
+      #f9a8d4 0 4px,
+      transparent 5px
+    ),
+    radial-gradient(
+      circle at 44px 68%,
+      #fff7ed 0 3px,
+      transparent 4px
+    ),
+
+    /* mushrooms */
+    radial-gradient(
+      ellipse at 118px 78%,
+      #dc2626 0 9px,
+      transparent 10px
+    ),
+    linear-gradient(
+      90deg,
+      transparent 0 112px,
+      #f3e5c8 113px 121px,
+      transparent 122px 100%
+    ),
+
+    /* rocks */
+    radial-gradient(
+      ellipse at 210px 82%,
+      #7c8793 0 18px,
+      #5f6974 19px 24px,
+      transparent 25px
+    ),
+
+    /* yellow flowers */
+    radial-gradient(
+      circle at 286px 70%,
+      #facc15 0 5px,
+      transparent 6px
+    ),
+
+    /* small log */
+    linear-gradient(
+      8deg,
+      transparent 0 71%,
+      #6b4428 72% 80%,
+      transparent 81%
+    );
+
+  background-size:
+    340px 100%,
+    340px 100%,
+    340px 100%,
+    340px 100%,
+    340px 100%,
+    340px 100%,
+    340px 100%;
+
+  background-repeat:
+    repeat-x;
+}
+
+.forest-details.is-running {
+  animation:
+    deerForestDetailsScroll 4.2s linear infinite;
+}
+
+@keyframes deerForestDetailsScroll {
+  from {
+    background-position-x:
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0;
+  }
+
+  to {
+    background-position-x:
+      -340px,
+      -340px,
+      -340px,
+      -340px,
+      -340px,
+      -340px,
+      -340px;
+  }
+}
+
+/* CLEAN UP FOREST FLOOR DECORATIONS */
+
+/* Remove the artificial grass-line overlay. */
+.forest-ground::before {
+  display: none;
+}
+
+/* Simplify scrolling details to natural-looking rocks and flowers. */
+.forest-details {
+  background:
+    radial-gradient(
+      ellipse at 75px 82%,
+      #7c8793 0 18px,
+      #5f6974 19px 24px,
+      transparent 25px
+    ),
+    radial-gradient(
+      circle at 180px 72%,
+      #facc15 0 5px,
+      transparent 6px
+    ),
+    radial-gradient(
+      circle at 265px 76%,
+      #f9a8d4 0 5px,
+      transparent 6px
+    ),
+    radial-gradient(
+      circle at 271px 72%,
+      #fff7ed 0 3px,
+      transparent 4px
+    );
+
+  background-size:
+    340px 100%,
+    340px 100%,
+    340px 100%,
+    340px 100%;
+
+  background-repeat:
+    repeat-x;
+}
+
+@keyframes deerForestDetailsScroll {
+  from {
+    background-position-x:
+      0,
+      0,
+      0,
+      0;
+  }
+
+  to {
+    background-position-x:
+      -340px,
+      -340px,
+      -340px,
+      -340px;
   }
 }
