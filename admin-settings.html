@@ -66,6 +66,10 @@
                   <input id="bugMeadowGameActive" type="checkbox" checked />
                   <span>Bug Meadow is active</span>
                 </label>
+                <label class="admin-toggle-row" for="deerRunGameActive">
+                  <input id="deerRunGameActive" type="checkbox" checked />
+                  <span>Deer Run is active</span>
+                </label>
               </div>
             </article>
           </section>
@@ -102,6 +106,9 @@
               </button>
               <button class="admin-tab-button" type="button" role="tab" id="tabBugMeadow" aria-controls="panelBugMeadow" aria-selected="false" data-tab="bugmeadow">
                 Bug Meadow
+              </button>
+              <button class="admin-tab-button" type="button" role="tab" id="tabDeerRun" aria-controls="panelDeerRun" aria-selected="false" data-tab="deerrun">
+                Deer Run
               </button>
             </div>
           </nav>
@@ -986,7 +993,550 @@
             </button>
           </section>
 
-          <section class="admin-tab-content" id="panelAdvanced" role="tabpanel" aria-labelledby="tabAdvanced" aria-hidden="true">
+                    <section class="admin-tab-content" id="panelDeerRun" role="tabpanel" aria-labelledby="tabDeerRun" aria-hidden="true">
+            <p class="admin-panel-note">
+              Configure Deer Run difficulty and choose which animals appear on each level.
+            </p>
+
+            <article class="admin-mini-card admin-mini-card--wide">
+              <h3>Deer Run Input</h3>
+              <div class="admin-inline-toggles">
+                <label class="admin-toggle-row" for="deerRunRequireClickAndDragToggle">
+                  <input id="deerRunRequireClickAndDragToggle" type="checkbox" />
+                  <span>Require click and drag</span>
+                </label>
+              </div>
+            </article>
+
+            <div class="admin-level-grid">
+              <article class="admin-level-card">
+                <h3>Level 1</h3>
+
+                <label class="admin-task-label" for="adminDeerRunGoalL1">
+                  Animals to avoid
+                </label>
+                <input
+                  id="adminDeerRunGoalL1"
+                  class="admin-task-input"
+                  type="number"
+                  min="1"
+                  max="100"
+                  step="1"
+                  value="5"
+                />
+
+                <label class="admin-task-label" for="adminDeerRunTimeL1">
+                  Time limit (seconds)
+                </label>
+                <input
+                  id="adminDeerRunTimeL1"
+                  class="admin-task-input"
+                  type="number"
+                  min="10"
+                  max="300"
+                  step="1"
+                  value="35"
+                />
+
+                <label class="admin-task-label" for="adminDeerRunMissesL1">
+                  Misses allowed
+                </label>
+                <input
+                  id="adminDeerRunMissesL1"
+                  class="admin-task-input"
+                  type="number"
+                  min="1"
+                  max="20"
+                  step="1"
+                  value="3"
+                />
+
+                <hr />
+
+                <label class="admin-toggle-row" for="adminDeerRunRabbitEnabledL1">
+                  <input
+                    id="adminDeerRunRabbitEnabledL1"
+                    type="checkbox" checked
+                  />
+                  <span>Rabbit enabled</span>
+                </label>
+
+                <label class="admin-task-label" for="adminDeerRunRabbitSpeedL1">
+                  Rabbit speed
+                </label>
+                <input
+                  id="adminDeerRunRabbitSpeedL1"
+                  class="admin-task-input"
+                  type="number"
+                  min="40"
+                  max="400"
+                  step="5"
+                  value="115"
+                />
+
+                <label class="admin-toggle-row" for="adminDeerRunFoxEnabledL1">
+                  <input
+                    id="adminDeerRunFoxEnabledL1"
+                    type="checkbox"
+                  />
+                  <span>Fox enabled</span>
+                </label>
+
+                <label class="admin-task-label" for="adminDeerRunFoxSpeedL1">
+                  Fox speed
+                </label>
+                <input
+                  id="adminDeerRunFoxSpeedL1"
+                  class="admin-task-input"
+                  type="number"
+                  min="40"
+                  max="400"
+                  step="5"
+                  value="130"
+                />
+
+                <label class="admin-toggle-row" for="adminDeerRunFalconEnabledL1">
+                  <input
+                    id="adminDeerRunFalconEnabledL1"
+                    type="checkbox"
+                  />
+                  <span>Falcon enabled</span>
+                </label>
+
+                <label class="admin-task-label" for="adminDeerRunFalconSpeedL1">
+                  Falcon speed
+                </label>
+                <input
+                  id="adminDeerRunFalconSpeedL1"
+                  class="admin-task-input"
+                  type="number"
+                  min="40"
+                  max="400"
+                  step="5"
+                  value="145"
+                />
+
+                <label class="admin-toggle-row" for="adminDeerRunOwlEnabledL1">
+                  <input
+                    id="adminDeerRunOwlEnabledL1"
+                    type="checkbox"
+                  />
+                  <span>Owl enabled</span>
+                </label>
+
+                <label class="admin-task-label" for="adminDeerRunOwlSpeedL1">
+                  Owl speed
+                </label>
+                <input
+                  id="adminDeerRunOwlSpeedL1"
+                  class="admin-task-input"
+                  type="number"
+                  min="40"
+                  max="400"
+                  step="5"
+                  value="135"
+                />
+              </article>
+
+              <article class="admin-level-card">
+                <h3>Level 2</h3>
+
+                <label class="admin-task-label" for="adminDeerRunGoalL2">
+                  Animals to avoid
+                </label>
+                <input
+                  id="adminDeerRunGoalL2"
+                  class="admin-task-input"
+                  type="number"
+                  min="1"
+                  max="100"
+                  step="1"
+                  value="7"
+                />
+
+                <label class="admin-task-label" for="adminDeerRunTimeL2">
+                  Time limit (seconds)
+                </label>
+                <input
+                  id="adminDeerRunTimeL2"
+                  class="admin-task-input"
+                  type="number"
+                  min="10"
+                  max="300"
+                  step="1"
+                  value="35"
+                />
+
+                <label class="admin-task-label" for="adminDeerRunMissesL2">
+                  Misses allowed
+                </label>
+                <input
+                  id="adminDeerRunMissesL2"
+                  class="admin-task-input"
+                  type="number"
+                  min="1"
+                  max="20"
+                  step="1"
+                  value="3"
+                />
+
+                <hr />
+
+                <label class="admin-toggle-row" for="adminDeerRunRabbitEnabledL2">
+                  <input
+                    id="adminDeerRunRabbitEnabledL2"
+                    type="checkbox" checked
+                  />
+                  <span>Rabbit enabled</span>
+                </label>
+
+                <label class="admin-task-label" for="adminDeerRunRabbitSpeedL2">
+                  Rabbit speed
+                </label>
+                <input
+                  id="adminDeerRunRabbitSpeedL2"
+                  class="admin-task-input"
+                  type="number"
+                  min="40"
+                  max="400"
+                  step="5"
+                  value="120"
+                />
+
+                <label class="admin-toggle-row" for="adminDeerRunFoxEnabledL2">
+                  <input
+                    id="adminDeerRunFoxEnabledL2"
+                    type="checkbox" checked
+                  />
+                  <span>Fox enabled</span>
+                </label>
+
+                <label class="admin-task-label" for="adminDeerRunFoxSpeedL2">
+                  Fox speed
+                </label>
+                <input
+                  id="adminDeerRunFoxSpeedL2"
+                  class="admin-task-input"
+                  type="number"
+                  min="40"
+                  max="400"
+                  step="5"
+                  value="130"
+                />
+
+                <label class="admin-toggle-row" for="adminDeerRunFalconEnabledL2">
+                  <input
+                    id="adminDeerRunFalconEnabledL2"
+                    type="checkbox"
+                  />
+                  <span>Falcon enabled</span>
+                </label>
+
+                <label class="admin-task-label" for="adminDeerRunFalconSpeedL2">
+                  Falcon speed
+                </label>
+                <input
+                  id="adminDeerRunFalconSpeedL2"
+                  class="admin-task-input"
+                  type="number"
+                  min="40"
+                  max="400"
+                  step="5"
+                  value="145"
+                />
+
+                <label class="admin-toggle-row" for="adminDeerRunOwlEnabledL2">
+                  <input
+                    id="adminDeerRunOwlEnabledL2"
+                    type="checkbox"
+                  />
+                  <span>Owl enabled</span>
+                </label>
+
+                <label class="admin-task-label" for="adminDeerRunOwlSpeedL2">
+                  Owl speed
+                </label>
+                <input
+                  id="adminDeerRunOwlSpeedL2"
+                  class="admin-task-input"
+                  type="number"
+                  min="40"
+                  max="400"
+                  step="5"
+                  value="135"
+                />
+              </article>
+
+              <article class="admin-level-card">
+                <h3>Level 3</h3>
+
+                <label class="admin-task-label" for="adminDeerRunGoalL3">
+                  Animals to avoid
+                </label>
+                <input
+                  id="adminDeerRunGoalL3"
+                  class="admin-task-input"
+                  type="number"
+                  min="1"
+                  max="100"
+                  step="1"
+                  value="9"
+                />
+
+                <label class="admin-task-label" for="adminDeerRunTimeL3">
+                  Time limit (seconds)
+                </label>
+                <input
+                  id="adminDeerRunTimeL3"
+                  class="admin-task-input"
+                  type="number"
+                  min="10"
+                  max="300"
+                  step="1"
+                  value="30"
+                />
+
+                <label class="admin-task-label" for="adminDeerRunMissesL3">
+                  Misses allowed
+                </label>
+                <input
+                  id="adminDeerRunMissesL3"
+                  class="admin-task-input"
+                  type="number"
+                  min="1"
+                  max="20"
+                  step="1"
+                  value="3"
+                />
+
+                <hr />
+
+                <label class="admin-toggle-row" for="adminDeerRunRabbitEnabledL3">
+                  <input
+                    id="adminDeerRunRabbitEnabledL3"
+                    type="checkbox" checked
+                  />
+                  <span>Rabbit enabled</span>
+                </label>
+
+                <label class="admin-task-label" for="adminDeerRunRabbitSpeedL3">
+                  Rabbit speed
+                </label>
+                <input
+                  id="adminDeerRunRabbitSpeedL3"
+                  class="admin-task-input"
+                  type="number"
+                  min="40"
+                  max="400"
+                  step="5"
+                  value="125"
+                />
+
+                <label class="admin-toggle-row" for="adminDeerRunFoxEnabledL3">
+                  <input
+                    id="adminDeerRunFoxEnabledL3"
+                    type="checkbox" checked
+                  />
+                  <span>Fox enabled</span>
+                </label>
+
+                <label class="admin-task-label" for="adminDeerRunFoxSpeedL3">
+                  Fox speed
+                </label>
+                <input
+                  id="adminDeerRunFoxSpeedL3"
+                  class="admin-task-input"
+                  type="number"
+                  min="40"
+                  max="400"
+                  step="5"
+                  value="140"
+                />
+
+                <label class="admin-toggle-row" for="adminDeerRunFalconEnabledL3">
+                  <input
+                    id="adminDeerRunFalconEnabledL3"
+                    type="checkbox" checked
+                  />
+                  <span>Falcon enabled</span>
+                </label>
+
+                <label class="admin-task-label" for="adminDeerRunFalconSpeedL3">
+                  Falcon speed
+                </label>
+                <input
+                  id="adminDeerRunFalconSpeedL3"
+                  class="admin-task-input"
+                  type="number"
+                  min="40"
+                  max="400"
+                  step="5"
+                  value="150"
+                />
+
+                <label class="admin-toggle-row" for="adminDeerRunOwlEnabledL3">
+                  <input
+                    id="adminDeerRunOwlEnabledL3"
+                    type="checkbox"
+                  />
+                  <span>Owl enabled</span>
+                </label>
+
+                <label class="admin-task-label" for="adminDeerRunOwlSpeedL3">
+                  Owl speed
+                </label>
+                <input
+                  id="adminDeerRunOwlSpeedL3"
+                  class="admin-task-input"
+                  type="number"
+                  min="40"
+                  max="400"
+                  step="5"
+                  value="140"
+                />
+              </article>
+
+              <article class="admin-level-card">
+                <h3>Level 4</h3>
+
+                <label class="admin-task-label" for="adminDeerRunGoalL4">
+                  Animals to avoid
+                </label>
+                <input
+                  id="adminDeerRunGoalL4"
+                  class="admin-task-input"
+                  type="number"
+                  min="1"
+                  max="100"
+                  step="1"
+                  value="12"
+                />
+
+                <label class="admin-task-label" for="adminDeerRunTimeL4">
+                  Time limit (seconds)
+                </label>
+                <input
+                  id="adminDeerRunTimeL4"
+                  class="admin-task-input"
+                  type="number"
+                  min="10"
+                  max="300"
+                  step="1"
+                  value="30"
+                />
+
+                <label class="admin-task-label" for="adminDeerRunMissesL4">
+                  Misses allowed
+                </label>
+                <input
+                  id="adminDeerRunMissesL4"
+                  class="admin-task-input"
+                  type="number"
+                  min="1"
+                  max="20"
+                  step="1"
+                  value="4"
+                />
+
+                <hr />
+
+                <label class="admin-toggle-row" for="adminDeerRunRabbitEnabledL4">
+                  <input
+                    id="adminDeerRunRabbitEnabledL4"
+                    type="checkbox" checked
+                  />
+                  <span>Rabbit enabled</span>
+                </label>
+
+                <label class="admin-task-label" for="adminDeerRunRabbitSpeedL4">
+                  Rabbit speed
+                </label>
+                <input
+                  id="adminDeerRunRabbitSpeedL4"
+                  class="admin-task-input"
+                  type="number"
+                  min="40"
+                  max="400"
+                  step="5"
+                  value="135"
+                />
+
+                <label class="admin-toggle-row" for="adminDeerRunFoxEnabledL4">
+                  <input
+                    id="adminDeerRunFoxEnabledL4"
+                    type="checkbox" checked
+                  />
+                  <span>Fox enabled</span>
+                </label>
+
+                <label class="admin-task-label" for="adminDeerRunFoxSpeedL4">
+                  Fox speed
+                </label>
+                <input
+                  id="adminDeerRunFoxSpeedL4"
+                  class="admin-task-input"
+                  type="number"
+                  min="40"
+                  max="400"
+                  step="5"
+                  value="150"
+                />
+
+                <label class="admin-toggle-row" for="adminDeerRunFalconEnabledL4">
+                  <input
+                    id="adminDeerRunFalconEnabledL4"
+                    type="checkbox" checked
+                  />
+                  <span>Falcon enabled</span>
+                </label>
+
+                <label class="admin-task-label" for="adminDeerRunFalconSpeedL4">
+                  Falcon speed
+                </label>
+                <input
+                  id="adminDeerRunFalconSpeedL4"
+                  class="admin-task-input"
+                  type="number"
+                  min="40"
+                  max="400"
+                  step="5"
+                  value="165"
+                />
+
+                <label class="admin-toggle-row" for="adminDeerRunOwlEnabledL4">
+                  <input
+                    id="adminDeerRunOwlEnabledL4"
+                    type="checkbox" checked
+                  />
+                  <span>Owl enabled</span>
+                </label>
+
+                <label class="admin-task-label" for="adminDeerRunOwlSpeedL4">
+                  Owl speed
+                </label>
+                <input
+                  id="adminDeerRunOwlSpeedL4"
+                  class="admin-task-input"
+                  type="number"
+                  min="40"
+                  max="400"
+                  step="5"
+                  value="150"
+                />
+              </article>
+
+            </div>
+
+            <button
+              id="resetDeerRunDefaultsBtn"
+              class="admin-apply admin-reset-action"
+              type="button"
+            >
+              Reset Deer Run to Defaults
+            </button>
+          </section>
+
+<section class="admin-tab-content" id="panelAdvanced" role="tabpanel" aria-labelledby="tabAdvanced" aria-hidden="true">
             <article class="admin-mini-card admin-mini-card--wide">
               <h3>Jack Jump</h3>
               <div class="admin-inline-toggles">

@@ -42,6 +42,9 @@ const deerTimeDisplay =
 const DEER_RUN_REQUIRE_CLICK_AND_DRAG_KEY =
   'deerRunRequireClickAndDrag';
 
+const DEER_RUN_ADMIN_SETTINGS_KEY =
+  'moving-sound-admin-settings-v1';
+
 const deerMovementGate =
   window.trackpadMovementSettings &&
   typeof window.trackpadMovementSettings.createClickAndDragGate ===
@@ -51,11 +54,242 @@ const deerMovementGate =
       )
     : null;
 
+const DEFAULT_DEER_RUN_LEVELS = [
+  {
+    goal: 5,
+    timeLimit: 35,
+    missesAllowed: 3,
+
+    rabbitEnabled: true,
+    rabbitSpeed: 115,
+
+    foxEnabled: false,
+    foxSpeed: 130,
+
+    falconEnabled: false,
+    falconSpeed: 145,
+
+    owlEnabled: false,
+    owlSpeed: 135,
+  },
+  {
+    goal: 7,
+    timeLimit: 35,
+    missesAllowed: 3,
+
+    rabbitEnabled: true,
+    rabbitSpeed: 120,
+
+    foxEnabled: true,
+    foxSpeed: 130,
+
+    falconEnabled: false,
+    falconSpeed: 145,
+
+    owlEnabled: false,
+    owlSpeed: 135,
+  },
+  {
+    goal: 9,
+    timeLimit: 30,
+    missesAllowed: 3,
+
+    rabbitEnabled: true,
+    rabbitSpeed: 125,
+
+    foxEnabled: true,
+    foxSpeed: 140,
+
+    falconEnabled: true,
+    falconSpeed: 150,
+
+    owlEnabled: false,
+    owlSpeed: 140,
+  },
+  {
+    goal: 12,
+    timeLimit: 30,
+    missesAllowed: 4,
+
+    rabbitEnabled: true,
+    rabbitSpeed: 135,
+
+    foxEnabled: true,
+    foxSpeed: 150,
+
+    falconEnabled: true,
+    falconSpeed: 165,
+
+    owlEnabled: true,
+    owlSpeed: 150,
+  },
+];
+
+function clampDeerLevelNumber(
+  value,
+  min,
+  max,
+  fallback
+) {
+  const parsed = Number(value);
+
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.min(
+    max,
+    Math.max(min, parsed)
+  );
+}
+
+function normalizeDeerRunLevel(
+  level,
+  defaults
+) {
+  const source =
+    level &&
+    typeof level === 'object'
+      ? level
+      : {};
+
+  return {
+    goal: Math.round(
+      clampDeerLevelNumber(
+        source.goal,
+        1,
+        100,
+        defaults.goal
+      )
+    ),
+
+    timeLimit: Math.round(
+      clampDeerLevelNumber(
+        source.timeLimit,
+        10,
+        300,
+        defaults.timeLimit
+      )
+    ),
+
+    missesAllowed: Math.round(
+      clampDeerLevelNumber(
+        source.missesAllowed,
+        1,
+        20,
+        defaults.missesAllowed
+      )
+    ),
+
+    rabbitEnabled:
+      typeof source.rabbitEnabled ===
+      'boolean'
+        ? source.rabbitEnabled
+        : defaults.rabbitEnabled,
+
+    rabbitSpeed:
+      clampDeerLevelNumber(
+        source.rabbitSpeed,
+        40,
+        400,
+        defaults.rabbitSpeed
+      ),
+
+    foxEnabled:
+      typeof source.foxEnabled ===
+      'boolean'
+        ? source.foxEnabled
+        : defaults.foxEnabled,
+
+    foxSpeed:
+      clampDeerLevelNumber(
+        source.foxSpeed,
+        40,
+        400,
+        defaults.foxSpeed
+      ),
+
+    falconEnabled:
+      typeof source.falconEnabled ===
+      'boolean'
+        ? source.falconEnabled
+        : defaults.falconEnabled,
+
+    falconSpeed:
+      clampDeerLevelNumber(
+        source.falconSpeed,
+        40,
+        400,
+        defaults.falconSpeed
+      ),
+
+    owlEnabled:
+      typeof source.owlEnabled ===
+      'boolean'
+        ? source.owlEnabled
+        : defaults.owlEnabled,
+
+    owlSpeed:
+      clampDeerLevelNumber(
+        source.owlSpeed,
+        40,
+        400,
+        defaults.owlSpeed
+      ),
+  };
+}
+
+function loadDeerRunLevels() {
+  try {
+    const raw =
+      localStorage.getItem(
+        DEER_RUN_ADMIN_SETTINGS_KEY
+      );
+
+    const parsed =
+      raw ? JSON.parse(raw) : {};
+
+    const saved =
+      Array.isArray(parsed.deerRunLevels)
+        ? parsed.deerRunLevels
+        : [];
+
+    return DEFAULT_DEER_RUN_LEVELS.map(
+      (defaults, index) =>
+        normalizeDeerRunLevel(
+          saved[index],
+          defaults
+        )
+    );
+  } catch {
+    return DEFAULT_DEER_RUN_LEVELS.map(
+      (level) => ({ ...level })
+    );
+  }
+}
+
+let deerLevels =
+  loadDeerRunLevels();
+
+let currentLevelIndex = 0;
+
+function getCurrentDeerLevel() {
+  return (
+    deerLevels[currentLevelIndex] ||
+    deerLevels[0]
+  );
+}
+
 let deerGameRunning = false;
+let deerLevelResult = null;
 
 let deerScore = 0;
 let deerMisses = 0;
 let deerGoalHits = 0;
+let deerTimeLeft = 0;
+
+let deerTimerAnimationId = 0;
+let deerTimerLastTimestamp = 0;
 
 let activeForestObstacles = [];
 let forestObstacleTypeBag = [];
@@ -75,14 +309,35 @@ function clearForestObstacles() {
   activeForestObstacles = [];
 }
 
+function getEnabledForestObstacleTypes() {
+  const level =
+    getCurrentDeerLevel();
+
+  const enabled = [];
+
+  if (level.rabbitEnabled) {
+    enabled.push('rabbit');
+  }
+
+  if (level.foxEnabled) {
+    enabled.push('fox');
+  }
+
+  if (level.falconEnabled) {
+    enabled.push('falcon');
+  }
+
+  if (level.owlEnabled) {
+    enabled.push('owl');
+  }
+
+  return enabled;
+}
+
 function getNextForestObstacleType() {
   if (forestObstacleTypeBag.length === 0) {
-    forestObstacleTypeBag = [
-      'rabbit',
-      'fox',
-      'falcon',
-      'owl',
-    ];
+    forestObstacleTypeBag =
+      getEnabledForestObstacleTypes();
 
     for (
       let index =
@@ -105,7 +360,10 @@ function getNextForestObstacleType() {
     }
   }
 
-  return forestObstacleTypeBag.pop();
+  return (
+    forestObstacleTypeBag.pop() ||
+    null
+  );
 }
 
 function createForestObstacle() {
@@ -114,6 +372,13 @@ function createForestObstacle() {
 
   const type =
     getNextForestObstacleType();
+
+  if (!type) {
+    return null;
+  }
+
+  const level =
+    getCurrentDeerLevel();
 
   const element =
     document.createElement('div');
@@ -128,7 +393,7 @@ function createForestObstacle() {
     'forest-obstacle-image';
 
   let lane = 'ground';
-  let speed = 115;
+  let speed = level.rabbitSpeed;
   let y = arenaRect.height * 0.72;
   let label = 'Forest obstacle';
 
@@ -144,7 +409,7 @@ function createForestObstacle() {
       '../../images/foxedit.png';
 
     label = 'Fox obstacle';
-    speed = 130;
+    speed = level.foxSpeed;
   }
 
   if (type === 'falcon') {
@@ -153,7 +418,7 @@ function createForestObstacle() {
 
     label = 'Falcon obstacle';
     lane = 'air';
-    speed = 145;
+    speed = level.falconSpeed;
     y = arenaRect.height * 0.40;
   }
 
@@ -163,7 +428,7 @@ function createForestObstacle() {
 
     label = 'Owl obstacle';
     lane = 'air';
-    speed = 135;
+    speed = level.owlSpeed;
     y = arenaRect.height * 0.40;
   }
 
@@ -261,19 +526,216 @@ function updateOwlPerspective(
 }
 
 function updateDeerStats() {
+  const level =
+    getCurrentDeerLevel();
+
+  if (deerLevelDisplay) {
+    deerLevelDisplay.textContent =
+      `${currentLevelIndex + 1} of ${deerLevels.length}`;
+  }
+
   if (deerGoalDisplay) {
     deerGoalDisplay.textContent =
-      `${deerGoalHits}/5`;
+      `${deerGoalHits}/${level.goal}`;
   }
 
   if (deerMissesDisplay) {
     deerMissesDisplay.textContent =
-      String(Math.max(0, 3 - deerMisses));
+      String(
+        Math.max(
+          0,
+          level.missesAllowed - deerMisses
+        )
+      );
   }
 
   if (deerScoreDisplay) {
     deerScoreDisplay.textContent =
       String(deerScore);
+  }
+
+  if (deerTimeDisplay) {
+    deerTimeDisplay.textContent =
+      String(
+        Math.max(
+          0,
+          Math.ceil(deerTimeLeft)
+        )
+      );
+  }
+}
+
+function stopDeerTimer() {
+  window.cancelAnimationFrame(
+    deerTimerAnimationId
+  );
+
+  deerTimerAnimationId = 0;
+  deerTimerLastTimestamp = 0;
+}
+
+function showDeerFailure(message) {
+  pauseDeerGameplay();
+
+  if (deerLevelResult) {
+    deerLevelResult.showFailure({
+      title: 'Try Again!',
+      message,
+    });
+    return;
+  }
+
+  deerStatus.textContent = message;
+  deerStartButton.hidden = false;
+  deerStartButton.textContent =
+    'Try Again';
+}
+
+function stepDeerTimer(timestamp) {
+  if (!deerGameRunning) {
+    return;
+  }
+
+  if (!deerTimerLastTimestamp) {
+    deerTimerLastTimestamp =
+      timestamp;
+  }
+
+  const delta =
+    Math.min(
+      0.1,
+      (
+        timestamp -
+        deerTimerLastTimestamp
+      ) / 1000
+    ) || 0;
+
+  deerTimerLastTimestamp =
+    timestamp;
+
+  deerTimeLeft =
+    Math.max(
+      0,
+      deerTimeLeft - delta
+    );
+
+  updateDeerStats();
+
+  if (deerTimeLeft <= 0) {
+    showDeerFailure(
+      `Time ran out on Level ${currentLevelIndex + 1}.`
+    );
+    return;
+  }
+
+  deerTimerAnimationId =
+    window.requestAnimationFrame(
+      stepDeerTimer
+    );
+}
+
+function pauseDeerGameplay() {
+  deerGameRunning = false;
+
+  stopForestObstacleAnimation();
+  stopDeerTimer();
+
+  if (forestTreesBack) {
+    forestTreesBack.classList.remove(
+      'is-running'
+    );
+  }
+
+  if (forestTreesFront) {
+    forestTreesFront.classList.remove(
+      'is-running'
+    );
+  }
+
+  if (forestDetails) {
+    forestDetails.classList.remove(
+      'is-running'
+    );
+  }
+
+  playerDeer.classList.remove(
+    'is-dragging'
+  );
+}
+
+function prepareNextDeerLevel() {
+  if (
+    currentLevelIndex >=
+    deerLevels.length - 1
+  ) {
+    return;
+  }
+
+  currentLevelIndex += 1;
+
+  deerGoalHits = 0;
+  deerMisses = 0;
+  deerTimeLeft =
+    getCurrentDeerLevel().timeLimit;
+
+  forestObstacleTypeBag = [];
+
+  clearForestObstacles();
+  resetDeerPosition();
+  updateDeerStats();
+
+  deerStartButton.hidden = false;
+  deerStartButton.textContent =
+    'Start Level';
+
+  deerStatus.textContent =
+    `Level ${currentLevelIndex + 1} ready. Press Start.`;
+}
+
+function retryCurrentDeerLevel() {
+  startDeerLevel(currentLevelIndex);
+}
+
+function playDeerRunAgain() {
+  currentLevelIndex = 0;
+  deerScore = 0;
+
+  startDeerLevel(0);
+}
+
+function showDeerLevelSuccess() {
+  pauseDeerGameplay();
+
+  const completedLevel =
+    currentLevelIndex + 1;
+
+  const hasNextLevel =
+    currentLevelIndex <
+    deerLevels.length - 1;
+
+  if (!deerLevelResult) {
+    if (hasNextLevel) {
+      prepareNextDeerLevel();
+    } else {
+      deerStatus.textContent =
+        'You completed all 4 Deer Run levels!';
+    }
+
+    return;
+  }
+
+  if (hasNextLevel) {
+    deerLevelResult.showSuccess({
+      title: 'Level Complete!',
+      message:
+        `Great run! Tap Level Up for Level ${completedLevel + 1}.`,
+    });
+  } else {
+    deerLevelResult.showFinal({
+      title: 'You Did It!',
+      message:
+        'You completed all 4 Deer Run levels!',
+    });
   }
 }
 
@@ -310,6 +772,16 @@ function checkForestObstacleResult(obstacle) {
         : 'Oops! Jump over the animal.';
 
     updateDeerStats();
+
+    if (
+      deerMisses >=
+      getCurrentDeerLevel().missesAllowed
+    ) {
+      showDeerFailure(
+        `Too many misses on Level ${currentLevelIndex + 1}.`
+      );
+    }
+
     return;
   }
 
@@ -328,6 +800,16 @@ function checkForestObstacleResult(obstacle) {
         : 'Great jump!';
 
     updateDeerStats();
+
+    if (
+      deerGoalHits >=
+      getCurrentDeerLevel().goal
+    ) {
+      deerStatus.textContent =
+        'Level complete!';
+
+      showDeerLevelSuccess();
+    }
   }
 }
 
@@ -542,58 +1024,84 @@ function handleDeerPointerUp(event) {
   }
 }
 
+function startDeerLevel(index) {
+  currentLevelIndex =
+    Math.max(
+      0,
+      Math.min(
+        index,
+        deerLevels.length - 1
+      )
+    );
+
+  deerGoalHits = 0;
+  deerMisses = 0;
+  deerTimeLeft =
+    getCurrentDeerLevel().timeLimit;
+
+  if (currentLevelIndex === 0) {
+    deerScore = 0;
+  }
+
+  deerGameRunning = true;
+
+  forestObstacleTypeBag = [];
+
+  updateDeerStats();
+
+  deerStartButton.hidden = true;
+
+  resetDeerPosition();
+
+  clearForestObstacles();
+  createForestObstacle();
+
+  stopForestObstacleAnimation();
+
+  nextForestObstacleSpawnAt =
+    performance.now() +
+    getNextForestObstacleDelay();
+
+  forestObstacleAnimationId =
+    window.requestAnimationFrame(
+      stepForestObstacles
+    );
+
+  stopDeerTimer();
+
+  deerTimerAnimationId =
+    window.requestAnimationFrame(
+      stepDeerTimer
+    );
+
+  if (forestTreesBack) {
+    forestTreesBack.classList.add(
+      'is-running'
+    );
+  }
+
+  if (forestTreesFront) {
+    forestTreesFront.classList.add(
+      'is-running'
+    );
+  }
+
+  if (forestDetails) {
+    forestDetails.classList.add(
+      'is-running'
+    );
+  }
+
+  deerStatus.textContent =
+    'Watch the trail and avoid the animals.';
+}
+
 deerStartButton.addEventListener(
   'click',
   () => {
-    deerGameRunning = true;
-
-    deerScore = 0;
-    deerMisses = 0;
-    deerGoalHits = 0;
-
-    updateDeerStats();
-
-    deerStartButton.hidden = true;
-
-    resetDeerPosition();
-
-    clearForestObstacles();
-
-    forestObstacleTypeBag = [];
-
-    createForestObstacle();
-
-    stopForestObstacleAnimation();
-
-    nextForestObstacleSpawnAt =
-      performance.now() +
-      getNextForestObstacleDelay();
-
-    forestObstacleAnimationId =
-      window.requestAnimationFrame(
-        stepForestObstacles
-      );
-
-    if (forestTreesBack) {
-      forestTreesBack.classList.add(
-        'is-running'
-      );
-    }
-
-    if (forestTreesFront) {
-      forestTreesFront.classList.add(
-        'is-running'
-      );
-    }
-
-    if (forestDetails) {
-      forestDetails.classList.add(
-        'is-running'
-      );
-    }
-
-    deerStatus.textContent =
-      'Move up and down to practice jumping.';
+    startDeerLevel(
+      currentLevelIndex
+    );
   }
 );
 
@@ -709,3 +1217,22 @@ document.addEventListener(
     deerTrackpadGuide.setPressed(false);
   }
 );
+
+
+if (
+  window.LevelResultController &&
+  deerArena
+) {
+  deerLevelResult =
+    new window.LevelResultController({
+      host: deerArena,
+      pauseGame: pauseDeerGameplay,
+      onNextLevel: prepareNextDeerLevel,
+      onRetry: retryCurrentDeerLevel,
+      onPlayAgain: playDeerRunAgain,
+      onHome: () => {
+        window.location.href =
+          '../../index.html';
+      },
+    });
+}

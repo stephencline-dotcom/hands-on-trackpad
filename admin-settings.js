@@ -18,6 +18,7 @@ const dragonDodgeGameActiveToggle = document.getElementById("dragonDodgeGameActi
 const firefighterRescueGameActiveToggle = document.getElementById("firefighterRescueGameActive");
 const martianMadnessGameActiveToggle = document.getElementById("martianMadnessGameActive");
 const bugMeadowGameActiveToggle = document.getElementById("bugMeadowGameActive");
+const deerRunGameActiveToggle = document.getElementById("deerRunGameActive");
 const soundEnabledToggle = document.getElementById("soundEnabledToggle");
 const trainingPausedToggle = document.getElementById("trainingPausedToggle");
 const lightTapRequireClickToggle = document.getElementById("lightTapRequireClickToggle");
@@ -26,6 +27,7 @@ const dragonRequireClickToggle = document.getElementById("dragonRequireClickTogg
 const fireRequireClickToggle = document.getElementById("fireRequireClickToggle");
 const martianRequireClickToggle = document.getElementById("martianRequireClickToggle");
 const bugMeadowRequireClickAndDragToggle = document.getElementById("bugMeadowRequireClickAndDragToggle");
+const deerRunRequireClickAndDragToggle = document.getElementById("deerRunRequireClickAndDragToggle");
 const jackFlameRainInputs = [4, 5, 6].map((level) => ({
   enabled: document.getElementById(`jackFlameRain${level}EnabledToggle`),
   size: document.getElementById(`jackFlameRain${level}Size`),
@@ -110,6 +112,24 @@ const bugMeadowLevelInputs = [1, 2, 3, 4].map((level) => ({
   birdCount: document.getElementById(`adminBugMeadowBirdsL${level}`),
   birdSpeed: document.getElementById(`adminBugMeadowBirdSpeedL${level}`),
 }));
+
+const deerRunLevelInputs = [1, 2, 3, 4].map((level) => ({
+  goal: document.getElementById(`adminDeerRunGoalL${level}`),
+  timeLimit: document.getElementById(`adminDeerRunTimeL${level}`),
+  missesAllowed: document.getElementById(`adminDeerRunMissesL${level}`),
+
+  rabbitEnabled: document.getElementById(`adminDeerRunRabbitEnabledL${level}`),
+  rabbitSpeed: document.getElementById(`adminDeerRunRabbitSpeedL${level}`),
+
+  foxEnabled: document.getElementById(`adminDeerRunFoxEnabledL${level}`),
+  foxSpeed: document.getElementById(`adminDeerRunFoxSpeedL${level}`),
+
+  falconEnabled: document.getElementById(`adminDeerRunFalconEnabledL${level}`),
+  falconSpeed: document.getElementById(`adminDeerRunFalconSpeedL${level}`),
+
+  owlEnabled: document.getElementById(`adminDeerRunOwlEnabledL${level}`),
+  owlSpeed: document.getElementById(`adminDeerRunOwlSpeedL${level}`),
+}));
 const adminTaskCard = document.querySelector(".admin-task-card");
 const adminAvailabilitySection = document.getElementById("adminAvailabilitySection");
 const backToAvailabilityBtn = document.getElementById("backToAvailabilityBtn");
@@ -124,6 +144,7 @@ const resetDragonDefaultsBtn = document.getElementById("resetDragonDefaultsBtn")
 const resetFireDefaultsBtn = document.getElementById("resetFireDefaultsBtn");
 const resetMartianDefaultsBtn = document.getElementById("resetMartianDefaultsBtn");
 const resetBugMeadowDefaultsBtn = document.getElementById("resetBugMeadowDefaultsBtn");
+const resetDeerRunDefaultsBtn = document.getElementById("resetDeerRunDefaultsBtn");
 const resetJackDefaultsBtn = document.getElementById("resetJackDefaultsBtn");
 const resetFullscreenDefaultsBtn = document.getElementById("resetFullscreenDefaultsBtn");
 const saveTask1Btn = document.getElementById("saveTask1Btn");
@@ -149,6 +170,7 @@ const DRAGON_DODGE_GAME_ACTIVE_KEY = "dragonDodgeGameActive";
 const FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY = "firefighterRescueGameActive";
 const MARTIAN_MADNESS_GAME_ACTIVE_KEY = "martianMadnessGameActive";
 const BUG_MEADOW_GAME_ACTIVE_KEY = "bugMeadowGameActive";
+const DEER_RUN_GAME_ACTIVE_KEY = "deerRunGameActive";
 const SOUND_ENABLED_KEY = "trackpadSoundEnabled";
 const TRAINING_PAUSED_KEY = "trackpadTrainingPaused";
 const MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY = "moving-sound-admin-settings-v1";
@@ -158,6 +180,7 @@ const DRAGON_REQUIRE_CLICK_KEY = "dragonRequireClick";
 const FIRE_REQUIRE_CLICK_KEY = "fireRequireClick";
 const MARTIAN_REQUIRE_CLICK_KEY = "martianRequireClick";
 const BUG_MEADOW_REQUIRE_CLICK_AND_DRAG_KEY = "bugMeadowRequireClickAndDrag";
+const DEER_RUN_REQUIRE_CLICK_AND_DRAG_KEY = "deerRunRequireClickAndDrag";
 const JACK_FLAME_RAIN_KEYS = [4, 5, 6].map((level) => ({
   enabled: `jackFlameRain${level}Enabled`,
   size: `jackFlameRain${level}SizePx`,
@@ -275,6 +298,62 @@ const DEFAULT_BUG_MEADOW_LEVELS = [
   { goal: 9, timeLimit: 30, missesAllowed: 3, birdCount: 2, birdSpeed: 3 },
   { goal: 12, timeLimit: 30, missesAllowed: 4, birdCount: 3, birdSpeed: 4 },
 ];
+
+const DEFAULT_DEER_RUN_LEVELS = [
+  {
+    goal: 5,
+    timeLimit: 35,
+    missesAllowed: 3,
+    rabbitEnabled: true,
+    rabbitSpeed: 115,
+    foxEnabled: false,
+    foxSpeed: 130,
+    falconEnabled: false,
+    falconSpeed: 145,
+    owlEnabled: false,
+    owlSpeed: 135,
+  },
+  {
+    goal: 7,
+    timeLimit: 35,
+    missesAllowed: 3,
+    rabbitEnabled: true,
+    rabbitSpeed: 120,
+    foxEnabled: true,
+    foxSpeed: 130,
+    falconEnabled: false,
+    falconSpeed: 145,
+    owlEnabled: false,
+    owlSpeed: 135,
+  },
+  {
+    goal: 9,
+    timeLimit: 30,
+    missesAllowed: 3,
+    rabbitEnabled: true,
+    rabbitSpeed: 125,
+    foxEnabled: true,
+    foxSpeed: 140,
+    falconEnabled: true,
+    falconSpeed: 150,
+    owlEnabled: false,
+    owlSpeed: 140,
+  },
+  {
+    goal: 12,
+    timeLimit: 30,
+    missesAllowed: 4,
+    rabbitEnabled: true,
+    rabbitSpeed: 135,
+    foxEnabled: true,
+    foxSpeed: 150,
+    falconEnabled: true,
+    falconSpeed: 165,
+    owlEnabled: true,
+    owlSpeed: 150,
+  },
+];
+
 const DEFAULT_JACK_FLAME_RAIN_BY_LEVEL = [
   {
     enabled: true,
@@ -908,6 +987,77 @@ function normalizeBugMeadowLevels(levels) {
   });
 }
 
+function normalizeDeerRunLevels(levels) {
+  return normalizeLevelArray(
+    levels,
+    DEFAULT_DEER_RUN_LEVELS,
+    (level, defaults) => ({
+      goal: parseLightTapLevelValue(
+        level.goal,
+        1,
+        100,
+        defaults.goal
+      ),
+      timeLimit: parseLightTapLevelValue(
+        level.timeLimit,
+        10,
+        300,
+        defaults.timeLimit
+      ),
+      missesAllowed: parseLightTapLevelValue(
+        level.missesAllowed,
+        1,
+        20,
+        defaults.missesAllowed
+      ),
+
+      rabbitEnabled:
+        typeof level.rabbitEnabled === "boolean"
+          ? level.rabbitEnabled
+          : defaults.rabbitEnabled,
+      rabbitSpeed: parseLightTapLevelValue(
+        level.rabbitSpeed,
+        40,
+        400,
+        defaults.rabbitSpeed
+      ),
+
+      foxEnabled:
+        typeof level.foxEnabled === "boolean"
+          ? level.foxEnabled
+          : defaults.foxEnabled,
+      foxSpeed: parseLightTapLevelValue(
+        level.foxSpeed,
+        40,
+        400,
+        defaults.foxSpeed
+      ),
+
+      falconEnabled:
+        typeof level.falconEnabled === "boolean"
+          ? level.falconEnabled
+          : defaults.falconEnabled,
+      falconSpeed: parseLightTapLevelValue(
+        level.falconSpeed,
+        40,
+        400,
+        defaults.falconSpeed
+      ),
+
+      owlEnabled:
+        typeof level.owlEnabled === "boolean"
+          ? level.owlEnabled
+          : defaults.owlEnabled,
+      owlSpeed: parseLightTapLevelValue(
+        level.owlSpeed,
+        40,
+        400,
+        defaults.owlSpeed
+      ),
+    })
+  );
+}
+
 function loadStoredLightTapLevels() {
   return loadGameLevelsFromStorage("arenaLevels", DEFAULT_LIGHT_TAP_LEVELS, normalizeLightTapLevels);
 }
@@ -958,11 +1108,144 @@ function saveStoredMartianLevels(levels) {
   saveGameLevelsToStorage("martianLevels", levels, normalizeMartianLevels);
 }
 
+function loadStoredDeerRunLevels() {
+  return loadGameLevelsFromStorage(
+    "deerRunLevels",
+    DEFAULT_DEER_RUN_LEVELS,
+    normalizeDeerRunLevels
+  );
+}
+
 function saveStoredBugMeadowLevels(levels) {
   saveGameLevelsToStorage(
     "bugMeadowLevels",
     levels,
     normalizeBugMeadowLevels
+  );
+}
+
+function saveStoredDeerRunLevels(levels) {
+  saveGameLevelsToStorage(
+    "deerRunLevels",
+    levels,
+    normalizeDeerRunLevels
+  );
+}
+
+
+function applyDeerRunLevelsToInputs(levels) {
+  deerRunLevelInputs.forEach((inputs, index) => {
+    const level =
+      levels[index] ||
+      DEFAULT_DEER_RUN_LEVELS[index];
+
+    if (inputs.goal) {
+      inputs.goal.value = String(level.goal);
+    }
+
+    if (inputs.timeLimit) {
+      inputs.timeLimit.value =
+        String(level.timeLimit);
+    }
+
+    if (inputs.missesAllowed) {
+      inputs.missesAllowed.value =
+        String(level.missesAllowed);
+    }
+
+    for (const animal of [
+      "rabbit",
+      "fox",
+      "falcon",
+      "owl",
+    ]) {
+      const enabled =
+        inputs[`${animal}Enabled`];
+
+      const speed =
+        inputs[`${animal}Speed`];
+
+      if (enabled) {
+        enabled.checked =
+          Boolean(level[`${animal}Enabled`]);
+      }
+
+      if (speed) {
+        speed.value =
+          String(level[`${animal}Speed`]);
+      }
+    }
+  });
+}
+
+function readDeerRunLevelsFromInputs() {
+  const rawLevels =
+    deerRunLevelInputs.map(
+      (inputs, index) => {
+        const defaults =
+          DEFAULT_DEER_RUN_LEVELS[index];
+
+        return {
+          goal:
+            inputs.goal
+              ? inputs.goal.value
+              : defaults.goal,
+
+          timeLimit:
+            inputs.timeLimit
+              ? inputs.timeLimit.value
+              : defaults.timeLimit,
+
+          missesAllowed:
+            inputs.missesAllowed
+              ? inputs.missesAllowed.value
+              : defaults.missesAllowed,
+
+          rabbitEnabled:
+            Boolean(
+              inputs.rabbitEnabled &&
+              inputs.rabbitEnabled.checked
+            ),
+          rabbitSpeed:
+            inputs.rabbitSpeed
+              ? inputs.rabbitSpeed.value
+              : defaults.rabbitSpeed,
+
+          foxEnabled:
+            Boolean(
+              inputs.foxEnabled &&
+              inputs.foxEnabled.checked
+            ),
+          foxSpeed:
+            inputs.foxSpeed
+              ? inputs.foxSpeed.value
+              : defaults.foxSpeed,
+
+          falconEnabled:
+            Boolean(
+              inputs.falconEnabled &&
+              inputs.falconEnabled.checked
+            ),
+          falconSpeed:
+            inputs.falconSpeed
+              ? inputs.falconSpeed.value
+              : defaults.falconSpeed,
+
+          owlEnabled:
+            Boolean(
+              inputs.owlEnabled &&
+              inputs.owlEnabled.checked
+            ),
+          owlSpeed:
+            inputs.owlSpeed
+              ? inputs.owlSpeed.value
+              : defaults.owlSpeed,
+        };
+      }
+    );
+
+  return normalizeDeerRunLevels(
+    rawLevels
   );
 }
 
@@ -1336,6 +1619,16 @@ async function resetFullscreenToDefaults() {
     BUG_MEADOW_REQUIRE_CLICK_AND_DRAG_KEY,
     String(bugMeadowRequireClickAndDrag)
   );
+  localStorage.setItem(
+    DEER_RUN_GAME_ACTIVE_KEY,
+    String(deerRunGameActive)
+  );
+
+  localStorage.setItem(
+    DEER_RUN_REQUIRE_CLICK_AND_DRAG_KEY,
+    String(deerRunRequireClickAndDrag)
+  );
+
   localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
   localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
   localStorage.setItem(LIGHT_TAP_REQUIRE_CLICK_KEY, String(lightTapRequireClick));
@@ -1563,6 +1856,46 @@ function resetBugMeadowToDefaults() {
   showSavedMessage("Bug Meadow reset to defaults.");
 }
 
+function resetDeerRunToDefaults() {
+  const confirmed = window.confirm(
+    "Reset Deer Run to default values? This only affects Deer Run settings."
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  const defaultLevels =
+    normalizeDeerRunLevels(
+      DEFAULT_DEER_RUN_LEVELS
+    );
+
+  saveStoredDeerRunLevels(
+    defaultLevels
+  );
+
+  applyDeerRunLevelsToInputs(
+    defaultLevels
+  );
+
+  if (deerRunRequireClickAndDragToggle) {
+    deerRunRequireClickAndDragToggle.checked =
+      false;
+
+    localStorage.setItem(
+      DEER_RUN_REQUIRE_CLICK_AND_DRAG_KEY,
+      "false"
+    );
+  }
+
+  setDirtyState(false);
+  updateQuickSummary();
+
+  showSavedMessage(
+    "Deer Run reset to defaults."
+  );
+}
+
 async function loadTask1Settings() {
   let task1Seconds = parseTask1Seconds(localStorage.getItem(TASK1_STORAGE_KEY));
   let task1Enabled = parseTaskEnabled(localStorage.getItem(TASK1_ENABLED_KEY), true);
@@ -1587,6 +1920,12 @@ async function loadTask1Settings() {
     localStorage.getItem(BUG_MEADOW_GAME_ACTIVE_KEY),
     true
   );
+
+  let deerRunGameActive = parseTaskEnabled(
+    localStorage.getItem(DEER_RUN_GAME_ACTIVE_KEY),
+    true
+  );
+
   let lightTapLevels = loadStoredLightTapLevels();
   let streetCarLevels = loadStoredStreetCarLevels();
   let dragonLevels = loadStoredDragonLevels();
@@ -1594,6 +1933,8 @@ async function loadTask1Settings() {
   let fireLevels = loadStoredFireLevels();
   let martianLevels = loadStoredMartianLevels();
   let bugMeadowLevels = loadStoredBugMeadowLevels();
+  let deerRunLevels = loadStoredDeerRunLevels();
+
   let soundEnabled = parseTaskEnabled(localStorage.getItem(SOUND_ENABLED_KEY), true);
   let trainingPaused = parseTrainingPaused(localStorage.getItem(TRAINING_PAUSED_KEY));
   let lightTapRequireClick = parseTaskEnabled(
@@ -1618,6 +1959,11 @@ async function loadTask1Settings() {
   );
   let bugMeadowRequireClickAndDrag = parseTaskEnabled(
     localStorage.getItem(BUG_MEADOW_REQUIRE_CLICK_AND_DRAG_KEY),
+    false
+  );
+
+  let deerRunRequireClickAndDrag = parseTaskEnabled(
+    localStorage.getItem(DEER_RUN_REQUIRE_CLICK_AND_DRAG_KEY),
     false
   );
   const jackFlameRainSettings = [4, 5, 6].map((level, idx) => {
@@ -1846,6 +2192,20 @@ async function loadTask1Settings() {
     bugMeadowRequireClickAndDragToggle.checked = bugMeadowRequireClickAndDrag;
   }
 
+  if (deerRunGameActiveToggle) {
+    deerRunGameActiveToggle.checked =
+      deerRunGameActive;
+  }
+
+  if (deerRunRequireClickAndDragToggle) {
+    deerRunRequireClickAndDragToggle.checked =
+      deerRunRequireClickAndDrag;
+  }
+
+  applyDeerRunLevelsToInputs(
+    deerRunLevels
+  );
+
   applyGameLevelsToInputs(bugMeadowLevels, bugMeadowLevelInputs, {
     goal: "goal",
     timeLimit: "timeLimit",
@@ -1974,6 +2334,15 @@ async function saveTask1Settings() {
   const bugMeadowGameActive = Boolean(
     bugMeadowGameActiveToggle && bugMeadowGameActiveToggle.checked
   );
+
+  const deerRunGameActive = Boolean(
+    deerRunGameActiveToggle &&
+    deerRunGameActiveToggle.checked
+  );
+
+  const deerRunLevels =
+    readDeerRunLevelsFromInputs();
+
   const bugMeadowLevels = normalizeBugMeadowLevels(
     readGameLevelsFromInputs(bugMeadowLevelInputs, {
       goal: "goal",
@@ -2077,6 +2446,11 @@ async function saveTask1Settings() {
     bugMeadowRequireClickAndDragToggle &&
     bugMeadowRequireClickAndDragToggle.checked
   );
+
+  const deerRunRequireClickAndDrag = Boolean(
+    deerRunRequireClickAndDragToggle &&
+    deerRunRequireClickAndDragToggle.checked
+  );
   const jackFlameRainSettingsToSave = [4, 5, 6].map((level, idx) => {
     const inputs = jackFlameRainInputs[idx];
     const defaults = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[idx];
@@ -2172,6 +2546,12 @@ async function saveTask1Settings() {
     saveStoredMartianLevels(martianLevels);
   }
   saveStoredBugMeadowLevels(bugMeadowLevels);
+  saveStoredDeerRunLevels(deerRunLevels);
+
+  applyDeerRunLevelsToInputs(
+    deerRunLevels
+  );
+
   applyGameLevelsToInputs(lightTapLevels, lightTapLevelInputs, {
     lives: "lives",
     time: "time",
@@ -2373,6 +2753,12 @@ if (resetBugMeadowDefaultsBtn) {
     resetBugMeadowToDefaults
   );
 }
+if (resetDeerRunDefaultsBtn) {
+  resetDeerRunDefaultsBtn.addEventListener(
+    "click",
+    resetDeerRunToDefaults
+  );
+}
 if (resetJackDefaultsBtn) {
   resetJackDefaultsBtn.addEventListener("click", resetJackToDefaults);
 }
@@ -2405,6 +2791,15 @@ const allInputs = [
     inputs.missesAllowed,
     inputs.birdCount,
     inputs.birdSpeed,
+  ]),
+  ...deerRunLevelInputs.flatMap((inputs) => [
+    inputs.goal,
+    inputs.timeLimit,
+    inputs.missesAllowed,
+    inputs.rabbitSpeed,
+    inputs.foxSpeed,
+    inputs.falconSpeed,
+    inputs.owlSpeed,
   ]),
   ...dragonLevelInputs.flatMap((inputs) => [
     inputs.dragonCount,
@@ -2439,6 +2834,7 @@ const allToggles = [
   firefighterRescueGameActiveToggle,
   martianMadnessGameActiveToggle,
   bugMeadowGameActiveToggle,
+  deerRunGameActiveToggle,
   task1EnabledToggle,
   task2EnabledToggle,
   task3EnabledToggle,
@@ -2450,6 +2846,13 @@ const allToggles = [
   fireRequireClickToggle,
   martianRequireClickToggle,
   bugMeadowRequireClickAndDragToggle,
+  deerRunRequireClickAndDragToggle,
+  ...deerRunLevelInputs.flatMap((inputs) => [
+    inputs.rabbitEnabled,
+    inputs.foxEnabled,
+    inputs.falconEnabled,
+    inputs.owlEnabled,
+  ]),
   ...mazeGhostLevelToggles,
   ...carGameLevelToggles,
 ];
@@ -2483,6 +2886,7 @@ allToggles.forEach((toggleEl) => {
   [fireRequireClickToggle, FIRE_REQUIRE_CLICK_KEY],
   [martianRequireClickToggle, MARTIAN_REQUIRE_CLICK_KEY],
   [bugMeadowRequireClickAndDragToggle, BUG_MEADOW_REQUIRE_CLICK_AND_DRAG_KEY],
+  [deerRunRequireClickAndDragToggle, DEER_RUN_REQUIRE_CLICK_AND_DRAG_KEY],
   [fullscreenRequireClickAndDragToggle, FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY],
   [mazeRequireClickAndDragToggle, MAZE_REQUIRE_CLICK_AND_DRAG_KEY],
   [carRequireClickAndDragToggle, CAR_REQUIRE_CLICK_AND_DRAG_KEY],
