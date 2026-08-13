@@ -117,6 +117,8 @@ const deerRunLevelInputs = [1, 2, 3, 4].map((level) => ({
   goal: document.getElementById(`adminDeerRunGoalL${level}`),
   timeLimit: document.getElementById(`adminDeerRunTimeL${level}`),
   missesAllowed: document.getElementById(`adminDeerRunMissesL${level}`),
+  spawnDelayMin: document.getElementById(`adminDeerRunSpawnMinL${level}`),
+  spawnDelayMax: document.getElementById(`adminDeerRunSpawnMaxL${level}`),
 
   rabbitEnabled: document.getElementById(`adminDeerRunRabbitEnabledL${level}`),
   rabbitSpeed: document.getElementById(`adminDeerRunRabbitSpeedL${level}`),
@@ -304,6 +306,8 @@ const DEFAULT_DEER_RUN_LEVELS = [
     goal: 5,
     timeLimit: 35,
     missesAllowed: 3,
+    spawnDelayMin: 3.0,
+    spawnDelayMax: 4.0,
     rabbitEnabled: true,
     rabbitSpeed: 115,
     foxEnabled: false,
@@ -317,6 +321,8 @@ const DEFAULT_DEER_RUN_LEVELS = [
     goal: 7,
     timeLimit: 35,
     missesAllowed: 3,
+    spawnDelayMin: 2.8,
+    spawnDelayMax: 3.6,
     rabbitEnabled: true,
     rabbitSpeed: 120,
     foxEnabled: true,
@@ -330,6 +336,8 @@ const DEFAULT_DEER_RUN_LEVELS = [
     goal: 9,
     timeLimit: 30,
     missesAllowed: 3,
+    spawnDelayMin: 2.4,
+    spawnDelayMax: 3.2,
     rabbitEnabled: true,
     rabbitSpeed: 125,
     foxEnabled: true,
@@ -343,6 +351,8 @@ const DEFAULT_DEER_RUN_LEVELS = [
     goal: 12,
     timeLimit: 30,
     missesAllowed: 4,
+    spawnDelayMin: 2.0,
+    spawnDelayMax: 2.8,
     rabbitEnabled: true,
     rabbitSpeed: 135,
     foxEnabled: true,
@@ -1011,6 +1021,20 @@ function normalizeDeerRunLevels(levels) {
         defaults.missesAllowed
       ),
 
+      spawnDelayMin: parseLightTapLevelValue(
+        level.spawnDelayMin,
+        0.5,
+        10,
+        defaults.spawnDelayMin
+      ),
+
+      spawnDelayMax: parseLightTapLevelValue(
+        level.spawnDelayMax,
+        0.5,
+        10,
+        defaults.spawnDelayMax
+      ),
+
       rabbitEnabled:
         typeof level.rabbitEnabled === "boolean"
           ? level.rabbitEnabled
@@ -1153,6 +1177,16 @@ function applyDeerRunLevelsToInputs(levels) {
         String(level.missesAllowed);
     }
 
+    if (inputs.spawnDelayMin) {
+      inputs.spawnDelayMin.value =
+        String(level.spawnDelayMin);
+    }
+
+    if (inputs.spawnDelayMax) {
+      inputs.spawnDelayMax.value =
+        String(level.spawnDelayMax);
+    }
+
     for (const animal of [
       "rabbit",
       "fox",
@@ -1200,6 +1234,16 @@ function readDeerRunLevelsFromInputs() {
             inputs.missesAllowed
               ? inputs.missesAllowed.value
               : defaults.missesAllowed,
+
+          spawnDelayMin:
+            inputs.spawnDelayMin
+              ? inputs.spawnDelayMin.value
+              : defaults.spawnDelayMin,
+
+          spawnDelayMax:
+            inputs.spawnDelayMax
+              ? inputs.spawnDelayMax.value
+              : defaults.spawnDelayMax,
 
           rabbitEnabled:
             Boolean(
@@ -2796,6 +2840,8 @@ const allInputs = [
     inputs.goal,
     inputs.timeLimit,
     inputs.missesAllowed,
+    inputs.spawnDelayMin,
+    inputs.spawnDelayMax,
     inputs.rabbitSpeed,
     inputs.foxSpeed,
     inputs.falconSpeed,

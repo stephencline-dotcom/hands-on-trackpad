@@ -181,6 +181,22 @@ function normalizeDeerRunLevel(
       )
     ),
 
+    spawnDelayMin:
+      clampDeerLevelNumber(
+        source.spawnDelayMin,
+        0.5,
+        10,
+        defaults.spawnDelayMin
+      ),
+
+    spawnDelayMax:
+      clampDeerLevelNumber(
+        source.spawnDelayMax,
+        0.5,
+        10,
+        defaults.spawnDelayMax
+      ),
+
     rabbitEnabled:
       typeof source.rabbitEnabled ===
       'boolean'
@@ -273,6 +289,93 @@ let deerLevels =
 
 let currentLevelIndex = 0;
 
+function getDeerRunStudentName() {
+  const possibleKeys = [
+    'studentName',
+    'movingSoundStudentName',
+    'bugMeadowStudentName',
+  ];
+
+  try {
+    for (const key of possibleKeys) {
+      const saved =
+        localStorage.getItem(key) || '';
+
+      const cleaned =
+        saved.trim().slice(0, 60);
+
+      if (cleaned) {
+        return cleaned;
+      }
+    }
+  } catch {
+    // Fall through to default.
+  }
+
+  return 'Student';
+}
+
+function saveDeerRunLevelResult() {
+  const levelCompleted =
+    currentLevelIndex + 1;
+
+  if (
+    savedDeerResultLevels.has(
+      levelCompleted
+    ) ||
+    !window.gameResultsStore
+  ) {
+    return;
+  }
+
+  const correctClicks =
+    Math.max(
+      0,
+      deerGoalHits
+    );
+
+  const missedClicks =
+    Math.max(
+      0,
+      deerMisses
+    );
+
+  const totalClicks =
+    correctClicks +
+    missedClicks;
+
+  const clickAccuracy =
+    totalClicks > 0
+      ? (
+          correctClicks /
+          totalClicks
+        ) * 100
+      : 0;
+
+  savedDeerResultLevels.add(
+    levelCompleted
+  );
+
+  void window.gameResultsStore.saveResult({
+    id:
+      `${Date.now()}-${Math.random()
+        .toString(16)
+        .slice(2)}`,
+
+    gameName: 'Deer Run',
+
+    studentName:
+      getDeerRunStudentName(),
+
+    levelCompleted,
+    missedClicks,
+    totalClicks,
+    correctClicks,
+    clickAccuracy,
+    playedAtMs: Date.now(),
+  });
+}
+
 function getCurrentDeerLevel() {
   return (
     deerLevels[currentLevelIndex] ||
@@ -282,6 +385,16 @@ function getCurrentDeerLevel() {
 
 let deerGameRunning = false;
 let deerLevelResult = null;
+let savedDeerResultLevels = new Set();
+
+let deerJumpY = 0;
+let deerJumpVelocity = 0;
+let deerJumpAnimationId = 0;
+let deerJumpLastTimestamp = 0;
+let deerPointerTouching = false;
+
+const DEER_JUMP_GRAVITY = 430;
+const DEER_JUMP_IMPULSE = -360;
 
 let deerScore = 0;
 let deerMisses = 0;
@@ -606,7 +719,27 @@ let forestObstacleLastTimestamp = 0;
 let nextForestObstacleSpawnAt = 0;
 
 function getNextForestObstacleDelay() {
-  return 3000 + Math.random() * 1000;
+  const level =
+    getCurrentDeerLevel();
+
+  const minSeconds =
+    Math.min(
+      level.spawnDelayMin,
+      level.spawnDelayMax
+    );
+
+  const maxSeconds =
+    Math.max(
+      level.spawnDelayMin,
+      level.spawnDelayMax
+    );
+
+  const seconds =
+    minSeconds +
+    Math.random() *
+      (maxSeconds - minSeconds);
+
+  return seconds * 1000;
 }
 
 function clearForestObstacles() {
@@ -951,6 +1084,7 @@ function pauseDeerGameplay() {
 
   stopForestObstacleAnimation();
   stopDeerTimer();
+  stopDeerJumpAnimation();
 
   if (forestTreesBack) {
     forestTreesBack.classList.remove(
@@ -1012,11 +1146,15 @@ function playDeerRunAgain() {
   currentLevelIndex = 0;
   deerScore = 0;
 
+  savedDeerResultLevels.clear();
+
   startDeerLevel(0);
 }
 
 function showDeerLevelSuccess() {
   pauseDeerGameplay();
+
+  saveDeerRunLevelResult();
 
   const completedLevel =
     currentLevelIndex + 1;
@@ -1059,8 +1197,32 @@ function checkForestObstacleResult(obstacle) {
   const deerRect =
     playerDeer.getBoundingClientRect();
 
-  const obstacleRect =
+  const rawObstacleRect =
     obstacle.element.getBoundingClientRect();
+
+  const obstacleRect = {
+    left: rawObstacleRect.left,
+    right: rawObstacleRect.right,
+    top: rawObstacleRect.top,
+    bottom: rawObstacleRect.bottom,
+  };
+
+  if (obstacle.lane === 'ground') {
+    const horizontalInset =
+      rawObstacleRect.width * 0.30;
+
+    const verticalInset =
+      rawObstacleRect.height * 0.25;
+
+    obstacleRect.left +=
+      horizontalInset;
+
+    obstacleRect.right -=
+      horizontalInset;
+
+    obstacleRect.top +=
+      verticalInset;
+  }
 
   const horizontalOverlap =
     deerRect.left < obstacleRect.right &&
@@ -1229,45 +1391,120 @@ function getArenaPointerPosition(event) {
   };
 }
 
-function moveDeerVertically(y) {
+function getDeerGroundY() {
   const rect =
     deerArena.getBoundingClientRect();
 
-  /*
-   * The deer remains horizontally fixed.
-   *
-   * Top limit:
-   * keep the deer fully inside the arena.
-   *
-   * Bottom limit:
-   * keep its feet near the forest floor instead
-   * of allowing it to move below the ground.
-   */
-  const minY =
-    rect.height * 0.12;
+  return rect.height * 0.66;
+}
 
-  const maxY =
-    rect.height * 0.66;
-
-  const safeY =
-    Math.max(
-      minY,
-      Math.min(maxY, y)
-    );
-
+function applyDeerJumpPosition() {
   playerDeer.style.top =
-    `${safeY}px`;
+    `${deerJumpY}px`;
 
   playerDeer.style.bottom =
     'auto';
 }
 
 function resetDeerPosition() {
-  const rect =
-    deerArena.getBoundingClientRect();
+  deerPointerTouching = false;
 
-  moveDeerVertically(
-    rect.height * 0.66
+  deerJumpY =
+    getDeerGroundY();
+
+  deerJumpVelocity = 0;
+
+  applyDeerJumpPosition();
+}
+
+function stopDeerJumpAnimation() {
+  window.cancelAnimationFrame(
+    deerJumpAnimationId
+  );
+
+  deerJumpAnimationId = 0;
+  deerJumpLastTimestamp = 0;
+}
+
+function stepDeerJump(timestamp) {
+  if (!deerGameRunning) {
+    deerJumpAnimationId = 0;
+    deerJumpLastTimestamp = 0;
+    return;
+  }
+
+  if (!deerJumpLastTimestamp) {
+    deerJumpLastTimestamp = timestamp;
+  }
+
+  const delta =
+    Math.min(
+      0.05,
+      (
+        timestamp -
+        deerJumpLastTimestamp
+      ) / 1000
+    ) || 0;
+
+  deerJumpLastTimestamp = timestamp;
+
+  const groundY =
+    getDeerGroundY();
+
+  deerJumpVelocity +=
+    DEER_JUMP_GRAVITY * delta;
+
+  deerJumpY +=
+    deerJumpVelocity * delta;
+
+  if (deerJumpY >= groundY) {
+    deerJumpY = groundY;
+    deerJumpVelocity = 0;
+  }
+
+  applyDeerJumpPosition();
+
+  deerJumpAnimationId =
+    window.requestAnimationFrame(
+      stepDeerJump
+    );
+}
+
+function triggerDeerJump() {
+  if (!deerGameRunning) {
+    return;
+  }
+
+  const groundY =
+    getDeerGroundY();
+
+  /*
+   * Allow a new jump only when the deer is
+   * basically back on the ground.
+   */
+  if (
+    Math.abs(
+      deerJumpY - groundY
+    ) > 8
+  ) {
+    return;
+  }
+
+  deerJumpVelocity =
+    DEER_JUMP_IMPULSE;
+
+  playDeerMovementSound();
+}
+
+function isPointerTouchingDeer(event) {
+  const rect =
+    playerDeer.getBoundingClientRect();
+
+  return (
+    event.clientX >= rect.left &&
+    event.clientX <= rect.right &&
+    event.clientY >= rect.top &&
+    event.clientY <= rect.bottom
   );
 }
 
@@ -1300,16 +1537,25 @@ function handleDeerPointerDown(event) {
     }
   }
 
-  const pos =
-    getArenaPointerPosition(event);
-
-  moveDeerVertically(pos.y);
+  triggerDeerJump();
 
   event.preventDefault();
 }
 
 function handleDeerPointerMove(event) {
   if (!deerGameRunning) {
+    return;
+  }
+
+  const touchingDeer =
+    isPointerTouchingDeer(event);
+
+  if (!touchingDeer) {
+    deerPointerTouching = false;
+    return;
+  }
+
+  if (deerPointerTouching) {
     return;
   }
 
@@ -1320,14 +1566,14 @@ function handleDeerPointerMove(event) {
     return;
   }
 
-  const pos =
-    getArenaPointerPosition(event);
+  deerPointerTouching = true;
 
-  moveDeerVertically(pos.y);
-  playDeerMovementSound();
+  triggerDeerJump();
 }
 
 function handleDeerPointerUp(event) {
+  deerPointerTouching = false;
+
   if (!deerMovementGate) {
     return;
   }
@@ -1370,6 +1616,13 @@ function startDeerLevel(index) {
   deerStartButton.hidden = true;
 
   resetDeerPosition();
+
+  stopDeerJumpAnimation();
+
+  deerJumpAnimationId =
+    window.requestAnimationFrame(
+      stepDeerJump
+    );
 
   clearForestObstacles();
   createForestObstacle();
