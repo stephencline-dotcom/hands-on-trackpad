@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Firefly Forest | Hands-On Trackpad</title>
+
+    <link rel="stylesheet" href="../moving-sound-mini-game/styles.css" />
+    <link rel="stylesheet" href="../../level-result.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body
+    class="firefly-forest-page"
+    data-game-active-key="fireflyForestGameActive"
+  >
+    <main class="shell game-shell firefly-forest-shell">
+      <header class="panel game-header">
+        <div class="copy game-heading">
+          <p class="eyebrow game-category">Mini Game</p>
+          <h1 class="game-title">Firefly Forest</h1>
+        </div>
+
+        <div class="game-header-controls">
+          <a
+            class="back-button game-header-button"
+            href="../../index.html"
+            aria-label="Home"
+            title="Home"
+          >
+            <img
+              class="home-btn-icon"
+              src="../../images/home-icon.svg"
+              alt=""
+              aria-hidden="true"
+            />
+          </a>
+
+          <button
+            id="fireflySoundButton"
+            class="sound-toggle-button game-header-button"
+            type="button"
+            aria-pressed="false"
+            aria-label="Sound on"
+            title="Sound on"
+          >
+            🔊
+          </button>
+        </div>
+      </header>
+
+      <p class="description game-instructions">
+        Find a glowing firefly, move the cursor to it, and click once.
+      </p>
+
+      <section class="hud game-stats" aria-live="polite">
+        <div
+          class="hud-main-stats game-stats-row"
+          role="group"
+          aria-label="Game stats"
+        >
+          <div class="stat game-stat">
+            <span class="label">Level</span>
+            <span class="value" id="fireflyLevel">1</span>
+          </div>
+
+          <div class="stat game-stat">
+            <span class="label">Goal</span>
+            <span class="value" id="fireflyGoal">0/0</span>
+          </div>
+
+          <div class="stat game-stat">
+            <span class="label">Misses</span>
+            <span class="value" id="fireflyMisses">0</span>
+          </div>
+
+          <div class="stat game-stat">
+            <span class="label">Score</span>
+            <span class="value" id="fireflyScore">0</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="arena-wrap game-stage-wrap">
+        <div class="arena-frame game-stage">
+          <div
+            id="fireflyArena"
+            class="firefly-arena"
+            aria-label="Firefly Forest game area"
+            role="application"
+          >
+            <div class="firefly-sky" aria-hidden="true"></div>
+            <div class="firefly-tree-layer" aria-hidden="true"></div>
+
+            <div
+              id="fireflyJar"
+              class="firefly-jar"
+              aria-label="Firefly jar"
+            >
+              <span class="firefly-jar-label">Jar</span>
+              <span
+                id="fireflyJarCount"
+                class="firefly-jar-count"
+              >
+                0
+              </span>
+            </div>
+
+            <div
+              id="fireflyField"
+              class="firefly-field"
+              aria-label="Fireflies"
+            ></div>
+
+            <div
+              id="fireflyClickWarning"
+              class="firefly-click-warning"
+              role="status"
+              aria-live="polite"
+              hidden
+            >
+              CLICK ONCE — WAIT
+            </div>
+
+            <button
+              id="fireflyStartButton"
+              class="firefly-start-button"
+              type="button"
+            >
+              Start Level
+            </button>
+
+            <p
+              id="fireflyStatus"
+              class="firefly-status"
+              aria-live="polite"
+            >
+              Click Start Level when you are ready.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="imported-trackpad-guide game-guide"
+        aria-label="Trackpad Guide"
+      >
+        <p class="imported-trackpad-guide-label">
+          Trackpad Guide
+        </p>
+
+        <section
+          id="fireflyTrackpadScene"
+          class="imported-trackpad-scene"
+          aria-label="Trackpad guide animation"
+        >
+          <img
+            class="imported-trackpad-image"
+            src="../../images/trackpad.png"
+            alt="Trackpad"
+            draggable="false"
+          />
+
+          <img
+            id="fireflyTrackpadLeftHand"
+            class="imported-trackpad-hand imported-trackpad-left-hand"
+            src="../../images/left-hand-transparent.png"
+            alt="Left hand"
+            draggable="false"
+          />
+
+          <img
+            id="fireflyTrackpadRightHand"
+            class="imported-trackpad-hand imported-trackpad-right-hand"
+            src="../../images/right-hand-transparent.png"
+            alt="Right hand"
+            draggable="false"
+          />
+
+          <div
+            class="imported-trackpad-press-indicator"
+            aria-hidden="true"
+          ></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="../../game-access.js"></script>
+    <script src="../../trackpad-guide.js"></script>
+    <script src="../../click-game-core.js"></script>
+    <script src="../../level-result.js"></script>
+    <script src="../../game-results-store.js"></script>
+    <script src="../../input-device-guard.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
