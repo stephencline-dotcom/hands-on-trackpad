@@ -4751,3 +4751,54 @@ body.car-page .scene {
   object-fit: cover;
   object-position: center top;
 }
+
+/* ========================================
+   TEACHER FREEZE SCREEN CONTROL
+======================================== */
+
+.teacher-freeze-button {
+  position: fixed;
+
+  top: 14px;
+  right: 14px;
+
+  z-index: 10000;
+
+  min-width: 150px;
+
+  padding: 10px 16px;
+
+  border: 2px solid
+    rgba(255, 255, 255, 0.75);
+
+  border-radius: 999px;
+
+  color: #ffffff;
+
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 6px 18px
+    rgba(0, 0, 0, 0.24);
+
+  transition:
+    transform 120ms ease,
+    background 120ms ease;
+}
+
+.teacher-freeze-button:hover {
+  transform: translateY(-1px);
+}
+
+.teacher-freeze-button.is-off {
+  background: #b91c1c;
+}
+
+.teacher-freeze-button.is-armed {
+  background: #15803d;
+}
+

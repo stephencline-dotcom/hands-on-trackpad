@@ -19,6 +19,8 @@ const DEFAULT_SETTINGS = {
   mazeRequireClickAndDrag: false,
   carRequireClickAndDrag: false,
   jackRequireClickAndDrag: false,
+  freezeScreenFeatureEnabled: false,
+  freezeScreenArmed: false,
   fullscreenGameActive: true,
   mazeGameActive: true,
   carGameActive: true,
@@ -398,6 +400,14 @@ function loadSettings() {
         data.jackRequireClickAndDrag,
         DEFAULT_SETTINGS.jackRequireClickAndDrag
       ),
+      freezeScreenFeatureEnabled: parseTaskEnabled(
+        data.freezeScreenFeatureEnabled,
+        DEFAULT_SETTINGS.freezeScreenFeatureEnabled
+      ),
+      freezeScreenArmed: parseTaskEnabled(
+        data.freezeScreenArmed,
+        DEFAULT_SETTINGS.freezeScreenArmed
+      ),
       fullscreenGameActive: parseTaskEnabled(
         data.fullscreenGameActive,
         DEFAULT_SETTINGS.fullscreenGameActive
@@ -519,6 +529,16 @@ function saveSettings(settings) {
     jackRequireClickAndDrag: parseTaskEnabled(
       settings.jackRequireClickAndDrag ?? existing.jackRequireClickAndDrag,
       DEFAULT_SETTINGS.jackRequireClickAndDrag
+    ),
+    freezeScreenFeatureEnabled: parseTaskEnabled(
+      settings.freezeScreenFeatureEnabled ??
+        existing.freezeScreenFeatureEnabled,
+      DEFAULT_SETTINGS.freezeScreenFeatureEnabled
+    ),
+    freezeScreenArmed: parseTaskEnabled(
+      settings.freezeScreenArmed ??
+        existing.freezeScreenArmed,
+      DEFAULT_SETTINGS.freezeScreenArmed
     ),
     fullscreenGameActive: parseTaskEnabled(
       settings.fullscreenGameActive ?? existing.fullscreenGameActive,

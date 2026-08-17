@@ -8,6 +8,7 @@ const fullscreenRequireClickAndDragToggle = document.getElementById("fullscreenR
 const mazeRequireClickAndDragToggle = document.getElementById("mazeRequireClickAndDragToggle");
 const carRequireClickAndDragToggle = document.getElementById("carRequireClickAndDragToggle");
 const jackRequireClickAndDragToggle = document.getElementById("jackRequireClickAndDragToggle");
+const freezeScreenFeatureToggle = document.getElementById("freezeScreenFeatureToggle");
 const fullscreenGameActiveToggle = document.getElementById("fullscreenGameActiveToggle");
 const mazeGameActiveToggle = document.getElementById("mazeGameActiveToggle");
 const carGameActiveToggle = document.getElementById("carGameActiveToggle");
@@ -162,6 +163,7 @@ const FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY = "fullscreenRequireClickAndDrag";
 const MAZE_REQUIRE_CLICK_AND_DRAG_KEY = "mazeRequireClickAndDrag";
 const CAR_REQUIRE_CLICK_AND_DRAG_KEY = "carRequireClickAndDrag";
 const JACK_REQUIRE_CLICK_AND_DRAG_KEY = "jackRequireClickAndDrag";
+const FREEZE_SCREEN_FEATURE_KEY = "freezeScreenFeatureEnabled";
 const FULLSCREEN_GAME_ACTIVE_KEY = "fullscreenGameActive";
 const MAZE_GAME_ACTIVE_KEY = "mazeGameActive";
 const CAR_GAME_ACTIVE_KEY = "carGameActive";
@@ -1635,6 +1637,11 @@ async function resetFullscreenToDefaults() {
   if (fullscreenRequireClickAndDragToggle) {
     fullscreenRequireClickAndDragToggle.checked = fullscreenRequireClickAndDrag;
   }
+  if (freezeScreenFeatureToggle) {
+    freezeScreenFeatureToggle.checked =
+      freezeScreenFeatureEnabled;
+  }
+
   if (fullscreenGameActiveToggle) {
     fullscreenGameActiveToggle.checked = fullscreenGameActive;
   }
@@ -1657,6 +1664,10 @@ async function resetFullscreenToDefaults() {
   localStorage.setItem(TASK3_STORAGE_KEY, String(task3RequiredDragSeconds));
   localStorage.setItem(TASK3_ENABLED_KEY, String(task3Enabled));
   localStorage.setItem(FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY, String(fullscreenRequireClickAndDrag));
+  localStorage.setItem(
+    FREEZE_SCREEN_FEATURE_KEY,
+    String(freezeScreenFeatureEnabled)
+  );
   localStorage.setItem(FULLSCREEN_GAME_ACTIVE_KEY, String(fullscreenGameActive));
   localStorage.setItem(BUG_MEADOW_GAME_ACTIVE_KEY, String(bugMeadowGameActive));
   localStorage.setItem(
@@ -1951,6 +1962,10 @@ async function loadTask1Settings() {
   let mazeRequireClickAndDrag = parseTaskEnabled(localStorage.getItem(MAZE_REQUIRE_CLICK_AND_DRAG_KEY), false);
   let carRequireClickAndDrag = parseTaskEnabled(localStorage.getItem(CAR_REQUIRE_CLICK_AND_DRAG_KEY), false);
   let jackRequireClickAndDrag = parseTaskEnabled(localStorage.getItem(JACK_REQUIRE_CLICK_AND_DRAG_KEY), false);
+  let freezeScreenFeatureEnabled = parseTaskEnabled(
+    localStorage.getItem(FREEZE_SCREEN_FEATURE_KEY),
+    false
+  );
   let fullscreenGameActive = parseTaskEnabled(localStorage.getItem(FULLSCREEN_GAME_ACTIVE_KEY), true);
   let mazeGameActive = parseTaskEnabled(localStorage.getItem(MAZE_GAME_ACTIVE_KEY), true);
   let carGameActive = parseTaskEnabled(localStorage.getItem(CAR_GAME_ACTIVE_KEY), true);
@@ -2067,6 +2082,10 @@ async function loadTask1Settings() {
       mazeRequireClickAndDrag = parseTaskEnabled(data.mazeRequireClickAndDrag, mazeRequireClickAndDrag);
       carRequireClickAndDrag = parseTaskEnabled(data.carRequireClickAndDrag, carRequireClickAndDrag);
       jackRequireClickAndDrag = parseTaskEnabled(data.jackRequireClickAndDrag, jackRequireClickAndDrag);
+      freezeScreenFeatureEnabled = parseTaskEnabled(
+        data.freezeScreenFeatureEnabled,
+        freezeScreenFeatureEnabled
+      );
       fullscreenGameActive = parseTaskEnabled(data.fullscreenGameActive, fullscreenGameActive);
       mazeGameActive = parseTaskEnabled(data.mazeGameActive, mazeGameActive);
       carGameActive = parseTaskEnabled(data.carGameActive, carGameActive);
@@ -2152,6 +2171,10 @@ async function loadTask1Settings() {
       localStorage.setItem(MAZE_REQUIRE_CLICK_AND_DRAG_KEY, String(mazeRequireClickAndDrag));
       localStorage.setItem(CAR_REQUIRE_CLICK_AND_DRAG_KEY, String(carRequireClickAndDrag));
       localStorage.setItem(JACK_REQUIRE_CLICK_AND_DRAG_KEY, String(jackRequireClickAndDrag));
+      localStorage.setItem(
+        FREEZE_SCREEN_FEATURE_KEY,
+        String(freezeScreenFeatureEnabled)
+      );
       localStorage.setItem(FULLSCREEN_GAME_ACTIVE_KEY, String(fullscreenGameActive));
       localStorage.setItem(MAZE_GAME_ACTIVE_KEY, String(mazeGameActive));
       localStorage.setItem(CAR_GAME_ACTIVE_KEY, String(carGameActive));
@@ -2366,6 +2389,10 @@ async function saveTask1Settings() {
   const mazeRequireClickAndDrag = Boolean(mazeRequireClickAndDragToggle && mazeRequireClickAndDragToggle.checked);
   const carRequireClickAndDrag = Boolean(carRequireClickAndDragToggle && carRequireClickAndDragToggle.checked);
   const jackRequireClickAndDrag = Boolean(jackRequireClickAndDragToggle && jackRequireClickAndDragToggle.checked);
+  const freezeScreenFeatureEnabled = Boolean(
+    freezeScreenFeatureToggle &&
+    freezeScreenFeatureToggle.checked
+  );
   const fullscreenGameActive = Boolean(fullscreenGameActiveToggle && fullscreenGameActiveToggle.checked);
   const mazeGameActive = Boolean(mazeGameActiveToggle && mazeGameActiveToggle.checked);
   const carGameActive = Boolean(carGameActiveToggle && carGameActiveToggle.checked);
@@ -2725,6 +2752,7 @@ async function saveTask1Settings() {
         mazeRequireClickAndDrag,
         carRequireClickAndDrag,
         jackRequireClickAndDrag,
+        freezeScreenFeatureEnabled,
         fullscreenGameActive,
         mazeGameActive,
         carGameActive,

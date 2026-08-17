@@ -75,6 +75,16 @@ function closeAdminLogin() {
 
 function submitAdminLogin() {
   if (adminPasswordInput.value === ADMIN_PASSWORD) {
+    /*
+     * Mark this browser session as the teacher.
+     * Shared teacher-only controls can use this
+     * without exposing them to student browsers.
+     */
+    sessionStorage.setItem(
+      "handsOnTrackpadTeacherSession",
+      "true"
+    );
+
     window.location.href = "admin-settings.html";
     return;
   }
