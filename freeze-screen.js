@@ -12,6 +12,13 @@
   const FREEZE_ARMED_KEY =
     "freezeScreenArmed";
 
+  const STUDENT_FREEZE_GRACE_MS = 650;
+
+  let studentFreezeArmed = false;
+  let studentLocked = false;
+  let studentFreezeArmedAt = 0;
+  let studentPollingStarted = false;
+
   function parseEnabled(
     value,
     fallback = false
@@ -92,10 +99,19 @@
         String(armed)
       );
 
-      button.textContent =
+      button.textContent = "";
+
+      button.setAttribute(
+        "aria-label",
         armed
-          ? "🟢 Freeze Armed"
-          : "🔴 Freeze Off";
+          ? "Freeze screens armed"
+          : "Freeze screens off"
+      );
+
+      button.title =
+        armed
+          ? "Freeze screens armed"
+          : "Freeze screens off";
     }
 
     button.addEventListener(
@@ -155,15 +171,221 @@
     renderButton();
   }
 
-  async function initializeFreezeScreen() {
-    /*
-     * Students never receive the teacher
-     * control, even though they load this
-     * same shared file.
-     */
-    if (!isTeacherSession()) {
+  function createStudentFreezeOverlay() {
+    let overlay =
+      document.getElementById(
+        "studentFreezeOverlay"
+      );
+
+    if (overlay) {
+      return overlay;
+    }
+
+    overlay =
+      document.createElement("div");
+
+    overlay.id =
+      "studentFreezeOverlay";
+
+    overlay.className =
+      "student-freeze-overlay";
+
+    overlay.hidden = true;
+
+    overlay.innerHTML = `
+      <div class="student-freeze-message">
+        <div class="student-freeze-eyes">
+          👀
+        </div>
+
+        <h2>EYES UP FRONT</h2>
+
+        <p>
+          Hands off your trackpad.
+        </p>
+      </div>
+    `;
+
+    document.body.appendChild(
+      overlay
+    );
+
+    return overlay;
+  }
+
+  function lockStudentScreen() {
+    if (studentLocked) {
       return;
     }
+
+    studentLocked = true;
+
+    const overlay =
+      createStudentFreezeOverlay();
+
+    overlay.hidden = false;
+
+    document.body.classList.add(
+      "student-screen-frozen"
+    );
+  }
+
+  function unlockStudentScreen() {
+    studentLocked = false;
+
+    const overlay =
+      document.getElementById(
+        "studentFreezeOverlay"
+      );
+
+    if (overlay) {
+      overlay.hidden = true;
+    }
+
+    document.body.classList.remove(
+      "student-screen-frozen"
+    );
+  }
+
+  function applyStudentFreezeState(
+    armed
+  ) {
+    const nextArmed =
+      Boolean(armed);
+
+    if (
+      nextArmed &&
+      !studentFreezeArmed
+    ) {
+      studentFreezeArmedAt =
+        performance.now();
+    }
+
+    studentFreezeArmed =
+      nextArmed;
+
+    if (!studentFreezeArmed) {
+      unlockStudentScreen();
+    }
+  }
+
+  function handleStudentTrackpadActivity(
+    event
+  ) {
+    if (
+      !studentFreezeArmed ||
+      studentLocked
+    ) {
+      return;
+    }
+
+    /*
+     * Ignore direct touchscreen pointer
+     * events. Trackpad/mouse input reports
+     * as pointerType "mouse".
+     */
+    if (
+      event.pointerType &&
+      event.pointerType === "touch"
+    ) {
+      return;
+    }
+
+    if (
+      performance.now() -
+        studentFreezeArmedAt <
+      STUDENT_FREEZE_GRACE_MS
+    ) {
+      return;
+    }
+
+    lockStudentScreen();
+  }
+
+  async function pollStudentFreezeState() {
+    try {
+      const response =
+        await fetch(
+          SETTINGS_API_PATH,
+          {
+            cache: "no-store",
+          }
+        );
+
+      if (!response.ok) {
+        return;
+      }
+
+      const settings =
+        await response.json();
+
+      const featureEnabled =
+        parseEnabled(
+          settings[
+            FREEZE_FEATURE_KEY
+          ],
+          false
+        );
+
+      if (!featureEnabled) {
+        applyStudentFreezeState(
+          false
+        );
+
+        return;
+      }
+
+      applyStudentFreezeState(
+        parseEnabled(
+          settings.freezeScreenArmed,
+          false
+        )
+      );
+    } catch {
+      /*
+       * Keep the student's current state
+       * if the server is temporarily
+       * unavailable.
+       */
+    }
+  }
+
+  function startStudentFreezeSystem(
+    initialArmed
+  ) {
+    if (studentPollingStarted) {
+      return;
+    }
+
+    studentPollingStarted = true;
+
+    createStudentFreezeOverlay();
+
+    applyStudentFreezeState(
+      initialArmed
+    );
+
+    document.addEventListener(
+      "pointermove",
+      handleStudentTrackpadActivity,
+      true
+    );
+
+    document.addEventListener(
+      "pointerdown",
+      handleStudentTrackpadActivity,
+      true
+    );
+
+    window.setInterval(
+      pollStudentFreezeState,
+      100
+    );
+  }
+
+  async function initializeFreezeScreen() {
+    const teacherSession =
+      isTeacherSession();
 
     let featureEnabled =
       parseEnabled(
@@ -172,6 +394,8 @@
         ),
         false
       );
+
+    let sharedArmed = false;
 
     try {
       const response =
@@ -194,7 +418,7 @@
             featureEnabled
           );
 
-        const sharedArmed =
+        sharedArmed =
           parseEnabled(
             settings.freezeScreenArmed,
             false
@@ -219,10 +443,21 @@
     }
 
     if (!featureEnabled) {
+      if (!teacherSession) {
+        unlockStudentScreen();
+      }
+
       return;
     }
 
-    createTeacherFreezeButton();
+    if (teacherSession) {
+      createTeacherFreezeButton();
+      return;
+    }
+
+    startStudentFreezeSystem(
+      sharedArmed
+    );
   }
 
   if (

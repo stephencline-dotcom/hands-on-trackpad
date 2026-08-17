@@ -1,0 +1,139 @@
+/* ========================================
+   SHARED FREEZE SCREEN SYSTEM
+======================================== */
+
+/* Teacher-only compact control */
+.teacher-freeze-button {
+  position: fixed;
+
+  top: 14px;
+  right: 14px;
+
+  z-index: 10000;
+
+  min-width: 0;
+  width: 42px;
+  height: 42px;
+
+  padding: 0;
+
+  border: 2px solid
+    rgba(255, 255, 255, 0.7);
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 6px 16px
+    rgba(0, 0, 0, 0.22);
+
+  transition:
+    transform 120ms ease,
+    background 120ms ease;
+}
+
+.teacher-freeze-button:hover {
+  transform: translateY(-1px);
+}
+
+.teacher-freeze-button::after {
+  content: "";
+
+  width: 14px;
+  height: 14px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255, 255, 255, 0.92);
+}
+
+.teacher-freeze-button.is-off {
+  background: #b91c1c;
+}
+
+.teacher-freeze-button.is-armed {
+  background: #15803d;
+}
+
+
+/* Student Eyes Up Front overlay */
+.student-freeze-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 99999;
+
+  display: grid;
+  place-items: center;
+
+  background:
+    rgba(7, 18, 32, 0.96);
+
+  cursor: default;
+}
+
+.student-freeze-overlay[hidden] {
+  display: none !important;
+}
+
+.student-freeze-message {
+  width: min(520px, 88vw);
+
+  padding: 34px 28px;
+
+  text-align: center;
+
+  border-radius: 28px;
+
+  background:
+    rgba(18, 39, 65, 0.98);
+
+  border:
+    2px solid
+    rgba(255, 255, 255, 0.18);
+
+  box-shadow:
+    0 24px 70px
+    rgba(0, 0, 0, 0.42);
+}
+
+.student-freeze-eyes {
+  font-size: 5rem;
+  line-height: 1;
+
+  margin-bottom: 14px;
+}
+
+.student-freeze-message h2 {
+  margin: 0 0 10px;
+
+  color: #ffffff;
+
+  font-size:
+    clamp(2rem, 5vw, 3.4rem);
+
+  letter-spacing: 0.04em;
+
+  text-shadow:
+    0 2px 4px
+    rgba(0, 0, 0, 0.55);
+}
+
+.student-freeze-message p {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size: 1.35rem;
+  font-weight: 800;
+
+  text-shadow:
+    0 2px 4px
+    rgba(0, 0, 0, 0.45);
+}

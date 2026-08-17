@@ -10,7 +10,8 @@
     <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
     <script defer src="../../firebase-config.js"></script>
     <script defer src="../../game-results-store.js"></script>
-  </head>
+      <link rel="stylesheet" href="../../freeze-screen.css" />
+</head>
   <body>
     <section id="nameScreen" class="name-screen" hidden>
       <div class="name-card">
@@ -1050,6 +1051,7 @@
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
 </script>
-    <script src="../../input-device-guard.js"></script>
+    <script src="../../freeze-screen.js"></script>
+<script src="../../input-device-guard.js"></script>
 </body>
 </html>
