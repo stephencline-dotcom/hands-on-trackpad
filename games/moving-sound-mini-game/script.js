@@ -5453,50 +5453,67 @@ void (async () => {
   if (!loadedFromServer) {
     loadAdminSettingsFromStorage();
   }
+
+  /*
+   * Do not initialize gameplay until the
+   * authoritative settings have loaded.
+   * This prevents old cached values from
+   * flashing before Supabase responds.
+   */
+  resizeArena();
+  resizeStreetArena();
+  resizeDragonArena();
+  resizeFireArena();
+  resizeMartianArena();
+
+  updateLevel(0);
+  updateLives(arenaState.levels[0].lives);
+  updateTime(arenaState.levels[0].time);
+  updateGoal(0, arenaState.levels[0].goal);
+  setStatus('Press play to start');
+
+  updateCarScore(0);
+  applyCarLevelFromConfig(0);
+  setCarStartButtonVisible(true);
+  setCarStatus('Ready');
+
+  dragonGameState.currentLevelIndex = 0;
+  dragonGameState.levelHits = 0;
+  applyDragonLevelFromConfig(0);
+  ensurePrincessTarget();
+  makeKnightImageTransparent();
+  updateDragonScore(0);
+  updateDragonGoal(
+    0,
+    dragonGameState.levelGoal
+  );
+  setDragonStartButtonVisible(true);
+  setDragonStatus('Ready');
+  applyDragonKnightVisibility();
+
+  ensureFireWindows();
+  updateFireScore(0);
+  fireGameState.currentLevelIndex = 0;
+  fireGameState.levelHits = 0;
+  applyFireLevelFromConfig(0);
+  setFireStartButtonVisible(true);
+  setFireStatus('Ready');
+
+  ensureMartianEntities();
+  updateMartianScore(0);
+  martianGameState.currentLevelIndex = 0;
+  martianGameState.levelHits = 0;
+  applyMartianLevelFromConfig(0);
+  setMartianStartButtonVisible(true);
+  setMartianStatus('Ready');
+  resetAllMartianEntities();
+
+  for (
+    const dragon of
+      dragonGameState.dragons
+  ) {
+    resetDragon(dragon);
+  }
+
+  initializeStudentNameFlow();
 })();
-
-resizeArena();
-resizeStreetArena();
-resizeDragonArena();
-resizeFireArena();
-resizeMartianArena();
-updateLevel(0);
-updateLives(arenaState.levels[0].lives);
-updateTime(arenaState.levels[0].time);
-updateGoal(0, arenaState.levels[0].goal);
-setStatus('Press play to start');
-updateCarScore(0);
-applyCarLevelFromConfig(0);
-setCarStartButtonVisible(true);
-setCarStatus('Ready');
-dragonGameState.currentLevelIndex = 0;
-dragonGameState.levelHits = 0;
-applyDragonLevelFromConfig(0);
-ensurePrincessTarget();
-makeKnightImageTransparent();
-updateDragonScore(0);
-updateDragonGoal(0, dragonGameState.levelGoal);
-setDragonStartButtonVisible(true);
-setDragonStatus('Ready');
-applyDragonKnightVisibility();
-ensureFireWindows();
-updateFireScore(0);
-fireGameState.currentLevelIndex = 0;
-fireGameState.levelHits = 0;
-applyFireLevelFromConfig(0);
-setFireStartButtonVisible(true);
-setFireStatus('Ready');
-ensureMartianEntities();
-updateMartianScore(0);
-martianGameState.currentLevelIndex = 0;
-martianGameState.levelHits = 0;
-applyMartianLevelFromConfig(0);
-setMartianStartButtonVisible(true);
-setMartianStatus('Ready');
-resetAllMartianEntities();
-
-for (const dragon of dragonGameState.dragons) {
-  resetDragon(dragon);
-}
-
-initializeStudentNameFlow();
