@@ -743,6 +743,28 @@ function loadGameLevelsFromStorage(storageField, defaultLevels, normalizeLevels)
   }
 }
 
+function getMovingSoundSettingsSnapshot() {
+  try {
+    const raw =
+      localStorage.getItem(
+        MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY
+      );
+
+    const parsed =
+      raw
+        ? JSON.parse(raw)
+        : {};
+
+    return ensureMovingSoundSettingsShape(
+      parsed
+    );
+  } catch {
+    return ensureMovingSoundSettingsShape(
+      {}
+    );
+  }
+}
+
 function ensureMovingSoundSettingsShape(existingSettings) {
   const next = existingSettings && typeof existingSettings === "object" ? existingSettings : {};
 
@@ -2069,6 +2091,30 @@ async function loadTask1Settings() {
     const response = await fetch(SETTINGS_API_PATH, { cache: "no-store" });
     if (response.ok) {
       const data = await response.json();
+
+      /*
+       * Supabase is authoritative for the
+       * merged-game configuration.
+       * Keep localStorage only as a
+       * compatibility cache for the
+       * imported game code.
+       */
+      if (
+        data.movingSoundSettings &&
+        typeof data.movingSoundSettings ===
+          "object" &&
+        Object.keys(
+          data.movingSoundSettings
+        ).length > 0
+      ) {
+        localStorage.setItem(
+          MOVING_SOUND_ADMIN_SETTINGS_STORAGE_KEY,
+          JSON.stringify(
+            data.movingSoundSettings
+          )
+        );
+      }
+
       task1Seconds = parseTask1Seconds(data.task1RequiredSeconds);
       task1Enabled = parseTaskEnabled(data.task1Enabled, true);
       task2Clicks = parseTask2Clicks(data.task2RequiredClicks);
@@ -2765,6 +2811,8 @@ async function saveTask1Settings() {
         bugMeadowGameActive,
         bugMeadowRequireClickAndDrag,
         bugMeadowLevels,
+        movingSoundSettings:
+          getMovingSoundSettingsSnapshot(),
         soundEnabled,
         trainingPaused,
         jackFlameRain4: jackFlameRainSettingsToSave[0],

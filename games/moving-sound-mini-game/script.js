@@ -2116,6 +2116,58 @@ function persistAdminSettingsToStorage() {
   }
 }
 
+async function loadAdminSettingsFromServer() {
+  try {
+    const response =
+      await fetch(
+        "/api/settings",
+        {
+          cache: "no-store",
+        }
+      );
+
+    if (!response.ok) {
+      return false;
+    }
+
+    const settings =
+      await response.json();
+
+    const snapshot =
+      settings &&
+      settings.movingSoundSettings;
+
+    if (
+      !snapshot ||
+      typeof snapshot !== "object"
+    ) {
+      return false;
+    }
+
+    if (
+      !applyAdminSettingsSnapshot(
+        snapshot
+      )
+    ) {
+      return false;
+    }
+
+    /*
+     * Keep the old storage key only as
+     * a local compatibility cache.
+     * Supabase is now authoritative.
+     */
+    localStorage.setItem(
+      ADMIN_SETTINGS_STORAGE_KEY,
+      JSON.stringify(snapshot)
+    );
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function loadAdminSettingsFromStorage() {
   try {
     const stored = localStorage.getItem(ADMIN_SETTINGS_STORAGE_KEY);
@@ -5393,7 +5445,16 @@ initImportedTrackpadGuides();
 loadSoundPreference();
 syncAdminInputsFromState();
 applyHomeMenuVisibility();
-loadAdminSettingsFromStorage();
+
+void (async () => {
+  const loadedFromServer =
+    await loadAdminSettingsFromServer();
+
+  if (!loadedFromServer) {
+    loadAdminSettingsFromStorage();
+  }
+})();
+
 resizeArena();
 resizeStreetArena();
 resizeDragonArena();

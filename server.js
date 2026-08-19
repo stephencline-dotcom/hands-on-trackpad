@@ -519,6 +519,11 @@ function loadSettings() {
         parseCarGameFuelDrainPerSecond,
         DEFAULT_SETTINGS.carGameLevelFuelDrainPerSecond
       ),
+      movingSoundSettings:
+        data.movingSoundSettings &&
+        typeof data.movingSoundSettings === "object"
+          ? data.movingSoundSettings
+          : {},
     };
   } catch {
     return { ...DEFAULT_SETTINGS };
@@ -668,6 +673,16 @@ function saveSettings(settings) {
       parseCarGameFuelDrainPerSecond,
       DEFAULT_SETTINGS.carGameLevelFuelDrainPerSecond
     ),
+    movingSoundSettings:
+      settings.movingSoundSettings &&
+      typeof settings.movingSoundSettings === "object"
+        ? settings.movingSoundSettings
+        : (
+            existing.movingSoundSettings &&
+            typeof existing.movingSoundSettings === "object"
+              ? existing.movingSoundSettings
+              : {}
+          ),
   };
   fs.writeFileSync(SETTINGS_FILE, JSON.stringify(normalized, null, 2));
   return normalized;
