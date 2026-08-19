@@ -29,6 +29,15 @@ const supabase =
       )
     : null;
 
+/*
+ * Temporary live classroom state.
+ * This intentionally resets whenever
+ * the server restarts.
+ */
+let liveClassroomState = {
+  freezeScreenArmed: false,
+};
+
 const DEFAULT_SETTINGS = {
   task1RequiredSeconds: 8,
   task1Enabled: true,
@@ -796,6 +805,14 @@ const server = http.createServer(async (req, res) => {
         const normalized =
           saveSettings(remoteSettings);
 
+        /*
+         * Never restore yesterday's
+         * armed Freeze Screen state.
+         */
+        normalized.freezeScreenArmed =
+          liveClassroomState
+            .freezeScreenArmed;
+
         sendJson(
           res,
           200,
@@ -839,9 +856,33 @@ const server = http.createServer(async (req, res) => {
         const normalized =
           saveSettings(parsed);
 
+        if (
+          typeof parsed.freezeScreenArmed ===
+          "boolean"
+        ) {
+          liveClassroomState
+            .freezeScreenArmed =
+              parsed.freezeScreenArmed;
+        }
+
+        /*
+         * Keep live classroom state out
+         * of permanent Supabase storage.
+         */
+        const persistentSettings = {
+          ...normalized,
+        };
+
+        delete persistentSettings
+          .freezeScreenArmed;
+
         await saveSettingsToSupabase(
-          normalized
+          persistentSettings
         );
+
+        normalized.freezeScreenArmed =
+          liveClassroomState
+            .freezeScreenArmed;
 
         sendJson(
           res,
