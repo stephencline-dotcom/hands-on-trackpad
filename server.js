@@ -1,12 +1,33 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+const { createClient } = require("@supabase/supabase-js");
 
 const PORT = Number.parseInt(process.env.PORT || "8000", 10);
 const HOST = process.env.HOST || "0.0.0.0";
 const ROOT_DIR = __dirname;
 const DATA_DIR = path.join(ROOT_DIR, "data");
 const SETTINGS_FILE = path.join(DATA_DIR, "settings.json");
+
+const SUPABASE_URL =
+  process.env.SUPABASE_URL || "";
+
+const SUPABASE_SECRET_KEY =
+  process.env.SUPABASE_SECRET_KEY || "";
+
+const supabase =
+  SUPABASE_URL && SUPABASE_SECRET_KEY
+    ? createClient(
+        SUPABASE_URL,
+        SUPABASE_SECRET_KEY,
+        {
+          auth: {
+            persistSession: false,
+            autoRefreshToken: false,
+          },
+        }
+      )
+    : null;
 
 const DEFAULT_SETTINGS = {
   task1RequiredSeconds: 8,
@@ -643,6 +664,72 @@ function saveSettings(settings) {
   return normalized;
 }
 
+async function loadSettingsFromSupabase() {
+  if (!supabase) {
+    throw new Error(
+      "Supabase is not configured"
+    );
+  }
+
+  const {
+    data,
+    error,
+  } = await supabase
+    .from("app_settings")
+    .select("settings")
+    .eq(
+      "id",
+      "hands-on-trackpad"
+    )
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  if (
+    !data ||
+    !data.settings ||
+    typeof data.settings !== "object"
+  ) {
+    return {};
+  }
+
+  return data.settings;
+}
+
+async function saveSettingsToSupabase(
+  settings
+) {
+  if (!supabase) {
+    throw new Error(
+      "Supabase is not configured"
+    );
+  }
+
+  const {
+    error,
+  } = await supabase
+    .from("app_settings")
+    .upsert(
+      {
+        id: "hands-on-trackpad",
+        settings,
+        updated_at:
+          new Date().toISOString(),
+      },
+      {
+        onConflict: "id",
+      }
+    );
+
+  if (error) {
+    throw error;
+  }
+
+  return settings;
+}
+
 function sendJson(res, statusCode, payload) {
   res.writeHead(statusCode, {
     "Content-Type": "application/json; charset=utf-8",
@@ -698,19 +785,85 @@ const server = http.createServer(async (req, res) => {
 
   if (requestUrl.pathname === "/api/settings") {
     if (req.method === "GET") {
-      sendJson(res, 200, loadSettings());
+      try {
+        const remoteSettings =
+          await loadSettingsFromSupabase();
+
+        /*
+         * Reuse the existing settings
+         * normalization logic.
+         */
+        const normalized =
+          saveSettings(remoteSettings);
+
+        sendJson(
+          res,
+          200,
+          normalized
+        );
+      } catch (error) {
+        console.error(
+          "Supabase settings load failed:",
+          error
+        );
+
+        /*
+         * Safe fallback while we are
+         * transitioning to persistent
+         * storage.
+         */
+        sendJson(
+          res,
+          200,
+          loadSettings()
+        );
+      }
+
       return;
     }
 
     if (req.method === "PUT") {
       try {
-        const body = await readRequestBody(req);
-        const parsed = body ? JSON.parse(body) : {};
-        const saved = saveSettings(parsed);
-        sendJson(res, 200, saved);
-      } catch {
-        sendJson(res, 400, { error: "Invalid settings payload" });
+        const body =
+          await readRequestBody(req);
+
+        const parsed =
+          body
+            ? JSON.parse(body)
+            : {};
+
+        /*
+         * Normalize through the existing
+         * trusted settings logic first.
+         */
+        const normalized =
+          saveSettings(parsed);
+
+        await saveSettingsToSupabase(
+          normalized
+        );
+
+        sendJson(
+          res,
+          200,
+          normalized
+        );
+      } catch (error) {
+        console.error(
+          "Supabase settings save failed:",
+          error
+        );
+
+        sendJson(
+          res,
+          500,
+          {
+            error:
+              "Could not save settings",
+          }
+        );
       }
+
       return;
     }
 
