@@ -45,6 +45,8 @@ const DEFAULT_SETTINGS = {
   task2Enabled: true,
   task3RequiredDragSeconds: 6,
   task3Enabled: true,
+  task4RequiredScrollSeconds: 6,
+  task4Enabled: true,
   fullscreenRequireClickAndDrag: false,
   mazeRequireClickAndDrag: false,
   carRequireClickAndDrag: false,
@@ -414,6 +416,13 @@ function loadSettings() {
       task2Enabled: parseTaskEnabled(data.task2Enabled, true),
       task3RequiredDragSeconds: parseTask3Seconds(data.task3RequiredDragSeconds),
       task3Enabled: parseTaskEnabled(data.task3Enabled, true),
+      task4RequiredScrollSeconds: parseTask3Seconds(
+        data.task4RequiredScrollSeconds
+      ),
+      task4Enabled: parseTaskEnabled(
+        data.task4Enabled,
+        true
+      ),
       fullscreenRequireClickAndDrag: parseTaskEnabled(
         data.fullscreenRequireClickAndDrag,
         DEFAULT_SETTINGS.fullscreenRequireClickAndDrag
@@ -549,6 +558,15 @@ function saveSettings(settings) {
     task2Enabled: parseTaskEnabled(settings.task2Enabled ?? existing.task2Enabled, true),
     task3RequiredDragSeconds: parseTask3Seconds(settings.task3RequiredDragSeconds ?? existing.task3RequiredDragSeconds),
     task3Enabled: parseTaskEnabled(settings.task3Enabled ?? existing.task3Enabled, true),
+    task4RequiredScrollSeconds: parseTask3Seconds(
+      settings.task4RequiredScrollSeconds ??
+        existing.task4RequiredScrollSeconds
+    ),
+    task4Enabled: parseTaskEnabled(
+      settings.task4Enabled ??
+        existing.task4Enabled,
+      true
+    ),
     fullscreenRequireClickAndDrag: parseTaskEnabled(
       settings.fullscreenRequireClickAndDrag ?? existing.fullscreenRequireClickAndDrag,
       DEFAULT_SETTINGS.fullscreenRequireClickAndDrag

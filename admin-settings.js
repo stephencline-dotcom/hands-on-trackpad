@@ -4,6 +4,8 @@ const task2ClicksInput = document.getElementById("task2Clicks");
 const task2EnabledToggle = document.getElementById("task2EnabledToggle");
 const task3DragSecondsInput = document.getElementById("task3DragSeconds");
 const task3EnabledToggle = document.getElementById("task3EnabledToggle");
+const task4ScrollSecondsInput = document.getElementById("task4ScrollSeconds");
+const task4EnabledToggle = document.getElementById("task4EnabledToggle");
 const fullscreenRequireClickAndDragToggle = document.getElementById("fullscreenRequireClickAndDragToggle");
 const mazeRequireClickAndDragToggle = document.getElementById("mazeRequireClickAndDragToggle");
 const carRequireClickAndDragToggle = document.getElementById("carRequireClickAndDragToggle");
@@ -156,9 +158,11 @@ const task1SavedMessage = document.getElementById("task1SavedMessage");
 const TASK1_STORAGE_KEY = "trackpadTask1RequiredSeconds";
 const TASK2_STORAGE_KEY = "trackpadTask2RequiredClicks";
 const TASK3_STORAGE_KEY = "trackpadTask3RequiredDragSeconds";
+const TASK4_STORAGE_KEY = "trackpadTask4RequiredScrollSeconds";
 const TASK1_ENABLED_KEY = "trackpadTask1Enabled";
 const TASK2_ENABLED_KEY = "trackpadTask2Enabled";
 const TASK3_ENABLED_KEY = "trackpadTask3Enabled";
+const TASK4_ENABLED_KEY = "trackpadTask4Enabled";
 const FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY = "fullscreenRequireClickAndDrag";
 const MAZE_REQUIRE_CLICK_AND_DRAG_KEY = "mazeRequireClickAndDrag";
 const CAR_REQUIRE_CLICK_AND_DRAG_KEY = "carRequireClickAndDrag";
@@ -263,6 +267,7 @@ const CAR_LEVEL_FUEL_DRAIN_KEYS = [
 const DEFAULT_TASK1_SECONDS = 8;
 const DEFAULT_TASK2_CLICKS = 10;
 const DEFAULT_TASK3_DRAG_SECONDS = 6;
+const DEFAULT_TASK4_SCROLL_SECONDS = 6;
 const DEFAULT_MAZE_GHOST_LEVEL_COUNTS = [1, 2, 3, 4, 5, 6];
 const DEFAULT_GHOST_LEVEL_COUNT = DEFAULT_MAZE_GHOST_LEVEL_COUNTS[0];
 const DEFAULT_CAR_LEVEL_SPEEDS = [0.16, 0.22, 0.28, 0.34, 0.4, 0.48];
@@ -1980,6 +1985,8 @@ async function loadTask1Settings() {
   let task2Enabled = parseTaskEnabled(localStorage.getItem(TASK2_ENABLED_KEY), true);
   let task3Seconds = parseTask3Seconds(localStorage.getItem(TASK3_STORAGE_KEY));
   let task3Enabled = parseTaskEnabled(localStorage.getItem(TASK3_ENABLED_KEY), true);
+  let task4Seconds = parseTask3Seconds(localStorage.getItem(TASK4_STORAGE_KEY));
+  let task4Enabled = parseTaskEnabled(localStorage.getItem(TASK4_ENABLED_KEY), true);
   let fullscreenRequireClickAndDrag = parseTaskEnabled(localStorage.getItem(FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY), false);
   let mazeRequireClickAndDrag = parseTaskEnabled(localStorage.getItem(MAZE_REQUIRE_CLICK_AND_DRAG_KEY), false);
   let carRequireClickAndDrag = parseTaskEnabled(localStorage.getItem(CAR_REQUIRE_CLICK_AND_DRAG_KEY), false);
@@ -2121,6 +2128,8 @@ async function loadTask1Settings() {
       task2Enabled = parseTaskEnabled(data.task2Enabled, true);
       task3Seconds = parseTask3Seconds(data.task3RequiredDragSeconds);
       task3Enabled = parseTaskEnabled(data.task3Enabled, true);
+      task4Seconds = parseTask3Seconds(data.task4RequiredScrollSeconds);
+      task4Enabled = parseTaskEnabled(data.task4Enabled, true);
       fullscreenRequireClickAndDrag = parseTaskEnabled(
         data.fullscreenRequireClickAndDrag,
         fullscreenRequireClickAndDrag
@@ -2285,6 +2294,8 @@ async function loadTask1Settings() {
   task2EnabledToggle.checked = task2Enabled;
   task3DragSecondsInput.value = String(task3Seconds);
   task3EnabledToggle.checked = task3Enabled;
+  task4ScrollSecondsInput.value = String(task4Seconds);
+  task4EnabledToggle.checked = task4Enabled;
   if (fullscreenRequireClickAndDragToggle) fullscreenRequireClickAndDragToggle.checked = fullscreenRequireClickAndDrag;
   if (mazeRequireClickAndDragToggle) mazeRequireClickAndDragToggle.checked = mazeRequireClickAndDrag;
   if (carRequireClickAndDragToggle) carRequireClickAndDragToggle.checked = carRequireClickAndDrag;
@@ -2431,6 +2442,8 @@ async function saveTask1Settings() {
   const task2Enabled = Boolean(task2EnabledToggle.checked);
   const safeTask3Seconds = parseTask3Seconds(task3DragSecondsInput.value);
   const task3Enabled = Boolean(task3EnabledToggle.checked);
+  const safeTask4Seconds = parseTask3Seconds(task4ScrollSecondsInput.value);
+  const task4Enabled = Boolean(task4EnabledToggle.checked);
   const fullscreenRequireClickAndDrag = Boolean(fullscreenRequireClickAndDragToggle && fullscreenRequireClickAndDragToggle.checked);
   const mazeRequireClickAndDrag = Boolean(mazeRequireClickAndDragToggle && mazeRequireClickAndDragToggle.checked);
   const carRequireClickAndDrag = Boolean(carRequireClickAndDragToggle && carRequireClickAndDragToggle.checked);
@@ -2615,6 +2628,7 @@ async function saveTask1Settings() {
   task1DurationInput.value = String(safeTask1Seconds);
   task2ClicksInput.value = String(safeTask2Clicks);
   task3DragSecondsInput.value = String(safeTask3Seconds);
+  task4ScrollSecondsInput.value = String(safeTask4Seconds);
   mazeGhostLevelCountInputs.forEach((inputEl, index) => {
     if (inputEl) {
       inputEl.value = String(mazeGhostLevelsPerLevelCounts[index]);
@@ -2626,6 +2640,8 @@ async function saveTask1Settings() {
   localStorage.setItem(TASK2_ENABLED_KEY, String(task2Enabled));
   localStorage.setItem(TASK3_STORAGE_KEY, String(safeTask3Seconds));
   localStorage.setItem(TASK3_ENABLED_KEY, String(task3Enabled));
+  localStorage.setItem(TASK4_STORAGE_KEY, String(safeTask4Seconds));
+  localStorage.setItem(TASK4_ENABLED_KEY, String(task4Enabled));
   localStorage.setItem(FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY, String(fullscreenRequireClickAndDrag));
   localStorage.setItem(MAZE_REQUIRE_CLICK_AND_DRAG_KEY, String(mazeRequireClickAndDrag));
   localStorage.setItem(CAR_REQUIRE_CLICK_AND_DRAG_KEY, String(carRequireClickAndDrag));
@@ -2794,6 +2810,9 @@ async function saveTask1Settings() {
         task2Enabled,
         task3RequiredDragSeconds: safeTask3Seconds,
         task3Enabled,
+        task4RequiredScrollSeconds:
+          safeTask4Seconds,
+        task4Enabled,
         fullscreenRequireClickAndDrag,
         mazeRequireClickAndDrag,
         carRequireClickAndDrag,

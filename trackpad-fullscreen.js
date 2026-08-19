@@ -33,13 +33,16 @@ const movementGate = window.trackpadMovementSettings.createClickAndDragGate(FULL
 const TASK1_STORAGE_KEY = "trackpadTask1RequiredSeconds";
 const TASK2_STORAGE_KEY = "trackpadTask2RequiredClicks";
 const TASK3_STORAGE_KEY = "trackpadTask3RequiredDragSeconds";
+const TASK4_STORAGE_KEY = "trackpadTask4RequiredScrollSeconds";
 const TASK1_ENABLED_KEY = "trackpadTask1Enabled";
 const TASK2_ENABLED_KEY = "trackpadTask2Enabled";
 const TASK3_ENABLED_KEY = "trackpadTask3Enabled";
+const TASK4_ENABLED_KEY = "trackpadTask4Enabled";
 const TRAINING_PAUSED_KEY = "trackpadTrainingPaused";
 const TASK1_DEFAULT_SECONDS = 8;
 const TASK2_DEFAULT_CLICKS = 10;
 const TASK3_DEFAULT_SECONDS = 6;
+const TASK4_DEFAULT_SECONDS = 6;
 const SETTINGS_API_PATH = "/api/settings";
 const TAP_MAX_DURATION_MS = 320;
 const TAP_MAX_MOVE_PX = 8;
@@ -421,6 +424,13 @@ let task3LastPointerY = 0;
 let task3StillTimeoutId = null;
 let task3SuccessShown = false;
 let task3Enabled = true;
+let task4RequiredMs =
+  TASK4_DEFAULT_SECONDS * 1000;
+let task4Enabled = true;
+let task4ScrollElapsedMs = 0;
+let task4ScrollStartAt = 0;
+let task4Tracking = false;
+let task4SuccessShown = false;
 let task3PresentX = LAYOUT.scene.width * 0.28;
 let task3PresentY = LAYOUT.scene.height * 0.54;
 let task1SuccessHideTimeoutId = null;
@@ -497,6 +507,9 @@ function getActiveTaskNumber() {
   if (task3Enabled && !task3SuccessShown) {
     return 3;
   }
+  if (task4Enabled && !task4SuccessShown) {
+    return 4;
+  }
 
   return null;
 }
@@ -533,6 +546,10 @@ function updateActiveTaskPrompt() {
     activeTaskPrompt.textContent = "Task 3: Press and hold (drag the present)";
     return;
   }
+  if (activeTask === 4) {
+    activeTaskPrompt.textContent = "Task 4: Bunny Ears scrolling";
+    return;
+  }
 
   activeTaskPrompt.textContent = "All enabled tasks complete";
 }
@@ -567,6 +584,8 @@ async function loadTaskRequirements() {
   let task2IsEnabled = parseTaskEnabled(localStorage.getItem(TASK2_ENABLED_KEY), true);
   let dragSeconds = parseTask3Seconds(localStorage.getItem(TASK3_STORAGE_KEY));
   let task3IsEnabled = parseTaskEnabled(localStorage.getItem(TASK3_ENABLED_KEY), true);
+  let scrollSeconds = parseTask3Seconds(localStorage.getItem(TASK4_STORAGE_KEY));
+  let task4IsEnabled = parseTaskEnabled(localStorage.getItem(TASK4_ENABLED_KEY), true);
   let isSoundEnabled = parseTaskEnabled(localStorage.getItem(SOUND_ENABLED_KEY), true);
   let paused = parseTrainingPaused(localStorage.getItem(TRAINING_PAUSED_KEY));
 
@@ -580,6 +599,8 @@ async function loadTaskRequirements() {
       task2IsEnabled = parseTaskEnabled(data.task2Enabled, true);
       dragSeconds = parseTask3Seconds(data.task3RequiredDragSeconds);
       task3IsEnabled = parseTaskEnabled(data.task3Enabled, true);
+      scrollSeconds = parseTask3Seconds(data.task4RequiredScrollSeconds);
+      task4IsEnabled = parseTaskEnabled(data.task4Enabled, true);
       const requireClickAndDrag = parseTaskEnabled(
         data.fullscreenRequireClickAndDrag,
         movementGate.isRequireClickAndDragEnabled(FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY)
@@ -592,6 +613,8 @@ async function loadTaskRequirements() {
       localStorage.setItem(TASK2_ENABLED_KEY, String(task2IsEnabled));
       localStorage.setItem(TASK3_STORAGE_KEY, String(dragSeconds));
       localStorage.setItem(TASK3_ENABLED_KEY, String(task3IsEnabled));
+      localStorage.setItem(TASK4_STORAGE_KEY, String(scrollSeconds));
+      localStorage.setItem(TASK4_ENABLED_KEY, String(task4IsEnabled));
       localStorage.setItem(FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY, String(requireClickAndDrag));
       localStorage.setItem(SOUND_ENABLED_KEY, String(isSoundEnabled));
       localStorage.setItem(TRAINING_PAUSED_KEY, String(paused));
@@ -606,6 +629,8 @@ async function loadTaskRequirements() {
   task2Enabled = task2IsEnabled;
   task3RequiredMs = dragSeconds * 1000;
   task3Enabled = task3IsEnabled;
+  task4RequiredMs = scrollSeconds * 1000;
+  task4Enabled = task4IsEnabled;
   setSoundEnabled(isSoundEnabled);
   setTrainingPaused(paused);
 
@@ -639,6 +664,8 @@ async function refreshSharedSettingsLive() {
   let task2IsEnabled = parseTaskEnabled(localStorage.getItem(TASK2_ENABLED_KEY), true);
   let dragSeconds = parseTask3Seconds(localStorage.getItem(TASK3_STORAGE_KEY));
   let task3IsEnabled = parseTaskEnabled(localStorage.getItem(TASK3_ENABLED_KEY), true);
+  let scrollSeconds = parseTask3Seconds(localStorage.getItem(TASK4_STORAGE_KEY));
+  let task4IsEnabled = parseTaskEnabled(localStorage.getItem(TASK4_ENABLED_KEY), true);
   let isSoundEnabled = parseTaskEnabled(localStorage.getItem(SOUND_ENABLED_KEY), true);
   let paused = parseTrainingPaused(localStorage.getItem(TRAINING_PAUSED_KEY));
 
@@ -652,6 +679,8 @@ async function refreshSharedSettingsLive() {
       task2IsEnabled = parseTaskEnabled(data.task2Enabled, true);
       dragSeconds = parseTask3Seconds(data.task3RequiredDragSeconds);
       task3IsEnabled = parseTaskEnabled(data.task3Enabled, true);
+      scrollSeconds = parseTask3Seconds(data.task4RequiredScrollSeconds);
+      task4IsEnabled = parseTaskEnabled(data.task4Enabled, true);
       const requireClickAndDrag = parseTaskEnabled(
         data.fullscreenRequireClickAndDrag,
         movementGate.isRequireClickAndDragEnabled(FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY)
@@ -664,6 +693,8 @@ async function refreshSharedSettingsLive() {
       localStorage.setItem(TASK2_ENABLED_KEY, String(task2IsEnabled));
       localStorage.setItem(TASK3_STORAGE_KEY, String(dragSeconds));
       localStorage.setItem(TASK3_ENABLED_KEY, String(task3IsEnabled));
+      localStorage.setItem(TASK4_STORAGE_KEY, String(scrollSeconds));
+      localStorage.setItem(TASK4_ENABLED_KEY, String(task4IsEnabled));
       localStorage.setItem(FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY, String(requireClickAndDrag));
       localStorage.setItem(SOUND_ENABLED_KEY, String(isSoundEnabled));
       localStorage.setItem(TRAINING_PAUSED_KEY, String(paused));
@@ -678,6 +709,8 @@ async function refreshSharedSettingsLive() {
   task2Enabled = task2IsEnabled;
   task3RequiredMs = dragSeconds * 1000;
   task3Enabled = task3IsEnabled;
+  task4RequiredMs = scrollSeconds * 1000;
+  task4Enabled = task4IsEnabled;
   setSoundEnabled(isSoundEnabled);
   setTrainingPaused(paused);
 
@@ -707,6 +740,7 @@ function setTrainingPaused(paused) {
   resetTask2Attempt();
   finishTask3Drag(false);
   resetTask3Attempt(true);
+  stopTask4Tracking(true);
   pageBody.classList.remove("flash-tap", "flash-hold", "flash-slide", "flash-just-slide");
 
   if (task1SuccessPopup) {
@@ -1145,6 +1179,50 @@ function setJustSlideVisualState(active) {
   pageBody.classList.remove("flash-just-slide");
 }
 
+function startTask4Tracking(now = performance.now()) {
+  if (
+    !isTaskActive(4) ||
+    task4SuccessShown
+  ) {
+    return;
+  }
+
+  if (!task4Tracking) {
+    task4Tracking = true;
+    task4ScrollStartAt = now;
+  }
+
+  task4ScrollElapsedMs =
+    now - task4ScrollStartAt;
+
+  if (
+    task4ScrollElapsedMs >=
+    task4RequiredMs
+  ) {
+    task4SuccessShown = true;
+    task4Tracking = false;
+    task4ScrollElapsedMs =
+      task4RequiredMs;
+
+    triggerSuccessCelebration();
+    applyTaskFlowState();
+  }
+}
+
+function stopTask4Tracking(
+  reset = false
+) {
+  task4Tracking = false;
+  task4ScrollStartAt = 0;
+
+  if (
+    reset &&
+    !task4SuccessShown
+  ) {
+    task4ScrollElapsedMs = 0;
+  }
+}
+
 function enterTwoFingerScrollMode() {
   if (twoFingerScrollActive) {
     return;
@@ -1384,6 +1462,10 @@ document.addEventListener(
 
     enterTwoFingerScrollMode();
 
+    startTask4Tracking(
+      performance.now()
+    );
+
     const range = getBunnyRange();
     bunnyY = clamp(bunnyY + event.deltaY * 0.26, range.minY, range.maxY);
     applyBunnyPosition(bunnyY);
@@ -1391,6 +1473,10 @@ document.addEventListener(
     clearTimeout(twoFingerScrollTimeoutId);
     twoFingerScrollTimeoutId = setTimeout(() => {
       exitTwoFingerScrollMode();
+
+      if (!task4SuccessShown) {
+        stopTask4Tracking(true);
+      }
     }, 220);
   },
   { passive: false }
