@@ -20,6 +20,9 @@ const task2CounterFill = document.getElementById("task2CounterFill");
 const task3Timer = document.getElementById("task3Timer");
 const task3TimerFill = document.getElementById("task3TimerFill");
 const task3TimerTime = document.getElementById("task3TimerTime");
+const task4Timer = document.getElementById("task4Timer");
+const task4TimerFill = document.getElementById("task4TimerFill");
+const task4TimerTime = document.getElementById("task4TimerTime");
 const task3Present = document.getElementById("task3Present");
 const task1SuccessPopup = document.getElementById("task1SuccessPopup");
 const task1BalloonLayer = document.getElementById("task1BalloonLayer");
@@ -1179,6 +1182,50 @@ function setJustSlideVisualState(active) {
   pageBody.classList.remove("flash-just-slide");
 }
 
+function showTask4Timer() {
+  if (!task4Timer) {
+    return;
+  }
+
+  task4Timer.hidden = false;
+  task4Timer.classList.add("active");
+}
+
+function hideTask4Timer() {
+  if (!task4Timer) {
+    return;
+  }
+
+  task4Timer.classList.remove("active");
+  task4Timer.hidden = true;
+}
+
+function updateTask4TimerVisual() {
+  const progress = clamp(
+    task4ScrollElapsedMs /
+      Math.max(task4RequiredMs, 1),
+    0,
+    1
+  );
+
+  const remaining = Math.max(
+    (task4RequiredMs -
+      task4ScrollElapsedMs) /
+      1000,
+    0
+  );
+
+  if (task4TimerFill) {
+    task4TimerFill.style.height =
+      `${progress * 100}%`;
+  }
+
+  if (task4TimerTime) {
+    task4TimerTime.textContent =
+      `${remaining.toFixed(1)}s`;
+  }
+}
+
 function startTask4Tracking(now = performance.now()) {
   if (
     !isTaskActive(4) ||
@@ -1190,10 +1237,13 @@ function startTask4Tracking(now = performance.now()) {
   if (!task4Tracking) {
     task4Tracking = true;
     task4ScrollStartAt = now;
+    showTask4Timer();
   }
 
   task4ScrollElapsedMs =
     now - task4ScrollStartAt;
+
+  updateTask4TimerVisual();
 
   if (
     task4ScrollElapsedMs >=
@@ -1203,6 +1253,9 @@ function startTask4Tracking(now = performance.now()) {
     task4Tracking = false;
     task4ScrollElapsedMs =
       task4RequiredMs;
+
+    updateTask4TimerVisual();
+    hideTask4Timer();
 
     triggerSuccessCelebration();
     applyTaskFlowState();
@@ -1220,6 +1273,8 @@ function stopTask4Tracking(
     !task4SuccessShown
   ) {
     task4ScrollElapsedMs = 0;
+    updateTask4TimerVisual();
+    hideTask4Timer();
   }
 }
 
