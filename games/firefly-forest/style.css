@@ -378,3 +378,84 @@
     opacity: 0.38;
   }
 }
+
+/* ---------------------------------------------------------
+   Firefly Forest shell polish
+   Keep these overrides scoped to this game only.
+   --------------------------------------------------------- */
+
+/* Keep the Home icon properly contained inside its header button. */
+.firefly-forest-page .back-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.firefly-forest-page .back-button .home-btn-icon {
+  display: block;
+  width: 28px;
+  height: 28px;
+  max-width: 28px;
+  max-height: 28px;
+  object-fit: contain;
+
+  /* Existing home SVG is dark; make it white in this dark shell. */
+  filter: brightness(0) invert(1);
+}
+
+/* Center the Trackpad Guide below the game. */
+.firefly-forest-page .imported-trackpad-guide {
+  width: min(100%, 900px);
+  margin: 8px auto 0;
+  box-sizing: border-box;
+}
+
+/* Keep the guide title centered too. */
+.firefly-forest-page .imported-trackpad-guide-label {
+  text-align: center;
+}
+
+/* Center and contain the actual trackpad scene. */
+.firefly-forest-page .imported-trackpad-scene {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+}
+
+@media (min-width: 1000px) and (max-height: 820px) {
+  .firefly-forest-page .game-stage-wrap {
+    max-height: 455px;
+  }
+
+  .firefly-forest-page .game-stage {
+    height: 455px;
+    min-height: 0;
+  }
+
+  .firefly-forest-page .imported-trackpad-guide {
+    margin-top: 6px;
+  }
+
+  .firefly-forest-page .imported-trackpad-scene {
+    transform-origin: top center;
+  }
+}
+
+/* Pull the Trackpad Guide upward so it stays fully visible. */
+.firefly-forest-page .imported-trackpad-guide {
+  margin-top: -12px;
+}
+
+/* Hide the small status sentence at the bottom of the game stage.
+   Important feedback uses the larger overlays instead. */
+.firefly-forest-page .firefly-status {
+  display: none;
+}
+
+/* Pull the Trackpad Guide closer to the gameplay area. */
+.firefly-forest-page .imported-trackpad-guide {
+  margin-top: -30px;
+  position: relative;
+  z-index: 5;
+}
