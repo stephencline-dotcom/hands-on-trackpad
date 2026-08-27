@@ -350,7 +350,7 @@ function parseJackFlameRainSpeedMin(value) {
     return DEFAULT_SETTINGS.jackFlameRainSpeedMin;
   }
 
-  return Math.min(900, Math.max(80, parsed));
+  return Math.min(900, Math.max(20, parsed));
 }
 
 function parseJackFlameRainSpeedMax(value, speedMin) {

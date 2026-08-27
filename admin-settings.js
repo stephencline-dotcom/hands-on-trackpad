@@ -690,7 +690,7 @@ function parseJackFlameRainSpeedMin(value, fallback = DEFAULT_JACK_FLAME_RAIN_BY
     return fallback;
   }
 
-  return Math.min(900, Math.max(80, parsed));
+  return Math.min(900, Math.max(20, parsed));
 }
 
 function parseJackFlameRainSpeedMax(value, speedMin, fallback = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[0].speedMax) {
@@ -2057,16 +2057,41 @@ async function loadTask1Settings() {
   const jackFlameRainSettings = [4, 5, 6].map((level, idx) => {
     const keys = JACK_FLAME_RAIN_KEYS[idx];
     const defaults = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[idx];
+    const burstMin = parseJackFlameRainBurstMin(
+      localStorage.getItem(keys.burstMin),
+      defaults.burstMin
+    );
+    const intervalMin = parseJackFlameRainIntervalMin(
+      localStorage.getItem(keys.intervalMin),
+      defaults.intervalMin
+    );
+    const speedMin = parseJackFlameRainSpeedMin(
+      localStorage.getItem(keys.speedMin),
+      defaults.speedMin
+    );
+
     return {
       enabled: parseTaskEnabled(localStorage.getItem(keys.enabled), defaults.enabled),
       size: parseJackFlameRainSize(localStorage.getItem(keys.size), defaults.size),
       hitRadius: parseJackFlameRainHitRadius(localStorage.getItem(keys.hitRadius), defaults.hitRadius),
-      burstMin: parseJackFlameRainBurstMin(localStorage.getItem(keys.burstMin), defaults.burstMin),
-      burstMax: parseJackFlameRainBurstMax(localStorage.getItem(keys.burstMax), defaults.burstMin, defaults.burstMax),
-      intervalMin: parseJackFlameRainIntervalMin(localStorage.getItem(keys.intervalMin), defaults.intervalMin),
-      intervalMax: parseJackFlameRainIntervalMax(localStorage.getItem(keys.intervalMax), defaults.intervalMin, defaults.intervalMax),
-      speedMin: parseJackFlameRainSpeedMin(localStorage.getItem(keys.speedMin), defaults.speedMin),
-      speedMax: parseJackFlameRainSpeedMax(localStorage.getItem(keys.speedMax), defaults.speedMin, defaults.speedMax),
+      burstMin,
+      burstMax: parseJackFlameRainBurstMax(
+        localStorage.getItem(keys.burstMax),
+        burstMin,
+        defaults.burstMax
+      ),
+      intervalMin,
+      intervalMax: parseJackFlameRainIntervalMax(
+        localStorage.getItem(keys.intervalMax),
+        intervalMin,
+        defaults.intervalMax
+      ),
+      speedMin,
+      speedMax: parseJackFlameRainSpeedMax(
+        localStorage.getItem(keys.speedMax),
+        speedMin,
+        defaults.speedMax
+      ),
     };
   });
   let mazeGhostLevelsEnabled = MAZE_GHOST_LEVEL_ENABLED_KEYS.map((key) =>
@@ -2173,19 +2198,34 @@ async function loadTask1Settings() {
         martianRequireClick
       );
       [4, 5, 6].forEach((level, idx) => {
-        const keys = JACK_FLAME_RAIN_KEYS[idx];
         const defaults = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[idx];
         const d = data[`jackFlameRain${level}`] || {};
+        const burstMin = parseJackFlameRainBurstMin(d.burstMin, defaults.burstMin);
+        const intervalMin = parseJackFlameRainIntervalMin(d.intervalMin, defaults.intervalMin);
+        const speedMin = parseJackFlameRainSpeedMin(d.speedMin, defaults.speedMin);
+
         jackFlameRainSettings[idx] = {
           enabled: parseTaskEnabled(d.enabled, defaults.enabled),
           size: parseJackFlameRainSize(d.size, defaults.size),
           hitRadius: parseJackFlameRainHitRadius(d.hitRadius, defaults.hitRadius),
-          burstMin: parseJackFlameRainBurstMin(d.burstMin, defaults.burstMin),
-          burstMax: parseJackFlameRainBurstMax(d.burstMax, defaults.burstMin, defaults.burstMax),
-          intervalMin: parseJackFlameRainIntervalMin(d.intervalMin, defaults.intervalMin),
-          intervalMax: parseJackFlameRainIntervalMax(d.intervalMax, defaults.intervalMin, defaults.intervalMax),
-          speedMin: parseJackFlameRainSpeedMin(d.speedMin, defaults.speedMin),
-          speedMax: parseJackFlameRainSpeedMax(d.speedMax, defaults.speedMin, defaults.speedMax),
+          burstMin,
+          burstMax: parseJackFlameRainBurstMax(
+            d.burstMax,
+            burstMin,
+            defaults.burstMax
+          ),
+          intervalMin,
+          intervalMax: parseJackFlameRainIntervalMax(
+            d.intervalMax,
+            intervalMin,
+            defaults.intervalMax
+          ),
+          speedMin,
+          speedMax: parseJackFlameRainSpeedMax(
+            d.speedMax,
+            speedMin,
+            defaults.speedMax
+          ),
         };
       });
       mazeGhostLevelsEnabled = parseGhostLevelEnabled(data.mazeGhostLevelsEnabled, true);
@@ -2584,16 +2624,41 @@ async function saveTask1Settings() {
   const jackFlameRainSettingsToSave = [4, 5, 6].map((level, idx) => {
     const inputs = jackFlameRainInputs[idx];
     const defaults = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[idx];
+    const burstMin = parseJackFlameRainBurstMin(
+      inputs.burstMin ? inputs.burstMin.value : defaults.burstMin,
+      defaults.burstMin
+    );
+    const intervalMin = parseJackFlameRainIntervalMin(
+      inputs.intervalMin ? inputs.intervalMin.value : defaults.intervalMin,
+      defaults.intervalMin
+    );
+    const speedMin = parseJackFlameRainSpeedMin(
+      inputs.speedMin ? inputs.speedMin.value : defaults.speedMin,
+      defaults.speedMin
+    );
+
     return {
       enabled: Boolean(inputs.enabled && inputs.enabled.checked),
       size: parseJackFlameRainSize(inputs.size ? inputs.size.value : defaults.size, defaults.size),
       hitRadius: parseJackFlameRainHitRadius(inputs.hitRadius ? inputs.hitRadius.value : defaults.hitRadius, defaults.hitRadius),
-      burstMin: parseJackFlameRainBurstMin(inputs.burstMin ? inputs.burstMin.value : defaults.burstMin, defaults.burstMin),
-      burstMax: parseJackFlameRainBurstMax(inputs.burstMax ? inputs.burstMax.value : defaults.burstMax, defaults.burstMin, defaults.burstMax),
-      intervalMin: parseJackFlameRainIntervalMin(inputs.intervalMin ? inputs.intervalMin.value : defaults.intervalMin, defaults.intervalMin),
-      intervalMax: parseJackFlameRainIntervalMax(inputs.intervalMax ? inputs.intervalMax.value : defaults.intervalMax, defaults.intervalMin, defaults.intervalMax),
-      speedMin: parseJackFlameRainSpeedMin(inputs.speedMin ? inputs.speedMin.value : defaults.speedMin, defaults.speedMin),
-      speedMax: parseJackFlameRainSpeedMax(inputs.speedMax ? inputs.speedMax.value : defaults.speedMax, defaults.speedMin, defaults.speedMax),
+      burstMin,
+      burstMax: parseJackFlameRainBurstMax(
+        inputs.burstMax ? inputs.burstMax.value : defaults.burstMax,
+        burstMin,
+        defaults.burstMax
+      ),
+      intervalMin,
+      intervalMax: parseJackFlameRainIntervalMax(
+        inputs.intervalMax ? inputs.intervalMax.value : defaults.intervalMax,
+        intervalMin,
+        defaults.intervalMax
+      ),
+      speedMin,
+      speedMax: parseJackFlameRainSpeedMax(
+        inputs.speedMax ? inputs.speedMax.value : defaults.speedMax,
+        speedMin,
+        defaults.speedMax
+      ),
     };
   });
   const mazeGhostLevelsEnabled = mazeGhostLevelToggles.map((toggle) => Boolean(toggle && toggle.checked));

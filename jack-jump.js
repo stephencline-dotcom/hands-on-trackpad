@@ -437,10 +437,10 @@ function normalizeFlameRainSettings(raw = {}, level) {
       parseIntNumber(raw.intervalMax, def.intervalMax, 200, 5000),
       parseIntNumber(raw.intervalMin, def.intervalMin, 160, 4000) + 30
     ),
-    speedMin: parseNumber(raw.speedMin, def.speedMin, 80, 900),
+    speedMin: parseNumber(raw.speedMin, def.speedMin, 20, 900),
     speedMax: Math.max(
-      parseNumber(raw.speedMax, def.speedMax, 100, 1200),
-      parseNumber(raw.speedMin, def.speedMin, 80, 900) + 1
+      parseNumber(raw.speedMax, def.speedMax, 20, 1200),
+      parseNumber(raw.speedMin, def.speedMin, 20, 900) + 1
     ),
     burstStaggerMax: def.burstStaggerMax,
     lanePadding: def.lanePadding,
