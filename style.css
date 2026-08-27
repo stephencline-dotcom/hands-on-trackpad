@@ -5051,3 +5051,18 @@ body.car-page .scene {
     max-width: 100%;
   }
 }
+
+/* Chromebook fit: crop Jack scene without compressing gameplay */
+@media (max-height: 820px) {
+  body.jack-jump-page .jack-jump-scene {
+    height: 320px;
+    max-height: 320px;
+    transform: translateY(-80px);
+    margin-bottom: -80px;
+    clip-path: inset(80px 0 0 round 18px);
+  }
+
+  body.jack-jump-page .jack-candle {
+    translate: 0 -24px;
+  }
+}
