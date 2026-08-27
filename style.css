@@ -5066,3 +5066,86 @@ body.car-page .scene {
     translate: 0 -24px;
   }
 }
+
+/* Firefly Forest homepage thumbnail */
+.game-thumb-firefly-forest {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(
+      180deg,
+      #132b59 0%,
+      #193b65 55%,
+      #0b3933 56%,
+      #082a26 100%
+    );
+}
+
+.firefly-thumb-moon {
+  position: absolute;
+  top: 12%;
+  right: 14%;
+  color: #fff0a8;
+  font-size: 2.4rem;
+  line-height: 1;
+  text-shadow:
+    0 0 10px rgba(255, 240, 168, 0.7);
+}
+
+.firefly-thumb-glow {
+  position: absolute;
+  color: #fde047;
+  font-size: 0.9rem;
+  line-height: 1;
+  text-shadow:
+    0 0 5px #fde047,
+    0 0 10px #facc15,
+    0 0 16px rgba(250, 204, 21, 0.9);
+  animation: fireflyThumbPulse 1.4s ease-in-out infinite;
+}
+
+.firefly-thumb-glow-1 {
+  left: 22%;
+  top: 34%;
+}
+
+.firefly-thumb-glow-2 {
+  left: 53%;
+  top: 54%;
+  animation-delay: 0.35s;
+}
+
+.firefly-thumb-glow-3 {
+  right: 20%;
+  top: 68%;
+  animation-delay: 0.7s;
+}
+
+.firefly-thumb-trees {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  color: #052c28;
+  font-size: 2rem;
+  line-height: 1;
+  text-align: center;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  text-shadow:
+    -18px 3px 0 #07342e,
+    18px 4px 0 #07342e;
+}
+
+@keyframes fireflyThumbPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.85);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
