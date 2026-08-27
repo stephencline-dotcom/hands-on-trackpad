@@ -25,6 +25,9 @@
   const fireflyMissesDisplay =
     document.getElementById("fireflyMisses");
 
+  const fireflyTimeDisplay =
+    document.getElementById("fireflyTime");
+
   const fireflyClickWarning =
     document.getElementById("fireflyClickWarning");
 
@@ -53,30 +56,137 @@
     return;
   }
 
-  const FIREFLY_LEVELS = [
+  const FIREFLY_SETTINGS_KEY =
+    "moving-sound-admin-settings-v1";
+
+  const DEFAULT_FIREFLY_LEVELS = [
     {
       goal: 5,
+      timeLimit: 35,
       targetSize: 92,
       missesAllowed: 3,
+      targetLifetimeSeconds: 0,
+      decoyCount: 0,
     },
     {
       goal: 8,
+      timeLimit: 35,
       targetSize: 56,
       missesAllowed: 3,
       targetLifetimeSeconds: 4,
+      decoyCount: 0,
     },
     {
       goal: 8,
+      timeLimit: 30,
       targetSize: 68,
       missesAllowed: 3,
+      targetLifetimeSeconds: 0,
+      decoyCount: 0,
     },
     {
       goal: 10,
+      timeLimit: 30,
       targetSize: 54,
       missesAllowed: 3,
-      simultaneousTargets: 6,
+      targetLifetimeSeconds: 0,
+      decoyCount: 5,
     },
   ];
+
+  function clampFireflyInteger(
+    value,
+    min,
+    max,
+    fallback
+  ) {
+    const parsed = Number.parseInt(value, 10);
+
+    if (!Number.isFinite(parsed)) {
+      return fallback;
+    }
+
+    return Math.min(max, Math.max(min, parsed));
+  }
+
+  function normalizeFireflyLevel(level, defaults) {
+    const source =
+      level && typeof level === "object"
+        ? level
+        : {};
+
+    const lifetime =
+      Number(source.targetLifetimeSeconds);
+
+    return {
+      goal: clampFireflyInteger(
+        source.goal,
+        1,
+        100,
+        defaults.goal
+      ),
+      timeLimit: clampFireflyInteger(
+        source.timeLimit,
+        10,
+        300,
+        defaults.timeLimit
+      ),
+      missesAllowed: clampFireflyInteger(
+        source.missesAllowed,
+        1,
+        20,
+        defaults.missesAllowed
+      ),
+      targetSize: clampFireflyInteger(
+        source.targetSize,
+        36,
+        120,
+        defaults.targetSize
+      ),
+      targetLifetimeSeconds:
+        Number.isFinite(lifetime)
+          ? Math.min(15, Math.max(0, lifetime))
+          : defaults.targetLifetimeSeconds,
+      decoyCount: clampFireflyInteger(
+        source.decoyCount,
+        0,
+        12,
+        defaults.decoyCount
+      ),
+    };
+  }
+
+  function loadFireflyForestLevels() {
+    try {
+      const raw =
+        localStorage.getItem(
+          FIREFLY_SETTINGS_KEY
+        );
+
+      const parsed =
+        raw ? JSON.parse(raw) : {};
+
+      const saved =
+        Array.isArray(parsed.fireflyForestLevels)
+          ? parsed.fireflyForestLevels
+          : [];
+
+      return DEFAULT_FIREFLY_LEVELS.map(
+        (defaults, index) =>
+          normalizeFireflyLevel(
+            saved[index],
+            defaults
+          )
+      );
+    } catch {
+      return DEFAULT_FIREFLY_LEVELS.map(
+        (level) => ({ ...level })
+      );
+    }
+  }
+
+  const FIREFLY_LEVELS =
+    loadFireflyForestLevels();
 
   let currentLevelIndex = 0;
   let firefliesCollected = 0;
@@ -88,6 +198,9 @@
   let glowingFirefly = null;
   let lastFireflyPosition = null;
   let fireflyGameRunning = false;
+  let fireflyTimeLeft = 0;
+  let fireflyTimerAnimationId = 0;
+  let fireflyTimerLastTimestamp = 0;
   let fireflyLevelResult = null;
 
   const clickGameCore =
@@ -145,8 +258,82 @@
     fireflyTrackpadGuide.setPressed(false);
   }
 
+  function stopFireflyTimer() {
+    if (fireflyTimerAnimationId) {
+      window.cancelAnimationFrame(
+        fireflyTimerAnimationId
+      );
+      fireflyTimerAnimationId = 0;
+    }
+
+    fireflyTimerLastTimestamp = 0;
+  }
+
+  function updateFireflyTimeDisplay() {
+    if (!fireflyTimeDisplay) {
+      return;
+    }
+
+    fireflyTimeDisplay.textContent =
+      String(Math.max(0, Math.ceil(fireflyTimeLeft)));
+  }
+
+  function stepFireflyTimer(timestamp) {
+    if (!fireflyGameRunning) {
+      stopFireflyTimer();
+      return;
+    }
+
+    if (!fireflyTimerLastTimestamp) {
+      fireflyTimerLastTimestamp = timestamp;
+    }
+
+    const elapsedSeconds = Math.min(
+      0.25,
+      Math.max(
+        0,
+        (timestamp - fireflyTimerLastTimestamp) / 1000
+      )
+    );
+
+    fireflyTimerLastTimestamp = timestamp;
+    fireflyTimeLeft = Math.max(
+      0,
+      fireflyTimeLeft - elapsedSeconds
+    );
+
+    updateFireflyTimeDisplay();
+
+    if (fireflyTimeLeft <= 0) {
+      stopFireflyTimer();
+
+      showFireflyFailure(
+        "Time is up. Try the level again."
+      );
+
+      return;
+    }
+
+    fireflyTimerAnimationId =
+      window.requestAnimationFrame(
+        stepFireflyTimer
+      );
+  }
+
+  function startFireflyTimer() {
+    stopFireflyTimer();
+
+    fireflyTimerLastTimestamp = 0;
+
+    fireflyTimerAnimationId =
+      window.requestAnimationFrame(
+        stepFireflyTimer
+      );
+  }
+
   function pauseFireflyGameplay() {
     fireflyGameRunning = false;
+    stopFireflyTimer();
 
     if (clickGameCore) {
       clickGameCore.pause();
@@ -162,7 +349,10 @@
 
     fireflyGameRunning = false;
     firefliesCollected = 0;
-    fireflyMissesRemaining = getCurrentLevel().missesAllowed;
+    fireflyMissesRemaining =
+      getCurrentLevel().missesAllowed;
+    fireflyTimeLeft =
+      getCurrentLevel().timeLimit;
     lastFireflyPosition = null;
 
     if (clickGameCore) {
@@ -257,6 +447,8 @@
       fireflyMissesDisplay.textContent =
         String(fireflyMissesRemaining);
     }
+
+    updateFireflyTimeDisplay();
   }
 
   function clearCurrentFireflyTimers() {
@@ -444,8 +636,15 @@
       fireflyStatus.textContent =
         "Try again. Find the glowing firefly and click once.";
 
+      buildLevelDecoys();
       createPracticeFirefly();
     }, 1200);
+  }
+
+  function handleDecoyFireflyClick() {
+    applyFireflyMiss(
+      "Miss! Find the glowing firefly."
+    );
   }
 
   function handleLevelFourWrongFirefly() {
@@ -561,8 +760,95 @@
       fireflyStatus.textContent =
         "Find the next glowing firefly.";
 
+      buildLevelDecoys();
       createPracticeFirefly();
     }, 350);
+  }
+
+  function createDecoyFirefly() {
+    const level = getCurrentLevel();
+    const firefly =
+      document.createElement("button");
+
+    firefly.type = "button";
+    firefly.className =
+      "firefly-target is-dim-target";
+
+    firefly.setAttribute(
+      "aria-label",
+      "Dim firefly"
+    );
+
+    firefly.innerHTML = `
+      <span class="firefly-glow" aria-hidden="true"></span>
+      <span class="firefly-body" aria-hidden="true">
+        <span class="firefly-wing firefly-wing-left"></span>
+        <span class="firefly-wing firefly-wing-right"></span>
+        <span class="firefly-head"></span>
+        <span class="firefly-tail"></span>
+      </span>
+    `;
+
+    const position = chooseFireflyPosition();
+
+    firefly.style.left = `${position.x}%`;
+    firefly.style.top = `${position.y}%`;
+    firefly.style.width = `${level.targetSize}px`;
+    firefly.style.height = `${level.targetSize}px`;
+
+    fireflyField.appendChild(firefly);
+    activeFireflies.push(firefly);
+
+    if (!clickGameCore) {
+      return;
+    }
+
+    clickGameCore.registerTarget(
+      firefly,
+      {
+        id:
+          `decoy-firefly-${currentLevelIndex + 1}-${Date.now()}-${activeFireflies.length}`,
+        isClickable: () => {
+          handleDecoyFireflyClick();
+          return false;
+        },
+      }
+    );
+
+    if (
+      currentLevelIndex >= 2 &&
+      typeof clickGameCore.startTargetMovement === "function"
+    ) {
+      clickGameCore.startTargetMovement(
+        firefly,
+        {
+          speed: 6,
+          minX: 14,
+          maxX: 82,
+          minY: 22,
+          maxY: 76,
+        }
+      );
+    }
+  }
+
+  function buildLevelDecoys() {
+    clearLevelFourFireflies();
+
+    if (currentLevelIndex === 3) {
+      return;
+    }
+
+    const decoyCount =
+      getCurrentLevel().decoyCount;
+
+    for (
+      let index = 0;
+      index < decoyCount;
+      index += 1
+    ) {
+      createDecoyFirefly();
+    }
   }
 
   function createLevelFourFirefly() {
@@ -641,7 +927,7 @@
     clearAllFireflies();
 
     const targetCount =
-      getCurrentLevel().simultaneousTargets || 4;
+      1 + getCurrentLevel().decoyCount;
 
     for (let index = 0; index < targetCount; index += 1) {
       createLevelFourFirefly();
@@ -680,6 +966,7 @@
       fireflyStatus.textContent =
         "Find the next firefly before it fades away.";
 
+      buildLevelDecoys();
       createPracticeFirefly();
     }, 300);
   }
@@ -794,7 +1081,10 @@
 
     fireflyGameRunning = true;
     firefliesCollected = 0;
-    fireflyMissesRemaining = getCurrentLevel().missesAllowed;
+    fireflyMissesRemaining =
+      getCurrentLevel().missesAllowed;
+    fireflyTimeLeft =
+      getCurrentLevel().timeLimit;
     lastFireflyPosition = null;
 
     updateProgress();
@@ -810,10 +1100,13 @@
       fireflyStatus.textContent =
         `Level ${currentLevelIndex + 1}: Find the glowing firefly and click it once.`;
 
+      buildLevelDecoys();
       createPracticeFirefly();
     }
 
     fireflyStartButton.hidden = true;
+
+    startFireflyTimer();
   }
 
   fireflyArena.addEventListener("click", (event) => {

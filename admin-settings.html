@@ -70,6 +70,10 @@
                   <input id="bugMeadowGameActive" type="checkbox" checked />
                   <span>Bug Meadow is active</span>
                 </label>
+                <label class="admin-toggle-row" for="fireflyForestGameActive">
+                  <input id="fireflyForestGameActive" type="checkbox" checked />
+                  <span>Firefly Forest is active</span>
+                </label>
                 <label class="admin-toggle-row" for="deerRunGameActive">
                   <input id="deerRunGameActive" type="checkbox" checked />
                   <span>Deer Run is active</span>
@@ -110,6 +114,9 @@
               </button>
               <button class="admin-tab-button" type="button" role="tab" id="tabBugMeadow" aria-controls="panelBugMeadow" aria-selected="false" data-tab="bugmeadow">
                 Bug Meadow
+              </button>
+              <button class="admin-tab-button" type="button" role="tab" id="tabFireflyForest" aria-controls="panelFireflyForest" aria-selected="false" data-tab="fireflyforest">
+                Firefly Forest
               </button>
               <button class="admin-tab-button" type="button" role="tab" id="tabDeerRun" aria-controls="panelDeerRun" aria-selected="false" data-tab="deerrun">
                 Deer Run
@@ -1008,7 +1015,102 @@
             </button>
           </section>
 
-                    <section class="admin-tab-content" id="panelDeerRun" role="tabpanel" aria-labelledby="tabDeerRun" aria-hidden="true">
+                    <section class="admin-tab-content" id="panelFireflyForest" role="tabpanel" aria-labelledby="tabFireflyForest" aria-hidden="true">
+            <p class="admin-panel-note">
+              Configure Firefly Forest clicking difficulty for each level.
+            </p>
+
+            <div class="admin-level-grid">
+              <article class="admin-level-card">
+                <h3>Level 1 — Big &amp; Still</h3>
+
+                <label class="admin-task-label" for="adminFireflyGoalL1">Fireflies to catch</label>
+                <input id="adminFireflyGoalL1" class="admin-task-input" type="number" min="1" max="100" step="1" value="5" />
+
+                <label class="admin-task-label" for="adminFireflyTimeL1">Time limit (seconds)</label>
+                <input id="adminFireflyTimeL1" class="admin-task-input" type="number" min="10" max="300" step="1" value="35" />
+
+                <label class="admin-task-label" for="adminFireflyMissesL1">Misses allowed</label>
+                <input id="adminFireflyMissesL1" class="admin-task-input" type="number" min="1" max="20" step="1" value="3" />
+
+                <label class="admin-task-label" for="adminFireflySizeL1">Firefly size (pixels)</label>
+                <input id="adminFireflySizeL1" class="admin-task-input" type="number" min="36" max="120" step="1" value="92" />
+
+                <label class="admin-task-label" for="adminFireflyDecoysL1">Decoy fireflies</label>
+                <input id="adminFireflyDecoysL1" class="admin-task-input" type="number" min="0" max="12" step="1" value="0" />
+              </article>
+
+              <article class="admin-level-card">
+                <h3>Level 2 — Smaller &amp; Fading</h3>
+
+                <label class="admin-task-label" for="adminFireflyGoalL2">Fireflies to catch</label>
+                <input id="adminFireflyGoalL2" class="admin-task-input" type="number" min="1" max="100" step="1" value="8" />
+
+                <label class="admin-task-label" for="adminFireflyTimeL2">Time limit (seconds)</label>
+                <input id="adminFireflyTimeL2" class="admin-task-input" type="number" min="10" max="300" step="1" value="35" />
+
+                <label class="admin-task-label" for="adminFireflyMissesL2">Misses allowed</label>
+                <input id="adminFireflyMissesL2" class="admin-task-input" type="number" min="1" max="20" step="1" value="3" />
+
+                <label class="admin-task-label" for="adminFireflySizeL2">Firefly size (pixels)</label>
+                <input id="adminFireflySizeL2" class="admin-task-input" type="number" min="36" max="120" step="1" value="56" />
+
+                <label class="admin-task-label" for="adminFireflyFadeL2">Time before firefly fades (seconds)</label>
+                <input id="adminFireflyFadeL2" class="admin-task-input" type="number" min="1" max="15" step="0.5" value="4" />
+
+                <label class="admin-task-label" for="adminFireflyDecoysL2">Decoy fireflies</label>
+                <input id="adminFireflyDecoysL2" class="admin-task-input" type="number" min="0" max="12" step="1" value="0" />
+              </article>
+
+              <article class="admin-level-card">
+                <h3>Level 3 — Moving</h3>
+
+                <label class="admin-task-label" for="adminFireflyGoalL3">Fireflies to catch</label>
+                <input id="adminFireflyGoalL3" class="admin-task-input" type="number" min="1" max="100" step="1" value="8" />
+
+                <label class="admin-task-label" for="adminFireflyTimeL3">Time limit (seconds)</label>
+                <input id="adminFireflyTimeL3" class="admin-task-input" type="number" min="10" max="300" step="1" value="30" />
+
+                <label class="admin-task-label" for="adminFireflyMissesL3">Misses allowed</label>
+                <input id="adminFireflyMissesL3" class="admin-task-input" type="number" min="1" max="20" step="1" value="3" />
+
+                <label class="admin-task-label" for="adminFireflySizeL3">Firefly size (pixels)</label>
+                <input id="adminFireflySizeL3" class="admin-task-input" type="number" min="36" max="120" step="1" value="68" />
+
+                <label class="admin-task-label" for="adminFireflyDecoysL3">Decoy fireflies</label>
+                <input id="adminFireflyDecoysL3" class="admin-task-input" type="number" min="0" max="12" step="1" value="0" />
+              </article>
+
+              <article class="admin-level-card">
+                <h3>Level 4 — Glow Challenge</h3>
+
+                <label class="admin-task-label" for="adminFireflyGoalL4">Fireflies to catch</label>
+                <input id="adminFireflyGoalL4" class="admin-task-input" type="number" min="1" max="100" step="1" value="10" />
+
+                <label class="admin-task-label" for="adminFireflyTimeL4">Time limit (seconds)</label>
+                <input id="adminFireflyTimeL4" class="admin-task-input" type="number" min="10" max="300" step="1" value="30" />
+
+                <label class="admin-task-label" for="adminFireflyMissesL4">Misses allowed</label>
+                <input id="adminFireflyMissesL4" class="admin-task-input" type="number" min="1" max="20" step="1" value="3" />
+
+                <label class="admin-task-label" for="adminFireflySizeL4">Firefly size (pixels)</label>
+                <input id="adminFireflySizeL4" class="admin-task-input" type="number" min="36" max="120" step="1" value="54" />
+
+                <label class="admin-task-label" for="adminFireflyDecoysL4">Decoy fireflies</label>
+                <input id="adminFireflyDecoysL4" class="admin-task-input" type="number" min="0" max="12" step="1" value="5" />
+              </article>
+            </div>
+
+            <button
+              id="resetFireflyForestDefaultsBtn"
+              class="admin-apply admin-reset-action"
+              type="button"
+            >
+              Reset Firefly Forest to Defaults
+            </button>
+          </section>
+
+          <section class="admin-tab-content" id="panelDeerRun" role="tabpanel" aria-labelledby="tabDeerRun" aria-hidden="true">
             <p class="admin-panel-note">
               Configure Deer Run difficulty and choose which animals appear on each level.
             </p>

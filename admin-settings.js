@@ -21,6 +21,7 @@ const dragonDodgeGameActiveToggle = document.getElementById("dragonDodgeGameActi
 const firefighterRescueGameActiveToggle = document.getElementById("firefighterRescueGameActive");
 const martianMadnessGameActiveToggle = document.getElementById("martianMadnessGameActive");
 const bugMeadowGameActiveToggle = document.getElementById("bugMeadowGameActive");
+const fireflyForestGameActiveToggle = document.getElementById("fireflyForestGameActive");
 const deerRunGameActiveToggle = document.getElementById("deerRunGameActive");
 const soundEnabledToggle = document.getElementById("soundEnabledToggle");
 const trainingPausedToggle = document.getElementById("trainingPausedToggle");
@@ -116,6 +117,19 @@ const bugMeadowLevelInputs = [1, 2, 3, 4].map((level) => ({
   birdSpeed: document.getElementById(`adminBugMeadowBirdSpeedL${level}`),
 }));
 
+const fireflyForestLevelInputs = [1, 2, 3, 4].map((level) => ({
+  goal: document.getElementById(`adminFireflyGoalL${level}`),
+  timeLimit: document.getElementById(`adminFireflyTimeL${level}`),
+  missesAllowed: document.getElementById(`adminFireflyMissesL${level}`),
+  targetSize: document.getElementById(`adminFireflySizeL${level}`),
+  targetLifetimeSeconds:
+    level === 2
+      ? document.getElementById("adminFireflyFadeL2")
+      : null,
+  decoyCount:
+    document.getElementById(`adminFireflyDecoysL${level}`),
+}));
+
 const deerRunLevelInputs = [1, 2, 3, 4].map((level) => ({
   goal: document.getElementById(`adminDeerRunGoalL${level}`),
   timeLimit: document.getElementById(`adminDeerRunTimeL${level}`),
@@ -149,6 +163,7 @@ const resetDragonDefaultsBtn = document.getElementById("resetDragonDefaultsBtn")
 const resetFireDefaultsBtn = document.getElementById("resetFireDefaultsBtn");
 const resetMartianDefaultsBtn = document.getElementById("resetMartianDefaultsBtn");
 const resetBugMeadowDefaultsBtn = document.getElementById("resetBugMeadowDefaultsBtn");
+const resetFireflyForestDefaultsBtn = document.getElementById("resetFireflyForestDefaultsBtn");
 const resetDeerRunDefaultsBtn = document.getElementById("resetDeerRunDefaultsBtn");
 const resetJackDefaultsBtn = document.getElementById("resetJackDefaultsBtn");
 const resetFullscreenDefaultsBtn = document.getElementById("resetFullscreenDefaultsBtn");
@@ -178,6 +193,7 @@ const DRAGON_DODGE_GAME_ACTIVE_KEY = "dragonDodgeGameActive";
 const FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY = "firefighterRescueGameActive";
 const MARTIAN_MADNESS_GAME_ACTIVE_KEY = "martianMadnessGameActive";
 const BUG_MEADOW_GAME_ACTIVE_KEY = "bugMeadowGameActive";
+const FIREFLY_FOREST_GAME_ACTIVE_KEY = "fireflyForestGameActive";
 const DEER_RUN_GAME_ACTIVE_KEY = "deerRunGameActive";
 const SOUND_ENABLED_KEY = "trackpadSoundEnabled";
 const TRAINING_PAUSED_KEY = "trackpadTrainingPaused";
@@ -306,6 +322,41 @@ const DEFAULT_BUG_MEADOW_LEVELS = [
   { goal: 7, timeLimit: 35, missesAllowed: 3, birdCount: 1, birdSpeed: 2 },
   { goal: 9, timeLimit: 30, missesAllowed: 3, birdCount: 2, birdSpeed: 3 },
   { goal: 12, timeLimit: 30, missesAllowed: 4, birdCount: 3, birdSpeed: 4 },
+];
+
+const DEFAULT_FIREFLY_FOREST_LEVELS = [
+  {
+    goal: 5,
+    timeLimit: 35,
+    missesAllowed: 3,
+    targetSize: 92,
+    targetLifetimeSeconds: 0,
+    decoyCount: 0,
+  },
+  {
+    goal: 8,
+    timeLimit: 35,
+    missesAllowed: 3,
+    targetSize: 56,
+    targetLifetimeSeconds: 4,
+    decoyCount: 0,
+  },
+  {
+    goal: 8,
+    timeLimit: 30,
+    missesAllowed: 3,
+    targetSize: 68,
+    targetLifetimeSeconds: 0,
+    decoyCount: 0,
+  },
+  {
+    goal: 10,
+    timeLimit: 30,
+    missesAllowed: 3,
+    targetSize: 54,
+    targetLifetimeSeconds: 0,
+    decoyCount: 5,
+  },
 ];
 
 const DEFAULT_DEER_RUN_LEVELS = [
@@ -1026,6 +1077,52 @@ function normalizeBugMeadowLevels(levels) {
   });
 }
 
+function normalizeFireflyForestLevels(levels) {
+  return normalizeLevelArray(
+    levels,
+    DEFAULT_FIREFLY_FOREST_LEVELS,
+    (level, defaults) => ({
+      goal: parseLightTapLevelValue(
+        level.goal,
+        1,
+        100,
+        defaults.goal
+      ),
+      timeLimit: parseLightTapLevelValue(
+        level.timeLimit,
+        10,
+        300,
+        defaults.timeLimit
+      ),
+      missesAllowed: parseLightTapLevelValue(
+        level.missesAllowed,
+        1,
+        20,
+        defaults.missesAllowed
+      ),
+      targetSize: parseLightTapLevelValue(
+        level.targetSize,
+        36,
+        120,
+        defaults.targetSize
+      ),
+      targetLifetimeSeconds:
+        Number.isFinite(Number(level.targetLifetimeSeconds))
+          ? Math.min(
+              15,
+              Math.max(0, Number(level.targetLifetimeSeconds))
+            )
+          : defaults.targetLifetimeSeconds,
+      decoyCount: parseLightTapLevelValue(
+        level.decoyCount,
+        0,
+        12,
+        defaults.decoyCount
+      ),
+    })
+  );
+}
+
 function normalizeDeerRunLevels(levels) {
   return normalizeLevelArray(
     levels,
@@ -1174,6 +1271,22 @@ function saveStoredBugMeadowLevels(levels) {
     "bugMeadowLevels",
     levels,
     normalizeBugMeadowLevels
+  );
+}
+
+function loadStoredFireflyForestLevels() {
+  return loadGameLevelsFromStorage(
+    "fireflyForestLevels",
+    DEFAULT_FIREFLY_FOREST_LEVELS,
+    normalizeFireflyForestLevels
+  );
+}
+
+function saveStoredFireflyForestLevels(levels) {
+  saveGameLevelsToStorage(
+    "fireflyForestLevels",
+    levels,
+    normalizeFireflyForestLevels
   );
 }
 
@@ -1697,6 +1810,7 @@ async function resetFullscreenToDefaults() {
   );
   localStorage.setItem(FULLSCREEN_GAME_ACTIVE_KEY, String(fullscreenGameActive));
   localStorage.setItem(BUG_MEADOW_GAME_ACTIVE_KEY, String(bugMeadowGameActive));
+  localStorage.setItem(FIREFLY_FOREST_GAME_ACTIVE_KEY, String(fireflyForestGameActive));
   localStorage.setItem(
     BUG_MEADOW_REQUIRE_CLICK_AND_DRAG_KEY,
     String(bugMeadowRequireClickAndDrag)
@@ -1938,6 +2052,39 @@ function resetBugMeadowToDefaults() {
   showSavedMessage("Bug Meadow reset to defaults.");
 }
 
+function resetFireflyForestToDefaults() {
+  const confirmed = window.confirm(
+    "Reset Firefly Forest to default values? This only affects Firefly Forest settings."
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  const defaultLevels = normalizeFireflyForestLevels(
+    DEFAULT_FIREFLY_FOREST_LEVELS
+  );
+
+  saveStoredFireflyForestLevels(defaultLevels);
+
+  applyGameLevelsToInputs(
+    defaultLevels,
+    fireflyForestLevelInputs,
+    {
+      goal: "goal",
+      timeLimit: "timeLimit",
+      missesAllowed: "missesAllowed",
+      targetSize: "targetSize",
+      targetLifetimeSeconds: "targetLifetimeSeconds",
+      decoyCount: "decoyCount",
+    }
+  );
+
+  setDirtyState(false);
+  updateQuickSummary();
+  showSavedMessage("Firefly Forest reset to defaults.");
+}
+
 function resetDeerRunToDefaults() {
   const confirmed = window.confirm(
     "Reset Deer Run to default values? This only affects Deer Run settings."
@@ -2009,6 +2156,11 @@ async function loadTask1Settings() {
     true
   );
 
+  let fireflyForestGameActive = parseTaskEnabled(
+    localStorage.getItem(FIREFLY_FOREST_GAME_ACTIVE_KEY),
+    true
+  );
+
   let deerRunGameActive = parseTaskEnabled(
     localStorage.getItem(DEER_RUN_GAME_ACTIVE_KEY),
     true
@@ -2021,6 +2173,7 @@ async function loadTask1Settings() {
   let fireLevels = loadStoredFireLevels();
   let martianLevels = loadStoredMartianLevels();
   let bugMeadowLevels = loadStoredBugMeadowLevels();
+  let fireflyForestLevels = loadStoredFireflyForestLevels();
   let deerRunLevels = loadStoredDeerRunLevels();
 
   let soundEnabled = parseTaskEnabled(localStorage.getItem(SOUND_ENABLED_KEY), true);
@@ -2279,6 +2432,7 @@ async function loadTask1Settings() {
       localStorage.setItem(DRAGON_DODGE_GAME_ACTIVE_KEY, String(dragonDodgeGameActive));
       localStorage.setItem(FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY, String(firefighterRescueGameActive));
       localStorage.setItem(MARTIAN_MADNESS_GAME_ACTIVE_KEY, String(martianMadnessGameActive));
+      localStorage.setItem(FIREFLY_FOREST_GAME_ACTIVE_KEY, String(fireflyForestGameActive));
       localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
       localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
       localStorage.setItem(LIGHT_TAP_REQUIRE_CLICK_KEY, String(lightTapRequireClick));
@@ -2352,6 +2506,10 @@ async function loadTask1Settings() {
   if (bugMeadowGameActiveToggle) {
     bugMeadowGameActiveToggle.checked = bugMeadowGameActive;
   }
+  if (fireflyForestGameActiveToggle) {
+    fireflyForestGameActiveToggle.checked =
+      fireflyForestGameActive;
+  }
   if (bugMeadowRequireClickAndDragToggle) {
     bugMeadowRequireClickAndDragToggle.checked = bugMeadowRequireClickAndDrag;
   }
@@ -2377,6 +2535,18 @@ async function loadTask1Settings() {
     birdCount: "birdCount",
     birdSpeed: "birdSpeed",
   });
+  applyGameLevelsToInputs(
+    fireflyForestLevels,
+    fireflyForestLevelInputs,
+    {
+      goal: "goal",
+      timeLimit: "timeLimit",
+      missesAllowed: "missesAllowed",
+      targetSize: "targetSize",
+      targetLifetimeSeconds: "targetLifetimeSeconds",
+      decoyCount: "decoyCount",
+    }
+  );
   applyGameLevelsToInputs(lightTapLevels, lightTapLevelInputs, {
     lives: "lives",
     time: "time",
@@ -2505,6 +2675,11 @@ async function saveTask1Settings() {
     bugMeadowGameActiveToggle && bugMeadowGameActiveToggle.checked
   );
 
+  const fireflyForestGameActive = Boolean(
+    fireflyForestGameActiveToggle &&
+    fireflyForestGameActiveToggle.checked
+  );
+
   const deerRunGameActive = Boolean(
     deerRunGameActiveToggle &&
     deerRunGameActiveToggle.checked
@@ -2522,6 +2697,22 @@ async function saveTask1Settings() {
     birdSpeed: "birdSpeed",
     })
   );
+
+  const fireflyForestLevels =
+    normalizeFireflyForestLevels(
+      readGameLevelsFromInputs(
+        fireflyForestLevelInputs,
+        {
+          goal: "goal",
+          timeLimit: "timeLimit",
+          missesAllowed: "missesAllowed",
+          targetSize: "targetSize",
+          targetLifetimeSeconds:
+            "targetLifetimeSeconds",
+          decoyCount: "decoyCount",
+        }
+      )
+    );
 
   const lightTapLevels = normalizeLightTapLevels(
     readGameLevelsFromInputs(lightTapLevelInputs, {
@@ -2744,6 +2935,7 @@ async function saveTask1Settings() {
     saveStoredMartianLevels(martianLevels);
   }
   saveStoredBugMeadowLevels(bugMeadowLevels);
+  saveStoredFireflyForestLevels(fireflyForestLevels);
   saveStoredDeerRunLevels(deerRunLevels);
 
   applyDeerRunLevelsToInputs(
@@ -2895,6 +3087,8 @@ async function saveTask1Settings() {
         bugMeadowGameActive,
         bugMeadowRequireClickAndDrag,
         bugMeadowLevels,
+        fireflyForestGameActive,
+        fireflyForestLevels,
         movingSoundSettings:
           getMovingSoundSettingsSnapshot(),
         soundEnabled,
@@ -2957,6 +3151,13 @@ if (resetBugMeadowDefaultsBtn) {
     resetBugMeadowToDefaults
   );
 }
+if (resetFireflyForestDefaultsBtn) {
+  resetFireflyForestDefaultsBtn.addEventListener(
+    "click",
+    resetFireflyForestToDefaults
+  );
+}
+
 if (resetDeerRunDefaultsBtn) {
   resetDeerRunDefaultsBtn.addEventListener(
     "click",
