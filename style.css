@@ -5149,3 +5149,9 @@ body.car-page .scene {
     transform: scale(1.15);
   }
 }
+
+
+/* Road Dash traffic uses center-based Y coordinates */
+body.car-page .car-traffic {
+  transform: translate(-50%, -50%);
+}

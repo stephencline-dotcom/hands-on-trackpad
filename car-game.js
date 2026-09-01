@@ -868,7 +868,7 @@ function spawnCarObstacle() {
   }
 
   const node = document.createElement("img");
-  node.className = "car-obstacle";
+  node.className = "car-obstacle car-traffic";
   node.alt = "";
   node.setAttribute("aria-hidden", "true");
   node.src = OBSTACLE_IMAGES[Math.floor(Math.random() * OBSTACLE_IMAGES.length)];
@@ -1022,7 +1022,23 @@ function getObstacleScreenState(obstacle) {
       const overshootBottom = boardBottom + (playerCar ? playerCar.offsetHeight * 0.6 : 36);
       y = lerp(road.topRoadY, overshootBottom, pumpTravel);
     } else {
-      y = lerp(road.topRoadY, road.bottomRoadY, curvedProgress);
+      /*
+       * Traffic must travel beyond the player's depth.
+       * The previous endpoint stopped too early to provide
+       * both a crash window and a safely-passed window.
+       */
+      const boardBottom = carBoard
+        ? carBoard.clientHeight
+        : road.bottomRoadY;
+
+      const trafficOvershootBottom =
+        boardBottom + playerCar.offsetHeight * 0.55;
+
+      y = lerp(
+        road.topRoadY,
+        trafficOvershootBottom,
+        curvedProgress
+      );
     }
   }
 
@@ -1081,7 +1097,7 @@ function isCollidingWithPlayer(obstacle, obstacleState) {
     return false;
   }
 
-  if (obstacle.type !== "car") {
+  if (obstacle.type !== "car" || obstacle.isPast) {
     return false;
   }
 
@@ -1096,11 +1112,12 @@ function isCollidingWithPlayer(obstacle, obstacleState) {
     return false;
   }
 
-  const passedPlayerDepth = hasPassedPlayerDepth(obstacleState);
-  if (passedPlayerDepth) {
-    return false;
-  }
-
+  /*
+   * Rectangle overlap determines whether a crash occurred.
+   * Do not reject the obstacle early on shorter boards:
+   * its visual size may become collision-eligible near the
+   * exact moment it reaches the player's depth.
+   */
   // Smaller hitboxes keep near-miss visuals from counting as crashes.
   const carHitboxWidth = carWidth * 0.6;
   const carHitboxHeight = carHeight * 0.7;
@@ -1185,10 +1202,32 @@ function hasPassedPlayerDepth(obstacleState) {
     return false;
   }
 
+  /*
+   * Gas pumps remain behind the player until they have
+   * completely cleared the player's car.
+   */
+  const playerBottomY = carBoard.clientHeight - 2;
+  return obstacleState.y >= playerBottomY;
+}
+
+function hasCarPassedPlayerDepth(obstacleState) {
+  if (!carBoard || !playerCar) {
+    return false;
+  }
+
+  /*
+   * Keep traffic collision-active while it approaches and
+   * crosses the player's crash area. Once its center moves
+   * below that area, it is safely past and moves forward.
+   */
   const carHeight = playerCar.offsetHeight;
-  const carCenterY = carBoard.clientHeight - 2 - carHeight / 2;
-  const carHitboxHeight = carHeight * 0.7;
-  return obstacleState.y > carCenterY + carHitboxHeight * 0.08;
+  const carCenterY =
+    carBoard.clientHeight - 2 - carHeight / 2;
+
+  const passY =
+    carCenterY + carHeight * 0.38;
+
+  return obstacleState.y >= passY;
 }
 
 function getCarSpawnIntervalMs() {
@@ -1415,25 +1454,28 @@ function updateObstacles(dtMs) {
     obstacle.node.style.width = `${state.width}px`;
     obstacle.node.style.height = `${state.height}px`;
 
-    if (obstacle.type === "car") {
-      const passedPlayerDepth = hasPassedPlayerDepth(state);
-      if (passedPlayerDepth && !obstacle.isPast && carObstaclesTop) {
-        obstacle.isPast = true;
-        carObstaclesTop.appendChild(obstacle.node);
-      }
-    }
-
-    if (obstacle.type === "gaspump") {
-      const passedPlayerDepth = hasPassedPlayerDepth(state);
-      if (passedPlayerDepth && !obstacle.isPast && carObstaclesTop) {
-        obstacle.isPast = true;
-        carObstaclesTop.appendChild(obstacle.node);
-      }
-    }
-
     if (isCollidingWithPlayer(obstacle, state)) {
       handleCrash();
       return;
+    }
+
+    /*
+     * Keep approaching traffic below the player's car.
+     * Only move a car to the foreground after it has
+     * safely passed without colliding.
+     */
+    if (obstacle.type === "car") {
+      const passedPlayerDepth =
+        hasCarPassedPlayerDepth(state);
+
+      if (
+        passedPlayerDepth &&
+        !obstacle.isPast &&
+        carObstaclesTop
+      ) {
+        obstacle.isPast = true;
+        carObstaclesTop.appendChild(obstacle.node);
+      }
     }
 
     if (isCollectingGasPump(obstacle, state)) {
@@ -1446,6 +1488,18 @@ function updateObstacles(dtMs) {
       showToast("Fuel up!", 850);
       removeObstacle(obstacle.id);
       return;
+    }
+
+    /*
+     * An uncollected gas pump moves to the foreground only
+     * after it has completely passed the player's car.
+     */
+    if (obstacle.type === "gaspump") {
+      const passedPlayerDepth = hasPassedPlayerDepth(state);
+      if (passedPlayerDepth && !obstacle.isPast && carObstaclesTop) {
+        obstacle.isPast = true;
+        carObstaclesTop.appendChild(obstacle.node);
+      }
     }
 
     if (obstacle.type === "bird") {
