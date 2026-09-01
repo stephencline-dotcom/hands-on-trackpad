@@ -862,10 +862,17 @@ const server = http.createServer(async (req, res) => {
          * transitioning to persistent
          * storage.
          */
+        const fallbackSettings =
+          loadSettings();
+
+        fallbackSettings.freezeScreenArmed =
+          liveClassroomState
+            .freezeScreenArmed;
+
         sendJson(
           res,
           200,
-          loadSettings()
+          fallbackSettings
         );
       }
 
@@ -881,6 +888,42 @@ const server = http.createServer(async (req, res) => {
           body
             ? JSON.parse(body)
             : {};
+
+        const parsedKeys =
+          Object.keys(parsed);
+
+        const isFreezeOnlyRequest =
+          parsedKeys.length === 1 &&
+          parsedKeys[0] ===
+            "freezeScreenArmed" &&
+          typeof parsed.freezeScreenArmed ===
+            "boolean";
+
+        /*
+         * Freeze is temporary live classroom
+         * state. Update it immediately without
+         * waiting for permanent Supabase storage.
+         */
+        if (isFreezeOnlyRequest) {
+          liveClassroomState
+            .freezeScreenArmed =
+              parsed.freezeScreenArmed;
+
+          const currentSettings =
+            loadSettings();
+
+          currentSettings.freezeScreenArmed =
+            liveClassroomState
+              .freezeScreenArmed;
+
+          sendJson(
+            res,
+            200,
+            currentSettings
+          );
+
+          return;
+        }
 
         /*
          * Normalize through the existing
