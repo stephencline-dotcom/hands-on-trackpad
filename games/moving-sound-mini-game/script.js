@@ -1327,6 +1327,23 @@ function ensureMartianEntities() {
           return;
         }
 
+        if (
+          window.InputDeviceGuard &&
+          typeof window.InputDeviceGuard
+            .shouldBlockRapidClick === 'function' &&
+          window.InputDeviceGuard.shouldBlockRapidClick(
+            'martian-madness',
+            event,
+            {
+              cooldownMs: 450,
+            }
+          )
+        ) {
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+
         event.stopPropagation();
         activateMartianPerson();
       });
@@ -1838,6 +1855,23 @@ function handleMartianArenaPointerDown(event) {
   }
 
   if (event.target.closest('.martian-person')) {
+    return;
+  }
+
+  if (
+    window.InputDeviceGuard &&
+    typeof window.InputDeviceGuard
+      .shouldBlockRapidClick === 'function' &&
+    window.InputDeviceGuard.shouldBlockRapidClick(
+      'martian-madness',
+      event,
+      {
+        cooldownMs: 450,
+      }
+    )
+  ) {
+    event.preventDefault();
+    event.stopPropagation();
     return;
   }
 
@@ -2536,6 +2570,39 @@ function lightTapRequiresClick() {
   } catch {
     return true;
   }
+}
+
+function handleLightTapRapidPointerDown(event) {
+  if (
+    !arenaState.running ||
+    !lightTapRequiresClick() ||
+    !window.InputDeviceGuard ||
+    typeof window.InputDeviceGuard
+      .shouldBlockRapidClick !== 'function'
+  ) {
+    return;
+  }
+
+  const shouldBlock =
+    window.InputDeviceGuard.shouldBlockRapidClick(
+      'light-tap',
+      event,
+      {
+        cooldownMs: 450,
+      }
+    );
+
+  if (!shouldBlock) {
+    return;
+  }
+
+  /*
+   * Stop the rapid second press before it reaches either
+   * the moving target or the arena miss handler.
+   */
+  event.preventDefault();
+  event.stopPropagation();
+  event.stopImmediatePropagation();
 }
 
 function createTarget() {
@@ -3607,6 +3674,35 @@ function streetCarRequiresClick() {
   }
 }
 
+function handleStreetCarRapidPointerDown(event) {
+  if (
+    !carGameState.running ||
+    !streetCarRequiresClick() ||
+    !window.InputDeviceGuard ||
+    typeof window.InputDeviceGuard
+      .shouldBlockRapidClick !== 'function'
+  ) {
+    return;
+  }
+
+  const shouldBlock =
+    window.InputDeviceGuard.shouldBlockRapidClick(
+      'street-car',
+      event,
+      {
+        cooldownMs: 450,
+      }
+    );
+
+  if (!shouldBlock) {
+    return;
+  }
+
+  event.preventDefault();
+  event.stopPropagation();
+  event.stopImmediatePropagation();
+}
+
 function createCar() {
   const carElement = document.createElement('button');
   carElement.type = 'button';
@@ -4443,6 +4539,23 @@ function handleFireArenaPointerDown(event) {
     return;
   }
 
+  if (
+    window.InputDeviceGuard &&
+    typeof window.InputDeviceGuard
+      .shouldBlockRapidClick === 'function' &&
+    window.InputDeviceGuard.shouldBlockRapidClick(
+      'firefighter-rescue',
+      event,
+      {
+        cooldownMs: 450,
+      }
+    )
+  ) {
+    event.preventDefault();
+    event.stopPropagation();
+    return;
+  }
+
   const clickedWindowElement = event.target.closest('.fire-window');
 
   if (!clickedWindowElement) {
@@ -4696,6 +4809,23 @@ function handleDragonArenaPointerDown(event) {
   }
 
   if (event.button !== 0 && event.pointerType !== 'touch') {
+    return;
+  }
+
+  if (
+    window.InputDeviceGuard &&
+    typeof window.InputDeviceGuard
+      .shouldBlockRapidClick === 'function' &&
+    window.InputDeviceGuard.shouldBlockRapidClick(
+      'dragon-dodge',
+      event,
+      {
+        cooldownMs: 450,
+      }
+    )
+  ) {
+    event.preventDefault();
+    event.stopPropagation();
     return;
   }
 
@@ -5367,7 +5497,17 @@ studentNameInput.addEventListener('keydown', (event) => {
 changeNameButton.addEventListener('click', handleChangeName);
 adminUnlockForm.addEventListener('submit', unlockAdmin);
 adminApplyButton.addEventListener('click', applyAdminSettings);
+arena.addEventListener(
+  'pointerdown',
+  handleLightTapRapidPointerDown,
+  true
+);
 arena.addEventListener('pointerdown', handleArenaMiss);
+streetArena.addEventListener(
+  'pointerdown',
+  handleStreetCarRapidPointerDown,
+  true
+);
 streetArena.addEventListener('pointerdown', handleStreetArenaMiss);
 dragonArena.addEventListener('pointerdown', handleDragonArenaPointerDown);
 dragonArena.addEventListener('pointerover', handleDragonArenaPointerEnter);
