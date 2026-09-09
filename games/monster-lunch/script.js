@@ -46,8 +46,12 @@
   const monsterCrunchSound =
     new Audio("../../sounds/crunch.mp3");
 
+  const monsterYoinkSound =
+    new Audio("../../sounds/yoink.mp3");
+
   monsterSplatSound.preload = "auto";
   monsterCrunchSound.preload = "auto";
+  monsterYoinkSound.preload = "auto";
 
   function playMonsterSound(audio) {
     if (!audio) {
@@ -742,10 +746,14 @@
       `Too slow! The snack snatcher stole ${currentRequest.label}.`;
 
     window.setTimeout(() => {
+      playMonsterSound(
+        monsterYoinkSound
+      );
+
       targetButton.classList.add(
         "is-stolen"
       );
-    }, 520);
+    }, 450);
 
     window.setTimeout(() => {
       roundActive = true;
