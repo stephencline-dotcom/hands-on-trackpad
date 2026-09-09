@@ -629,6 +629,20 @@ function saveSettings(settings) {
       settings.martianMadnessGameActive ?? existing.martianMadnessGameActive,
       DEFAULT_SETTINGS.martianMadnessGameActive
     ),
+
+    monsterLunchGameActive: parseTaskEnabled(
+      settings.monsterLunchGameActive ??
+        existing.monsterLunchGameActive,
+      true
+    ),
+
+    monsterLunchLevels:
+      Array.isArray(settings.monsterLunchLevels)
+        ? settings.monsterLunchLevels
+        : Array.isArray(existing.monsterLunchLevels)
+          ? existing.monsterLunchLevels
+          : [],
+
     soundEnabled: parseTaskEnabled(settings.soundEnabled ?? existing.soundEnabled, true),
     trainingPaused: parseTrainingPaused(settings.trainingPaused ?? existing.trainingPaused),
     jackFlameRainEnabled: parseTaskEnabled(

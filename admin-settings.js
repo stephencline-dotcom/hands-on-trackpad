@@ -22,6 +22,7 @@ const firefighterRescueGameActiveToggle = document.getElementById("firefighterRe
 const martianMadnessGameActiveToggle = document.getElementById("martianMadnessGameActive");
 const bugMeadowGameActiveToggle = document.getElementById("bugMeadowGameActive");
 const fireflyForestGameActiveToggle = document.getElementById("fireflyForestGameActive");
+const monsterLunchGameActiveToggle = document.getElementById("monsterLunchGameActive");
 const deerRunGameActiveToggle = document.getElementById("deerRunGameActive");
 const soundEnabledToggle = document.getElementById("soundEnabledToggle");
 const trainingPausedToggle = document.getElementById("trainingPausedToggle");
@@ -130,6 +131,23 @@ const fireflyForestLevelInputs = [1, 2, 3, 4].map((level) => ({
     document.getElementById(`adminFireflyDecoysL${level}`),
 }));
 
+const monsterLunchLevelInputs = [1, 2, 3, 4].map((level) => ({
+  goal: document.getElementById(`adminMonsterGoalL${level}`),
+  missesAllowed: document.getElementById(`adminMonsterMissesL${level}`),
+  choiceCount: document.getElementById(`adminMonsterChoicesL${level}`),
+  foodSize: document.getElementById(`adminMonsterSizeL${level}`),
+  timeLimitEnabled: document.getElementById(`adminMonsterTimerEnabledL${level}`),
+  timeLimit: document.getElementById(`adminMonsterTimeL${level}`),
+  moveSpeed:
+    level >= 3
+      ? document.getElementById(`adminMonsterSpeedL${level}`)
+      : null,
+  snatcherDelaySeconds:
+    level >= 3
+      ? document.getElementById(`adminMonsterSnatcherL${level}`)
+      : null,
+}));
+
 const deerRunLevelInputs = [1, 2, 3, 4].map((level) => ({
   goal: document.getElementById(`adminDeerRunGoalL${level}`),
   timeLimit: document.getElementById(`adminDeerRunTimeL${level}`),
@@ -164,6 +182,7 @@ const resetFireDefaultsBtn = document.getElementById("resetFireDefaultsBtn");
 const resetMartianDefaultsBtn = document.getElementById("resetMartianDefaultsBtn");
 const resetBugMeadowDefaultsBtn = document.getElementById("resetBugMeadowDefaultsBtn");
 const resetFireflyForestDefaultsBtn = document.getElementById("resetFireflyForestDefaultsBtn");
+const resetMonsterLunchDefaultsBtn = document.getElementById("resetMonsterLunchDefaultsBtn");
 const resetDeerRunDefaultsBtn = document.getElementById("resetDeerRunDefaultsBtn");
 const resetJackDefaultsBtn = document.getElementById("resetJackDefaultsBtn");
 const resetFullscreenDefaultsBtn = document.getElementById("resetFullscreenDefaultsBtn");
@@ -194,6 +213,7 @@ const FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY = "firefighterRescueGameActive";
 const MARTIAN_MADNESS_GAME_ACTIVE_KEY = "martianMadnessGameActive";
 const BUG_MEADOW_GAME_ACTIVE_KEY = "bugMeadowGameActive";
 const FIREFLY_FOREST_GAME_ACTIVE_KEY = "fireflyForestGameActive";
+const MONSTER_LUNCH_GAME_ACTIVE_KEY = "monsterLunchGameActive";
 const DEER_RUN_GAME_ACTIVE_KEY = "deerRunGameActive";
 const SOUND_ENABLED_KEY = "trackpadSoundEnabled";
 const TRAINING_PAUSED_KEY = "trackpadTrainingPaused";
@@ -356,6 +376,49 @@ const DEFAULT_FIREFLY_FOREST_LEVELS = [
     targetSize: 54,
     targetLifetimeSeconds: 0,
     decoyCount: 5,
+  },
+];
+
+const DEFAULT_MONSTER_LUNCH_LEVELS = [
+  {
+    goal: 5,
+    missesAllowed: 3,
+    choiceCount: 3,
+    foodSize: 118,
+    timeLimitEnabled: false,
+    timeLimit: 35,
+    moveSpeed: 0,
+    snatcherDelaySeconds: 0,
+  },
+  {
+    goal: 7,
+    missesAllowed: 3,
+    choiceCount: 5,
+    foodSize: 88,
+    timeLimitEnabled: false,
+    timeLimit: 35,
+    moveSpeed: 0,
+    snatcherDelaySeconds: 0,
+  },
+  {
+    goal: 8,
+    missesAllowed: 3,
+    choiceCount: 5,
+    foodSize: 88,
+    timeLimitEnabled: true,
+    timeLimit: 35,
+    moveSpeed: 5,
+    snatcherDelaySeconds: 5,
+  },
+  {
+    goal: 10,
+    missesAllowed: 3,
+    choiceCount: 9,
+    foodSize: 82,
+    timeLimitEnabled: true,
+    timeLimit: 30,
+    moveSpeed: 6,
+    snatcherDelaySeconds: 3.5,
   },
 ];
 
@@ -952,7 +1015,19 @@ function readGameLevelsFromInputs(levelInputs, fieldMap) {
     const level = {};
 
     Object.entries(fieldMap).forEach(([levelKey, inputKey]) => {
-      level[levelKey] = inputs[inputKey] ? inputs[inputKey].value : null;
+      const input = inputs[inputKey];
+
+      if (!input) {
+        level[levelKey] = null;
+        return;
+      }
+
+      if (input.type === "checkbox") {
+        level[levelKey] = input.checked;
+        return;
+      }
+
+      level[levelKey] = input.value;
     });
 
     return level;
@@ -967,9 +1042,18 @@ function applyGameLevelsToInputs(levels, levelInputs, fieldMap) {
     }
 
     Object.entries(fieldMap).forEach(([levelKey, inputKey]) => {
-      if (inputs[inputKey]) {
-        inputs[inputKey].value = String(level[levelKey]);
+      const input = inputs[inputKey];
+
+      if (!input) {
+        return;
       }
+
+      if (input.type === "checkbox") {
+        input.checked = level[levelKey] === true;
+        return;
+      }
+
+      input.value = String(level[levelKey]);
     });
   });
 }
@@ -1119,6 +1203,83 @@ function normalizeFireflyForestLevels(levels) {
         12,
         defaults.decoyCount
       ),
+    })
+  );
+}
+
+function normalizeMonsterLunchLevels(levels) {
+  return normalizeLevelArray(
+    levels,
+    DEFAULT_MONSTER_LUNCH_LEVELS,
+    (level, defaults) => ({
+      goal: parseLightTapLevelValue(
+        level.goal,
+        1,
+        100,
+        defaults.goal
+      ),
+
+      missesAllowed: parseLightTapLevelValue(
+        level.missesAllowed,
+        1,
+        20,
+        defaults.missesAllowed
+      ),
+
+      choiceCount: parseLightTapLevelValue(
+        level.choiceCount,
+        3,
+        10,
+        defaults.choiceCount
+      ),
+
+      foodSize: parseLightTapLevelValue(
+        level.foodSize,
+        60,
+        140,
+        defaults.foodSize
+      ),
+
+      timeLimitEnabled:
+        level.timeLimitEnabled === true ||
+        level.timeLimitEnabled === "true",
+
+      timeLimit: parseLightTapLevelValue(
+        level.timeLimit,
+        10,
+        300,
+        defaults.timeLimit
+      ),
+
+      moveSpeed:
+        Number.isFinite(
+          Number(level.moveSpeed)
+        )
+          ? Math.min(
+              10,
+              Math.max(
+                0,
+                Number(level.moveSpeed)
+              )
+            )
+          : defaults.moveSpeed,
+
+      snatcherDelaySeconds:
+        Number.isFinite(
+          Number(
+            level.snatcherDelaySeconds
+          )
+        )
+          ? Math.min(
+              15,
+              Math.max(
+                0,
+                Number(
+                  level.snatcherDelaySeconds
+                )
+              )
+            )
+          : defaults.snatcherDelaySeconds,
     })
   );
 }
@@ -1287,6 +1448,22 @@ function saveStoredFireflyForestLevels(levels) {
     "fireflyForestLevels",
     levels,
     normalizeFireflyForestLevels
+  );
+}
+
+function loadStoredMonsterLunchLevels() {
+  return loadGameLevelsFromStorage(
+    "monsterLunchLevels",
+    DEFAULT_MONSTER_LUNCH_LEVELS,
+    normalizeMonsterLunchLevels
+  );
+}
+
+function saveStoredMonsterLunchLevels(levels) {
+  return saveGameLevelsToStorage(
+    "monsterLunchLevels",
+    levels,
+    normalizeMonsterLunchLevels
   );
 }
 
@@ -1811,6 +1988,7 @@ async function resetFullscreenToDefaults() {
   localStorage.setItem(FULLSCREEN_GAME_ACTIVE_KEY, String(fullscreenGameActive));
   localStorage.setItem(BUG_MEADOW_GAME_ACTIVE_KEY, String(bugMeadowGameActive));
   localStorage.setItem(FIREFLY_FOREST_GAME_ACTIVE_KEY, String(fireflyForestGameActive));
+  localStorage.setItem(MONSTER_LUNCH_GAME_ACTIVE_KEY, String(monsterLunchGameActive));
   localStorage.setItem(
     BUG_MEADOW_REQUIRE_CLICK_AND_DRAG_KEY,
     String(bugMeadowRequireClickAndDrag)
@@ -2161,6 +2339,11 @@ async function loadTask1Settings() {
     true
   );
 
+  let monsterLunchGameActive = parseTaskEnabled(
+    localStorage.getItem(MONSTER_LUNCH_GAME_ACTIVE_KEY),
+    true
+  );
+
   let deerRunGameActive = parseTaskEnabled(
     localStorage.getItem(DEER_RUN_GAME_ACTIVE_KEY),
     true
@@ -2174,6 +2357,7 @@ async function loadTask1Settings() {
   let martianLevels = loadStoredMartianLevels();
   let bugMeadowLevels = loadStoredBugMeadowLevels();
   let fireflyForestLevels = loadStoredFireflyForestLevels();
+  let monsterLunchLevels = loadStoredMonsterLunchLevels();
   let deerRunLevels = loadStoredDeerRunLevels();
 
   let soundEnabled = parseTaskEnabled(localStorage.getItem(SOUND_ENABLED_KEY), true);
@@ -2328,6 +2512,26 @@ async function loadTask1Settings() {
       dragonDodgeGameActive = parseTaskEnabled(data.dragonDodgeGameActive, dragonDodgeGameActive);
       firefighterRescueGameActive = parseTaskEnabled(data.firefighterRescueGameActive, firefighterRescueGameActive);
       martianMadnessGameActive = parseTaskEnabled(data.martianMadnessGameActive, martianMadnessGameActive);
+
+      monsterLunchGameActive =
+        parseTaskEnabled(
+          data.monsterLunchGameActive,
+          monsterLunchGameActive
+        );
+
+      if (
+        Array.isArray(data.monsterLunchLevels)
+      ) {
+        monsterLunchLevels =
+          normalizeMonsterLunchLevels(
+            data.monsterLunchLevels
+          );
+
+        saveStoredMonsterLunchLevels(
+          monsterLunchLevels
+        );
+      }
+
       soundEnabled = parseTaskEnabled(data.soundEnabled, true);
       trainingPaused = parseTrainingPaused(data.trainingPaused);
       lightTapRequireClick = parseTaskEnabled(
@@ -2433,6 +2637,7 @@ async function loadTask1Settings() {
       localStorage.setItem(FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY, String(firefighterRescueGameActive));
       localStorage.setItem(MARTIAN_MADNESS_GAME_ACTIVE_KEY, String(martianMadnessGameActive));
       localStorage.setItem(FIREFLY_FOREST_GAME_ACTIVE_KEY, String(fireflyForestGameActive));
+      localStorage.setItem(MONSTER_LUNCH_GAME_ACTIVE_KEY, String(monsterLunchGameActive));
       localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
       localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
       localStorage.setItem(LIGHT_TAP_REQUIRE_CLICK_KEY, String(lightTapRequireClick));
@@ -2545,6 +2750,21 @@ async function loadTask1Settings() {
       targetSize: "targetSize",
       targetLifetimeSeconds: "targetLifetimeSeconds",
       decoyCount: "decoyCount",
+    }
+  );
+  applyGameLevelsToInputs(
+    monsterLunchLevels,
+    monsterLunchLevelInputs,
+    {
+      goal: "goal",
+      missesAllowed: "missesAllowed",
+      choiceCount: "choiceCount",
+      foodSize: "foodSize",
+      timeLimitEnabled: "timeLimitEnabled",
+      timeLimit: "timeLimit",
+      moveSpeed: "moveSpeed",
+      snatcherDelaySeconds:
+        "snatcherDelaySeconds",
     }
   );
   applyGameLevelsToInputs(lightTapLevels, lightTapLevelInputs, {
@@ -2680,6 +2900,11 @@ async function saveTask1Settings() {
     fireflyForestGameActiveToggle.checked
   );
 
+  const monsterLunchGameActive = Boolean(
+    monsterLunchGameActiveToggle &&
+    monsterLunchGameActiveToggle.checked
+  );
+
   const deerRunGameActive = Boolean(
     deerRunGameActiveToggle &&
     deerRunGameActiveToggle.checked
@@ -2710,6 +2935,25 @@ async function saveTask1Settings() {
           targetLifetimeSeconds:
             "targetLifetimeSeconds",
           decoyCount: "decoyCount",
+        }
+      )
+    );
+
+  const monsterLunchLevels =
+    normalizeMonsterLunchLevels(
+      readGameLevelsFromInputs(
+        monsterLunchLevelInputs,
+        {
+          goal: "goal",
+          missesAllowed: "missesAllowed",
+          choiceCount: "choiceCount",
+          foodSize: "foodSize",
+          timeLimitEnabled:
+            "timeLimitEnabled",
+          timeLimit: "timeLimit",
+          moveSpeed: "moveSpeed",
+          snatcherDelaySeconds:
+            "snatcherDelaySeconds",
         }
       )
     );
@@ -2936,6 +3180,7 @@ async function saveTask1Settings() {
   }
   saveStoredBugMeadowLevels(bugMeadowLevels);
   saveStoredFireflyForestLevels(fireflyForestLevels);
+  saveStoredMonsterLunchLevels(monsterLunchLevels);
   saveStoredDeerRunLevels(deerRunLevels);
 
   applyDeerRunLevelsToInputs(
@@ -3089,6 +3334,8 @@ async function saveTask1Settings() {
         bugMeadowLevels,
         fireflyForestGameActive,
         fireflyForestLevels,
+        monsterLunchGameActive,
+        monsterLunchLevels,
         movingSoundSettings:
           getMovingSoundSettingsSnapshot(),
         soundEnabled,

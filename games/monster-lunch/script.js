@@ -66,7 +66,10 @@
     return;
   }
 
-  const MONSTER_LEVELS = [
+  const MONSTER_SETTINGS_KEY =
+    "moving-sound-admin-settings-v1";
+
+  const DEFAULT_MONSTER_LEVELS = [
     {
       goal: 5,
       missesAllowed: 3,
@@ -76,6 +79,7 @@
       moveSpeed: 0,
       timeLimitEnabled: false,
       timeLimit: 35,
+      snatcherDelaySeconds: 0,
     },
     {
       goal: 7,
@@ -86,6 +90,7 @@
       moveSpeed: 0,
       timeLimitEnabled: false,
       timeLimit: 35,
+      snatcherDelaySeconds: 0,
     },
     {
       goal: 8,
@@ -110,6 +115,215 @@
       snatcherDelaySeconds: 3.5,
     },
   ];
+
+  function clampMonsterNumber(
+    value,
+    min,
+    max,
+    fallback
+  ) {
+    const parsed = Number(value);
+
+    if (!Number.isFinite(parsed)) {
+      return fallback;
+    }
+
+    return Math.min(
+      max,
+      Math.max(min, parsed)
+    );
+  }
+
+  function normalizeMonsterLevel(
+    level,
+    defaults,
+    index
+  ) {
+    const source =
+      level && typeof level === "object"
+        ? level
+        : {};
+
+    return {
+      goal: Math.round(
+        clampMonsterNumber(
+          source.goal,
+          1,
+          100,
+          defaults.goal
+        )
+      ),
+
+      missesAllowed: Math.round(
+        clampMonsterNumber(
+          source.missesAllowed,
+          1,
+          20,
+          defaults.missesAllowed
+        )
+      ),
+
+      choiceCount: Math.round(
+        clampMonsterNumber(
+          source.choiceCount,
+          3,
+          10,
+          defaults.choiceCount
+        )
+      ),
+
+      foodSize: Math.round(
+        clampMonsterNumber(
+          source.foodSize,
+          60,
+          140,
+          defaults.foodSize
+        )
+      ),
+
+      moving: index >= 2,
+
+      moveSpeed:
+        index >= 2
+          ? clampMonsterNumber(
+              source.moveSpeed,
+              1,
+              10,
+              defaults.moveSpeed
+            )
+          : 0,
+
+      timeLimitEnabled:
+        source.timeLimitEnabled === true ||
+        source.timeLimitEnabled === "true",
+
+      timeLimit: Math.round(
+        clampMonsterNumber(
+          source.timeLimit,
+          10,
+          300,
+          defaults.timeLimit
+        )
+      ),
+
+      snatcherDelaySeconds:
+        index >= 2
+          ? clampMonsterNumber(
+              source.snatcherDelaySeconds,
+              1,
+              15,
+              defaults.snatcherDelaySeconds
+            )
+          : 0,
+    };
+  }
+
+  function normalizeMonsterLevels(levels) {
+    return DEFAULT_MONSTER_LEVELS.map(
+      (defaults, index) =>
+        normalizeMonsterLevel(
+          Array.isArray(levels)
+            ? levels[index]
+            : null,
+          defaults,
+          index
+        )
+    );
+  }
+
+  function loadLocalMonsterLevels() {
+    try {
+      const raw =
+        localStorage.getItem(
+          MONSTER_SETTINGS_KEY
+        );
+
+      const parsed =
+        raw ? JSON.parse(raw) : {};
+
+      return normalizeMonsterLevels(
+        parsed.monsterLunchLevels
+      );
+    } catch {
+      return normalizeMonsterLevels(
+        DEFAULT_MONSTER_LEVELS
+      );
+    }
+  }
+
+  let MONSTER_LEVELS =
+    loadLocalMonsterLevels();
+
+  function cacheMonsterLevels(levels) {
+    try {
+      const raw =
+        localStorage.getItem(
+          MONSTER_SETTINGS_KEY
+        );
+
+      const parsed =
+        raw ? JSON.parse(raw) : {};
+
+      parsed.monsterLunchLevels =
+        levels;
+
+      localStorage.setItem(
+        MONSTER_SETTINGS_KEY,
+        JSON.stringify(parsed)
+      );
+    } catch {
+      // Game can continue with remote/default settings.
+    }
+  }
+
+  async function loadRemoteMonsterLevels() {
+    try {
+      const response = await fetch(
+        "/api/settings",
+        {
+          cache: "no-store",
+        }
+      );
+
+      if (!response.ok) {
+        return;
+      }
+
+      const settings =
+        await response.json();
+
+      const remoteLevels =
+        Array.isArray(
+          settings.monsterLunchLevels
+        )
+          ? settings.monsterLunchLevels
+          : settings.movingSoundSettings &&
+              Array.isArray(
+                settings.movingSoundSettings
+                  .monsterLunchLevels
+              )
+            ? settings.movingSoundSettings
+                .monsterLunchLevels
+            : null;
+
+      if (!remoteLevels) {
+        return;
+      }
+
+      MONSTER_LEVELS =
+        normalizeMonsterLevels(
+          remoteLevels
+        );
+
+      cacheMonsterLevels(
+        MONSTER_LEVELS
+      );
+
+      updateHud();
+    } catch {
+      // Keep local/default settings if API is unavailable.
+    }
+  }
 
   let currentLevelIndex = 0;
 
@@ -1082,4 +1296,6 @@
   );
 
   updateHud();
+
+  loadRemoteMonsterLevels();
 })();
