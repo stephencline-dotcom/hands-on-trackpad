@@ -40,6 +40,36 @@
   const monsterSnatcher =
     document.getElementById("monsterSnatcher");
 
+  const monsterSplatSound =
+    new Audio("../../sounds/splat.mp3");
+
+  const monsterCrunchSound =
+    new Audio("../../sounds/crunch.mp3");
+
+  monsterSplatSound.preload = "auto";
+  monsterCrunchSound.preload = "auto";
+
+  function playMonsterSound(audio) {
+    if (!audio) {
+      return;
+    }
+
+    try {
+      audio.currentTime = 0;
+
+      const playPromise = audio.play();
+
+      if (
+        playPromise &&
+        typeof playPromise.catch === "function"
+      ) {
+        playPromise.catch(() => {});
+      }
+    } catch {
+      // Ignore audio playback failures.
+    }
+  }
+
   const trackpadScene =
     document.getElementById("monsterTrackpadScene");
 
@@ -878,7 +908,11 @@
 
     window.setTimeout(() => {
       button.classList.add("is-splatted");
-    }, 260);
+
+      playMonsterSound(
+        monsterSplatSound
+      );
+    }, 170);
 
     window.setTimeout(() => {
       applyMiss(
@@ -968,6 +1002,12 @@
 
     monsterStatus.textContent =
       `Yum! ${food.label}!`;
+
+    window.setTimeout(() => {
+      playMonsterSound(
+        monsterCrunchSound
+      );
+    }, 360);
 
     window.setTimeout(() => {
       score += 1;
