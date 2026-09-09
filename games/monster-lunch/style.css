@@ -1,0 +1,1196 @@
+/* Monster Lunch game-specific visuals only.
+   Shared shell/layout comes from:
+   ../moving-sound-mini-game/styles.css
+*/
+
+.monster-lunch-page {
+  margin: 0;
+  min-height: 100svh;
+}
+
+.monster-arena {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      180deg,
+      #4c1d95 0%,
+      #6d28d9 46%,
+      #f5d0a9 47%,
+      #f3c892 100%
+    );
+  user-select: none;
+}
+
+.monster-room-backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(255, 255, 255, 0.12) 0 24px,
+      transparent 25px
+    ),
+    radial-gradient(
+      circle at 82% 25%,
+      rgba(255, 255, 255, 0.1) 0 18px,
+      transparent 19px
+    );
+}
+
+.monster-character {
+  position: absolute;
+  left: 50%;
+  top: 24%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+.monster-face {
+  font-size: clamp(4rem, 7vw, 6rem);
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.25));
+}
+
+.monster-request {
+  position: absolute;
+  z-index: 15;
+  left: 50%;
+  top: 42%;
+  transform: translateX(-50%);
+  min-width: 220px;
+  padding: 10px 18px;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #2e1065;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+}
+
+.monster-request-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+#monsterRequestedFood {
+  display: block;
+  margin-top: 2px;
+  font-size: 1.4rem;
+  font-weight: 1000;
+}
+
+.monster-food-field {
+  position: absolute;
+  inset: 0;
+}
+
+.monster-start-button {
+  position: absolute;
+  z-index: 25;
+  left: 50%;
+  bottom: 38px;
+  transform: translateX(-50%);
+  min-width: 150px;
+  padding: 10px 18px;
+  border: 0;
+  border-radius: 999px;
+  background: #facc15;
+  color: #172033;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.24);
+}
+
+.monster-status {
+  display: none;
+}
+
+.monster-click-warning {
+  position: absolute;
+  z-index: 60;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  padding: 18px 28px;
+  border: 4px solid #ffffff;
+  border-radius: 18px;
+  background: rgba(127, 29, 29, 0.96);
+  color: #ffffff;
+  font-size: clamp(1.25rem, 2.4vw, 2rem);
+  font-weight: 1000;
+  letter-spacing: 0.04em;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.38);
+  pointer-events: none;
+}
+
+.monster-lunch-page .back-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.monster-lunch-page .back-button .home-btn-icon {
+  display: block;
+  width: 28px;
+  height: 28px;
+  max-width: 28px;
+  max-height: 28px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.monster-lunch-page .imported-trackpad-guide {
+  width: min(100%, 900px);
+  margin: -30px auto 0;
+  position: relative;
+  z-index: 5;
+  box-sizing: border-box;
+}
+
+.monster-lunch-page .imported-trackpad-guide-label {
+  text-align: center;
+}
+
+.monster-lunch-page .imported-trackpad-scene {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+}
+
+@media (min-width: 1000px) and (max-height: 820px) {
+  .monster-lunch-page .game-stage-wrap {
+    max-height: 455px;
+  }
+
+  .monster-lunch-page .game-stage {
+    height: 455px;
+    min-height: 0;
+  }
+}
+
+/* Monster Lunch layout polish */
+
+.monster-lunch-page .imported-trackpad-guide {
+  margin-top: 8px;
+  width: min(100%, 900px);
+  position: relative;
+  z-index: 5;
+}
+
+.monster-lunch-page .game-stage-wrap {
+  margin-bottom: 0;
+}
+
+.monster-lunch-page .monster-start-button {
+  bottom: 34px;
+}
+
+.monster-lunch-page .monster-request {
+  top: 40%;
+}
+
+@media (min-width: 1000px) and (max-height: 820px) {
+  .monster-lunch-page .game-stage-wrap {
+    max-height: 430px;
+  }
+
+  .monster-lunch-page .game-stage {
+    height: 430px;
+    min-height: 0;
+  }
+
+  .monster-lunch-page .imported-trackpad-guide {
+    margin-top: 6px;
+  }
+}
+
+/* Final Monster Lunch guide position */
+.monster-lunch-page .imported-trackpad-guide {
+  margin-top: -12px;
+}
+
+
+/* Compact top chrome without changing gameplay height. */
+.monster-lunch-page .game-header {
+  padding: 6px 10px;
+}
+
+.monster-lunch-page .game-header-button {
+  min-height: 48px;
+  height: 48px;
+}
+
+.monster-lunch-page .back-button .home-btn-icon {
+  width: 24px;
+  height: 24px;
+  max-width: 24px;
+  max-height: 24px;
+}
+
+.monster-lunch-page .game-instructions {
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
+.monster-lunch-page .game-stats {
+  margin-top: 0;
+  margin-bottom: 3px;
+}
+
+.monster-lunch-page .game-stat {
+  padding: 5px 8px;
+}
+
+/* Keep Trackpad Guide clearly below the game. */
+.monster-lunch-page .imported-trackpad-guide {
+  margin-top: 4px;
+}
+
+
+/* Share one row: instructions left, HUD right.
+   HUD is removed from normal flow so the game can move upward. */
+@media (min-width: 1000px) {
+  .monster-lunch-page .monster-lunch-shell {
+    position: relative;
+  }
+
+  .monster-lunch-page .game-instructions {
+    margin: 4px 0 6px;
+    padding-right: 560px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .monster-lunch-page .game-stats {
+    position: absolute;
+    z-index: 20;
+    top: 82px;
+    right: 0;
+    width: auto;
+    margin: 0;
+  }
+
+  .monster-lunch-page .game-stats-row {
+    justify-content: flex-end;
+    gap: 5px;
+  }
+
+  .monster-lunch-page .game-stat {
+    padding: 5px 8px;
+  }
+
+  .monster-lunch-page .game-stage-wrap {
+    margin-top: 0;
+  }
+}
+
+/* Tighten the instruction/HUD strip to reclaim vertical space. */
+@media (min-width: 1000px) {
+  .monster-lunch-page .game-instructions {
+    min-height: 30px;
+    margin: 0 0 2px;
+    font-size: 0.9rem;
+  }
+
+  .monster-lunch-page .game-stats {
+    top: 74px;
+  }
+
+  .monster-lunch-page .game-stats-row {
+    gap: 4px;
+  }
+
+  .monster-lunch-page .game-stat {
+    padding: 4px 7px;
+    min-height: 36px;
+  }
+
+  .monster-lunch-page .game-stat .label {
+    font-size: 0.72rem;
+  }
+
+  .monster-lunch-page .game-stat .value {
+    font-size: 0.9rem;
+  }
+
+  .monster-lunch-page .game-stage-wrap {
+    margin-top: -8px;
+  }
+}
+
+/* Smaller instruction and HUD typography. */
+@media (min-width: 1000px) {
+  .monster-lunch-page .game-instructions {
+    font-size: 0.78rem;
+  }
+
+  .monster-lunch-page .game-stat {
+    padding: 3px 6px;
+    min-height: 32px;
+  }
+
+  .monster-lunch-page .game-stat .label {
+    font-size: 0.62rem;
+  }
+
+  .monster-lunch-page .game-stat .value {
+    font-size: 0.78rem;
+  }
+}
+
+/* Compact Monster Lunch header controls and HUD. */
+@media (min-width: 1000px) {
+  .monster-lunch-page .game-header-controls {
+    gap: 6px;
+  }
+
+  .monster-lunch-page .game-header-button {
+    width: 74px;
+    min-width: 74px;
+    height: 38px;
+    min-height: 38px;
+    padding: 4px 10px;
+    border-radius: 22px;
+  }
+
+  .monster-lunch-page .back-button .home-btn-icon {
+    width: 20px;
+    height: 20px;
+    max-width: 20px;
+    max-height: 20px;
+  }
+
+  .monster-lunch-page .sound-toggle-button {
+    font-size: 0.72rem;
+  }
+
+  .monster-lunch-page .game-stats {
+    top: 68px;
+  }
+
+  .monster-lunch-page .game-stats-row {
+    gap: 3px;
+  }
+
+  .monster-lunch-page .game-stat {
+    min-height: 26px;
+    padding: 2px 6px;
+    border-radius: 15px;
+  }
+
+  .monster-lunch-page .game-stat .label {
+    font-size: 0.56rem;
+  }
+
+  .monster-lunch-page .game-stat .value {
+    font-size: 0.68rem;
+  }
+}
+
+/* Match Home button dimensions to Volume button. */
+@media (min-width: 1000px) {
+  .monster-lunch-page .back-button {
+    width: 74px;
+    min-width: 74px;
+    max-width: 74px;
+  }
+}
+
+/* Force Home and Volume buttons to identical dimensions. */
+@media (min-width: 1000px) {
+  .monster-lunch-page .game-header-controls .back-button,
+  .monster-lunch-page .game-header-controls .sound-toggle-button {
+    width: 74px !important;
+    min-width: 74px !important;
+    max-width: 74px !important;
+
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+
+    padding: 0 !important;
+    box-sizing: border-box;
+  }
+}
+
+.monster-food {
+  position: absolute;
+  z-index: 30;
+  transform: translate(-50%, -50%);
+  width: 118px;
+  height: 118px;
+  border: 4px solid rgba(255, 255, 255, 0.9);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #2e1065;
+  cursor: pointer;
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.22);
+  transition:
+    transform 140ms ease,
+    opacity 140ms ease;
+}
+
+.monster-food-emoji {
+  display: block;
+  font-size: 3.4rem;
+  line-height: 1;
+}
+
+.monster-food-label {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.78rem;
+  font-weight: 1000;
+}
+
+.monster-food.is-pending {
+  transform:
+    translate(-50%, -50%)
+    scale(0.94);
+}
+
+.monster-food.is-correct {
+  transform:
+    translate(-50%, -50%)
+    scale(1.12);
+  opacity: 0.2;
+}
+
+.monster-click-warning.is-visible {
+  animation:
+    monsterClickWarningPop
+    180ms ease-out;
+}
+
+@keyframes monsterClickWarningPop {
+  from {
+    transform:
+      translate(-50%, -50%)
+      scale(0.82);
+  }
+
+  to {
+    transform:
+      translate(-50%, -50%)
+      scale(1);
+  }
+}
+
+/* Keep Level 1 food choices clearly below the monster request. */
+.monster-food {
+  margin-top: 42px;
+}
+
+/* Correct food flies into the monster. */
+.monster-food.is-feeding {
+  z-index: 80;
+  pointer-events: none;
+  animation: monsterFoodFeed 650ms ease-in forwards;
+}
+
+.monster-food.is-waiting {
+  pointer-events: none;
+  opacity: 0.35;
+}
+
+.monster-character.is-chomping {
+  animation: monsterChomp 650ms ease-in-out;
+}
+
+@keyframes monsterFoodFeed {
+  0% {
+    transform:
+      translate(-50%, -50%)
+      translate(0, 0)
+      scale(1);
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 1;
+  }
+
+  100% {
+    transform:
+      translate(-50%, -50%)
+      translate(
+        var(--feed-x, 0),
+        var(--feed-y, -180px)
+      )
+      scale(0.2);
+    opacity: 0;
+  }
+}
+
+@keyframes monsterChomp {
+  0%,
+  35%,
+  100% {
+    transform:
+      translate(-50%, -50%)
+      scale(1);
+  }
+
+  55% {
+    transform:
+      translate(-50%, -50%)
+      scale(1.14);
+  }
+
+  72% {
+    transform:
+      translate(-50%, -50%)
+      scale(0.94);
+  }
+}
+
+/* Friendly CSS monster with a real feeding mouth. */
+.monster-character {
+  position: absolute;
+  z-index: 18;
+  left: 50%;
+  top: 23%;
+  width: 190px;
+  height: 155px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.monster-body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 46% 46% 38% 38%;
+  background:
+    radial-gradient(
+      circle at 32% 25%,
+      rgba(255, 255, 255, 0.2) 0 8px,
+      transparent 9px
+    ),
+    radial-gradient(
+      circle at 72% 38%,
+      rgba(255, 255, 255, 0.16) 0 10px,
+      transparent 11px
+    ),
+    linear-gradient(
+      180deg,
+      #38bdf8 0%,
+      #0ea5e9 52%,
+      #0284c7 100%
+    );
+  border: 4px solid #7dd3fc;
+  box-shadow:
+    0 8px 0 #0369a1,
+    0 12px 22px rgba(0, 0, 0, 0.3);
+}
+
+.monster-horn {
+  position: absolute;
+  top: 20px;
+  width: 26px;
+  height: 42px;
+  background: #fde047;
+  border-radius: 70% 70% 30% 30%;
+}
+
+.monster-horn-left {
+  left: -10px;
+  transform: rotate(-35deg);
+}
+
+.monster-horn-right {
+  right: -10px;
+  transform: rotate(35deg);
+}
+
+.monster-eye {
+  position: absolute;
+  top: 26px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 4px solid #bae6fd;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.monster-eye-left {
+  left: 34px;
+}
+
+.monster-eye-right {
+  right: 34px;
+}
+
+.monster-pupil {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  width: 14px;
+  height: 18px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #1e1b4b;
+}
+
+.monster-mouth {
+  position: absolute;
+  left: 50%;
+  top: 77px;
+  width: 106px;
+  height: 62px;
+  transform: translateX(-50%);
+  overflow: hidden;
+  border: 4px solid #172554;
+  border-radius: 20px 20px 46px 46px;
+  background: #250535;
+  box-shadow:
+    inset 0 5px 10px rgba(0, 0, 0, 0.55);
+}
+
+.monster-tooth {
+  position: absolute;
+  top: -1px;
+  width: 16px;
+  height: 20px;
+  background: #ffffff;
+  border-radius: 0 0 8px 8px;
+}
+
+.monster-tooth-1 {
+  left: 24px;
+}
+
+.monster-tooth-2 {
+  right: 24px;
+}
+
+.monster-tongue {
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  width: 62px;
+  height: 30px;
+  transform: translateX(-50%);
+  border-radius: 50% 50% 0 0;
+  background: #fb7185;
+}
+
+.monster-arm {
+  position: absolute;
+  top: 82px;
+  width: 45px;
+  height: 24px;
+  border-radius: 999px;
+  background: #0ea5e9;
+  border: 3px solid #7dd3fc;
+}
+
+.monster-arm-left {
+  left: -25px;
+  transform: rotate(18deg);
+}
+
+.monster-arm-right {
+  right: -25px;
+  transform: rotate(-18deg);
+}
+
+/* Chomp animation closes the mouth briefly after feeding. */
+.monster-character.is-chomping .monster-mouth {
+  animation: monsterMouthChomp 650ms ease-in-out;
+}
+
+@keyframes monsterMouthChomp {
+  0%,
+  35%,
+  100% {
+    height: 62px;
+  }
+
+  55% {
+    height: 18px;
+  }
+
+  72% {
+    height: 50px;
+  }
+}
+
+/* ---------------------------------------------------------
+   Monster Lunch gameplay layout
+   Clear vertical zones: monster / request / food choices
+   --------------------------------------------------------- */
+
+/* Move the monster higher and make it less dominant. */
+.monster-lunch-page .monster-character {
+  top: 17%;
+  transform: translate(-50%, -50%) scale(0.78);
+  transform-origin: center center;
+}
+
+/* Give the request its own clear middle area. */
+.monster-lunch-page .monster-request {
+  top: 43%;
+  min-width: 300px;
+  padding: 8px 18px;
+}
+
+.monster-lunch-page .monster-request-label {
+  font-size: 0.7rem;
+}
+
+.monster-lunch-page #monsterRequestedFood {
+  font-size: 1.25rem;
+}
+
+/* Put all food choices in one clean lower row. */
+.monster-lunch-page .monster-food {
+  top: 77% !important;
+  margin-top: 0;
+  width: 106px;
+  height: 106px;
+  border-radius: 20px;
+}
+
+.monster-lunch-page .monster-food-emoji {
+  font-size: 3rem;
+}
+
+.monster-lunch-page .monster-food-label {
+  margin-top: 4px;
+  font-size: 0.7rem;
+}
+
+/* Keep the middle card visually above the food row. */
+.monster-lunch-page .monster-request {
+  z-index: 35;
+}
+
+.monster-lunch-page .monster-food {
+  z-index: 30;
+}
+
+/* ---------------------------------------------------------
+   Monster Lunch layout refinement
+   Monster centered, request card moved to side
+   --------------------------------------------------------- */
+
+/* Give the monster more room in the center. */
+.monster-lunch-page .monster-character {
+  top: 24%;
+  transform: translate(-50%, -50%) scale(0.9);
+}
+
+/* Move the request card to the left side of the arena. */
+.monster-lunch-page .monster-request {
+  left: 16%;
+  top: 34%;
+  transform: translate(-50%, -50%);
+  min-width: 220px;
+  width: 220px;
+  padding: 10px 16px;
+  z-index: 35;
+}
+
+/* Keep request text compact and readable. */
+.monster-lunch-page .monster-request-label {
+  font-size: 0.68rem;
+}
+
+.monster-lunch-page #monsterRequestedFood {
+  font-size: 1.2rem;
+}
+
+/* Keep foods in their existing lower row. */
+.monster-lunch-page .monster-food {
+  top: 77% !important;
+  margin-top: 0;
+}
+
+/* Delay the chomp so the mouth closes as the food arrives. */
+.monster-character.is-chomping .monster-mouth {
+  animation: monsterMouthChomp 650ms ease-in-out;
+  animation-delay: 360ms;
+}
+
+@keyframes monsterMouthChomp {
+  0%,
+  25% {
+    height: 62px;
+  }
+
+  45% {
+    height: 18px;
+  }
+
+  70% {
+    height: 48px;
+  }
+
+  100% {
+    height: 62px;
+  }
+}
+
+/* Wrong food flies toward the screen and splats. */
+.monster-food.is-wrong-launch {
+  z-index: 120;
+  pointer-events: none;
+  animation: monsterWrongFoodLaunch 620ms ease-in forwards;
+}
+
+.monster-food.is-wrong-launch .monster-food-label {
+  opacity: 0;
+}
+
+.monster-food.is-wrong-launch.is-splatted::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 150px;
+  height: 110px;
+  transform: translate(-50%, -50%) rotate(-12deg);
+  border-radius:
+    48% 52% 42% 58% /
+    55% 43% 57% 45%;
+  background:
+    radial-gradient(
+      circle at 40% 45%,
+      rgba(255, 255, 255, 0.28) 0 8px,
+      transparent 9px
+    ),
+    rgba(244, 63, 94, 0.92);
+  box-shadow:
+    32px 18px 0 -14px rgba(244, 63, 94, 0.9),
+    -38px 24px 0 -18px rgba(244, 63, 94, 0.88),
+    18px -32px 0 -20px rgba(244, 63, 94, 0.85);
+}
+
+@keyframes monsterWrongFoodLaunch {
+  0% {
+    transform:
+      translate(-50%, -50%)
+      scale(1);
+    opacity: 1;
+  }
+
+  42% {
+    transform:
+      translate(-50%, -60%)
+      scale(1.7)
+      rotate(-5deg);
+    opacity: 1;
+  }
+
+  72% {
+    transform:
+      translate(-50%, -70%)
+      scale(2.8)
+      rotate(8deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform:
+      translate(-50%, -75%)
+      scale(3.4)
+      rotate(-10deg);
+    opacity: 0.18;
+  }
+}
+
+/* Wrong-food splat matches the selected food. */
+.monster-food.is-wrong-launch.is-splatted::after {
+  background:
+    radial-gradient(
+      circle at 40% 45%,
+      rgba(255, 255, 255, 0.28) 0 8px,
+      transparent 9px
+    ),
+    var(--food-splat-color, #f43f5e);
+
+  box-shadow:
+    32px 18px 0 -14px var(--food-splat-color, #f43f5e),
+    -38px 24px 0 -18px var(--food-splat-color, #f43f5e),
+    18px -32px 0 -20px var(--food-splat-color, #f43f5e);
+}
+
+/* Monster reacts to a wrong choice. */
+.monster-character.is-wrong-reaction {
+  animation: monsterWrongReaction 620ms ease-in-out;
+}
+
+.monster-character.is-wrong-reaction .monster-eye {
+  animation: monsterWrongEyes 620ms ease-in-out;
+}
+
+.monster-character.is-wrong-reaction .monster-mouth {
+  animation: monsterWrongMouth 620ms ease-in-out;
+}
+
+@keyframes monsterWrongReaction {
+  0%,
+  100% {
+    transform:
+      translate(-50%, -50%)
+      scale(0.9)
+      rotate(0deg);
+  }
+
+  25% {
+    transform:
+      translate(-50%, -50%)
+      scale(0.94)
+      rotate(-5deg);
+  }
+
+  50% {
+    transform:
+      translate(-50%, -50%)
+      scale(0.94)
+      rotate(5deg);
+  }
+
+  75% {
+    transform:
+      translate(-50%, -50%)
+      scale(0.92)
+      rotate(-3deg);
+  }
+}
+
+@keyframes monsterWrongEyes {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  40%,
+  70% {
+    transform: scale(1.18);
+  }
+}
+
+@keyframes monsterWrongMouth {
+  0%,
+  100% {
+    height: 62px;
+    border-radius: 20px 20px 46px 46px;
+  }
+
+  45% {
+    height: 30px;
+    border-radius: 46px 46px 20px 20px;
+  }
+}
+
+/* Allow food contents to scale with configured card size. */
+.monster-food {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.monster-food[style*="88px"] .monster-food-emoji {
+  font-size: 2.35rem;
+}
+
+.monster-food[style*="88px"] .monster-food-label {
+  font-size: 0.6rem;
+}
+
+/* ---------------------------------------------------------
+   Snack Snatcher — Levels 3 and 4
+   --------------------------------------------------------- */
+
+.monster-snatcher[hidden] {
+  display: none;
+}
+
+.monster-snatcher {
+  position: absolute;
+  z-index: 110;
+  left: 0;
+  top: 0;
+  width: 105px;
+  height: 92px;
+  pointer-events: none;
+}
+
+.snatcher-body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 4px solid #f0abfc;
+  border-radius: 48% 48% 40% 40%;
+  background:
+    linear-gradient(
+      180deg,
+      #c026d3,
+      #7e22ce
+    );
+  box-shadow:
+    0 7px 0 #581c87,
+    0 10px 18px rgba(0, 0, 0, 0.32);
+}
+
+.snatcher-eye {
+  position: absolute;
+  top: 20px;
+  width: 25px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+.snatcher-eye::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  width: 9px;
+  height: 12px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #1e1b4b;
+}
+
+.snatcher-eye-left {
+  left: 19px;
+}
+
+.snatcher-eye-right {
+  right: 19px;
+}
+
+.snatcher-mouth {
+  position: absolute;
+  left: 50%;
+  bottom: 15px;
+  width: 43px;
+  height: 22px;
+  transform: translateX(-50%);
+  border-radius: 8px 8px 22px 22px;
+  background: #240046;
+}
+
+.snatcher-arm {
+  position: absolute;
+  right: -34px;
+  top: 49px;
+  width: 47px;
+  height: 17px;
+  border: 3px solid #f0abfc;
+  border-radius: 999px;
+  background: #a21caf;
+  transform: rotate(-12deg);
+  transform-origin: left center;
+}
+
+.monster-snatcher.is-snatching {
+  animation:
+    monsterSnatcherRun
+    1050ms
+    ease-in-out
+    forwards;
+}
+
+.monster-food.is-being-stolen {
+  z-index: 111;
+  animation:
+    monsterFoodStolen
+    1050ms
+    ease-in
+    forwards;
+}
+
+@keyframes monsterSnatcherRun {
+  0% {
+    transform:
+      translate(
+        -140px,
+        var(--snatch-y, 250px)
+      )
+      scale(0.9);
+  }
+
+  48% {
+    transform:
+      translate(
+        calc(var(--snatch-x, 600px) - 55px),
+        calc(var(--snatch-y, 250px) - 46px)
+      )
+      scale(1);
+  }
+
+  62% {
+    transform:
+      translate(
+        calc(var(--snatch-x, 600px) - 40px),
+        calc(var(--snatch-y, 250px) - 46px)
+      )
+      scale(1.05);
+  }
+
+  100% {
+    transform:
+      translate(
+        calc(100vw + 150px),
+        calc(var(--snatch-y, 250px) - 46px)
+      )
+      scale(0.92);
+  }
+}
+
+@keyframes monsterFoodStolen {
+  0%,
+  48% {
+    opacity: 1;
+    transform:
+      translate(-50%, -50%)
+      scale(1);
+  }
+
+  65% {
+    opacity: 1;
+    transform:
+      translate(-50%, -50%)
+      scale(0.65)
+      rotate(12deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform:
+      translate(250px, -50%)
+      scale(0.25)
+      rotate(30deg);
+  }
+}
+
+/* Keep the snack snatcher completely hidden until triggered. */
+.monster-snatcher {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.monster-snatcher.is-snatching {
+  opacity: 1;
+  visibility: visible;
+}

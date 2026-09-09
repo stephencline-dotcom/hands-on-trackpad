@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monster Lunch | Hands-On Trackpad</title>
+
+    <link rel="stylesheet" href="../moving-sound-mini-game/styles.css" />
+    <link rel="stylesheet" href="../../level-result.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="../../freeze-screen.css" />
+  </head>
+
+  <body
+    class="monster-lunch-page"
+    data-game-active-key="monsterLunchGameActive"
+  >
+    <main class="shell game-shell monster-lunch-shell">
+      <header class="panel game-header">
+        <div class="copy game-heading">
+          <p class="eyebrow game-category">Mini Game</p>
+          <h1 class="game-title">Monster Lunch</h1>
+        </div>
+
+        <div class="game-header-controls">
+          <a
+            class="back-button game-header-button"
+            href="../../index.html"
+            aria-label="Home"
+            title="Home"
+          >
+            <img
+              class="home-btn-icon"
+              src="../../images/home-icon.svg"
+              alt=""
+              aria-hidden="true"
+            />
+          </a>
+
+          <button
+            id="monsterSoundButton"
+            class="sound-toggle-button game-header-button"
+            type="button"
+            aria-pressed="false"
+            aria-label="Sound on"
+            title="Sound on"
+          >
+            🔊
+          </button>
+        </div>
+      </header>
+
+      <p class="description game-instructions">
+        Find the food the monster asks for, move to it, and click once.
+      </p>
+
+      <section class="hud game-stats" aria-live="polite">
+        <div
+          class="hud-main-stats game-stats-row"
+          role="group"
+          aria-label="Game stats"
+        >
+          <div class="stat game-stat">
+            <span class="label">Level</span>
+            <span class="value" id="monsterLevel">1</span>
+          </div>
+
+          <div class="stat game-stat">
+            <span class="label">Goal</span>
+            <span class="value" id="monsterGoal">0/0</span>
+          </div>
+
+          <div class="stat game-stat">
+            <span class="label">Misses</span>
+            <span class="value" id="monsterMisses">0</span>
+          </div>
+
+          <div class="stat game-stat">
+            <span class="label">Score</span>
+            <span class="value" id="monsterScore">0</span>
+          </div>
+
+          <div class="stat game-stat">
+            <span class="label">Time</span>
+            <span class="value" id="monsterTime">0</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="arena-wrap game-stage-wrap">
+        <div class="arena-frame game-stage">
+          <div
+            id="monsterArena"
+            class="monster-arena"
+            aria-label="Monster Lunch game area"
+            role="application"
+          >
+            <div class="monster-room-backdrop" aria-hidden="true"></div>
+
+            <div
+              id="monsterCharacter"
+              class="monster-character"
+              aria-label="Friendly hungry monster"
+            >
+              <div class="monster-body" aria-hidden="true">
+                <span class="monster-horn monster-horn-left"></span>
+                <span class="monster-horn monster-horn-right"></span>
+
+                <span class="monster-eye monster-eye-left">
+                  <span class="monster-pupil"></span>
+                </span>
+
+                <span class="monster-eye monster-eye-right">
+                  <span class="monster-pupil"></span>
+                </span>
+
+                <div
+                  id="monsterMouth"
+                  class="monster-mouth"
+                >
+                  <span class="monster-tooth monster-tooth-1"></span>
+                  <span class="monster-tooth monster-tooth-2"></span>
+                  <span class="monster-tongue"></span>
+                </div>
+
+                <span class="monster-arm monster-arm-left"></span>
+                <span class="monster-arm monster-arm-right"></span>
+              </div>
+            </div>
+
+            <div
+              id="monsterRequest"
+              class="monster-request"
+              aria-live="polite"
+            >
+              <span class="monster-request-label">I want...</span>
+              <strong id="monsterRequestedFood">FOOD</strong>
+            </div>
+
+            <div
+              id="monsterFoodField"
+              class="monster-food-field"
+              aria-label="Food choices"
+            ></div>
+
+            <div
+              id="monsterSnatcher"
+              class="monster-snatcher"
+              aria-hidden="true"
+            >
+              <div class="snatcher-body">
+                <span class="snatcher-eye snatcher-eye-left"></span>
+                <span class="snatcher-eye snatcher-eye-right"></span>
+                <span class="snatcher-mouth"></span>
+                <span class="snatcher-arm"></span>
+              </div>
+            </div>
+
+            <div
+              id="monsterClickWarning"
+              class="monster-click-warning"
+              role="status"
+              aria-live="polite"
+              hidden
+            >
+              CLICK ONCE — WAIT
+            </div>
+
+            <button
+              id="monsterStartButton"
+              class="monster-start-button"
+              type="button"
+            >
+              Start Level
+            </button>
+
+            <p
+              id="monsterStatus"
+              class="monster-status"
+              aria-live="polite"
+            >
+              Click Start Level when you are ready.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="imported-trackpad-guide game-guide"
+        aria-label="Trackpad Guide"
+      >
+        <p class="imported-trackpad-guide-label">
+          Trackpad Guide
+        </p>
+
+        <section
+          id="monsterTrackpadScene"
+          class="imported-trackpad-scene"
+          aria-label="Trackpad guide animation"
+        >
+          <img
+            class="imported-trackpad-image"
+            src="../../images/trackpad.png"
+            alt="Trackpad"
+            draggable="false"
+          />
+
+          <img
+            id="monsterTrackpadLeftHand"
+            class="imported-trackpad-hand imported-trackpad-left-hand"
+            src="../../images/left-hand-transparent.png"
+            alt="Left hand"
+            draggable="false"
+          />
+
+          <img
+            id="monsterTrackpadRightHand"
+            class="imported-trackpad-hand imported-trackpad-right-hand"
+            src="../../images/right-hand-transparent.png"
+            alt="Right hand"
+            draggable="false"
+          />
+
+          <div
+            class="imported-trackpad-press-indicator"
+            aria-hidden="true"
+          ></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="../../game-access.js"></script>
+    <script src="../../trackpad-guide.js"></script>
+    <script src="../../click-game-core.js"></script>
+    <script src="../../level-result.js"></script>
+    <script src="../../game-results-store.js"></script>
+    <script src="../../freeze-screen.js"></script>
+    <script src="../../input-device-guard.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
