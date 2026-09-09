@@ -40,6 +40,9 @@
   const monsterSnatcher =
     document.getElementById("monsterSnatcher");
 
+  const monsterSoundButton =
+    document.getElementById("monsterSoundButton");
+
   const monsterSplatSound =
     new Audio("../../sounds/splat.mp3");
 
@@ -53,8 +56,36 @@
   monsterCrunchSound.preload = "auto";
   monsterYoinkSound.preload = "auto";
 
+  let monsterSoundEnabled = true;
+
+  function updateMonsterSoundButton() {
+    if (!monsterSoundButton) {
+      return;
+    }
+
+    monsterSoundButton.textContent =
+      monsterSoundEnabled ? "🔊" : "🔇";
+
+    monsterSoundButton.setAttribute(
+      "aria-pressed",
+      String(!monsterSoundEnabled)
+    );
+
+    monsterSoundButton.setAttribute(
+      "aria-label",
+      monsterSoundEnabled
+        ? "Sound on"
+        : "Sound off"
+    );
+
+    monsterSoundButton.title =
+      monsterSoundEnabled
+        ? "Sound on"
+        : "Sound off";
+  }
+
   function playMonsterSound(audio) {
-    if (!audio) {
+    if (!audio || !monsterSoundEnabled) {
       return;
     }
 
@@ -478,6 +509,7 @@
 
   let monsterTimeLeft = 0;
   let monsterTimerId = null;
+  let monsterLevelResult = null;
 
   let snatcherTimerId = null;
   let snatcherActive = false;
@@ -564,24 +596,34 @@
       String(Math.max(0, monsterTimeLeft));
   }
 
-  function handleMonsterTimeExpired() {
-    stopMonsterTimer();
-
+  function pauseMonsterGameplay() {
     roundActive = false;
-    clearFoods();
+
+    stopMonsterTimer();
+    stopSnatcherTimer();
 
     if (clickGameCore) {
       clickGameCore.pause();
     }
+  }
+
+  function handleMonsterTimeExpired() {
+    pauseMonsterGameplay();
+    clearFoods();
 
     monsterRequestedFood.textContent =
       "TIME UP";
 
-    monsterStartButton.hidden = false;
-    monsterStartButton.textContent =
-      "Try Again";
-
     updateMonsterTimeDisplay();
+
+    if (monsterLevelResult) {
+      monsterLevelResult.showFailure({
+        title: "Try Again!",
+        message:
+          "Time is up. Try the level again.",
+        primaryLabel: "Try Again",
+      });
+    }
   }
 
   function startMonsterTimer() {
@@ -848,20 +890,20 @@
     monsterStatus.textContent = message;
 
     if (missesRemaining <= 0) {
-      roundActive = false;
-      stopMonsterTimer();
+      pauseMonsterGameplay();
       clearFoods();
-
-      if (clickGameCore) {
-        clickGameCore.pause();
-      }
 
       monsterRequestedFood.textContent =
         "TRY AGAIN";
 
-      monsterStartButton.hidden = false;
-      monsterStartButton.textContent =
-        "Try Again";
+      if (monsterLevelResult) {
+        monsterLevelResult.showFailure({
+          title: "Try Again!",
+          message:
+            "No misses left. Try the level again.",
+          primaryLabel: "Try Again",
+        });
+      }
     }
   }
 
@@ -923,6 +965,13 @@
     }, 170);
 
     window.setTimeout(() => {
+      /*
+       * The food animation temporarily pauses the
+       * round. Re-enable the round just long enough
+       * for applyMiss() to record the miss.
+       */
+      roundActive = true;
+
       applyMiss(
         `Not ${food.label}. Find ${currentRequest.label}.`
       );
@@ -1030,22 +1079,34 @@
       clearFoods();
 
       if (score >= getCurrentLevel().goal) {
-        stopMonsterTimer();
+        pauseMonsterGameplay();
 
         monsterRequestedFood.textContent =
           "LEVEL COMPLETE";
 
-        if (
-          currentLevelIndex <
-          MONSTER_LEVELS.length - 1
-        ) {
-          monsterStartButton.hidden = false;
-          monsterStartButton.textContent =
-            "Level Up";
-        } else {
-          monsterStartButton.hidden = false;
-          monsterStartButton.textContent =
-            "Play Again";
+        const completedLevel =
+          currentLevelIndex + 1;
+
+        const isFinalLevel =
+          currentLevelIndex >=
+          MONSTER_LEVELS.length - 1;
+
+        if (monsterLevelResult) {
+          if (isFinalLevel) {
+            monsterLevelResult.showFinal({
+              title: "You Did It!",
+              message:
+                "You completed all 4 Monster Lunch levels!",
+              primaryLabel: "Play Again",
+            });
+          } else {
+            monsterLevelResult.showSuccess({
+              title: "Level Complete!",
+              message:
+                `Great job! Click Level Up for Level ${completedLevel + 1}.`,
+              primaryLabel: "Level Up",
+            });
+          }
         }
 
         return;
@@ -1249,6 +1310,47 @@
     monsterStatus.textContent =
       `Find ${currentRequest.label} and click it once.`;
 
+    /*
+     * Always start the requested food in one of the
+     * lowest food positions so students can clearly
+     * see the food they are being asked to find.
+     */
+    let requestedStartIndex;
+
+    if (choices.length <= 3) {
+      requestedStartIndex = Math.min(
+        1,
+        choices.length - 1
+      );
+    } else if (choices.length <= 5) {
+      requestedStartIndex = Math.min(
+        3,
+        choices.length - 1
+      );
+    } else {
+      requestedStartIndex =
+        choices.length - 1;
+    }
+
+    const requestedIndex =
+      choices.findIndex(
+        (food) =>
+          food.id === currentRequest.id
+      );
+
+    if (
+      requestedIndex >= 0 &&
+      requestedIndex !== requestedStartIndex
+    ) {
+      [
+        choices[requestedIndex],
+        choices[requestedStartIndex],
+      ] = [
+        choices[requestedStartIndex],
+        choices[requestedIndex],
+      ];
+    }
+
     choices.forEach(
       (food, index) => {
         createFoodButton(food, index);
@@ -1262,6 +1364,10 @@
     stopSnatcherTimer();
     resetSnatcherVisual();
     clearFoods();
+
+    if (monsterLevelResult) {
+      monsterLevelResult.hide();
+    }
 
     score = 0;
     missesRemaining =
@@ -1281,42 +1387,104 @@
     startFoodRound();
   }
 
-  function handleStartButton() {
+  function prepareNextMonsterLevel() {
     if (
-      monsterStartButton.textContent.trim() ===
-      "Level Up"
+      currentLevelIndex >=
+      MONSTER_LEVELS.length - 1
     ) {
-      stopMonsterTimer();
-      stopSnatcherTimer();
-      resetSnatcherVisual();
-
-      currentLevelIndex += 1;
-
-      score = 0;
-      missesRemaining =
-        getCurrentLevel().missesAllowed;
-      roundActive = false;
-
-      updateHud();
-
-      monsterRequestedFood.textContent =
-        "READY";
-
-      monsterStartButton.textContent =
-        `Start Level ${currentLevelIndex + 1}`;
-
       return;
     }
 
-    if (
-      monsterStartButton.textContent.trim() ===
-      "Play Again"
-    ) {
-      currentLevelIndex = 0;
+    currentLevelIndex += 1;
+
+    if (monsterLevelResult) {
+      monsterLevelResult.hide();
+    }
+
+    score = 0;
+    missesRemaining =
+      getCurrentLevel().missesAllowed;
+    roundActive = false;
+
+    updateHud();
+
+    monsterRequestedFood.textContent =
+      "READY";
+
+    monsterStartButton.hidden = false;
+    monsterStartButton.textContent =
+      `Start Level ${currentLevelIndex + 1}`;
+  }
+
+  function retryMonsterLevel() {
+    if (monsterLevelResult) {
+      monsterLevelResult.hide();
     }
 
     startCurrentLevel();
   }
+
+  function playMonsterAgain() {
+    currentLevelIndex = 0;
+
+    if (monsterLevelResult) {
+      monsterLevelResult.hide();
+    }
+
+    startCurrentLevel();
+  }
+
+  function handleStartButton() {
+    startCurrentLevel();
+  }
+
+  if (
+    window.LevelResultController &&
+    monsterArena
+  ) {
+    monsterLevelResult =
+      new window.LevelResultController({
+        host: monsterArena,
+        pauseGame: pauseMonsterGameplay,
+        onNextLevel:
+          prepareNextMonsterLevel,
+        onRetry:
+          retryMonsterLevel,
+        onPlayAgain:
+          playMonsterAgain,
+        onHome: () => {
+          window.location.href =
+            "../../index.html";
+        },
+        canPlaySound: () =>
+          monsterSoundEnabled,
+      });
+  }
+
+  if (monsterSoundButton) {
+    monsterSoundButton.addEventListener(
+      "click",
+      () => {
+        monsterSoundEnabled =
+          !monsterSoundEnabled;
+
+        if (!monsterSoundEnabled) {
+          [
+            monsterSplatSound,
+            monsterCrunchSound,
+            monsterYoinkSound,
+          ].forEach((audio) => {
+            audio.pause();
+            audio.currentTime = 0;
+          });
+        }
+
+        updateMonsterSoundButton();
+      }
+    );
+  }
+
+  updateMonsterSoundButton();
 
   window.addEventListener(
     "pointermove",

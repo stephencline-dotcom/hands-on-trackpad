@@ -215,6 +215,94 @@
         })
       : null;
 
+  const fireflySoundButton =
+    document.getElementById("fireflySoundButton");
+
+  const fireflyNightSounds =
+    new Audio("../../sounds/nightsounds.mp3");
+
+  const fireflyZapSound =
+    new Audio("../../sounds/zap.mp3");
+
+  fireflyNightSounds.loop = true;
+  fireflyNightSounds.preload = "auto";
+  fireflyNightSounds.volume = 0.45;
+
+  fireflyZapSound.preload = "auto";
+
+  let fireflySoundEnabled = true;
+
+  function updateFireflySoundButton() {
+    if (!fireflySoundButton) {
+      return;
+    }
+
+    fireflySoundButton.textContent =
+      fireflySoundEnabled ? "🔊" : "🔇";
+
+    fireflySoundButton.setAttribute(
+      "aria-pressed",
+      String(!fireflySoundEnabled)
+    );
+
+    fireflySoundButton.setAttribute(
+      "aria-label",
+      fireflySoundEnabled
+        ? "Sound on"
+        : "Sound off"
+    );
+
+    fireflySoundButton.title =
+      fireflySoundEnabled
+        ? "Sound on"
+        : "Sound off";
+  }
+
+  function playFireflyZap() {
+    if (!fireflySoundEnabled) {
+      return;
+    }
+
+    try {
+      fireflyZapSound.currentTime = 0;
+
+      const playPromise =
+        fireflyZapSound.play();
+
+      if (
+        playPromise &&
+        typeof playPromise.catch === "function"
+      ) {
+        playPromise.catch(() => {});
+      }
+    } catch {
+      // Ignore audio playback failures.
+    }
+  }
+
+  function startFireflyNightSounds() {
+    if (
+      !fireflySoundEnabled ||
+      !fireflyGameRunning
+    ) {
+      return;
+    }
+
+    const playPromise =
+      fireflyNightSounds.play();
+
+    if (
+      playPromise &&
+      typeof playPromise.catch === "function"
+    ) {
+      playPromise.catch(() => {});
+    }
+  }
+
+  function pauseFireflyNightSounds() {
+    fireflyNightSounds.pause();
+  }
+
   const fireflyTrackpadGuide =
     window.trackpadGuide &&
     typeof window.trackpadGuide.create === "function" &&
@@ -334,6 +422,7 @@
   function pauseFireflyGameplay() {
     fireflyGameRunning = false;
     stopFireflyTimer();
+    pauseFireflyNightSounds();
 
     if (clickGameCore) {
       clickGameCore.pause();
@@ -690,6 +779,8 @@
     firefliesCollected += 1;
     updateProgress();
 
+    playFireflyZap();
+
     element.classList.add("is-collected");
 
     fireflyStatus.textContent =
@@ -739,6 +830,8 @@
   function handleFireflyCollected() {
     firefliesCollected += 1;
     updateProgress();
+
+    playFireflyZap();
 
     fireflyStatus.textContent =
       "Great click! You caught the firefly.";
@@ -1107,6 +1200,7 @@
     fireflyStartButton.hidden = true;
 
     startFireflyTimer();
+    startFireflyNightSounds();
   }
 
   fireflyArena.addEventListener("click", (event) => {
@@ -1141,9 +1235,35 @@
         onHome: () => {
           window.location.href = "../../index.html";
         },
-        canPlaySound: () => true,
+        canPlaySound: () =>
+          fireflySoundEnabled,
       });
   }
+
+  if (fireflySoundButton) {
+    fireflySoundButton.addEventListener(
+      "click",
+      () => {
+        fireflySoundEnabled =
+          !fireflySoundEnabled;
+
+        if (fireflySoundEnabled) {
+          startFireflyNightSounds();
+        } else {
+          pauseFireflyNightSounds();
+        }
+
+        updateFireflySoundButton();
+      }
+    );
+  }
+
+  updateFireflySoundButton();
+
+  window.addEventListener(
+    "pagehide",
+    pauseFireflyNightSounds
+  );
 
   window.addEventListener(
     "pointermove",
