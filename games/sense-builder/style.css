@@ -1464,3 +1464,756 @@ body.sense-round-two[
   }
 }
 
+/* ========================================
+   ROUND 3 — SENSE MONSTERS
+======================================== */
+
+.sense-monster-stage {
+  display: none;
+}
+
+body.sense-round-three
+.sense-person {
+  display: none;
+}
+
+body.sense-round-three
+.sense-monster-stage {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(125px, 155px));
+  justify-content: center;
+  align-content: center;
+  gap: 20px;
+  width: min(540px, 96%);
+  height: 100%;
+}
+
+body.sense-round-three
+.sense-monster-card {
+  position: relative;
+  inset: auto;
+  display: grid;
+  place-items: center;
+  width: 145px;
+  height: 130px;
+  transform: none;
+  overflow: visible;
+  border: 6px solid #ffffff;
+  border-radius:
+    46% 54% 42% 58%;
+  background: #8b5cf6;
+  box-shadow:
+    0 8px 0 #51328e,
+    0 14px 22px
+    rgba(51, 33, 92, 0.24);
+}
+
+body.sense-round-three
+.sense-monster-card::before,
+body.sense-round-three
+.sense-monster-card::after {
+  content: "";
+  position: absolute;
+  bottom: -13px;
+  width: 38px;
+  height: 30px;
+  border-radius: 50%;
+  background: inherit;
+}
+
+body.sense-round-three
+.sense-monster-card::before {
+  left: 18px;
+  transform: rotate(16deg);
+}
+
+body.sense-round-three
+.sense-monster-card::after {
+  right: 18px;
+  transform: rotate(-16deg);
+}
+
+body.sense-round-three
+.sense-eye-monster {
+  background: #7dd3fc;
+  border-color: #e9faff;
+  box-shadow:
+    0 8px 0 #2685b4,
+    0 14px 22px
+    rgba(38, 133, 180, 0.24);
+}
+
+body.sense-round-three
+.sense-ear-monster {
+  background: #f9a8d4;
+  border-color: #fff0f8;
+  box-shadow:
+    0 8px 0 #b94b87,
+    0 14px 22px
+    rgba(185, 75, 135, 0.24);
+}
+
+body.sense-round-three
+.sense-nose-monster {
+  background: #86efac;
+  border-color: #effff4;
+  box-shadow:
+    0 8px 0 #31965a,
+    0 14px 22px
+    rgba(49, 150, 90, 0.24);
+}
+
+body.sense-round-three
+.sense-mouth-monster {
+  background: #fca5a5;
+  border-color: #fff1f1;
+  box-shadow:
+    0 8px 0 #bd4d4d,
+    0 14px 22px
+    rgba(189, 77, 77, 0.24);
+}
+
+body.sense-round-three
+.sense-hand-monster {
+  grid-column: 2;
+  background: #fde68a;
+  border-color: #fffbed;
+  box-shadow:
+    0 8px 0 #c69025,
+    0 14px 22px
+    rgba(198, 144, 37, 0.24);
+}
+
+.monster-feature,
+.monster-side-feature,
+.monster-hands {
+  position: relative;
+  z-index: 3;
+  font-size: 2.5rem;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.monster-side-feature {
+  letter-spacing: 28px;
+  transform: translateX(14px);
+}
+
+.monster-hands {
+  letter-spacing: 12px;
+  transform: translateX(6px);
+}
+
+.monster-horns {
+  position: absolute;
+  z-index: 2;
+  top: -25px;
+  color: #51328e;
+  font-size: 1.7rem;
+  letter-spacing: 34px;
+  transform: translateX(17px);
+  pointer-events: none;
+}
+
+.monster-face,
+.monster-eyes,
+.monster-smile,
+.monster-sniff,
+.monster-teeth {
+  position: absolute;
+  z-index: 3;
+  color: #17324d;
+  font-weight: 1000;
+  pointer-events: none;
+}
+
+.monster-face {
+  font-size: 1.45rem;
+}
+
+.monster-eyes {
+  top: 24px;
+  letter-spacing: 28px;
+  transform: translateX(14px);
+}
+
+.monster-smile {
+  bottom: 25px;
+  font-size: 2rem;
+}
+
+.monster-sniff {
+  bottom: 23px;
+  font-size: 1.25rem;
+}
+
+.monster-teeth {
+  bottom: 17px;
+  color: #ffffff;
+}
+
+.sense-monster-food-slot {
+  position: absolute;
+  z-index: 8;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+body.sense-round-three
+.sense-monster-card.is-ready {
+  transform: scale(1.08);
+  border-color: #fff3a6;
+  box-shadow:
+    0 8px 0 #d78d00,
+    0 0 30px
+    rgba(255, 183, 3, 0.9);
+}
+
+body.sense-round-three
+.sense-monster-card.is-fed {
+  border-color: #ffffff;
+  box-shadow:
+    0 8px 0 #14734e,
+    0 0 28px
+    rgba(34, 197, 94, 0.72);
+}
+
+body.sense-round-three
+.sense-monster-card.is-fed
+> :not(.sense-monster-food-slot) {
+  opacity: 0.22;
+}
+
+body.sense-round-three
+.sense-monster-food-slot
+.sense-placed-picture {
+  font-size: 3.5rem;
+  animation:
+    senseMonsterYum 480ms ease;
+}
+
+@keyframes senseMonsterYum {
+  0% {
+    transform: scale(0.5);
+  }
+
+  55% {
+    transform: scale(1.28);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (max-height: 800px) {
+  body.sense-round-three
+  .sense-monster-stage {
+    grid-template-columns:
+      repeat(3, minmax(105px, 130px));
+    gap: 14px;
+  }
+
+  body.sense-round-three
+  .sense-monster-card {
+    width: 122px;
+    height: 102px;
+  }
+
+  .monster-feature,
+  .monster-side-feature,
+  .monster-hands {
+    font-size: 2rem;
+  }
+}
+
+/* Keep all Sense Monster features visible */
+body.sense-round-three
+.sense-monster-card
+> :not(.sense-monster-food-slot) {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1;
+}
+
+body.sense-round-three
+.sense-monster-card:not(.is-fed)
+.sense-monster-food-slot {
+  display: grid;
+}
+
+/* ========================================
+   ROUND 3 — GIANT MOVING SENSE MONSTERS
+======================================== */
+
+body.sense-round-three
+.sense-monster-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+body.sense-round-three
+.sense-monster-card {
+  display: none;
+}
+
+body.sense-round-three
+.sense-monster-card.is-current-monster {
+  position: relative;
+  inset: auto;
+  display: grid;
+  place-items: center;
+  width: 270px;
+  height: 225px;
+  transform: none;
+  overflow: visible;
+  border: 8px solid #ffffff;
+  border-radius:
+    46% 54% 44% 56%;
+  animation:
+    senseMonsterWalk 4.2s
+    ease-in-out infinite;
+}
+
+body.sense-round-three
+.monster-big-feature {
+  position: relative;
+  z-index: 6;
+  display: block;
+  font-size: 7rem;
+  line-height: 1;
+  filter:
+    drop-shadow(
+      0 5px 3px
+      rgba(27, 45, 72, 0.18)
+    );
+  pointer-events: none;
+}
+
+body.sense-round-three
+.monster-googly-eyes {
+  position: absolute;
+  z-index: 7;
+  top: 25px;
+  color: #152d47;
+  font-size: 1.65rem;
+  font-weight: 1000;
+  letter-spacing: 34px;
+  transform: translateX(17px);
+  pointer-events: none;
+}
+
+body.sense-round-three
+.monster-grin {
+  position: absolute;
+  z-index: 7;
+  bottom: 28px;
+  color: #152d47;
+  font-size: 3rem;
+  font-weight: 1000;
+  pointer-events: none;
+}
+
+body.sense-round-three
+.monster-antenna,
+body.sense-round-three
+.monster-arm,
+body.sense-round-three
+.monster-leg {
+  position: absolute;
+  display: block;
+  background: inherit;
+  border: 6px solid
+    rgba(32, 66, 102, 0.72);
+  pointer-events: none;
+}
+
+body.sense-round-three
+.monster-antenna {
+  top: -42px;
+  width: 18px;
+  height: 58px;
+  border-radius: 999px;
+}
+
+body.sense-round-three
+.monster-antenna::after {
+  content: "";
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  width: 27px;
+  height: 27px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: inherit;
+  border: 5px solid
+    rgba(32, 66, 102, 0.72);
+}
+
+body.sense-round-three
+.monster-antenna-left {
+  left: 55px;
+  transform: rotate(-18deg);
+}
+
+body.sense-round-three
+.monster-antenna-right {
+  right: 55px;
+  transform: rotate(18deg);
+}
+
+body.sense-round-three
+.monster-arm {
+  top: 92px;
+  width: 78px;
+  height: 28px;
+  border-radius: 999px;
+}
+
+body.sense-round-three
+.monster-arm-left {
+  left: -64px;
+  transform: rotate(-18deg);
+}
+
+body.sense-round-three
+.monster-arm-right {
+  right: -64px;
+  transform: rotate(18deg);
+}
+
+body.sense-round-three
+.monster-leg {
+  bottom: -45px;
+  width: 34px;
+  height: 70px;
+  border-radius: 999px;
+}
+
+body.sense-round-three
+.monster-leg-left {
+  left: 58px;
+  transform: rotate(8deg);
+}
+
+body.sense-round-three
+.monster-leg-right {
+  right: 58px;
+  transform: rotate(-8deg);
+}
+
+body.sense-round-three
+.sense-monster-card.has-snack
+.sense-monster-food-slot {
+  display: grid;
+  place-items: center;
+}
+
+body.sense-round-three
+.sense-monster-card.has-snack
+.monster-big-feature {
+  opacity: 0.28;
+}
+
+body.sense-round-three
+.sense-monster-card.is-celebrating {
+  animation:
+    senseMonsterCelebrate 520ms
+    ease-in-out 1;
+}
+
+@keyframes senseMonsterWalk {
+  0%,
+  100% {
+    transform:
+      translateX(-65px)
+      rotate(-2deg);
+  }
+
+  50% {
+    transform:
+      translateX(65px)
+      rotate(2deg);
+  }
+}
+
+@keyframes senseMonsterCelebrate {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  45% {
+    transform:
+      translateY(-22px)
+      scale(1.14)
+      rotate(-5deg);
+  }
+
+  70% {
+    transform:
+      translateY(-8px)
+      scale(1.08)
+      rotate(5deg);
+  }
+}
+
+@media (max-height: 800px) {
+  body.sense-round-three
+  .sense-monster-card.is-current-monster {
+    width: 225px;
+    height: 180px;
+  }
+
+  body.sense-round-three
+  .monster-big-feature {
+    font-size: 5.6rem;
+  }
+
+  body.sense-round-three
+  .monster-arm {
+    top: 74px;
+  }
+
+  body.sense-round-three
+  .monster-leg {
+    height: 54px;
+    bottom: -38px;
+  }
+}
+
+/* ========================================
+   ROUND 3 — BODY-PART MONSTERS
+======================================== */
+
+body.sense-round-three
+.sense-eye-monster {
+  --monster-limb-color: #3ba5dc;
+}
+
+body.sense-round-three
+.sense-ear-monster {
+  --monster-limb-color: #db65a4;
+}
+
+body.sense-round-three
+.sense-nose-monster {
+  --monster-limb-color: #39b86b;
+}
+
+body.sense-round-three
+.sense-mouth-monster {
+  --monster-limb-color: #e15b64;
+}
+
+body.sense-round-three
+.sense-hand-monster {
+  --monster-limb-color: #d6a023;
+}
+
+body.sense-round-three
+.sense-monster-card.is-current-monster {
+  width: 275px;
+  height: 230px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body.sense-round-three
+.sense-monster-card::before,
+body.sense-round-three
+.sense-monster-card::after {
+  display: none;
+}
+
+body.sense-round-three
+.monster-big-feature {
+  z-index: 8;
+  font-size: 9.5rem;
+  filter:
+    drop-shadow(
+      0 9px 5px
+      rgba(24, 48, 72, 0.26)
+    );
+}
+
+body.sense-round-three
+.monster-googly-eyes {
+  z-index: 10;
+  top: 54px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background:
+    rgba(255, 255, 255, 0.88);
+  font-size: 1.25rem;
+  letter-spacing: 22px;
+  transform: translateX(11px);
+}
+
+body.sense-round-three
+.monster-grin {
+  z-index: 10;
+  bottom: 48px;
+  font-size: 2.4rem;
+}
+
+body.sense-round-three
+.monster-antenna,
+body.sense-round-three
+.monster-arm,
+body.sense-round-three
+.monster-leg {
+  z-index: 3;
+  background:
+    var(
+      --monster-limb-color,
+      #7450a5
+    );
+  border-color: #24445f;
+  box-shadow:
+    inset 0 0 0 3px
+    rgba(255, 255, 255, 0.28);
+}
+
+body.sense-round-three
+.monster-antenna {
+  top: -14px;
+  height: 68px;
+}
+
+body.sense-round-three
+.monster-antenna::after {
+  background:
+    var(
+      --monster-limb-color,
+      #7450a5
+    );
+  border-color: #24445f;
+}
+
+body.sense-round-three
+.monster-antenna-left {
+  left: 72px;
+}
+
+body.sense-round-three
+.monster-antenna-right {
+  right: 72px;
+}
+
+body.sense-round-three
+.monster-arm {
+  top: 104px;
+  width: 82px;
+  height: 29px;
+}
+
+body.sense-round-three
+.monster-arm-left {
+  left: -22px;
+}
+
+body.sense-round-three
+.monster-arm-right {
+  right: -22px;
+}
+
+body.sense-round-three
+.monster-leg {
+  bottom: -5px;
+  width: 34px;
+  height: 76px;
+}
+
+body.sense-round-three
+.monster-leg-left {
+  left: 73px;
+}
+
+body.sense-round-three
+.monster-leg-right {
+  right: 73px;
+}
+
+body.sense-round-three
+.sense-monster-card.is-ready {
+  border: 0;
+  background: transparent;
+  box-shadow:
+    0 0 34px 18px
+    rgba(255, 210, 45, 0.78);
+}
+
+body.sense-round-three
+.sense-monster-card.has-snack
+.monster-big-feature {
+  opacity: 1;
+}
+
+body.sense-round-three
+.sense-monster-food-slot {
+  z-index: 14;
+}
+
+body.sense-round-three
+.sense-monster-food-slot
+.sense-placed-picture {
+  padding: 12px;
+  border: 5px solid #ffffff;
+  border-radius: 50%;
+  background:
+    rgba(77, 215, 147, 0.94);
+  box-shadow:
+    0 8px 18px
+    rgba(17, 86, 57, 0.28);
+  font-size: 4rem;
+}
+
+@media (max-height: 800px) {
+  body.sense-round-three
+  .sense-monster-card.is-current-monster {
+    width: 235px;
+    height: 185px;
+  }
+
+  body.sense-round-three
+  .monster-big-feature {
+    font-size: 7.3rem;
+  }
+
+  body.sense-round-three
+  .monster-googly-eyes {
+    top: 39px;
+  }
+
+  body.sense-round-three
+  .monster-grin {
+    bottom: 35px;
+  }
+
+  body.sense-round-three
+  .monster-antenna {
+    height: 55px;
+  }
+
+  body.sense-round-three
+  .monster-arm {
+    top: 81px;
+    width: 65px;
+  }
+
+  body.sense-round-three
+  .monster-leg {
+    height: 58px;
+  }
+}
+

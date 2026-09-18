@@ -146,6 +146,52 @@
         rightHand: "touch",
       },
     },
+    {
+      number: 3,
+      instruction:
+        "Match!",
+      pieces: [
+        {
+          id: "telescope",
+          match: "sight",
+          symbol: "🔭",
+          label: "Telescope",
+        },
+        {
+          id: "trumpet",
+          match: "hearing",
+          symbol: "🎺",
+          label: "Trumpet",
+        },
+        {
+          id: "coffee",
+          match: "smell",
+          symbol: "☕",
+          label: "Coffee",
+        },
+        {
+          id: "strawberry",
+          match: "taste",
+          symbol: "🍓",
+          label: "Strawberry",
+        },
+        {
+          id: "teddy-bear",
+          match: "touch",
+          symbol: "🧸",
+          label: "Teddy bear",
+        },
+      ],
+      targets: {
+        eyes: "sight",
+        leftEar: "hearing",
+        rightEar: "hearing",
+        nose: "smell",
+        mouth: "taste",
+        leftHand: "touch",
+        rightHand: "touch",
+      },
+    }
   ];
 
   if (
@@ -160,7 +206,7 @@
   }
 
   const correctSound =
-    new Audio("../../sounds/woohoo.mp3");
+    new Audio("../../sounds/good.mp3");
 
   const wrongSound =
     new Audio("../../sounds/wrongflower.mp3");
@@ -168,17 +214,25 @@
   const pickupSound =
     new Audio("../../sounds/click.mp3");
 
+  const monsterRoarSound =
+    new Audio("../../sounds/roar.mp3");
+
   correctSound.preload = "auto";
   wrongSound.preload = "auto";
   pickupSound.preload = "auto";
+  monsterRoarSound.preload = "auto";
 
   correctSound.volume = 0.75;
   wrongSound.volume = 0.58;
   pickupSound.volume = 0.45;
+  monsterRoarSound.volume = 0.72;
 
   let soundEnabled = true;
   let gameRunning = false;
   let currentRoundIndex = 0;
+  let currentMonsterIndex = 0;
+  let currentMonsterFedCount = 0;
+
   let roundGoal =
     SENSE_ROUNDS[0].pieces.length;
   let matchedCount = 0;
@@ -247,6 +301,164 @@
         ? "Sound on"
         : "Sound off";
   }
+
+  const MONSTER_CHALLENGES = [
+    {
+      match: "sight",
+      monsterClass: "sense-eye-monster",
+      prompt: "👁️",
+      choices: [
+        {
+          id: "rainbow",
+          match: "sight",
+          symbol: "🌈",
+          label: "Rainbow",
+        },
+        {
+          id: "telescope",
+          match: "sight",
+          symbol: "🔭",
+          label: "Telescope",
+        },
+        {
+          id: "trumpet-decoy",
+          match: "hearing",
+          symbol: "🎺",
+          label: "Trumpet",
+        },
+        {
+          id: "pizza-decoy",
+          match: "taste",
+          symbol: "🍕",
+          label: "Pizza",
+        },
+      ],
+    },
+    {
+      match: "hearing",
+      monsterClass: "sense-ear-monster",
+      prompt: "👂",
+      choices: [
+        {
+          id: "singing-bird",
+          match: "hearing",
+          symbol: "🐦🎵",
+          label: "Singing bird",
+        },
+        {
+          id: "trumpet",
+          match: "hearing",
+          symbol: "🎺",
+          label: "Trumpet",
+        },
+        {
+          id: "rainbow-decoy",
+          match: "sight",
+          symbol: "🌈",
+          label: "Rainbow",
+        },
+        {
+          id: "strawberry-decoy",
+          match: "taste",
+          symbol: "🍓",
+          label: "Strawberry",
+        },
+      ],
+    },
+    {
+      match: "smell",
+      monsterClass: "sense-nose-monster",
+      prompt: "👃",
+      choices: [
+        {
+          id: "flower",
+          match: "smell",
+          symbol: "🌸",
+          label: "Flower",
+        },
+        {
+          id: "coffee",
+          match: "smell",
+          symbol: "☕",
+          label: "Coffee",
+        },
+        {
+          id: "teddy-decoy",
+          match: "touch",
+          symbol: "🧸",
+          label: "Teddy bear",
+        },
+        {
+          id: "trumpet-smell-decoy",
+          match: "hearing",
+          symbol: "🎺",
+          label: "Trumpet",
+        },
+      ],
+    },
+    {
+      match: "taste",
+      monsterClass: "sense-mouth-monster",
+      prompt: "👄",
+      choices: [
+        {
+          id: "strawberry",
+          match: "taste",
+          symbol: "🍓",
+          label: "Strawberry",
+        },
+        {
+          id: "pizza",
+          match: "taste",
+          symbol: "🍕",
+          label: "Pizza",
+        },
+        {
+          id: "flower-taste-decoy",
+          match: "smell",
+          symbol: "🌸",
+          label: "Flower",
+        },
+        {
+          id: "telescope-decoy",
+          match: "sight",
+          symbol: "🔭",
+          label: "Telescope",
+        },
+      ],
+    },
+    {
+      match: "touch",
+      monsterClass: "sense-hand-monster",
+      prompt: "✋",
+      choices: [
+        {
+          id: "feather",
+          match: "touch",
+          symbol: "🪶",
+          label: "Feather",
+        },
+        {
+          id: "teddy-bear",
+          match: "touch",
+          symbol: "🧸",
+          label: "Teddy bear",
+        },
+        {
+          id: "coffee-touch-decoy",
+          match: "smell",
+          symbol: "☕",
+          label: "Coffee",
+        },
+        {
+          id: "bird-touch-decoy",
+          match: "hearing",
+          symbol: "🐦🎵",
+          label: "Singing bird",
+        },
+      ],
+    },
+  ];
 
   const ROUND_TWO_SEQUENCE = [
     {
@@ -322,6 +534,135 @@
     }
   }
 
+  function configureMonsterChallenge(
+    monsterIndex
+  ) {
+    const challenge =
+      MONSTER_CHALLENGES[
+        monsterIndex
+      ];
+
+    if (!challenge) {
+      return;
+    }
+
+    /*
+     * Remove the empty tray spaces left by
+     * the previous monster's eaten items.
+     */
+    document
+      .querySelectorAll(
+        ".sense-piece-placeholder"
+      )
+      .forEach((placeholder) => {
+        placeholder.remove();
+      });
+
+    currentMonsterIndex =
+      monsterIndex;
+
+    currentMonsterFedCount = 0;
+    roundGoal = 10;
+
+    document
+      .querySelectorAll(
+        ".sense-monster-card"
+      )
+      .forEach((monster) => {
+        monster.classList.remove(
+          "is-current-monster",
+          "is-fed",
+          "has-snack",
+          "is-celebrating"
+        );
+
+        restoreMonsterCard(monster);
+      });
+
+    const activeMonster =
+      document.querySelector(
+        `.${challenge.monsterClass}`
+      );
+
+    if (activeMonster) {
+      activeMonster.classList.add(
+        "is-current-monster"
+      );
+
+      playSound(
+        monsterRoarSound
+      );
+    }
+
+    if (instructionDisplay) {
+      instructionDisplay.textContent =
+        challenge.prompt;
+    }
+
+    pieces.forEach(
+      (piece, index) => {
+        if (pieceTray) {
+          pieceTray.appendChild(piece);
+        }
+
+        piece.classList.remove(
+          "is-matched",
+          "is-dragging",
+          "is-returning"
+        );
+
+        piece.style.position = "";
+        piece.style.left = "";
+        piece.style.top = "";
+        piece.style.width = "";
+        piece.style.height = "";
+        piece.style.margin = "";
+        piece.style.transform = "";
+        piece.style.opacity = "";
+
+        const choice =
+          challenge.choices[index];
+
+        if (!choice) {
+          piece.hidden = true;
+          return;
+        }
+
+        piece.hidden = false;
+
+        piece.dataset.piece =
+          choice.match;
+
+        piece.dataset.itemId =
+          choice.id;
+
+        piece.setAttribute(
+          "aria-label",
+          choice.label
+        );
+
+        const picture =
+          document.createElement(
+            "span"
+          );
+
+        picture.textContent =
+          choice.symbol;
+
+        picture.setAttribute(
+          "aria-hidden",
+          "true"
+        );
+
+        piece.replaceChildren(
+          picture
+        );
+      }
+    );
+
+    updateStats();
+  }
+
   function configureCurrentRound() {
     const round =
       SENSE_ROUNDS[currentRoundIndex];
@@ -338,6 +679,11 @@
     document.body.classList.toggle(
       "sense-round-two",
       currentRoundIndex === 1
+    );
+
+    document.body.classList.toggle(
+      "sense-round-three",
+      currentRoundIndex === 2
     );
 
     roundGoal =
@@ -471,9 +817,12 @@
       }
     );
 
-    updateStats();
-
-    showActiveSenseStep(0);
+    if (currentRoundIndex === 2) {
+      configureMonsterChallenge(0);
+    } else {
+      showActiveSenseStep(0);
+      updateStats();
+    }
   }
 
   function updateStats() {
@@ -705,6 +1054,73 @@
       getZonesForMatch(matchName);
 
     matchingZones.forEach((zone) => {
+      if (
+        currentRoundIndex === 2 &&
+        zone.classList.contains(
+          "sense-monster-card"
+        )
+      ) {
+        zone.classList.add(
+          "has-snack"
+        );
+
+        const foodSlot =
+          zone.querySelector(
+            ".sense-monster-food-slot"
+          );
+
+        if (foodSlot) {
+          foodSlot.innerHTML = "";
+
+          const monsterFood =
+            document.createElement(
+              "span"
+            );
+
+          monsterFood.className =
+            "sense-placed-picture";
+
+          monsterFood.textContent =
+            symbol;
+
+          monsterFood.setAttribute(
+            "aria-hidden",
+            "true"
+          );
+
+          foodSlot.appendChild(
+            monsterFood
+          );
+        }
+
+
+        currentMonsterFedCount += 1;
+
+        if (
+          currentMonsterFedCount >= 2
+        ) {
+          zone.classList.add(
+            "is-celebrating"
+          );
+
+          const nextMonsterIndex =
+            currentMonsterIndex + 1;
+
+          if (
+            nextMonsterIndex <
+            MONSTER_CHALLENGES.length
+          ) {
+            window.setTimeout(() => {
+              configureMonsterChallenge(
+                nextMonsterIndex
+              );
+            }, 850);
+          }
+        }
+
+        return;
+      }
+
       /*
        * In Round 2, the object is brought in
        * front of the sense organ, then clears
@@ -1112,6 +1528,67 @@
     resetDragState();
   }
 
+  function restoreMonsterCard(zone) {
+    let feature = "";
+
+    if (
+      zone.classList.contains(
+        "sense-eye-monster"
+      )
+    ) {
+      feature = "👁️";
+    } else if (
+      zone.classList.contains(
+        "sense-ear-monster"
+      )
+    ) {
+      feature = "👂";
+    } else if (
+      zone.classList.contains(
+        "sense-nose-monster"
+      )
+    ) {
+      feature = "👃";
+    } else if (
+      zone.classList.contains(
+        "sense-mouth-monster"
+      )
+    ) {
+      feature = "👄";
+    } else if (
+      zone.classList.contains(
+        "sense-hand-monster"
+      )
+    ) {
+      feature = "✋";
+    }
+
+    zone.innerHTML = `
+      <span class="monster-antenna monster-antenna-left"></span>
+      <span class="monster-antenna monster-antenna-right"></span>
+
+      <span class="monster-googly-eyes">
+        ● ●
+      </span>
+
+      <span class="monster-big-feature">
+        ${feature}
+      </span>
+
+      <span class="monster-grin">
+        ◡
+      </span>
+
+      <span class="monster-arm monster-arm-left"></span>
+      <span class="monster-arm monster-arm-right"></span>
+
+      <span class="monster-leg monster-leg-left"></span>
+      <span class="monster-leg monster-leg-right"></span>
+
+      <span class="sense-monster-food-slot"></span>
+    `;
+  }
+
   function resetRound() {
     matchedCount = 0;
     tryCount = 0;
@@ -1130,10 +1607,23 @@
     );
 
     zones.forEach((zone) => {
-      zone.innerHTML = "";
+      if (
+        zone.classList.contains(
+          "sense-monster-card"
+        )
+      ) {
+        restoreMonsterCard(zone);
+      } else {
+        zone.innerHTML = "";
+      }
+
       zone.classList.remove(
         "is-filled",
-        "is-ready"
+        "is-ready",
+        "is-fed",
+        "has-snack",
+        "is-current-monster",
+        "is-celebrating"
       );
     });
 
