@@ -1184,3 +1184,283 @@ body.sense-drag-active *::after {
   opacity: 0.4;
 }
 
+/* ========================================
+   SENSE BUILDER — GUIDED ROUND 2
+======================================== */
+
+.sense-drop-zone.is-sense-active {
+  border-color: #ffb703;
+  background: rgba(255, 224, 102, 0.72);
+  outline: 8px solid rgba(255, 183, 3, 0.3);
+  box-shadow:
+    0 0 0 5px rgba(255, 255, 255, 0.92),
+    0 0 24px rgba(255, 183, 3, 0.8);
+}
+
+.sense-piece.is-gentle-shake {
+  animation:
+    senseGentleShake 360ms ease;
+}
+
+@keyframes senseGentleShake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  30% {
+    transform: translateX(-7px);
+  }
+
+  65% {
+    transform: translateX(7px);
+  }
+}
+
+/* ========================================
+   SENSE BUILDER — FACE-FOCUSED ROUND 2
+======================================== */
+
+body.sense-round-two .sense-person {
+  justify-content: center;
+}
+
+body.sense-round-two .sense-head {
+  transform:
+    translateX(-50%)
+    translateY(24px)
+    scale(1.32);
+
+  transform-origin:
+    center center;
+}
+
+body.sense-round-two:not(
+  [data-active-sense="touch"]
+) .sense-body {
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.sense-round-two
+.sense-drop-zone {
+  border-color: transparent;
+  background: transparent;
+  outline: none;
+  box-shadow: none;
+}
+
+body.sense-round-two
+.sense-drop-zone::after {
+  opacity: 1;
+  filter: none;
+}
+
+body.sense-round-two
+.sense-drop-zone.is-sense-active {
+  border: 5px solid #ffb703;
+  background:
+    rgba(255, 224, 102, 0.82);
+  outline:
+    10px solid
+    rgba(255, 183, 3, 0.25);
+  box-shadow:
+    0 0 0 5px #ffffff,
+    0 0 30px
+    rgba(255, 183, 3, 0.95);
+}
+
+body.sense-round-two
+.sense-drop-zone.is-sense-complete {
+  border-color: #18a76f;
+  background:
+    rgba(103, 232, 177, 0.88);
+  box-shadow:
+    0 0 0 7px
+    rgba(24, 167, 111, 0.24);
+}
+
+body.sense-round-two[
+  data-active-sense="touch"
+] .sense-head {
+  transform:
+    translateX(-50%)
+    translateY(-2px)
+    scale(1.06);
+}
+
+body.sense-round-two[
+  data-active-sense="touch"
+] .sense-body {
+  opacity: 1;
+}
+
+/* ========================================
+   ROUND 2 — ANIMATED SENSE CLUES
+======================================== */
+
+/* Eyes look from side to side. */
+body.sense-round-two[
+  data-active-sense="sight"
+] .sense-eyes-zone::after {
+  animation:
+    senseEyesLook 900ms ease-in-out infinite;
+}
+
+/* Both ears wiggle while listening. */
+body.sense-round-two[
+  data-active-sense="hearing"
+] .sense-left-ear-zone::after {
+  animation:
+    senseLeftEarListen 650ms ease-in-out infinite;
+}
+
+body.sense-round-two[
+  data-active-sense="hearing"
+] .sense-right-ear-zone::after {
+  animation:
+    senseRightEarListen 650ms ease-in-out infinite;
+}
+
+/* Nose gently sniffs. */
+body.sense-round-two[
+  data-active-sense="smell"
+] .sense-nose-zone::after {
+  animation:
+    senseNoseSniff 700ms ease-in-out infinite;
+}
+
+/* Mouth opens and closes. */
+body.sense-round-two[
+  data-active-sense="taste"
+] .sense-mouth-zone::after {
+  animation:
+    senseMouthTaste 700ms ease-in-out infinite;
+}
+
+/* Hands wave for touch. */
+body.sense-round-two[
+  data-active-sense="touch"
+] .sense-left-hand-zone::after {
+  animation:
+    senseLeftHandWave 750ms ease-in-out infinite;
+}
+
+body.sense-round-two[
+  data-active-sense="touch"
+] .sense-right-hand-zone::after {
+  animation:
+    senseRightHandWave 750ms ease-in-out infinite;
+}
+
+@keyframes senseEyesLook {
+  0%,
+  100% {
+    transform: translateX(-7px);
+  }
+
+  50% {
+    transform: translateX(7px);
+  }
+}
+
+@keyframes senseLeftEarListen {
+  0%,
+  100% {
+    transform:
+      scaleX(-1)
+      rotate(0deg)
+      scale(1);
+  }
+
+  50% {
+    transform:
+      scaleX(-1)
+      rotate(-10deg)
+      scale(1.16);
+  }
+}
+
+@keyframes senseRightEarListen {
+  0%,
+  100% {
+    transform:
+      rotate(0deg)
+      scale(1);
+  }
+
+  50% {
+    transform:
+      rotate(10deg)
+      scale(1.16);
+  }
+}
+
+@keyframes senseNoseSniff {
+  0%,
+  100% {
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+  35% {
+    transform:
+      translateY(-5px)
+      scale(1.12);
+  }
+
+  65% {
+    transform:
+      translateY(3px)
+      scale(0.94);
+  }
+}
+
+@keyframes senseMouthTaste {
+  0%,
+  100% {
+    transform: scale(1, 0.82);
+  }
+
+  50% {
+    transform: scale(1.12, 1.18);
+  }
+}
+
+@keyframes senseLeftHandWave {
+  0%,
+  100% {
+    transform:
+      rotate(-98deg)
+      scaleX(-1);
+  }
+
+  50% {
+    transform:
+      rotate(-76deg)
+      scaleX(-1)
+      scale(1.1);
+  }
+}
+
+@keyframes senseRightHandWave {
+  0%,
+  100% {
+    transform: rotate(98deg);
+  }
+
+  50% {
+    transform:
+      rotate(76deg)
+      scale(1.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.sense-round-two
+  .sense-drop-zone::after {
+    animation: none !important;
+  }
+}
+

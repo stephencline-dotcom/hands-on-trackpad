@@ -13,6 +13,12 @@
   const feedback =
     document.getElementById("senseFeedback");
 
+  const roundDisplay =
+    document.getElementById("senseRound");
+
+  const instructionDisplay =
+    document.getElementById("senseInstruction");
+
   const matchesDisplay =
     document.getElementById("senseMatches");
 
@@ -33,6 +39,115 @@
     document.querySelectorAll(".sense-drop-zone")
   );
 
+  const SENSE_ROUNDS = [
+    {
+      number: 1,
+      instruction:
+        "Build the person!",
+      pieces: [
+        {
+          id: "eyes",
+          match: "eyes",
+          symbol: "👀",
+          label: "Eyes",
+        },
+        {
+          id: "left-ear",
+          match: "left-ear",
+          symbol: "👂",
+          label: "Left ear",
+          mirrored: true,
+        },
+        {
+          id: "right-ear",
+          match: "right-ear",
+          symbol: "👂",
+          label: "Right ear",
+        },
+        {
+          id: "nose",
+          match: "nose",
+          symbol: "👃",
+          label: "Nose",
+        },
+        {
+          id: "mouth",
+          match: "mouth",
+          symbol: "👄",
+          label: "Mouth",
+        },
+        {
+          id: "left-hand",
+          match: "left-hand",
+          symbol: "✋",
+          label: "Left hand",
+          mirrored: true,
+        },
+        {
+          id: "right-hand",
+          match: "right-hand",
+          symbol: "✋",
+          label: "Right hand",
+        },
+      ],
+      targets: {
+        eyes: "eyes",
+        leftEar: "left-ear",
+        rightEar: "right-ear",
+        nose: "nose",
+        mouth: "mouth",
+        leftHand: "left-hand",
+        rightHand: "right-hand",
+      },
+    },
+    {
+      number: 2,
+      instruction:
+        "Match!",
+      pieces: [
+        {
+          id: "rainbow",
+          match: "sight",
+          symbol: "🌈",
+          label: "Rainbow",
+        },
+        {
+          id: "music",
+          match: "hearing",
+          symbol: "🎵",
+          label: "Music",
+        },
+        {
+          id: "flower",
+          match: "smell",
+          symbol: "🌸",
+          label: "Flower",
+        },
+        {
+          id: "ice-cream",
+          match: "taste",
+          symbol: "🍦",
+          label: "Ice cream",
+        },
+        {
+          id: "feather",
+          match: "touch",
+          symbol: "🪶",
+          label: "Feather",
+        },
+      ],
+      targets: {
+        eyes: "sight",
+        leftEar: "hearing",
+        rightEar: "hearing",
+        nose: "smell",
+        mouth: "taste",
+        leftHand: "touch",
+        rightHand: "touch",
+      },
+    },
+  ];
+
   if (
     !arena ||
     !board ||
@@ -45,7 +160,7 @@
   }
 
   const correctSound =
-    new Audio("../../sounds/sparkle.mp3");
+    new Audio("../../sounds/woohoo.mp3");
 
   const wrongSound =
     new Audio("../../sounds/wrongflower.mp3");
@@ -63,6 +178,9 @@
 
   let soundEnabled = true;
   let gameRunning = false;
+  let currentRoundIndex = 0;
+  let roundGoal =
+    SENSE_ROUNDS[0].pieces.length;
   let matchedCount = 0;
   let tryCount = 0;
   let feedbackTimer = 0;
@@ -130,9 +248,237 @@
         : "Sound off";
   }
 
+  const ROUND_TWO_SEQUENCE = [
+    {
+      match: "sight",
+      prompt: "👀",
+    },
+    {
+      match: "hearing",
+      prompt: "👂",
+    },
+    {
+      match: "smell",
+      prompt: "👃",
+    },
+    {
+      match: "taste",
+      prompt: "👄",
+    },
+    {
+      match: "touch",
+      prompt: "✋",
+    },
+  ];
+
+  let activeSenseMatch = "";
+
+  function showActiveSenseStep(stepIndex = 0) {
+    zones.forEach((zone) => {
+      zone.classList.remove(
+        "is-sense-active"
+      );
+    });
+
+    activeSenseMatch = "";
+
+    document.body.removeAttribute(
+      "data-active-sense"
+    );
+
+    if (currentRoundIndex !== 1) {
+      return;
+    }
+
+    const step =
+      ROUND_TWO_SEQUENCE[stepIndex];
+
+    if (!step) {
+      return;
+    }
+
+    activeSenseMatch =
+      step.match;
+
+    document.body.setAttribute(
+      "data-active-sense",
+      activeSenseMatch
+    );
+
+    zones.forEach((zone) => {
+      if (
+        zone.dataset.match ===
+        activeSenseMatch
+      ) {
+        zone.classList.add(
+          "is-sense-active"
+        );
+      }
+    });
+
+    if (instructionDisplay) {
+      instructionDisplay.textContent =
+        step.prompt;
+    }
+  }
+
+  function configureCurrentRound() {
+    const round =
+      SENSE_ROUNDS[currentRoundIndex];
+
+    if (!round) {
+      return;
+    }
+
+    /*
+     * Round 2 uses a separate, face-focused
+     * presentation instead of the Round 1
+     * build-the-person layout.
+     */
+    document.body.classList.toggle(
+      "sense-round-two",
+      currentRoundIndex === 1
+    );
+
+    roundGoal =
+      round.pieces.length;
+
+    if (roundDisplay) {
+      roundDisplay.textContent =
+        String(round.number);
+    }
+
+    if (instructionDisplay) {
+      instructionDisplay.textContent =
+        round.instruction;
+    }
+
+    const targetElements = {
+      eyes:
+        document.querySelector(
+          ".sense-eyes-zone"
+        ),
+      leftEar:
+        document.querySelector(
+          ".sense-left-ear-zone"
+        ),
+      rightEar:
+        document.querySelector(
+          ".sense-right-ear-zone"
+        ),
+      nose:
+        document.querySelector(
+          ".sense-nose-zone"
+        ),
+      mouth:
+        document.querySelector(
+          ".sense-mouth-zone"
+        ),
+      leftHand:
+        document.querySelector(
+          ".sense-left-hand-zone"
+        ),
+      rightHand:
+        document.querySelector(
+          ".sense-right-hand-zone"
+        ),
+    };
+
+    Object.entries(
+      round.targets
+    ).forEach(
+      ([targetName, matchName]) => {
+        const target =
+          targetElements[targetName];
+
+        if (target) {
+          target.dataset.match =
+            matchName;
+        }
+      }
+    );
+
+    pieces.forEach(
+      (piece, index) => {
+        /*
+         * A completed piece was temporarily
+         * moved to document.body during dragging.
+         * Return every button to the tray before
+         * building the next round.
+         */
+        if (pieceTray) {
+          pieceTray.appendChild(piece);
+        }
+
+        piece.classList.remove(
+          "is-matched",
+          "is-dragging",
+          "is-returning"
+        );
+
+        piece.style.position = "";
+        piece.style.left = "";
+        piece.style.top = "";
+        piece.style.width = "";
+        piece.style.height = "";
+        piece.style.margin = "";
+        piece.style.transform = "";
+        piece.style.opacity = "";
+
+        const definition =
+          round.pieces[index];
+
+        if (!definition) {
+          piece.hidden = true;
+          return;
+        }
+
+        piece.hidden = false;
+
+        piece.dataset.piece =
+          definition.match;
+
+        piece.dataset.itemId =
+          definition.id;
+
+        piece.setAttribute(
+          "aria-label",
+          definition.label
+        );
+
+        const symbol =
+          document.createElement(
+            "span"
+          );
+
+        symbol.textContent =
+          definition.symbol;
+
+        symbol.setAttribute(
+          "aria-hidden",
+          "true"
+        );
+
+        if (definition.mirrored) {
+          symbol.classList.add(
+            "sense-mirrored-picture"
+          );
+        }
+
+        piece.replaceChildren(
+          symbol
+        );
+      }
+    );
+
+    updateStats();
+
+    showActiveSenseStep(0);
+  }
+
   function updateStats() {
     matchesDisplay.textContent =
-      `${matchedCount}/${pieces.length}`;
+      `${matchedCount}/${roundGoal}`;
 
     triesDisplay.textContent =
       String(tryCount);
@@ -359,6 +705,27 @@
       getZonesForMatch(matchName);
 
     matchingZones.forEach((zone) => {
+      /*
+       * In Round 2, the object is brought in
+       * front of the sense organ, then clears
+       * away so the face remains visible.
+       */
+      if (currentRoundIndex === 1) {
+        zone.classList.add(
+          "is-sense-complete"
+        );
+
+        zone.innerHTML = "";
+
+        window.setTimeout(() => {
+          zone.classList.remove(
+            "is-sense-complete"
+          );
+        }, 500);
+
+        return;
+      }
+
       zone.classList.add(
         "is-filled"
       );
@@ -401,6 +768,18 @@
       "sense-drag-active"
     );
 
+    if (currentRoundIndex === 1) {
+      const completedStep =
+        ROUND_TWO_SEQUENCE.findIndex(
+          (step) =>
+            step.match === matchName
+        );
+
+      showActiveSenseStep(
+        completedStep + 1
+      );
+    }
+
     if (dragState.placeholder) {
       dragState.placeholder.classList.add(
         "is-matched-placeholder"
@@ -428,6 +807,10 @@
   function finishRound() {
     gameRunning = false;
 
+    const hasNextRound =
+      currentRoundIndex <
+      SENSE_ROUNDS.length - 1;
+
     showFeedback(
       "correct",
       "⭐ GREAT JOB! ⭐"
@@ -435,20 +818,47 @@
 
     window.setTimeout(() => {
       if (resultController) {
-        resultController.showFinal({
-          title: "Great Job!",
-          message:
-            "You built the five senses!",
-        });
+        if (hasNextRound) {
+          resultController.showSuccess({
+            title: "Round Complete!",
+            message:
+              "Great matching!",
+          });
+        } else {
+          resultController.showFinal({
+            title: "You Did It!",
+            message:
+              "You matched the five senses!",
+          });
+        }
 
         return;
       }
 
       startButton.textContent =
-        "PLAY AGAIN";
+        hasNextRound
+          ? "NEXT ROUND"
+          : "PLAY AGAIN";
 
       startButton.hidden = false;
     }, 700);
+  }
+
+  function startNextRound() {
+    if (
+      currentRoundIndex >=
+      SENSE_ROUNDS.length - 1
+    ) {
+      return;
+    }
+
+    currentRoundIndex += 1;
+    startRound();
+  }
+
+  function playAllRoundsAgain() {
+    currentRoundIndex = 0;
+    startRound();
   }
 
   function handlePiecePointerDown(
@@ -471,6 +881,42 @@
       event.button !== 0 &&
       event.pointerType !== "touch"
     ) {
+      return;
+    }
+
+    /*
+     * Round 2 teaches one sense at a time.
+     * Only the picture matching the glowing
+     * body part can be moved.
+     */
+    if (
+      currentRoundIndex === 1 &&
+      piece.dataset.piece !==
+        activeSenseMatch
+    ) {
+      event.preventDefault();
+
+      showFeedback(
+        "wrong",
+        "TRY ANOTHER PICTURE"
+      );
+
+      piece.classList.remove(
+        "is-gentle-shake"
+      );
+
+      void piece.offsetWidth;
+
+      piece.classList.add(
+        "is-gentle-shake"
+      );
+
+      window.setTimeout(() => {
+        piece.classList.remove(
+          "is-gentle-shake"
+        );
+      }, 420);
+
       return;
     }
 
@@ -645,7 +1091,7 @@
       updateStats();
       resetDragState();
 
-      if (matchedCount >= pieces.length) {
+      if (matchedCount >= roundGoal) {
         finishRound();
       }
 
@@ -726,6 +1172,7 @@
 
   function startRound() {
     resetRound();
+    configureCurrentRound();
 
     gameRunning = true;
     startButton.hidden = true;
@@ -867,8 +1314,13 @@
           gameRunning = false;
         },
 
+        onNextLevel:
+          startNextRound,
+
         onRetry: startRound,
-        onPlayAgain: startRound,
+
+        onPlayAgain:
+          playAllRoundsAgain,
 
         onHome: () => {
           window.location.href =
@@ -879,4 +1331,5 @@
 
   updateSoundButton();
   resetRound();
+  configureCurrentRound();
 })();
