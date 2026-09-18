@@ -1,0 +1,1186 @@
+* {
+  box-sizing: border-box;
+}
+
+.sense-builder-page {
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(255, 232, 168, 0.7),
+      transparent 30%
+    ),
+    linear-gradient(135deg, #eaf8ff, #f7efff);
+}
+
+.sense-builder-shell {
+  width: min(1420px, calc(100% - 28px));
+  margin: 0 auto;
+  padding: 14px 0 30px;
+}
+
+.sense-builder-page .game-header {
+  min-height: 76px;
+}
+
+.sense-builder-page .game-instructions {
+  margin: 8px 0;
+  text-align: center;
+  color: #204b70;
+  font-size: clamp(1rem, 1.7vw, 1.3rem);
+  font-weight: 900;
+}
+
+.sense-builder-page .game-stats {
+  margin-bottom: 8px;
+}
+
+.sense-builder-page .game-stats-row {
+  justify-content: center;
+}
+
+.sense-builder-page .game-stat {
+  min-width: 130px;
+}
+
+.sense-builder-page .game-stage {
+  padding: 10px;
+  border-radius: 26px;
+  background: #ffffff;
+}
+
+.sense-arena {
+  position: relative;
+  min-height: 475px;
+  overflow: hidden;
+  border: 4px solid #8ed8f8;
+  border-radius: 22px;
+  background:
+    radial-gradient(
+      circle at 15% 15%,
+      rgba(255, 255, 255, 0.95),
+      transparent 24%
+    ),
+    linear-gradient(180deg, #dff6ff 0 56%, #dff6cf 56% 100%);
+  touch-action: none;
+  user-select: none;
+}
+
+.sense-picture-prompt {
+  position: absolute;
+  z-index: 20;
+  top: 12px;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transform: translateX(-50%);
+  padding: 8px 20px;
+  border: 3px solid #5bb8ea;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #173d63;
+  font-size: 1.05rem;
+  box-shadow: 0 5px 12px rgba(18, 72, 104, 0.16);
+}
+
+.sense-picture-prompt span {
+  font-size: 1.45rem;
+}
+
+.sense-board {
+  display: grid;
+  grid-template-columns: minmax(330px, 1fr) minmax(150px, 240px);
+  gap: 18px;
+  width: 100%;
+  min-height: 467px;
+  padding: 54px 22px 18px;
+}
+
+.sense-person-area {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+}
+
+.sense-person {
+  position: relative;
+  width: 330px;
+  height: 385px;
+}
+
+.sense-head {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  left: 50%;
+  width: 215px;
+  height: 235px;
+  transform: translateX(-50%);
+  border: 6px solid #c77a48;
+  border-radius: 48% 48% 45% 45%;
+  background: #f3b77c;
+  box-shadow:
+    inset 0 -14px 0 rgba(187, 98, 51, 0.1),
+    0 10px 20px rgba(64, 69, 86, 0.16);
+}
+
+.sense-head::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -24px;
+  left: 14px;
+  width: 175px;
+  height: 76px;
+  border-radius: 70% 70% 28% 28%;
+  background: #5a3825;
+}
+
+.sense-head::after {
+  content: "";
+  position: absolute;
+  bottom: 17px;
+  left: 50%;
+  width: 118px;
+  height: 44px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: rgba(255, 226, 190, 0.32);
+}
+
+.sense-body {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 245px;
+  height: 175px;
+  transform: translateX(-50%);
+  border: 6px solid #2965a3;
+  border-radius: 70px 70px 24px 24px;
+  background: #55a8e8;
+  box-shadow: 0 10px 18px rgba(41, 82, 124, 0.17);
+}
+
+.sense-body::before,
+.sense-body::after {
+  content: "";
+  position: absolute;
+  top: 42px;
+  width: 90px;
+  height: 42px;
+  border: 6px solid #2965a3;
+  border-radius: 999px;
+  background: #55a8e8;
+}
+
+.sense-body::before {
+  left: -72px;
+  transform: rotate(18deg);
+}
+
+.sense-body::after {
+  right: -72px;
+  transform: rotate(-18deg);
+}
+
+.sense-drop-zone {
+  position: absolute;
+  z-index: 8;
+  display: grid;
+  place-items: center;
+  border: 4px dashed rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.32);
+  box-shadow:
+    0 0 0 3px rgba(47, 126, 172, 0.25),
+    inset 0 0 14px rgba(255, 255, 255, 0.7);
+  transition:
+    transform 150ms ease,
+    background 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.sense-drop-zone.is-ready {
+  transform: scale(1.1);
+  background: rgba(255, 244, 125, 0.9);
+  box-shadow:
+    0 0 0 5px #ffd84c,
+    0 0 24px #fff4a3;
+}
+
+.sense-drop-zone.is-filled {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+
+.sense-eyes-zone {
+  top: 70px;
+  left: 50%;
+  width: 118px;
+  height: 58px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+}
+
+.sense-eyes-zone.is-ready {
+  transform: translateX(-50%) scale(1.1);
+}
+
+.sense-left-ear-zone,
+.sense-right-ear-zone {
+  top: 86px;
+  width: 55px;
+  height: 75px;
+  border-radius: 50%;
+}
+
+.sense-left-ear-zone {
+  left: -38px;
+}
+
+.sense-right-ear-zone {
+  right: -38px;
+}
+
+.sense-nose-zone {
+  top: 126px;
+  left: 50%;
+  width: 56px;
+  height: 67px;
+  transform: translateX(-50%);
+  border-radius: 45%;
+}
+
+.sense-nose-zone.is-ready {
+  transform: translateX(-50%) scale(1.1);
+}
+
+.sense-mouth-zone {
+  top: 184px;
+  left: 50%;
+  width: 95px;
+  height: 43px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+}
+
+.sense-mouth-zone.is-ready {
+  transform: translateX(-50%) scale(1.1);
+}
+
+.sense-left-hand-zone,
+.sense-right-hand-zone {
+  z-index: 10;
+  top: 69px;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+}
+
+.sense-left-hand-zone {
+  left: -105px;
+}
+
+.sense-right-hand-zone {
+  right: -105px;
+}
+
+.sense-piece-tray {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(64px, 1fr));
+  align-content: center;
+  gap: 12px;
+  padding: 14px;
+  border: 4px solid #c8a7ef;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 10px 20px rgba(87, 52, 124, 0.13);
+}
+
+.sense-piece {
+  position: relative;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  height: 82px;
+  padding: 4px;
+  border: 4px solid #7450a5;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #ffffff, #f1e6ff);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  box-shadow:
+    0 7px 0 #57377e,
+    0 10px 16px rgba(51, 30, 74, 0.18);
+  transition:
+    transform 130ms ease,
+    opacity 180ms ease;
+}
+
+.sense-piece:last-child {
+  grid-column: 1 / -1;
+}
+
+.sense-piece span {
+  display: block;
+  font-size: 3.35rem;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.sense-piece:hover {
+  transform: translateY(-3px);
+}
+
+.sense-piece.is-dragging {
+  z-index: 100;
+  cursor: grabbing;
+  transform: scale(1.08);
+  box-shadow:
+    0 10px 0 #57377e,
+    0 18px 28px rgba(51, 30, 74, 0.28);
+}
+
+.sense-piece.is-returning {
+  transition:
+    left 260ms ease,
+    top 260ms ease,
+    transform 260ms ease;
+}
+
+.sense-piece.is-matched {
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.4);
+}
+
+.sense-placed-picture {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  font-size: 3.1rem;
+  line-height: 1;
+  animation: sensePop 300ms ease;
+}
+
+.sense-feedback {
+  position: absolute;
+  z-index: 120;
+  left: 50%;
+  bottom: 15px;
+  min-width: 150px;
+  transform: translateX(-50%) scale(0.8);
+  padding: 9px 20px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #164b73;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 1000;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 7px 18px rgba(20, 57, 87, 0.2);
+  transition:
+    opacity 150ms ease,
+    transform 150ms ease;
+}
+
+.sense-feedback.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+.sense-feedback.is-correct {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.sense-feedback.is-wrong {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.sense-start-button {
+  position: absolute;
+  z-index: 150;
+  top: 50%;
+  left: 50%;
+  min-width: 180px;
+  transform: translate(-50%, -50%);
+  padding: 18px 30px;
+  border: 4px solid #16845a;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #7af0bb, #3dd699);
+  color: #073d2b;
+  font-size: 1.5rem;
+  font-weight: 1000;
+  cursor: pointer;
+  box-shadow:
+    0 8px 0 #13704d,
+    0 14px 25px rgba(10, 79, 54, 0.25);
+}
+
+.sense-start-button:hover {
+  transform: translate(-50%, calc(-50% - 3px));
+}
+
+.sense-start-button[hidden] {
+  display: none;
+}
+
+@keyframes sensePop {
+  0% {
+    transform: scale(0.4);
+  }
+
+  70% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 760px) {
+  .sense-board {
+    grid-template-columns: 1fr;
+    padding: 50px 10px 12px;
+  }
+
+  .sense-piece-tray {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .sense-piece,
+  .sense-piece:last-child {
+    grid-column: auto;
+    height: 68px;
+  }
+
+  .sense-piece span {
+    font-size: 2.6rem;
+  }
+}
+
+@media (max-height: 820px) and (min-width: 761px) {
+  .sense-builder-shell {
+    padding-top: 6px;
+  }
+
+  .sense-builder-page .game-header {
+    min-height: 60px;
+  }
+
+  .sense-builder-page .game-instructions {
+    margin: 3px 0;
+  }
+
+  .sense-builder-page .game-stats {
+    margin-bottom: 4px;
+  }
+
+  .sense-arena {
+    min-height: 390px;
+  }
+
+  .sense-board {
+    min-height: 382px;
+    padding-top: 48px;
+  }
+
+  .sense-person {
+    width: 290px;
+    height: 320px;
+    transform: scale(0.84);
+    transform-origin: center;
+  }
+
+  .sense-piece {
+    height: 66px;
+  }
+
+  .sense-piece span {
+    font-size: 2.8rem;
+  }
+
+  .sense-builder-page .game-guide {
+    margin-top: 6px;
+  }
+}
+
+/* Sense Builder shell and Chromebook fit */
+.sense-builder-page .game-header-button {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 54px;
+  padding: 0;
+}
+
+.sense-builder-page .home-btn-icon {
+  display: block;
+  width: 26px;
+  height: 26px;
+  max-width: 26px;
+  max-height: 26px;
+  object-fit: contain;
+}
+
+.sense-builder-page .game-stage-wrap,
+.sense-builder-page .arena-frame,
+.sense-builder-page .game-stage {
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+}
+
+.sense-builder-page .game-stage-wrap {
+  width: 100%;
+}
+
+.sense-builder-page .game-stage {
+  width: 100%;
+}
+
+.sense-builder-page .sense-arena {
+  width: 100%;
+  height: 420px;
+  min-height: 0;
+}
+
+.sense-builder-page .sense-board {
+  height: 412px;
+  min-height: 0;
+}
+
+.sense-builder-page .game-guide,
+.sense-builder-page .imported-trackpad-guide {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: none;
+  min-height: 245px;
+  margin: 8px auto 0;
+  padding: 4px 12px 10px;
+}
+
+.sense-builder-page
+.imported-trackpad-guide-label {
+  width: 100%;
+  margin: 0 0 3px;
+  text-align: center;
+}
+
+.sense-builder-page
+.imported-trackpad-scene {
+  width: min(450px, 96%);
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+@media (max-height: 820px) and (min-width: 761px) {
+  .sense-builder-shell {
+    width: min(1420px, calc(100% - 18px));
+    padding: 4px 0 12px;
+  }
+
+  .sense-builder-page .game-header {
+    min-height: 56px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  .sense-builder-page .game-header-button {
+    width: 58px;
+    height: 48px;
+  }
+
+  .sense-builder-page .game-instructions {
+    margin: 2px 0;
+    font-size: 1rem;
+  }
+
+  .sense-builder-page .game-stats {
+    margin: 2px 0 4px;
+  }
+
+  .sense-builder-page .game-stage {
+    padding: 6px;
+  }
+
+  .sense-builder-page .sense-arena {
+    height: 350px;
+    min-height: 350px;
+  }
+
+  .sense-builder-page .sense-board {
+    height: 342px;
+    min-height: 342px;
+    padding: 43px 18px 8px;
+  }
+
+  .sense-builder-page .sense-person-area {
+    height: 285px;
+  }
+
+  .sense-builder-page .sense-person {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 330px;
+    height: 385px;
+    transform:
+      translate(-50%, -50%)
+      scale(0.72);
+    transform-origin: center;
+  }
+
+  .sense-builder-page .sense-piece-tray {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .sense-builder-page .sense-piece {
+    height: 57px;
+    border-width: 3px;
+    border-radius: 16px;
+    box-shadow:
+      0 5px 0 #57377e,
+      0 7px 12px
+      rgba(51, 30, 74, 0.16);
+  }
+
+  .sense-builder-page .sense-piece span {
+    font-size: 2.4rem;
+  }
+
+  .sense-builder-page .game-guide,
+  .sense-builder-page
+  .imported-trackpad-guide {
+    min-height: 225px;
+    margin-top: 5px;
+  }
+
+  .sense-builder-page
+  .imported-trackpad-scene {
+    width: min(390px, 92%);
+    max-width: 390px;
+  }
+}
+
+/* Sense Builder visible trackpad fit */
+@media (max-height: 900px) and (min-width: 761px) {
+  .sense-builder-shell {
+    width: min(1420px, calc(100% - 18px));
+    padding: 4px 0 10px;
+  }
+
+  .sense-builder-page .game-header {
+    min-height: 56px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .sense-builder-page .game-title {
+    font-size: 1.45rem;
+  }
+
+  .sense-builder-page .game-category {
+    margin-bottom: 1px;
+  }
+
+  .sense-builder-page .game-header-button {
+    width: 58px;
+    height: 48px;
+  }
+
+  .sense-builder-page .game-instructions {
+    margin: 2px 0;
+    font-size: 1rem;
+    line-height: 1.15;
+  }
+
+  .sense-builder-page .game-stats {
+    margin: 2px 0 4px;
+  }
+
+  .sense-builder-page .game-stage {
+    padding: 5px;
+  }
+
+  .sense-builder-page .sense-arena {
+    height: 325px;
+    min-height: 325px;
+  }
+
+  .sense-builder-page .sense-board {
+    height: 317px;
+    min-height: 317px;
+    padding: 40px 18px 7px;
+  }
+
+  .sense-builder-page .sense-person-area {
+    height: 267px;
+  }
+
+  .sense-builder-page .sense-person {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 330px;
+    height: 385px;
+    transform:
+      translate(-50%, -50%)
+      scale(0.67);
+    transform-origin: center;
+  }
+
+  .sense-builder-page .sense-piece-tray {
+    gap: 7px;
+    padding: 9px;
+  }
+
+  .sense-builder-page .sense-piece {
+    height: 53px;
+    border-width: 3px;
+    border-radius: 15px;
+    box-shadow:
+      0 4px 0 #57377e,
+      0 6px 10px
+      rgba(51, 30, 74, 0.16);
+  }
+
+  .sense-builder-page .sense-piece span {
+    font-size: 2.25rem;
+  }
+
+  .sense-builder-page .sense-picture-prompt {
+    top: 7px;
+    padding: 5px 16px;
+  }
+
+  .sense-builder-page .game-guide,
+  .sense-builder-page
+  .imported-trackpad-guide {
+    width: 100%;
+    min-height: 238px;
+    margin: 4px auto 0;
+    padding: 2px 10px 8px;
+  }
+
+  .sense-builder-page
+  .imported-trackpad-guide-label {
+    margin: 0 0 2px;
+  }
+
+  .sense-builder-page
+  .imported-trackpad-scene {
+    width: min(400px, 94%);
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+/* Raise and compact the Sense Builder guide */
+@media (max-height: 900px) and (min-width: 761px) {
+  .sense-builder-page .game-instructions {
+    height: 22px;
+    margin: 0;
+  }
+
+  .sense-builder-page .game-stats {
+    min-height: 32px;
+    margin: 0 0 2px;
+  }
+
+  .sense-builder-page .game-stage-wrap {
+    margin-bottom: 0;
+  }
+
+  .sense-builder-page .game-guide,
+  .sense-builder-page
+  .imported-trackpad-guide {
+    position: relative;
+    z-index: 40;
+    width: 100%;
+    min-height: 168px;
+    height: 168px;
+    margin: -2px auto 0;
+    padding: 0 8px 4px;
+    overflow: hidden;
+  }
+
+  .sense-builder-page
+  .imported-trackpad-guide-label {
+    height: 22px;
+    margin: 0;
+    line-height: 22px;
+  }
+
+  .sense-builder-page
+  .imported-trackpad-scene {
+    width: 310px;
+    max-width: 310px;
+    margin: 0 auto;
+    transform: scale(0.82);
+    transform-origin: top center;
+  }
+}
+
+/* Sense Builder directions and tracker row */
+.sense-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  width: 100%;
+  min-height: 46px;
+  padding: 3px 8px;
+}
+
+.sense-builder-page
+.sense-top-row
+.game-instructions {
+  flex: 1 1 auto;
+  height: auto;
+  margin: 0;
+  text-align: left;
+}
+
+.sense-builder-page
+.sense-top-row
+.game-stats {
+  flex: 0 0 auto;
+  width: auto;
+  min-height: 0;
+  margin: 0;
+}
+
+.sense-builder-page
+.sense-top-row
+.game-stats-row {
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.sense-builder-page
+.sense-top-row
+.game-stat {
+  min-width: 118px;
+}
+
+@media (max-height: 900px) and (min-width: 761px) {
+  .sense-top-row {
+    min-height: 38px;
+    padding: 1px 8px;
+  }
+
+  .sense-builder-page
+  .sense-top-row
+  .game-instructions {
+    height: auto;
+    font-size: 0.96rem;
+  }
+
+  .sense-builder-page
+  .sense-top-row
+  .game-stats {
+    min-height: 0;
+    margin: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .sense-top-row {
+    display: grid;
+    gap: 5px;
+  }
+
+  .sense-builder-page
+  .sense-top-row
+  .game-instructions {
+    text-align: center;
+  }
+
+  .sense-builder-page
+  .sense-top-row
+  .game-stats-row {
+    justify-content: center;
+  }
+}
+
+/* Separate left and right sense pieces */
+.sense-mirrored-picture {
+  display: inline-block;
+  transform: scaleX(-1);
+}
+
+.sense-piece
+.sense-mirrored-picture {
+  transform: scaleX(-1);
+}
+
+.sense-placed-picture
+.sense-mirrored-picture {
+  transform: scaleX(-1);
+}
+
+.sense-placed-picture.sense-mirrored-picture {
+  transform: scaleX(-1);
+}
+
+/* Clear kindergarten drag targets */
+.sense-piece.is-dragging {
+  opacity: 0.62;
+  transform: scale(0.88);
+}
+
+.sense-drop-zone.is-ready {
+  border-color: #fff;
+  background: rgba(255, 229, 70, 0.96);
+  box-shadow:
+    0 0 0 7px #ffb703,
+    0 0 32px 14px
+    rgba(255, 220, 55, 0.88);
+}
+
+.sense-left-hand-zone
+.sense-placed-picture,
+.sense-right-hand-zone
+.sense-placed-picture {
+  font-size: 2.55rem;
+}
+
+.sense-left-ear-zone
+.sense-placed-picture,
+.sense-right-ear-zone
+.sense-placed-picture {
+  font-size: 2.65rem;
+}
+
+/* Stable targets and attached hands */
+.sense-drop-zone,
+.sense-drop-zone.is-ready {
+  border: 4px dashed rgba(255, 255, 255, 0.98);
+  background: rgba(255, 238, 125, 0.52);
+  box-shadow:
+    0 0 0 3px rgba(44, 137, 186, 0.35);
+  transition: none;
+}
+
+.sense-piece,
+.sense-piece.is-dragging {
+  transition: none;
+}
+
+.sense-piece.is-dragging {
+  opacity: 0.48;
+  transform: scale(0.82);
+}
+
+.sense-placed-picture {
+  animation: none;
+}
+
+.sense-left-hand-zone,
+.sense-right-hand-zone {
+  top: 55px;
+  width: 62px;
+  height: 62px;
+}
+
+.sense-left-hand-zone {
+  left: -83px;
+}
+
+.sense-right-hand-zone {
+  right: -83px;
+}
+
+.sense-left-hand-zone
+.sense-placed-picture {
+  font-size: 2.45rem;
+  transform:
+    rotate(-90deg)
+    scaleX(-1);
+}
+
+.sense-right-hand-zone
+.sense-placed-picture {
+  font-size: 2.45rem;
+  transform: rotate(90deg);
+}
+
+.sense-left-ear-zone
+.sense-placed-picture {
+  transform: scaleX(-1);
+}
+
+.sense-right-ear-zone
+.sense-placed-picture {
+  transform: none;
+}
+
+/* Stable tray and centered hands */
+.sense-piece-placeholder {
+  min-width: 0;
+  border: 4px solid transparent;
+  border-radius: 20px;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.sense-piece-placeholder:last-child {
+  grid-column: 1 / -1;
+}
+
+.sense-left-hand-zone {
+  left: -59px;
+}
+
+.sense-right-hand-zone {
+  right: -59px;
+}
+
+.sense-left-hand-zone
+.sense-placed-picture,
+.sense-right-hand-zone
+.sense-placed-picture {
+  font-size: 2.35rem;
+}
+
+/* Final hand placement */
+.sense-left-hand-zone,
+.sense-right-hand-zone {
+  top: 34px;
+  width: 60px;
+  height: 60px;
+}
+
+.sense-left-hand-zone {
+  left: -87px;
+}
+
+.sense-right-hand-zone {
+  right: -87px;
+}
+
+.sense-left-hand-zone
+.sense-placed-picture,
+.sense-right-hand-zone
+.sense-placed-picture {
+  font-size: 2.35rem;
+}
+
+/* Outermost hand placement */
+.sense-left-hand-zone {
+  left: -105px;
+}
+
+.sense-right-hand-zone {
+  right: -105px;
+}
+
+/* Flicker-free dragging */
+.sense-piece.is-dragging {
+  opacity: 0.52;
+  transform: none;
+  will-change: transform;
+  backface-visibility: hidden;
+  contain: layout paint style;
+  box-shadow: none;
+}
+
+body.sense-drag-active *,
+body.sense-drag-active *::before,
+body.sense-drag-active *::after {
+  animation-play-state: paused !important;
+  transition: none !important;
+}
+
+/* Equal pieces and forgiving visual targets */
+.sense-piece:last-child,
+.sense-piece-placeholder:last-child {
+  grid-column: auto;
+}
+
+.sense-piece-tray {
+  grid-auto-rows: 1fr;
+}
+
+.sense-piece {
+  width: 100%;
+  min-width: 0;
+}
+
+.sense-builder-page .panel,
+.sense-builder-page .arena-frame {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.sense-drop-zone::after {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: #173d63;
+  font-size: 2.3rem;
+  line-height: 1;
+  opacity: 0.22;
+  filter: grayscale(1);
+  pointer-events: none;
+}
+
+.sense-eyes-zone::after {
+  content: "👀";
+}
+
+.sense-left-ear-zone::after {
+  content: "👂";
+  transform: scaleX(-1);
+}
+
+.sense-right-ear-zone::after {
+  content: "👂";
+}
+
+.sense-nose-zone::after {
+  content: "👃";
+}
+
+.sense-mouth-zone::after {
+  content: "👄";
+}
+
+.sense-left-hand-zone::after {
+  content: "✋";
+  font-size: 2rem;
+  transform:
+    rotate(-90deg)
+    scaleX(-1);
+}
+
+.sense-right-hand-zone::after {
+  content: "✋";
+  font-size: 2rem;
+  transform: rotate(90deg);
+}
+
+.sense-drop-zone.is-filled::after {
+  display: none;
+}
+
+.sense-piece.is-dragging {
+  opacity: 0.4;
+}
+

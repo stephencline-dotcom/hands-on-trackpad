@@ -5192,3 +5192,46 @@ body.car-page .car-traffic {
   letter-spacing: 0.18rem;
   white-space: nowrap;
 }
+
+/* Sense Builder homepage thumbnail */
+.game-thumb-sense-builder {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 28% 30%,
+      #fff7ac 0 13%,
+      transparent 14%
+    ),
+    linear-gradient(
+      135deg,
+      #bcecff,
+      #ead4ff
+    );
+}
+
+.sense-builder-thumb-face {
+  font-size: clamp(3.8rem, 7vw, 5.4rem);
+  filter:
+    drop-shadow(
+      0 7px 6px
+      rgba(47, 67, 91, 0.2)
+    );
+}
+
+.sense-builder-thumb-pictures {
+  position: absolute;
+  right: 9px;
+  bottom: 7px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background:
+    rgba(255, 255, 255, 0.88);
+  font-size: 1.25rem;
+  letter-spacing: 2px;
+  box-shadow:
+    0 4px 9px
+    rgba(50, 54, 76, 0.18);
+}

@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>Sense Builder | Hands-On Trackpad</title>
+
+  <link
+    rel="stylesheet"
+    href="../moving-sound-mini-game/styles.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="../../level-result.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="../../freeze-screen.css"
+  />
+</head>
+
+<body
+  class="sense-builder-page"
+  data-game-active-key="senseBuilderGameActive"
+>
+  <main class="shell game-shell sense-builder-shell">
+
+    <header class="panel game-header">
+      <div class="copy game-heading">
+        <p class="eyebrow game-category">
+          Mini Game
+        </p>
+
+        <h1 class="game-title">
+          Sense Builder
+        </h1>
+      </div>
+
+      <div class="game-header-controls">
+        <a
+          class="back-button game-header-button"
+          href="../../index.html"
+          aria-label="Home"
+          title="Home"
+        >
+          <img
+            class="home-btn-icon"
+            src="../../images/home-icon.svg"
+            alt=""
+            aria-hidden="true"
+          />
+        </a>
+
+        <button
+          id="senseSoundButton"
+          class="sound-toggle-button game-header-button"
+          type="button"
+          aria-pressed="false"
+          aria-label="Sound on"
+          title="Sound on"
+        >
+          🔊
+        </button>
+      </div>
+    </header>
+
+    <div class="sense-top-row">
+      <p
+        id="senseInstruction"
+        class="description game-instructions"
+      >
+        Drag each picture to its match.
+      </p>
+  
+      <section
+        class="hud game-stats"
+        aria-live="polite"
+      >
+        <div
+          class="hud-main-stats game-stats-row"
+          role="group"
+          aria-label="Game progress"
+        >
+          <div class="stat game-stat">
+            <span class="label">Round</span>
+            <span class="value" id="senseRound">1</span>
+          </div>
+  
+          <div class="stat game-stat">
+            <span class="label">Matches</span>
+            <span class="value" id="senseMatches">0/7</span>
+          </div>
+  
+          <div class="stat game-stat">
+            <span class="label">Tries</span>
+            <span class="value" id="senseTries">0</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="arena-wrap game-stage-wrap">
+      <div class="arena-frame game-stage">
+
+        <div
+          id="senseArena"
+          class="sense-arena"
+          role="application"
+          aria-label="Five senses matching game"
+        >
+          <div
+            id="sensePrompt"
+            class="sense-picture-prompt"
+            aria-live="polite"
+          >
+            <span aria-hidden="true">☝️</span>
+            <strong>DRAG</strong>
+          </div>
+
+          <div
+            id="senseBoard"
+            class="sense-board"
+          >
+            <section
+              id="sensePersonArea"
+              class="sense-person-area"
+              aria-label="Person matching area"
+            >
+              <div
+                id="sensePerson"
+                class="sense-person"
+                aria-hidden="true"
+              >
+                <div class="sense-head">
+                  <div
+                    class="sense-drop-zone sense-eyes-zone"
+                    data-match="eyes"
+                  ></div>
+
+                  <div
+                    class="sense-drop-zone sense-left-ear-zone"
+                    data-match="left-ear"
+                  ></div>
+
+                  <div
+                    class="sense-drop-zone sense-right-ear-zone"
+                    data-match="right-ear"
+                  ></div>
+
+                  <div
+                    class="sense-drop-zone sense-nose-zone"
+                    data-match="nose"
+                  ></div>
+
+                  <div
+                    class="sense-drop-zone sense-mouth-zone"
+                    data-match="mouth"
+                  ></div>
+                </div>
+
+                <div class="sense-body">
+                  <div
+                    class="sense-drop-zone sense-left-hand-zone"
+                    data-match="left-hand"
+                  ></div>
+
+                  <div
+                    class="sense-drop-zone sense-right-hand-zone"
+                    data-match="right-hand"
+                  ></div>
+                </div>
+              </div>
+            </section>
+
+            <section
+              id="sensePieceTray"
+              class="sense-piece-tray"
+              aria-label="Pieces to match"
+            >
+              <button
+                class="sense-piece"
+                type="button"
+                data-piece="eyes"
+                aria-label="Eyes"
+              >
+                <span aria-hidden="true">👀</span>
+              </button>
+
+              <button
+                class="sense-piece"
+                type="button"
+                data-piece="left-ear"
+                aria-label="Left ear"
+              >
+                <span
+                  class="sense-mirrored-picture"
+                  aria-hidden="true"
+                >
+                  👂
+                </span>
+              </button>
+
+              <button
+                class="sense-piece"
+                type="button"
+                data-piece="right-ear"
+                aria-label="Right ear"
+              >
+                <span aria-hidden="true">👂</span>
+              </button>
+
+              <button
+                class="sense-piece"
+                type="button"
+                data-piece="nose"
+                aria-label="Nose"
+              >
+                <span aria-hidden="true">👃</span>
+              </button>
+
+              <button
+                class="sense-piece"
+                type="button"
+                data-piece="mouth"
+                aria-label="Mouth"
+              >
+                <span aria-hidden="true">👄</span>
+              </button>
+
+              <button
+                class="sense-piece"
+                type="button"
+                data-piece="left-hand"
+                aria-label="Left hand"
+              >
+                <span
+                  class="sense-mirrored-picture"
+                  aria-hidden="true"
+                >
+                  ✋
+                </span>
+              </button>
+
+              <button
+                class="sense-piece"
+                type="button"
+                data-piece="right-hand"
+                aria-label="Right hand"
+              >
+                <span aria-hidden="true">✋</span>
+              </button>
+            </section>
+          </div>
+
+          <button
+            id="senseStartButton"
+            class="sense-start-button"
+            type="button"
+          >
+            PLAY
+          </button>
+
+          <div
+            id="senseFeedback"
+            class="sense-feedback"
+            role="status"
+            aria-live="polite"
+          ></div>
+        </div>
+
+      </div>
+    </section>
+
+    <section
+      class="imported-trackpad-guide game-guide"
+      aria-label="Trackpad Guide"
+    >
+      <p class="imported-trackpad-guide-label">
+        Trackpad Guide
+      </p>
+
+      <section
+        id="senseTrackpadScene"
+        class="imported-trackpad-scene"
+        aria-label="Trackpad guide animation"
+      >
+        <img
+          class="imported-trackpad-image"
+          src="../../images/trackpad.png"
+          alt="Trackpad"
+          draggable="false"
+        />
+
+        <img
+          id="senseTrackpadLeftHand"
+          class="imported-trackpad-hand imported-trackpad-left-hand"
+          src="../../images/left-hand-transparent.png"
+          alt="Left hand"
+          draggable="false"
+        />
+
+        <img
+          id="senseTrackpadRightHand"
+          class="imported-trackpad-hand imported-trackpad-right-hand"
+          src="../../images/right-hand-transparent.png"
+          alt="Right hand"
+          draggable="false"
+        />
+
+        <div
+          class="imported-trackpad-press-indicator"
+          aria-hidden="true"
+        ></div>
+      </section>
+    </section>
+
+  </main>
+
+  <script src="../../game-access.js"></script>
+  <script src="../../trackpad-guide.js"></script>
+  <script src="../../level-result.js"></script>
+  <script src="../../game-results-store.js"></script>
+  <script src="../../freeze-screen.js"></script>
+  <script src="../../input-device-guard.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
