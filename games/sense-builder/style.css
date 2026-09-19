@@ -2217,3 +2217,962 @@ body.sense-round-three
   }
 }
 
+/* ========================================
+   ROUND 1 — RANDOM CHARACTER BUILDER
+======================================== */
+
+/* Boy keeps the original appearance. */
+.sense-person.character-boy
+.sense-head {
+  background: #f3b77c;
+}
+
+.sense-person.character-boy
+.sense-body {
+  background: #55a8e8;
+}
+
+/* Girl uses the same face pieces. */
+.sense-person.character-girl
+.sense-head {
+  border-color: #aa6842;
+  background: #f4bb84;
+}
+
+.sense-person.character-girl
+.sense-head::before {
+  z-index: -1;
+  top: -30px;
+  left: -12px;
+  width: 227px;
+  height: 255px;
+  border-radius:
+    48% 48% 42% 42%;
+  background: #6d3f28;
+  box-shadow:
+    -12px 12px 0 #6d3f28,
+    12px 12px 0 #6d3f28;
+}
+
+.sense-person.character-girl
+.sense-body,
+.sense-person.character-girl
+.sense-body::before,
+.sense-person.character-girl
+.sense-body::after {
+  border-color: #9b4da4;
+  background: #d879d5;
+}
+
+/* Silly Monster character. */
+.sense-person.character-monster
+.sense-head {
+  border: 7px solid #347b57;
+  border-radius:
+    44% 56% 48% 52%;
+  background: #79df9f;
+  box-shadow:
+    inset 0 -14px 0
+      rgba(28, 115, 71, 0.15),
+    0 10px 20px
+      rgba(35, 76, 58, 0.2);
+}
+
+.sense-person.character-monster
+.sense-head::before {
+  z-index: -1;
+  top: -41px;
+  left: 22px;
+  width: 165px;
+  height: 78px;
+  border-radius: 0;
+  background: #814ac6;
+  clip-path:
+    polygon(
+      0 100%,
+      12% 12%,
+      27% 100%,
+      50% 0,
+      72% 100%,
+      89% 13%,
+      100% 100%
+    );
+}
+
+.sense-person.character-monster
+.sense-head::after {
+  bottom: 24px;
+  left: 35px;
+  width: 20px;
+  height: 20px;
+  transform: none;
+  border-radius: 50%;
+  background: #4dbb76;
+  box-shadow:
+    118px -112px 0 #4dbb76,
+    132px -30px 0 #4dbb76,
+    38px -142px 0 #4dbb76;
+}
+
+.sense-person.character-monster
+.sense-body,
+.sense-person.character-monster
+.sense-body::before,
+.sense-person.character-monster
+.sense-body::after {
+  border-color: #57318b;
+  background: #9a62d0;
+}
+
+.sense-person.character-monster
+.sense-head,
+.sense-person.character-monster
+.sense-body {
+  transform-origin: center;
+}
+
+/* Monster pieces in the tray. */
+.sense-monster-part {
+  position: relative;
+  filter:
+    hue-rotate(76deg)
+    saturate(1.45);
+}
+
+.sense-monster-part-eyes {
+  font-size: 1.75rem !important;
+  letter-spacing: -5px;
+  filter: none;
+}
+
+.sense-monster-part-left-ear,
+.sense-monster-part-right-ear,
+.sense-monster-part-nose,
+.sense-monster-part-left-hand,
+.sense-monster-part-right-hand {
+  filter:
+    hue-rotate(75deg)
+    saturate(1.7)
+    brightness(1.05);
+}
+
+.sense-monster-part-mouth::after {
+  content: "▾  ▾";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  transform: translateX(-50%);
+  color: #ffffff;
+  font-size: 1rem;
+  letter-spacing: 4px;
+  text-shadow:
+    0 1px 1px
+    rgba(40, 30, 55, 0.55);
+}
+
+/* Monster target previews. */
+.sense-person.character-monster
+.sense-eyes-zone::after {
+  content: "👁️ 👁️ 👁️";
+  font-size: 1.35rem;
+  letter-spacing: -4px;
+  filter: grayscale(1);
+}
+
+.sense-person.character-monster
+.sense-left-ear-zone::after,
+.sense-person.character-monster
+.sense-right-ear-zone::after,
+.sense-person.character-monster
+.sense-nose-zone::after,
+.sense-person.character-monster
+.sense-left-hand-zone::after,
+.sense-person.character-monster
+.sense-right-hand-zone::after {
+  filter:
+    grayscale(0.6)
+    hue-rotate(75deg)
+    saturate(1.5);
+}
+
+.sense-person.character-monster
+.sense-mouth-zone::after {
+  content: "👄";
+}
+
+/* Monster pieces after placement. */
+.sense-monster-placed-part {
+  filter:
+    hue-rotate(75deg)
+    saturate(1.65);
+}
+
+.sense-monster-placed-eyes {
+  font-size: 1.45rem;
+  letter-spacing: -6px;
+  filter: none;
+}
+
+.sense-monster-placed-mouth {
+  position: relative;
+  filter: none;
+}
+
+.sense-monster-placed-mouth::after {
+  content: "▾  ▾";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  transform: translateX(-50%);
+  color: #ffffff;
+  font-size: 0.9rem;
+  letter-spacing: 3px;
+}
+
+.sense-monster-placed-left-hand,
+.sense-monster-placed-right-hand {
+  filter:
+    hue-rotate(75deg)
+    saturate(1.7);
+}
+
+/* ========================================
+   ROUND 1 — CHARACTER PICKER
+======================================== */
+
+.sense-character-chooser {
+  position: absolute;
+  z-index: 500;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background:
+    rgba(224, 247, 255, 0.93);
+}
+
+.sense-character-chooser[hidden] {
+  display: none;
+}
+
+.sense-character-card {
+  width: min(680px, 94%);
+  padding: 24px;
+  border: 7px solid #ffffff;
+  border-radius: 36px;
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff,
+      #e8f7ff
+    );
+  box-shadow:
+    0 12px 0 #4aa4d1,
+    0 22px 38px
+    rgba(27, 78, 112, 0.25);
+}
+
+.sense-character-title {
+  margin-bottom: 20px;
+  color: #123b62;
+  font-size: 2.3rem;
+  font-weight: 1000;
+  text-align: center;
+}
+
+.sense-character-options {
+  display: grid;
+  grid-template-columns:
+    repeat(3, 1fr);
+  gap: 22px;
+}
+
+.sense-character-choice {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  height: 175px;
+  border: 6px solid #ffffff;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow:
+    0 9px 0 #316f9d,
+    0 14px 22px
+    rgba(32, 74, 105, 0.2);
+}
+
+.sense-character-choice span {
+  font-size: 6.5rem;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.sense-character-choice-boy {
+  background: #8bd4ff;
+}
+
+.sense-character-choice-girl {
+  background: #ffb5dc;
+}
+
+.sense-character-choice-monster {
+  background: #a7ef9b;
+}
+
+.sense-character-choice:hover {
+  transform: translateY(-4px);
+}
+
+.sense-character-choice:active {
+  transform: translateY(5px);
+  box-shadow:
+    0 4px 0 #316f9d;
+}
+
+@media (max-height: 800px) {
+  .sense-character-card {
+    padding: 16px;
+  }
+
+  .sense-character-title {
+    margin-bottom: 12px;
+    font-size: 1.8rem;
+  }
+
+  .sense-character-choice {
+    height: 125px;
+  }
+
+  .sense-character-choice span {
+    font-size: 4.8rem;
+  }
+}
+
+
+/* ========================================
+   ROUND 1 — CORRECTED GIRL CHARACTER
+======================================== */
+
+.sense-person.character-girl
+.sense-head {
+  border-color: #b16d46;
+  background: #f4bb84;
+}
+
+/* Hair cap and side locks */
+.sense-person.character-girl
+.sense-head::before {
+  z-index: 2;
+  top: -25px;
+  left: 3px;
+  width: 197px;
+  height: 88px;
+  border-radius:
+    70% 70% 35% 35%;
+  background: #6d3f28;
+  box-shadow:
+    -17px 62px 0 -5px #6d3f28,
+    17px 62px 0 -5px #6d3f28;
+  clip-path: none;
+  pointer-events: none;
+}
+
+/* Pink hair bow */
+.sense-person.character-girl
+.sense-head::after {
+  z-index: 7;
+  top: 4px;
+  left: auto;
+  right: -17px;
+  bottom: auto;
+  width: 52px;
+  height: 35px;
+  transform: rotate(10deg);
+  border-radius: 0;
+  background:
+    linear-gradient(
+      135deg,
+      transparent 0 18%,
+      #ff5ba7 19% 46%,
+      transparent 47% 53%,
+      #ff5ba7 54% 81%,
+      transparent 82%
+    );
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.sense-person.character-girl
+.sense-body,
+.sense-person.character-girl
+.sense-body::before,
+.sense-person.character-girl
+.sense-body::after {
+  border-color: #9b4da4;
+  background: #d879d5;
+}
+
+/* ========================================
+   ROUND 1 — GIRL CHARACTER POLISH
+======================================== */
+
+.sense-person.character-girl
+.sense-head::before {
+  z-index: 2;
+  top: -22px;
+  left: 8px;
+  width: 187px;
+  height: 70px;
+  border-radius:
+    70% 70% 34% 34%;
+  background: #6d3f28;
+  box-shadow:
+    -34px 62px 0 -13px #6d3f28,
+    34px 62px 0 -13px #6d3f28;
+}
+
+/* Clear three-part hair bow */
+.sense-person.character-girl
+.sense-head::after {
+  z-index: 9;
+  top: -1px;
+  right: -20px;
+  width: 62px;
+  height: 42px;
+  transform: rotate(8deg);
+  border-radius: 0;
+  background:
+    radial-gradient(
+      ellipse at 20% 50%,
+      #ff5ba7 0 38%,
+      transparent 41%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      #d92f7d 0 16%,
+      transparent 19%
+    ),
+    radial-gradient(
+      ellipse at 80% 50%,
+      #ff5ba7 0 38%,
+      transparent 41%
+    );
+}
+
+/* Bright shirt with a simple white collar */
+.sense-person.character-girl
+.sense-body {
+  border-color: #a33e91;
+  background:
+    radial-gradient(
+      ellipse at 42% 3%,
+      #ffffff 0 14%,
+      transparent 15%
+    ),
+    radial-gradient(
+      ellipse at 58% 3%,
+      #ffffff 0 14%,
+      transparent 15%
+    ),
+    linear-gradient(
+      180deg,
+      #f58bd3,
+      #d85fbe
+    );
+}
+
+.sense-person.character-girl
+.sense-body::before,
+.sense-person.character-girl
+.sense-body::after {
+  border-color: #a33e91;
+  background: #ed7ccc;
+}
+
+/* GIRL PNG HEAD */
+.sense-person.character-girl .sense-head {
+  border: none !important;
+  background-color: transparent !important;
+  background-image: url("../../images/girlface.png") !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  box-shadow: none !important;
+}
+
+.sense-person.character-girl .sense-head::before,
+.sense-person.character-girl .sense-head::after {
+  display: none !important;
+}
+
+/* GIRL PNG HEAD — LARGER WITH HAIR BEHIND BODY */
+.sense-person.character-girl {
+  position: relative;
+  isolation: isolate;
+}
+
+.sense-person.character-girl::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute;
+  z-index: 0;
+  top: -58px;
+  left: 50%;
+  width: 310px;
+  height: 375px;
+  transform: translateX(-50%);
+  background:
+    url("../../images/girlface.png")
+    center top /
+    contain
+    no-repeat;
+  pointer-events: none;
+}
+
+.sense-person.character-girl .sense-head {
+  z-index: 2;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.sense-person.character-girl .sense-body {
+  z-index: 1;
+}
+
+.sense-person.character-girl .sense-drop-zone {
+  z-index: 12;
+}
+
+/* GIRL PNG FINAL HEAD POSITION */
+.sense-person.character-girl::before {
+  display: none !important;
+}
+
+.sense-person.character-girl .sense-head {
+  z-index: 4;
+  overflow: visible;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.sense-person.character-girl .sense-head::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute;
+  z-index: 0;
+  top: -48px;
+  left: 50%;
+  width: 310px;
+  height: 340px;
+  transform: translateX(-50%);
+  border-radius: 0;
+  background:
+    url("../../images/girlface.png")
+    center top /
+    contain
+    no-repeat !important;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.sense-person.character-girl .sense-head::after {
+  display: none !important;
+}
+
+.sense-person.character-girl .sense-body {
+  z-index: 5;
+}
+
+.sense-person.character-girl .sense-head .sense-drop-zone,
+.sense-person.character-girl .sense-body .sense-drop-zone {
+  z-index: 12;
+}
+
+/* GIRL FACE TARGET ALIGNMENT */
+.sense-person.character-girl
+.sense-head::before {
+  top: -55px;
+  width: 335px;
+  height: 355px;
+}
+
+/* Keep all facial pieces inside the peach face. */
+.sense-person.character-girl
+.sense-eyes-zone {
+  top: 55px;
+  width: 112px;
+  height: 50px;
+}
+
+.sense-person.character-girl
+.sense-left-ear-zone,
+.sense-person.character-girl
+.sense-right-ear-zone {
+  top: 72px;
+  width: 55px;
+  height: 70px;
+}
+
+.sense-person.character-girl
+.sense-left-ear-zone {
+  left: -58px;
+}
+
+.sense-person.character-girl
+.sense-right-ear-zone {
+  right: -58px;
+}
+
+.sense-person.character-girl
+.sense-nose-zone {
+  top: 101px;
+  width: 52px;
+  height: 52px;
+}
+
+.sense-person.character-girl
+.sense-mouth-zone {
+  top: 145px;
+  width: 92px;
+  height: 38px;
+}
+
+/* Keep the orange hair behind the shirt. */
+.sense-person.character-girl
+.sense-body {
+  z-index: 5;
+}
+
+.sense-person.character-girl
+.sense-head {
+  z-index: 4;
+}
+
+.sense-person.character-girl
+.sense-drop-zone {
+  z-index: 12;
+}
+
+/* GIRL FINAL PART ALIGNMENT */
+.sense-person.character-girl
+.sense-mouth-zone {
+  top: 110px;
+  width: 78px;
+  height: 32px;
+}
+
+.sense-person.character-girl
+.sense-left-ear-zone,
+.sense-person.character-girl
+.sense-right-ear-zone {
+  top: 72px;
+  width: 50px;
+  height: 66px;
+}
+
+.sense-person.character-girl
+.sense-left-ear-zone {
+  left: -18px;
+}
+
+.sense-person.character-girl
+.sense-right-ear-zone {
+  right: -18px;
+}
+
+.sense-person.character-girl
+.sense-left-hand-zone,
+.sense-person.character-girl
+.sense-right-hand-zone {
+  top: 34px;
+}
+
+/* GIRL HEAD AND BODY FINAL SIZE */
+.sense-person.character-girl
+.sense-head::before {
+  top: -72px;
+  width: 380px;
+  height: 405px;
+}
+
+/* Separate the nose and mouth on the larger peach face. */
+.sense-person.character-girl
+.sense-nose-zone {
+  top: 100px;
+  width: 50px;
+  height: 45px;
+}
+
+.sense-person.character-girl
+.sense-mouth-zone {
+  top: 148px;
+  width: 76px;
+  height: 30px;
+}
+
+/* Raise the shirt and arms to meet the head and hair. */
+.sense-person.character-girl
+.sense-body {
+  bottom: 22px;
+}
+
+/* GIRL FINAL CENTERING AND FACE FIT */
+.sense-person.character-girl {
+  margin-left: -18px;
+}
+
+.sense-person.character-girl
+.sense-eyes-zone {
+  top: 43px;
+}
+
+.sense-person.character-girl
+.sense-left-ear-zone,
+.sense-person.character-girl
+.sense-right-ear-zone {
+  top: 62px;
+}
+
+.sense-person.character-girl
+.sense-nose-zone {
+  top: 90px;
+}
+
+.sense-person.character-girl
+.sense-mouth-zone {
+  top: 138px;
+}
+
+.sense-person.character-girl
+.sense-body {
+  bottom: 35px;
+}
+
+/* GIRL LAST ALIGNMENT CORRECTIONS */
+.sense-person.character-girl {
+  margin-left: 0;
+}
+
+.sense-person.character-girl
+.sense-right-ear-zone {
+  right: -2px;
+}
+
+.sense-person.character-girl
+.sense-mouth-zone {
+  top: 124px;
+}
+
+/* GIRL PLACED HAND ORIENTATION */
+.sense-person.character-girl
+.sense-left-hand-zone
+.sense-placed-picture {
+  transform:
+    scaleX(-1)
+    scaleY(-1);
+}
+
+.sense-person.character-girl
+.sense-right-hand-zone
+.sense-placed-picture {
+  transform: scaleY(-1);
+}
+
+/* GIRL OUTWARD HANDS, CENTERED NOSE, LEVEL EARS */
+.sense-person.character-girl
+.sense-nose-zone {
+  left: calc(50% - 14px);
+}
+
+.sense-person.character-girl
+.sense-left-ear-zone,
+.sense-person.character-girl
+.sense-right-ear-zone {
+  top: 57px;
+}
+
+.sense-person.character-girl
+.sense-left-hand-zone
+.sense-placed-picture {
+  transform:
+    rotate(-90deg)
+    scaleX(-1);
+}
+
+.sense-person.character-girl
+.sense-right-hand-zone
+.sense-placed-picture {
+  transform: rotate(90deg);
+}
+
+/* GIRL OUTWARD HANDS WITH THUMBS UP */
+.sense-person.character-girl
+.sense-left-hand-zone
+.sense-placed-picture {
+  transform:
+    scaleY(-1)
+    rotate(-90deg)
+    scaleX(-1);
+}
+
+.sense-person.character-girl
+.sense-right-hand-zone
+.sense-placed-picture {
+  transform:
+    scaleY(-1)
+    rotate(90deg);
+}
+
+/* CENTER GIRL EXACTLY LIKE BOY */
+@media (min-width: 761px) and (max-height: 900px) {
+  .sense-builder-page
+  .sense-person.character-girl {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: 0;
+  }
+}
+
+/* ========================================
+   ROUND 1 CHARACTER CELEBRATION
+======================================== */
+
+.sense-person.is-character-celebrating
+.sense-body::before {
+  animation:
+    senseCharacterLeftArmCheer
+    380ms ease-in-out 2;
+}
+
+.sense-person.is-character-celebrating
+.sense-body::after {
+  animation:
+    senseCharacterRightArmCheer
+    380ms ease-in-out 2;
+}
+
+.sense-person.is-character-celebrating
+.sense-left-hand-zone {
+  animation:
+    senseCharacterLeftHandCheer
+    380ms ease-in-out 2;
+}
+
+.sense-person.is-character-celebrating
+.sense-right-hand-zone {
+  animation:
+    senseCharacterRightHandCheer
+    380ms ease-in-out 2;
+}
+
+.sense-person.is-character-celebrating
+.sense-eyes-zone
+.sense-placed-picture {
+  animation:
+    senseCharacterBlink
+    700ms ease-in-out 2;
+}
+
+.sense-person.is-character-celebrating
+.sense-mouth-zone
+.sense-placed-picture {
+  animation:
+    senseCharacterSmile
+    380ms ease-in-out 2;
+}
+
+@keyframes senseCharacterLeftArmCheer {
+  0%,
+  100% {
+    transform: rotate(18deg);
+  }
+
+  50% {
+    transform:
+      translateY(-24px)
+      rotate(-28deg);
+  }
+}
+
+@keyframes senseCharacterRightArmCheer {
+  0%,
+  100% {
+    transform: rotate(-18deg);
+  }
+
+  50% {
+    transform:
+      translateY(-24px)
+      rotate(28deg);
+  }
+}
+
+@keyframes senseCharacterLeftHandCheer {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform:
+      translateY(-24px)
+      rotate(-18deg);
+  }
+}
+
+@keyframes senseCharacterRightHandCheer {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform:
+      translateY(-24px)
+      rotate(18deg);
+  }
+}
+
+@keyframes senseCharacterBlink {
+  0%,
+  42%,
+  58%,
+  100% {
+    transform: scaleY(1);
+  }
+
+  50% {
+    transform: scaleY(0.12);
+  }
+}
+
+@keyframes senseCharacterSmile {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform:
+      translateY(-3px)
+      scale(1.25);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sense-person.is-character-celebrating
+  .sense-body::before,
+  .sense-person.is-character-celebrating
+  .sense-body::after,
+  .sense-person.is-character-celebrating
+  .sense-left-hand-zone,
+  .sense-person.is-character-celebrating
+  .sense-right-hand-zone,
+  .sense-person.is-character-celebrating
+  .sense-placed-picture {
+    animation: none !important;
+  }
+}

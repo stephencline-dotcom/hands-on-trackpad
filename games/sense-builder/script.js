@@ -230,6 +230,16 @@
   let soundEnabled = true;
   let gameRunning = false;
   let currentRoundIndex = 0;
+
+  const ROUND_ONE_CHARACTERS = [
+    "boy",
+    "girl",
+    "monster",
+  ];
+
+  let roundOneCharacter = "boy";
+  let roundOneCharacterChosen = false;
+
   let currentMonsterIndex = 0;
   let currentMonsterFedCount = 0;
 
@@ -534,6 +544,42 @@
     }
   }
 
+  function shuffleVisiblePieces() {
+    if (!pieceTray) {
+      return;
+    }
+
+    const visiblePieces =
+      Array.from(pieces).filter(
+        (piece) => !piece.hidden
+      );
+
+    for (
+      let index =
+        visiblePieces.length - 1;
+      index > 0;
+      index -= 1
+    ) {
+      const randomIndex =
+        Math.floor(
+          Math.random() *
+          (index + 1)
+        );
+
+      [
+        visiblePieces[index],
+        visiblePieces[randomIndex],
+      ] = [
+        visiblePieces[randomIndex],
+        visiblePieces[index],
+      ];
+    }
+
+    visiblePieces.forEach((piece) => {
+      pieceTray.appendChild(piece);
+    });
+  }
+
   function configureMonsterChallenge(
     monsterIndex
   ) {
@@ -660,7 +706,42 @@
       }
     );
 
+    shuffleVisiblePieces();
     updateStats();
+  }
+
+  function applyRoundOneCharacter() {
+    const person =
+      document.getElementById(
+        "sensePerson"
+      );
+
+    if (!person) {
+      return;
+    }
+
+    person.classList.remove(
+      "character-boy",
+      "character-girl",
+      "character-monster"
+    );
+
+    /*
+     * Keep the student's selected character
+     * for both Round 1 and Round 2.
+     * Round 3 uses the Sense Monsters.
+     */
+    const character =
+      currentRoundIndex <= 1
+        ? roundOneCharacter
+        : "boy";
+
+    person.classList.add(
+      `character-${character}`
+    );
+
+    person.dataset.character =
+      character;
   }
 
   function configureCurrentRound() {
@@ -685,6 +766,8 @@
       "sense-round-three",
       currentRoundIndex === 2
     );
+
+    applyRoundOneCharacter();
 
     roundGoal =
       round.pieces.length;
@@ -811,6 +894,37 @@
           );
         }
 
+        if (
+          currentRoundIndex === 0 &&
+          roundOneCharacter === "monster"
+        ) {
+          symbol.classList.add(
+            "sense-monster-part",
+            `sense-monster-part-${definition.match}`
+          );
+
+          if (
+            definition.match === "eyes"
+          ) {
+            symbol.textContent =
+              "👁️ 👁️ 👁️";
+          } else if (
+            definition.match ===
+              "mouth"
+          ) {
+            symbol.textContent =
+              "👄";
+          } else if (
+            definition.match ===
+              "left-hand" ||
+            definition.match ===
+              "right-hand"
+          ) {
+            symbol.textContent =
+              "🤚";
+          }
+        }
+
         piece.replaceChildren(
           symbol
         );
@@ -820,6 +934,7 @@
     if (currentRoundIndex === 2) {
       configureMonsterChallenge(0);
     } else {
+      shuffleVisiblePieces();
       showActiveSenseStep(0);
       updateStats();
     }
@@ -1155,6 +1270,16 @@
         "sense-placed-picture";
 
       if (
+        currentRoundIndex === 0 &&
+        roundOneCharacter === "monster"
+      ) {
+        placed.classList.add(
+          "sense-monster-placed-part",
+          `sense-monster-placed-${matchName}`
+        );
+      }
+
+      if (
         matchName === "left-ear" ||
         matchName === "left-hand"
       ) {
@@ -1223,6 +1348,26 @@
   function finishRound() {
     gameRunning = false;
 
+    const completedPerson =
+      document.getElementById(
+        "sensePerson"
+      );
+
+    if (
+      currentRoundIndex === 0 &&
+      completedPerson
+    ) {
+      completedPerson.classList.remove(
+        "is-character-celebrating"
+      );
+
+      void completedPerson.offsetWidth;
+
+      completedPerson.classList.add(
+        "is-character-celebrating"
+      );
+    };
+
     const hasNextRound =
       currentRoundIndex <
       SENSE_ROUNDS.length - 1;
@@ -1274,7 +1419,15 @@
 
   function playAllRoundsAgain() {
     currentRoundIndex = 0;
-    startRound();
+    roundOneCharacterChosen = false;
+
+    resetRound();
+    configureCurrentRound();
+
+    window.setTimeout(
+      showCharacterChooser,
+      80
+    );
   }
 
   function handlePiecePointerDown(
@@ -1590,6 +1743,17 @@
   }
 
   function resetRound() {
+    const completedPerson =
+      document.getElementById(
+        "sensePerson"
+      );
+
+    if (completedPerson) {
+      completedPerson.classList.remove(
+        "is-character-celebrating"
+      );
+    }
+
     matchedCount = 0;
     tryCount = 0;
     gameRunning = false;
@@ -1660,6 +1824,127 @@
     updateStats();
   }
 
+  function getCharacterChooser() {
+    let chooser =
+      document.getElementById(
+        "senseCharacterChooser"
+      );
+
+    if (chooser) {
+      return chooser;
+    }
+
+    chooser =
+      document.createElement(
+        "section"
+      );
+
+    chooser.id =
+      "senseCharacterChooser";
+
+    chooser.className =
+      "sense-character-chooser";
+
+    chooser.hidden = true;
+
+    chooser.innerHTML = `
+      <div class="sense-character-card">
+        <div class="sense-character-title">
+          PICK!
+        </div>
+
+        <div class="sense-character-options">
+          <button
+            class="sense-character-choice sense-character-choice-boy"
+            type="button"
+            data-character="boy"
+            aria-label="Choose boy"
+          >
+            <span aria-hidden="true">👦</span>
+          </button>
+
+          <button
+            class="sense-character-choice sense-character-choice-girl"
+            type="button"
+            data-character="girl"
+            aria-label="Choose girl"
+          >
+            <span aria-hidden="true">👧</span>
+          </button>
+
+          <button
+            class="sense-character-choice sense-character-choice-monster"
+            type="button"
+            data-character="monster"
+            aria-label="Choose monster"
+          >
+            <span aria-hidden="true">👾</span>
+          </button>
+        </div>
+      </div>
+    `;
+
+    arena.appendChild(
+      chooser
+    );
+
+    chooser
+      .querySelectorAll(
+        ".sense-character-choice"
+      )
+      .forEach((button) => {
+        button.addEventListener(
+          "click",
+          () => {
+            const character =
+              button.dataset.character;
+
+            if (
+              !ROUND_ONE_CHARACTERS.includes(
+                character
+              )
+            ) {
+              return;
+            }
+
+            roundOneCharacter =
+              character;
+
+            roundOneCharacterChosen =
+              true;
+
+            chooser.hidden = true;
+
+            applyRoundOneCharacter();
+            startRound();
+          }
+        );
+      });
+
+    return chooser;
+  }
+
+  function showCharacterChooser() {
+    const chooser =
+      getCharacterChooser();
+
+    gameRunning = false;
+    startButton.hidden = true;
+    chooser.hidden = false;
+  }
+
+  function handleStartButton() {
+    if (
+      currentRoundIndex === 0 &&
+      !roundOneCharacterChosen
+    ) {
+      showCharacterChooser();
+      return;
+    }
+
+    startRound();
+  }
+
   function startRound() {
     resetRound();
     configureCurrentRound();
@@ -1697,7 +1982,7 @@
 
   startButton.addEventListener(
     "click",
-    startRound
+    handleStartButton
   );
 
   if (soundButton) {
