@@ -1588,6 +1588,21 @@
 
     event.preventDefault();
 
+    /*
+     * Keep the guide's sliding hand following
+     * the pointer only during an active drag.
+     * Idle pointer movement remains disabled
+     * to avoid Chromebook display flashing.
+     */
+    if (
+      trackpadGuide &&
+      typeof trackpadGuide
+        .updateFromPointerEvent === "function"
+    ) {
+      trackpadGuide
+        .updateFromPointerEvent(event);
+    }
+
     positionDraggedPiece(
       piece,
       event.clientX,
