@@ -106,6 +106,18 @@ const DEFAULT_SETTINGS = {
       speedMin: 320,
       speedMax: 480,
     },
+    jackFlameRain7: {
+      enabled: true,
+      size: 24,
+      hitRadius: 12,
+      burstMin: 2,
+      burstMax: 3,
+      intervalMin: 800,
+      intervalMax: 1500,
+      speedMin: 130,
+      speedMax: 210,
+    },
+  jackBonusSurvivalSeconds: 20,
   mazeGhostLevelsEnabled: [true, true, true, true, true, true],
   mazeGhostLevelsPerLevelCounts: [1, 2, 3, 4, 5, 6],
   carGameLevelsEnabled: [true, true, true, true, true, true],
@@ -497,6 +509,15 @@ function loadSettings() {
       jackFlameRain4: parseFlameRainLevel(data.jackFlameRain4, DEFAULT_SETTINGS.jackFlameRain4),
       jackFlameRain5: parseFlameRainLevel(data.jackFlameRain5, DEFAULT_SETTINGS.jackFlameRain5),
       jackFlameRain6: parseFlameRainLevel(data.jackFlameRain6, DEFAULT_SETTINGS.jackFlameRain6),
+      jackFlameRain7: parseFlameRainLevel(data.jackFlameRain7, DEFAULT_SETTINGS.jackFlameRain7),
+      jackBonusSurvivalSeconds: Math.min(
+        120,
+        Math.max(
+          5,
+          Number.parseInt(data.jackBonusSurvivalSeconds, 10) ||
+            DEFAULT_SETTINGS.jackBonusSurvivalSeconds
+        )
+      ),
       mazeGhostLevelsEnabled: parseGhostLevelsEnabled(data.mazeGhostLevelsEnabled, true),
       mazeGhostLevelsPerLevelCounts: parseGhostLevelCounts(
         data.mazeGhostLevelsPerLevelCounts,
@@ -671,6 +692,22 @@ function saveSettings(settings) {
     jackFlameRain4: parseFlameRainLevel(settings.jackFlameRain4, existing.jackFlameRain4),
     jackFlameRain5: parseFlameRainLevel(settings.jackFlameRain5, existing.jackFlameRain5),
     jackFlameRain6: parseFlameRainLevel(settings.jackFlameRain6, existing.jackFlameRain6),
+    jackFlameRain7: parseFlameRainLevel(
+      settings.jackFlameRain7,
+      existing.jackFlameRain7
+    ),
+    jackBonusSurvivalSeconds: Math.min(
+      120,
+      Math.max(
+        5,
+        Number.parseInt(
+          settings.jackBonusSurvivalSeconds ??
+            existing.jackBonusSurvivalSeconds ??
+            20,
+          10
+        ) || 20
+      )
+    ),
     mazeGhostLevelsEnabled: parseGhostLevelsEnabled(settings.mazeGhostLevelsEnabled ?? existing.mazeGhostLevelsEnabled, true),
     mazeGhostLevelsPerLevelCounts: parseGhostLevelCounts(
       settings.mazeGhostLevelsPerLevelCounts ?? existing.mazeGhostLevelsPerLevelCounts,

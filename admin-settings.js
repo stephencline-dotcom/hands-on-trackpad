@@ -3265,6 +3265,20 @@ async function saveTask1Settings() {
     localStorage.setItem(keys.speedMin, String(s.speedMin));
     localStorage.setItem(keys.speedMax, String(s.speedMax));
   });
+  if (jackBonusSurvivalInput) {
+    const bonusSeconds = Math.min(
+      120,
+      Math.max(
+        5,
+        Number.parseInt(jackBonusSurvivalInput.value, 10) || 20
+      )
+    );
+    jackBonusSurvivalInput.value = String(bonusSeconds);
+    localStorage.setItem(
+      "jackBonusSurvivalSeconds",
+      String(bonusSeconds)
+    );
+  }
   MAZE_GHOST_LEVEL_ENABLED_KEYS.forEach((key, index) => {
     localStorage.setItem(key, String(mazeGhostLevelsEnabled[index]));
   });
