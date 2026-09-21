@@ -1956,6 +1956,105 @@
               </div>
             </article>
 
+
+            <article class="admin-mini-card admin-mini-card--wide">
+              <h3>Jack Jump: Bonus Level</h3>
+
+              <p class="admin-panel-note">
+                Set how long Jack must survive and how the falling flames behave.
+              </p>
+
+              <div class="admin-inline-toggles">
+                <label
+                  class="admin-toggle-row"
+                  for="jackFlameRain7EnabledToggle"
+                >
+                  <input
+                    id="jackFlameRain7EnabledToggle"
+                    type="checkbox"
+                    checked
+                  />
+                  <span>Enable falling flames on the bonus level</span>
+                </label>
+              </div>
+
+              <div class="admin-control-grid">
+                <div>
+                  <label
+                    class="admin-task-label"
+                    for="jackBonusSurvivalSeconds"
+                  >
+                    Survival time (seconds)
+                  </label>
+                  <input
+                    id="jackBonusSurvivalSeconds"
+                    class="admin-task-input"
+                    type="number"
+                    min="5"
+                    max="120"
+                    step="1"
+                    value="20"
+                  />
+                </div>
+
+                <div>
+                  <label class="admin-task-label" for="jackFlameRain7Size">
+                    Flame size (px)
+                  </label>
+                  <input id="jackFlameRain7Size" class="admin-task-input" type="number" min="10" max="64" step="1" />
+                </div>
+
+                <div>
+                  <label class="admin-task-label" for="jackFlameRain7HitRadius">
+                    Hit radius (px)
+                  </label>
+                  <input id="jackFlameRain7HitRadius" class="admin-task-input" type="number" min="4" max="48" step="1" />
+                </div>
+
+                <div>
+                  <label class="admin-task-label" for="jackFlameRain7BurstMin">
+                    Flames per drop — minimum
+                  </label>
+                  <input id="jackFlameRain7BurstMin" class="admin-task-input" type="number" min="1" max="8" step="1" />
+                </div>
+
+                <div>
+                  <label class="admin-task-label" for="jackFlameRain7BurstMax">
+                    Flames per drop — maximum
+                  </label>
+                  <input id="jackFlameRain7BurstMax" class="admin-task-input" type="number" min="1" max="10" step="1" />
+                </div>
+
+                <div>
+                  <label class="admin-task-label" for="jackFlameRain7IntervalMin">
+                    Longest frequency (minimum ms)
+                  </label>
+                  <input id="jackFlameRain7IntervalMin" class="admin-task-input" type="number" min="160" max="4000" step="10" />
+                </div>
+
+                <div>
+                  <label class="admin-task-label" for="jackFlameRain7IntervalMax">
+                    Longest frequency (maximum ms)
+                  </label>
+                  <input id="jackFlameRain7IntervalMax" class="admin-task-input" type="number" min="200" max="5000" step="10" />
+                </div>
+
+                <div>
+                  <label class="admin-task-label" for="jackFlameRain7SpeedMin">
+                    Fall speed minimum (px/sec)
+                  </label>
+                  <input id="jackFlameRain7SpeedMin" class="admin-task-input" type="number" min="20" max="900" step="1" />
+                </div>
+
+                <div>
+                  <label class="admin-task-label" for="jackFlameRain7SpeedMax">
+                    Fall speed maximum (px/sec)
+                  </label>
+                  <input id="jackFlameRain7SpeedMax" class="admin-task-input" type="number" min="20" max="1200" step="1" />
+                </div>
+              </div>
+            </article>
+
             <article class="admin-mini-card admin-mini-card--wide">
               <h3>Tips</h3>
               <p class="admin-panel-note">Use Fullscreen Trackpad for day-to-day changes, Maze for ghost tuning, Car Game for driving levels, and Jumping Jack for flame rain settings.</p>

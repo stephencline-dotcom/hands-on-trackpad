@@ -17,7 +17,7 @@ const BASE_SCENE_HEIGHT = 394;
 const DOT_COUNT = 72;
 const START_RADIUS = 62;
 const CANDLE_ZONE_UNLOCK_RADIUS = 120;
-const CANDLE_HIT_RADIUS = 24;
+const CANDLE_HIT_RADIUS = 35;
 const JACK_HIT_RADIUS = 18;
 const GOAL_T = 1;
 const FOLLOW_LERP = 0.22;
@@ -94,6 +94,19 @@ const DEFAULT_FLAME_RAIN_SETTINGS = {
     burstStaggerMax: 360,
     lanePadding: 20,
   },
+  7: {
+    enabled: true,
+    size: 24,
+    hitRadius: 12,
+    burstMin: 2,
+    burstMax: 3,
+    intervalMin: 800,
+    intervalMax: 1500,
+    speedMin: 130,
+    speedMax: 210,
+    burstStaggerMax: 420,
+    lanePadding: 20,
+  },
 };
 const FALLING_FLAME_LEVEL_PROFILES = {
   3: {
@@ -136,6 +149,33 @@ runningFeetSound.preload = "auto";
 runningFeetSound.volume = 0.55;
 runningFeetSound.loop = true;
 
+const circusSound = new Audio("sounds/circus.mp3");
+circusSound.preload = "auto";
+circusSound.volume = 0.45;
+circusSound.loop = true;
+
+function playCircusMusic() {
+  if (!isBonusLevel()) {
+    return;
+  }
+
+  const playPromise = circusSound.play();
+
+  if (
+    playPromise &&
+    typeof playPromise.catch === "function"
+  ) {
+    playPromise.catch(() => {
+      /* The first bonus-level interaction tries again. */
+    });
+  }
+}
+
+function stopCircusMusic() {
+  circusSound.pause();
+  circusSound.currentTime = 0;
+}
+
 const JACK_PATH_LEVELS = [
   [
     { x: 76, y: 322 },
@@ -165,127 +205,89 @@ const JACK_PATH_LEVELS = [
   ],
   [
     { x: 76, y: 322 },
-    { x: 126, y: 330 },
-    { x: 170, y: 324 },
-    { x: 208, y: 300 },
-    { x: 238, y: 266 },
-    { x: 268, y: 234 },
-    { x: 304, y: 214 },
-    { x: 342, y: 208 },
-    { x: 372, y: 222 },
-    { x: 392, y: 248 },
-    { x: 408, y: 280 },
-    { x: 396, y: 306 },
-    { x: 420, y: 324 },
-    { x: 452, y: 332 },
-    { x: 484, y: 320 },
-    { x: 506, y: 296 },
-    { x: 502, y: 268 },
-    { x: 480, y: 246 },
-    { x: 496, y: 224 },
-    { x: 528, y: 214 },
-    { x: 562, y: 226 },
-    { x: 590, y: 252 },
-    { x: 606, y: 286 },
+    { x: 160, y: 322 },
+    { x: 240, y: 322 },
+    { x: 310, y: 322 },
+    { x: 350, y: 310 },
+    { x: 378, y: 255 },
+    { x: 402, y: 218 },
+    { x: 426, y: 255 },
+    { x: 454, y: 310 },
+    { x: 494, y: 322 },
+    { x: 560, y: 322 },
     { x: 624, y: 322 },
   ],
   [
     { x: 76, y: 322 },
-    { x: 122, y: 334 },
-    { x: 162, y: 326 },
-    { x: 196, y: 302 },
-    { x: 224, y: 268 },
-    { x: 252, y: 236 },
-    { x: 286, y: 210 },
-    { x: 324, y: 196 },
-    { x: 362, y: 204 },
-    { x: 390, y: 228 },
-    { x: 404, y: 258 },
-    { x: 414, y: 290 },
-    { x: 430, y: 318 },
-    { x: 456, y: 336 },
-    { x: 488, y: 338 },
-    { x: 516, y: 324 },
-    { x: 532, y: 298 },
-    { x: 530, y: 268 },
-    { x: 514, y: 244 },
-    { x: 490, y: 228 },
-    { x: 498, y: 206 },
-    { x: 528, y: 192 },
-    { x: 564, y: 196 },
-    { x: 592, y: 220 },
-    { x: 610, y: 252 },
-    { x: 616, y: 286 },
+    { x: 135, y: 322 },
+    { x: 165, y: 275 },
+    { x: 195, y: 322 },
+    { x: 245, y: 322 },
+    { x: 280, y: 260 },
+    { x: 310, y: 215 },
+    { x: 340, y: 260 },
+    { x: 370, y: 322 },
+    { x: 420, y: 335 },
+    { x: 470, y: 330 },
+    { x: 510, y: 300 },
+    { x: 525, y: 250 },
+    { x: 510, y: 205 },
+    { x: 475, y: 180 },
+    { x: 430, y: 185 },
+    { x: 400, y: 215 },
+    { x: 395, y: 255 },
+    { x: 415, y: 285 },
+    { x: 455, y: 300 },
+    { x: 510, y: 295 },
+    { x: 565, y: 305 },
     { x: 624, y: 322 },
   ],
   [
     { x: 76, y: 322 },
-    { x: 118, y: 336 },
-    { x: 154, y: 330 },
-    { x: 186, y: 308 },
-    { x: 214, y: 276 },
-    { x: 238, y: 240 },
-    { x: 266, y: 208 },
-    { x: 302, y: 184 },
-    { x: 342, y: 174 },
-    { x: 380, y: 184 },
-    { x: 408, y: 208 },
-    { x: 426, y: 238 },
-    { x: 438, y: 272 },
-    { x: 446, y: 304 },
-    { x: 462, y: 332 },
-    { x: 490, y: 350 },
-    { x: 524, y: 350 },
-    { x: 548, y: 332 },
-    { x: 558, y: 304 },
-    { x: 554, y: 274 },
-    { x: 538, y: 248 },
-    { x: 514, y: 230 },
-    { x: 496, y: 214 },
-    { x: 504, y: 192 },
-    { x: 534, y: 174 },
-    { x: 570, y: 176 },
-    { x: 600, y: 196 },
-    { x: 618, y: 226 },
-    { x: 622, y: 260 },
-    { x: 622, y: 292 },
+    { x: 135, y: 322 },
+    { x: 165, y: 175 },
+    { x: 195, y: 322 },
+    { x: 260, y: 322 },
+    { x: 290, y: 175 },
+    { x: 320, y: 322 },
+    { x: 350, y: 322 },
+    { x: 385, y: 280 },
+    { x: 420, y: 322 },
+    { x: 470, y: 322 },
+    { x: 500, y: 175 },
+    { x: 530, y: 322 },
     { x: 624, y: 322 },
   ],
   [
     { x: 76, y: 322 },
-    { x: 114, y: 338 },
-    { x: 148, y: 334 },
-    { x: 178, y: 314 },
-    { x: 204, y: 286 },
-    { x: 226, y: 250 },
-    { x: 250, y: 214 },
-    { x: 280, y: 184 },
-    { x: 316, y: 166 },
-    { x: 356, y: 162 },
-    { x: 392, y: 174 },
-    { x: 420, y: 198 },
-    { x: 438, y: 228 },
-    { x: 448, y: 262 },
-    { x: 454, y: 296 },
-    { x: 466, y: 326 },
-    { x: 490, y: 346 },
-    { x: 522, y: 354 },
-    { x: 552, y: 344 },
-    { x: 572, y: 320 },
-    { x: 580, y: 292 },
-    { x: 576, y: 262 },
-    { x: 562, y: 236 },
-    { x: 542, y: 216 },
-    { x: 518, y: 198 },
-    { x: 502, y: 182 },
-    { x: 510, y: 164 },
-    { x: 538, y: 150 },
-    { x: 572, y: 152 },
-    { x: 602, y: 170 },
-    { x: 622, y: 198 },
-    { x: 630, y: 230 },
-    { x: 630, y: 262 },
-    { x: 628, y: 292 },
+
+    { x: 95, y: 300 },
+    { x: 105, y: 240 },
+    { x: 130, y: 185 },
+    { x: 165, y: 155 },
+    { x: 200, y: 170 },
+    { x: 225, y: 215 },
+    { x: 235, y: 270 },
+    { x: 245, y: 310 },
+
+    { x: 255, y: 270 },
+    { x: 270, y: 210 },
+    { x: 305, y: 165 },
+    { x: 345, y: 155 },
+    { x: 380, y: 180 },
+    { x: 400, y: 230 },
+    { x: 405, y: 280 },
+    { x: 395, y: 310 },
+
+    { x: 415, y: 270 },
+    { x: 430, y: 210 },
+    { x: 465, y: 165 },
+    { x: 505, y: 155 },
+    { x: 540, y: 185 },
+    { x: 565, y: 240 },
+    { x: 575, y: 290 },
+    { x: 590, y: 310 },
+
     { x: 624, y: 322 },
   ],
 ];
@@ -313,7 +315,7 @@ const JACK_LEVELS = [
   },
   {
     pathPoints: JACK_PATH_LEVELS[2],
-    candleT: 0.44,
+    candleT: 0.58,
     pathTolerance: 30,
     candleZonePathTolerance: 50,
     candleCollisionWindow: 0.16,
@@ -323,7 +325,7 @@ const JACK_LEVELS = [
   },
   {
     pathPoints: JACK_PATH_LEVELS[3],
-    candleT: 0.45,
+    candleT: 0.30,
     pathTolerance: 26,
     candleZonePathTolerance: 44,
     candleCollisionWindow: 0.14,
@@ -333,7 +335,7 @@ const JACK_LEVELS = [
   },
   {
     pathPoints: JACK_PATH_LEVELS[4],
-    candleT: 0.47,
+    candleT: 0.623,
     pathTolerance: 22,
     candleZonePathTolerance: 38,
     candleCollisionWindow: 0.12,
@@ -343,7 +345,7 @@ const JACK_LEVELS = [
   },
   {
     pathPoints: JACK_PATH_LEVELS[5],
-    candleT: 0.49,
+    candleT: 0.64,
     pathTolerance: 18,
     candleZonePathTolerance: 32,
     candleCollisionWindow: 0.1,
@@ -352,6 +354,54 @@ const JACK_LEVELS = [
     backgroundImage: "images/desert.png",
   },
 ];
+
+JACK_PATH_LEVELS.push([
+  { x: 95, y: 310 },
+  { x: 605, y: 310 },
+]);
+
+JACK_LEVELS.push({
+  pathPoints:
+    JACK_PATH_LEVELS[
+      JACK_PATH_LEVELS.length - 1
+    ],
+  candleT: 0.5,
+  pathTolerance: 700,
+  candleZonePathTolerance: 700,
+  candleCollisionWindow: 0,
+  candlePathWindow: 0,
+  progressStep: 1,
+  backgroundImage: "",
+  bonusLevel: true,
+});
+
+const JACK_BONUS_SURVIVAL_KEY =
+  "jackBonusSurvivalSeconds";
+const JACK_BONUS_DEFAULT_SECONDS = 20;
+const JACK_BONUS_FLOOR_Y = 250;
+const JACK_BONUS_DOOR_X = 610;
+
+let bonusSurvivalSeconds = Math.min(
+  120,
+  Math.max(
+    5,
+    Number.parseInt(
+      localStorage.getItem(
+        JACK_BONUS_SURVIVAL_KEY
+      ) || String(
+        JACK_BONUS_DEFAULT_SECONDS
+      ),
+      10
+    ) || JACK_BONUS_DEFAULT_SECONDS
+  )
+);
+
+let bonusTimeRemainingMs = 0;
+let bonusDoorWaitMs = 0;
+let bonusDoorOpen = false;
+let bonusEscaping = false;
+let bonusTimerElement = null;
+let bonusDoorElement = null;
 
 let scenePathPoints = [];
 let pathSegments = [];
@@ -460,7 +510,7 @@ function persistFlameRainSettingsToLocalStorage(settings) {
 }
 
 function loadFlameRainSettingsFromLocalStorage() {
-  for (const level of [4, 5, 6]) {
+  for (const level of [4, 5, 6, 7]) {
     const prefix = `jackFlameRain${level}`;
     const raw = {
       enabled: localStorage.getItem(`${prefix}Enabled`),
@@ -484,11 +534,27 @@ async function refreshFlameRainSettingsFromApi() {
       return;
     }
     const data = await response.json();
-    for (const level of [4, 5, 6]) {
-      flameRainSettings[level] = normalizeFlameRainSettings(data[`jackFlameRain${level}`] || {}, level);
+    for (const level of [4, 5, 6, 7]) {
+      flameRainSettings[level] = normalizeFlameRainSettings(
+        data[`jackFlameRain${level}`] || {},
+        level
+      );
     }
+
+    bonusSurvivalSeconds = parseIntNumber(
+      data.jackBonusSurvivalSeconds,
+      bonusSurvivalSeconds,
+      5,
+      120
+    );
+
+    localStorage.setItem(
+      JACK_BONUS_SURVIVAL_KEY,
+      String(bonusSurvivalSeconds)
+    );
+
     // Optionally persist to localStorage for offline use
-    for (const level of [4, 5, 6]) {
+    for (const level of [4, 5, 6, 7]) {
       const s = flameRainSettings[level];
       const prefix = `jackFlameRain${level}`;
       localStorage.setItem(`${prefix}Enabled`, String(s.enabled));
@@ -507,7 +573,7 @@ async function refreshFlameRainSettingsFromApi() {
 }
 
 function isFallingFlameLevel() {
-  return [4, 5, 6].includes(currentLevelIndex + 1) && flameRainSettings[currentLevelIndex + 1]?.enabled;
+  return [4, 5, 6, 7].includes(currentLevelIndex + 1) && flameRainSettings[currentLevelIndex + 1]?.enabled;
 }
 
 function getFlameRainSettingsForLevel() {
@@ -691,6 +757,160 @@ function updateFallingFlames(deltaMs) {
   activeFallingFlames = active;
 }
 
+function isBonusLevel() {
+  return Boolean(
+    getCurrentLevel().bonusLevel
+  );
+}
+
+function ensureBonusElements() {
+  if (!bonusTimerElement) {
+    bonusTimerElement =
+      document.createElement("div");
+    bonusTimerElement.className =
+      "jack-bonus-timer";
+    bonusTimerElement.hidden = true;
+    jackScene.appendChild(
+      bonusTimerElement
+    );
+  }
+
+  if (!bonusDoorElement) {
+    bonusDoorElement =
+      document.createElement("div");
+    bonusDoorElement.className =
+      "jack-bonus-door";
+    bonusDoorElement.hidden = true;
+    bonusDoorElement.innerHTML = `
+      <span class="jack-bonus-door-sign">
+        EXIT
+      </span>
+      <span class="jack-bonus-door-panel">
+      </span>
+    `;
+    jackScene.appendChild(
+      bonusDoorElement
+    );
+  }
+}
+
+function resetBonusLevelState() {
+  ensureBonusElements();
+
+  bonusTimeRemainingMs =
+    bonusSurvivalSeconds * 1000;
+  bonusDoorWaitMs = 0;
+  bonusDoorOpen = false;
+  bonusEscaping = false;
+
+  document.body.classList.toggle(
+    "jack-bonus-level",
+    isBonusLevel()
+  );
+
+  jackPathDots.hidden =
+    isBonusLevel();
+
+  bonusTimerElement.hidden =
+    !isBonusLevel();
+
+  bonusDoorElement.hidden =
+    !isBonusLevel();
+
+  bonusDoorElement.classList.remove(
+    "is-open"
+  );
+
+  if (isBonusLevel()) {
+    bonusTimerElement.textContent =
+      `SURVIVE: ${bonusSurvivalSeconds}`;
+  }
+}
+
+function updateBonusLevel(deltaMs) {
+  if (!isBonusLevel() || gameOver) {
+    return;
+  }
+
+  if (bonusDoorOpen) {
+    bonusDoorWaitMs += deltaMs;
+
+    if (
+      bonusDoorWaitMs >= 700 &&
+      !bonusEscaping
+    ) {
+      bonusEscaping = true;
+      started = false;
+      targetPos = {
+        x: JACK_BONUS_DOOR_X,
+        y: JACK_BONUS_FLOOR_Y,
+      };
+
+      jackWrap.classList.add(
+        "is-running"
+      );
+
+      setStatus(
+        "The door is open! Jack is escaping!",
+        "success"
+      );
+    }
+
+    if (bonusEscaping) {
+      targetPos = {
+        x: JACK_BONUS_DOOR_X,
+        y: JACK_BONUS_FLOOR_Y,
+      };
+
+      if (
+        distance(
+          jackPos,
+          targetPos
+        ) < 22
+      ) {
+        triggerSuccess();
+      }
+    }
+
+    return;
+  }
+
+  if (!started) {
+    return;
+  }
+
+  bonusTimeRemainingMs =
+    Math.max(
+      0,
+      bonusTimeRemainingMs - deltaMs
+    );
+
+  bonusTimerElement.textContent =
+    `SURVIVE: ${Math.ceil(
+      bonusTimeRemainingMs / 1000
+    )}`;
+
+  if (bonusTimeRemainingMs > 0) {
+    return;
+  }
+
+  bonusDoorOpen = true;
+  bonusDoorWaitMs = 0;
+  clearFallingFlames();
+
+  bonusTimerElement.textContent =
+    "DOOR OPEN!";
+
+  bonusDoorElement.classList.add(
+    "is-open"
+  );
+
+  setStatus(
+    "You survived! The exit is opening!",
+    "success"
+  );
+}
+
 function getCurrentLevel() {
   return JACK_LEVELS[currentLevelIndex] || JACK_LEVELS[0];
 }
@@ -700,7 +920,10 @@ function updateLevelBadge() {
     return;
   }
 
-  jackLevelBadge.textContent = `Level ${currentLevelIndex + 1} of ${JACK_LEVELS.length}`;
+  jackLevelBadge.textContent =
+    isBonusLevel()
+      ? "BONUS LEVEL"
+      : `Level ${currentLevelIndex + 1} of ${JACK_LEVELS.length - 1}`;
 }
 
 function applyLevelBackground() {
@@ -708,7 +931,19 @@ function applyLevelBackground() {
     return;
   }
 
-  const backgroundImage = getCurrentLevel().backgroundImage;
+  document.body.classList.toggle(
+    "jack-bonus-level",
+    isBonusLevel()
+  );
+
+  if (isBonusLevel()) {
+    jackScene.style.backgroundImage =
+      "linear-gradient(180deg, transparent 0 74%, #facc15 74% 78%, #b86b2b 78% 100%), linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.18)), repeating-linear-gradient(90deg, #ef4444 0 70px, #fff7d6 70px 140px)";
+    return;
+  }
+
+  const backgroundImage =
+    JACK_LEVELS[0].backgroundImage;
   jackScene.style.backgroundImage = `linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.12)), url("${backgroundImage}")`;
 }
 
@@ -1060,12 +1295,14 @@ function resetToStart(message, state = "neutral") {
   clearFallingFlames();
   previousTickAtMs = 0;
   hideLevelOverlay();
+  resetBonusLevelState();
   updateDots();
   updateCharacterVisual();
   setStatus(message, state);
 }
 
 function pauseJackGameplayForResult() {
+  stopCircusMusic();
   clearLevelAdvanceTimer();
   waitingNextLevel = false;
   started = false;
@@ -1079,6 +1316,20 @@ function pauseJackGameplayForResult() {
   clearFallingFlames();
 }
 
+function enterJackBonusLevel() {
+  currentLevelIndex = JACK_LEVELS.length - 1;
+
+  updateLevelBadge();
+  applyLevelBackground();
+
+  rebuildLayoutAndReset(
+    "Bonus Level ready! Move Jack back and forth and dodge the falling flames.",
+    "neutral"
+  );
+
+  playCircusMusic();
+}
+
 function prepareNextJackLevel() {
   currentLevelIndex = Math.min(currentLevelIndex + 1, JACK_LEVELS.length - 1);
 
@@ -1089,16 +1340,31 @@ function prepareNextJackLevel() {
     `Level ${currentLevelIndex + 1} ready. Move to Jack's start point when you're ready.`,
     "neutral"
   );
+
+  if (isBonusLevel()) {
+    playCircusMusic();
+  } else {
+    stopCircusMusic();
+  }
 }
 
 function restartCurrentJackLevel() {
   rebuildLayoutAndReset(
-    `Try Level ${currentLevelIndex + 1} again. Start from Jack's beginning point.`,
+    isBonusLevel()
+      ? "Try the Bonus Level again. Dodge the falling flames!"
+      : `Try Level ${currentLevelIndex + 1} again. Start from Jack's beginning point.`,
     "warning"
   );
+
+  if (isBonusLevel()) {
+    playCircusMusic();
+  } else {
+    stopCircusMusic();
+  }
 }
 
 function playJackAgainFromLevel1() {
+  stopCircusMusic();
   currentLevelIndex = 0;
   updateLevelBadge();
   applyLevelBackground();
@@ -1109,48 +1375,248 @@ function playJackAgainFromLevel1() {
   );
 }
 
+function goToJackHome() {
+  window.location.href = "index.html";
+}
+
+function ensureJackExtraResultButton() {
+  if (!jackLevelResult) {
+    return null;
+  }
+
+  let button =
+    jackLevelResult.actionsElement.querySelector(
+      ".jack-extra-result-button"
+    );
+
+  if (!button) {
+    button = document.createElement("button");
+    button.type = "button";
+    button.className =
+      "level-result-button jack-extra-result-button";
+
+    jackLevelResult.actionsElement.insertBefore(
+      button,
+      jackLevelResult.secondaryButton
+    );
+  }
+
+  return button;
+}
+
+function restoreJackHomeButton() {
+  if (!jackLevelResult) {
+    return;
+  }
+
+  const homeButton =
+    jackLevelResult.secondaryButton;
+
+  homeButton.className =
+    "level-result-home";
+
+  homeButton.innerHTML = `
+    <img
+      class="level-result-home-icon"
+      src="/images/home-icon.svg"
+      alt=""
+      aria-hidden="true"
+    />
+  `;
+
+  homeButton.setAttribute(
+    "aria-label",
+    "Home"
+  );
+
+  homeButton.setAttribute(
+    "title",
+    "Home"
+  );
+
+  homeButton.onclick = null;
+  jackLevelResult.secondaryButtonAction =
+    goToJackHome;
+}
+
+function resetJackResultChoices() {
+  if (!jackLevelResult) {
+    return;
+  }
+
+  delete jackLevelResult.overlay.dataset
+    .jackChoice;
+
+  const extraButton =
+    ensureJackExtraResultButton();
+
+  if (extraButton) {
+    extraButton.hidden = true;
+    extraButton.onclick = null;
+  }
+
+  restoreJackHomeButton();
+}
+
 function showJackFailureResult(message) {
   pauseJackGameplayForResult();
 
-  if (jackLevelResult) {
-    jackLevelResult.showFailure({
-      title: "Try Again!",
-      message,
-    });
-  } else {
+  if (!jackLevelResult) {
     restartCurrentJackLevel();
+    return;
   }
+
+  resetJackResultChoices();
+
+  jackLevelResult.showFailure({
+    title: "Try Again!",
+    message,
+  });
+
+  if (!isBonusLevel()) {
+    return;
+  }
+
+  jackLevelResult.overlay.dataset
+    .jackChoice = "bonus-failure";
+
+  jackLevelResult.primaryButton.textContent =
+    "Try Bonus Again";
+
+  jackLevelResult.primaryButtonAction =
+    restartCurrentJackLevel;
+
+  const levelsButton =
+    ensureJackExtraResultButton();
+
+  levelsButton.hidden = false;
+  levelsButton.textContent =
+    "Play Levels Again";
+
+  levelsButton.onclick = () => {
+    jackLevelResult.hide();
+    playJackAgainFromLevel1();
+  };
+
+  restoreJackHomeButton();
+
+  jackLevelResult.secondaryButton.hidden =
+    false;
+
+  jackLevelResult.secondaryButtonAction =
+    goToJackHome;
 }
 
 function showJackSuccessResult() {
   pauseJackGameplayForResult();
+  resetJackResultChoices();
 
-  const completedLevel = currentLevelIndex + 1;
-  const hasNextLevel = currentLevelIndex < JACK_LEVELS.length - 1;
+  const completedLevel =
+    currentLevelIndex + 1;
 
   if (!jackLevelResult) {
-    if (hasNextLevel) {
+    if (completedLevel === 6) {
+      enterJackBonusLevel();
+    } else if (
+      currentLevelIndex <
+      JACK_LEVELS.length - 1
+    ) {
       prepareNextJackLevel();
     } else {
-      setStatus("Level complete! You finished all Jack Jump levels.", "success");
-      showLevelOverlay("All Levels Complete!");
+      setStatus(
+        "Bonus complete! You finished Jack Jump!",
+        "success"
+      );
+      showLevelOverlay(
+        "All Levels Complete!"
+      );
     }
+
     return;
   }
 
-  if (hasNextLevel) {
+  if (completedLevel < 6) {
     jackLevelResult.showSuccess({
       title: "Level Complete!",
-      message: `Great job! Tap Level Up for Level ${completedLevel + 1}.`,
+      message:
+        `Great job! Tap Level Up for Level ${completedLevel + 1}.`,
     });
-  } else {
-    jackLevelResult.showFinal({
-      title: "You Did It!",
-      message: "You finished all Jack Jump levels!",
-    });
+    return;
   }
-}
 
+  if (completedLevel === 6) {
+    jackLevelResult.showFinal({
+      title: "Six Levels Complete!",
+      message:
+        "Play the levels again, or try the special Bonus Level!",
+      primaryLabel:
+        "Play Levels Again",
+    });
+
+    jackLevelResult.overlay.dataset
+      .jackChoice = "bonus";
+
+    jackLevelResult.primaryButton.textContent =
+      "Play Levels Again";
+
+    jackLevelResult.primaryButtonAction =
+      playJackAgainFromLevel1;
+
+    jackLevelResult.secondaryButton.hidden =
+      true;
+
+    const bonusButton =
+      ensureJackExtraResultButton();
+
+    bonusButton.hidden = false;
+    bonusButton.textContent =
+      "Play Bonus Level";
+
+    bonusButton.onclick = () => {
+      jackLevelResult.hide();
+      enterJackBonusLevel();
+    };
+
+    return;
+  }
+
+  jackLevelResult.showFinal({
+    title: "Bonus Complete!",
+    message:
+      "Amazing! Jack survived the falling flames!",
+    primaryLabel:
+      "Play Bonus Again",
+  });
+
+  jackLevelResult.overlay.dataset
+    .jackChoice = "bonus-complete";
+
+  jackLevelResult.primaryButton.textContent =
+    "Play Bonus Again";
+
+  jackLevelResult.primaryButtonAction =
+    restartCurrentJackLevel;
+
+  const levelsButton =
+    ensureJackExtraResultButton();
+
+  levelsButton.hidden = false;
+  levelsButton.textContent =
+    "Play Levels Again";
+
+  levelsButton.onclick = () => {
+    jackLevelResult.hide();
+    playJackAgainFromLevel1();
+  };
+
+  restoreJackHomeButton();
+
+  jackLevelResult.secondaryButton.hidden =
+    false;
+
+  jackLevelResult.secondaryButtonAction =
+    goToJackHome;
+}
 function triggerFlameFailure() {
   if (gameOver) {
     return;
@@ -1165,7 +1631,11 @@ function triggerFlameFailure() {
   clearFallingFlames();
   playFireSound();
 
-  showJackFailureResult("Jack touched the flame. Try this level again.");
+  window.setTimeout(() => {
+    showJackFailureResult(
+      "Jack touched the flame. Try this level again."
+    );
+  }, 1500);
 }
 
 function triggerSuccess() {
@@ -1371,9 +1841,44 @@ function onScenePointerMove(event) {
   const pointer = getScenePointFromEvent(event);
   const startPoint = scenePathPoints[0];
 
+  if (isBonusLevel()) {
+    if (gameOver || bonusDoorOpen) {
+      return;
+    }
+
+    if (!started) {
+      started = true;
+      setStatus(
+        "Run back and forth. Dodge the falling flames!",
+        "neutral"
+      );
+    }
+
+    previousPos = { ...jackPos };
+    targetPos = {
+      /*
+       * Let Jack use nearly the entire bonus
+       * board, including the area beyond the
+       * closed exit door.
+       */
+      x: clamp(pointer.x, 35, 690),
+      y: JACK_BONUS_FLOOR_Y,
+    };
+
+    jackWrap.classList.add(
+      "is-running"
+    );
+
+    return;
+  }
+
   if (!started) {
     if (distance(pointer, startPoint) <= START_RADIUS) {
       started = true;
+
+      if (isBonusLevel()) {
+        playCircusMusic();
+      }
       setStatus("Follow the loop and avoid the candle.", "neutral");
     } else {
       return;
@@ -1396,18 +1901,40 @@ function onScenePointerLeave() {
 
 function placeSceneObjects() {
   const level = getCurrentLevel();
+
+  ensureBonusElements();
+
+  if (isBonusLevel()) {
+    candleObstacle.hidden = true;
+    jackGoal.hidden = true;
+
+    bonusDoorElement.style.left =
+      `${JACK_BONUS_DOOR_X - 36}px`;
+    bonusDoorElement.style.top = "185px";
+
+    goalPoint = {
+      x: JACK_BONUS_DOOR_X,
+      y: JACK_BONUS_FLOOR_Y,
+    };
+
+    return;
+  }
+
+  candleObstacle.hidden = false;
+  jackGoal.hidden = false;
+
   candlePoint = getPointAtT(level.candleT);
   goalPoint = getPointAtT(GOAL_T);
 
   const candleLeft = candlePoint.x - 24;
-  const candleTop = candlePoint.y + 66;
+  const candleTop = candlePoint.y + (currentLevelIndex === 1 ? 40 : currentLevelIndex === 3 ? 34 : currentLevelIndex === 4 ? 28 : currentLevelIndex === 5 ? 24 : 66);
   candleObstacle.style.left = `${candleLeft}px`;
   candleObstacle.style.top = `${candleTop}px`;
 
   // Collision focuses near the flame head, not the dotted path center.
   candleCollisionPoint = {
     x: candleLeft + 23,
-    y: candleTop + 12,
+    y: candleTop + (window.matchMedia("(max-height: 820px)").matches ? 21 : 45),
   };
 
   jackGoal.style.left = `${goalPoint.x - 48}px`;
@@ -1422,7 +1949,14 @@ function tick(nowMs = 0) {
   updateFallingFlames(deltaMs);
   syncRunningFeetSound();
 
-  if (started && !gameOver && !waitingNextLevel) {
+  updateBonusLevel(deltaMs);
+
+  if (
+    started &&
+    !gameOver &&
+    !waitingNextLevel &&
+    !isBonusLevel()
+  ) {
     const jackMetrics = getPathMetricsForPoint(jackPos);
     updatePathProgress(jackMetrics);
     checkGameRules(jackMetrics);
@@ -1451,6 +1985,7 @@ function initialize() {
   flameSettingsRefreshTimerId = window.setInterval(() => {
     refreshFlameRainSettingsFromApi();
   }, FLAME_SETTINGS_REFRESH_INTERVAL_MS);
+  ensureBonusElements();
   updateLevelBadge();
   applyLevelBackground();
   rebuildLayoutAndReset();

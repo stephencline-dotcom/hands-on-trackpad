@@ -5235,3 +5235,526 @@ body.car-page .car-traffic {
     0 4px 9px
     rgba(50, 54, 76, 0.18);
 }
+
+
+.jack-jump-page .level-result-card {
+  margin: 0;
+}
+
+
+/* Keep Jumping Jack results centered on short screens */
+.jack-jump-page .level-result-overlay {
+  align-items: center;
+}
+
+.jack-jump-page .level-result-panel {
+  margin-top: 0;
+}
+
+/* Bright landing target until Jack reaches it */
+.jack-goal:not(.is-success) .jack-goal-ring {
+  border: 4px dashed #ffd400;
+  background: rgba(255, 235, 59, 0.48);
+  box-shadow:
+    0 0 8px #fff7a8,
+    0 0 20px #ffd400,
+    0 0 34px rgba(255, 193, 7, 0.9);
+  animation: jackGoalYellowGlow 900ms ease-in-out infinite alternate;
+}
+
+.jack-goal:not(.is-success) .jack-goal-label {
+  color: #7a5100;
+  font-size: 0.72rem;
+  text-shadow:
+    0 0 5px #ffffff,
+    0 0 10px #ffd400;
+}
+
+@keyframes jackGoalYellowGlow {
+  from {
+    transform: scale(1);
+    box-shadow:
+      0 0 8px #fff7a8,
+      0 0 18px #ffd400,
+      0 0 28px rgba(255, 193, 7, 0.75);
+  }
+
+  to {
+    transform: scale(1.15);
+    box-shadow:
+      0 0 14px #ffffff,
+      0 0 30px #ffe600,
+      0 0 48px rgba(255, 193, 7, 1);
+  }
+}
+
+/* ========================================
+   JUMPING JACK — BONUS CIRCUS LEVEL
+======================================== */
+
+.jack-bonus-level .jack-jump-scene {
+  background-color: #fff1c7;
+  background-size: cover;
+}
+
+.jack-bonus-level .jack-path-dots,
+.jack-bonus-level .jack-goal,
+.jack-bonus-level .jack-candle {
+  display: none !important;
+}
+
+.jack-bonus-timer {
+  position: absolute;
+  z-index: 25;
+  top: 18px;
+  left: 50%;
+  min-width: 190px;
+  padding: 10px 18px;
+  transform: translateX(-50%);
+  border: 4px solid #ffffff;
+  border-radius: 999px;
+  background: #7c3aed;
+  color: #ffffff;
+  box-shadow:
+    0 0 0 4px #facc15,
+    0 8px 20px rgba(30, 41, 59, 0.3);
+  font-size: 1.2rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+.jack-bonus-door {
+  position: absolute;
+  z-index: 8;
+  width: 72px;
+  height: 130px;
+  overflow: hidden;
+  border: 6px solid #facc15;
+  border-radius: 12px 12px 4px 4px;
+  background: #1e293b;
+  box-shadow:
+    0 0 0 5px #7c3aed,
+    0 0 24px rgba(250, 204, 21, 0.8);
+}
+
+.jack-bonus-door-sign {
+  position: absolute;
+  z-index: 3;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.jack-bonus-door-panel {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #ef4444 0 16px,
+      #fff7d6 16px 32px
+    );
+  transform-origin: left center;
+  transition: transform 650ms ease;
+}
+
+.jack-bonus-door.is-open
+.jack-bonus-door-panel {
+  transform: perspective(240px)
+    rotateY(-86deg);
+}
+
+.jack-bonus-level
+.jack-character-wrap {
+  z-index: 12;
+}
+
+/* Circus floor details */
+.jack-bonus-level .jack-jump-scene {
+  box-shadow:
+    inset 0 -16px 0 #7c3f18,
+    inset 0 -22px 0 #facc15;
+}
+
+/* Level 6 choice: replay the course or enter the bonus. */
+.jack-jump-page
+.level-result-overlay[data-jack-choice="bonus"]
+.level-result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.jack-jump-page
+.level-result-overlay[data-jack-choice="bonus"]
+.level-result-button {
+  width: auto;
+  min-width: 190px;
+  padding-right: 22px;
+  padding-left: 22px;
+}
+
+.jack-jump-page
+.level-result-overlay[data-jack-choice="bonus"]
+.level-result-button-secondary {
+  width: auto;
+  min-width: 190px;
+  color: #102f4b;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+
+/* Jack Jump result choices */
+.jack-jump-page
+.level-result-overlay[data-jack-choice]
+.level-result-actions {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(180px, 1fr));
+  width: min(100%, 520px);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.jack-jump-page
+.level-result-overlay[data-jack-choice]
+.level-result-button,
+.jack-jump-page
+.jack-extra-result-button {
+  width: 100%;
+  min-width: 0;
+  min-height: 56px;
+  padding: 12px 18px;
+  color: #24104f;
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1.15;
+  white-space: normal;
+  background:
+    linear-gradient(
+      180deg,
+      #ffe96b,
+      #ffc928
+    );
+  box-shadow:
+    0 7px 0 #a96d00,
+    0 12px 22px
+      rgba(255, 202, 40, 0.28);
+}
+
+.jack-jump-page
+.level-result-overlay[data-jack-choice="bonus"]
+.jack-extra-result-button {
+  color: #ffffff;
+  background:
+    linear-gradient(
+      180deg,
+      #a855f7,
+      #7133c5
+    );
+  box-shadow:
+    0 7px 0 #42177b,
+    0 12px 22px
+      rgba(139, 76, 222, 0.34);
+}
+
+.jack-jump-page
+.level-result-overlay[data-jack-choice="bonus-failure"]
+.level-result-actions {
+  grid-template-columns:
+    repeat(3, minmax(130px, 1fr));
+  width: min(100%, 590px);
+}
+
+.jack-jump-page
+.level-result-overlay[data-jack-choice="bonus-failure"]
+.level-result-home {
+  width: 56px;
+  height: 56px;
+  justify-self: center;
+}
+
+@media (max-width: 620px) {
+  .jack-jump-page
+  .level-result-overlay[data-jack-choice]
+  .level-result-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .jack-jump-page
+  .level-result-overlay[data-jack-choice="bonus-failure"]
+  .level-result-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* Keep the bonus timer visible below the cropped scene edge. */
+.jack-bonus-level .jack-bonus-timer {
+  display: block;
+  top: 18px;
+}
+
+.jack-bonus-level .jack-bonus-timer[hidden] {
+  display: none;
+}
+
+@media (max-height: 820px) {
+  .jack-bonus-level .jack-bonus-timer {
+    top: 92px;
+  }
+}
+
+/* Three choices after completing the bonus level. */
+.jack-jump-page
+.level-result-overlay[data-jack-choice="bonus-complete"]
+.level-result-actions {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(130px, 1fr));
+  width: min(100%, 590px);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.jack-jump-page
+.level-result-overlay[data-jack-choice="bonus-complete"]
+.level-result-button {
+  width: 100%;
+  min-width: 0;
+  min-height: 56px;
+  padding: 12px 18px;
+  white-space: normal;
+}
+
+.jack-jump-page
+.level-result-overlay[data-jack-choice="bonus-complete"]
+.level-result-home {
+  width: 56px;
+  height: 56px;
+  justify-self: center;
+}
+
+@media (max-width: 620px) {
+  .jack-jump-page
+  .level-result-overlay[data-jack-choice="bonus-complete"]
+  .level-result-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* Prominent white home button on Jack result panels. */
+.jack-jump-page
+.level-result-overlay[data-jack-choice]
+.level-result-home {
+  border: 3px solid #ffffff;
+  background:
+    linear-gradient(
+      180deg,
+      #2879ba,
+      #174c7a
+    );
+  box-shadow:
+    0 0 0 3px rgba(126, 211, 255, 0.55),
+    0 8px 18px rgba(0, 0, 0, 0.32);
+}
+
+.jack-jump-page
+.level-result-overlay[data-jack-choice]
+.level-result-home:hover {
+  background:
+    linear-gradient(
+      180deg,
+      #3698df,
+      #1c6098
+    );
+}
+
+.jack-jump-page
+.level-result-overlay[data-jack-choice]
+.level-result-home-icon {
+  width: 28px;
+  height: 28px;
+  filter:
+    brightness(0)
+    invert(1)
+    drop-shadow(
+      0 2px 2px
+      rgba(0, 0, 0, 0.35)
+    );
+}
+
+/* Final Jack result-panel fit and alignment */
+.jack-jump-page
+.level-result-overlay[data-jack-choice="bonus"]
+.level-result-actions {
+  display: grid;
+  grid-template-columns:
+    minmax(180px, 1fr)
+    minmax(180px, 1fr)
+    56px;
+  align-items: center;
+  width: min(100%, 590px);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.jack-jump-page
+.level-result-overlay[data-jack-choice="bonus"]
+.level-result-home {
+  display: inline-flex;
+  width: 56px;
+  height: 56px;
+  justify-self: center;
+}
+
+/*
+ * The Jack scene is cropped by 80px on shorter
+ * screens. Keep the result panel below that crop.
+ */
+@media (max-height: 820px) {
+  body.jack-jump-page
+  .level-result-overlay {
+    align-items: flex-start;
+    padding-top: 92px;
+    padding-bottom: 8px;
+  }
+
+  body.jack-jump-page
+  .level-result-panel {
+    max-height: calc(100% - 100px);
+    margin-top: 0;
+    padding: 12px 16px 14px;
+    overflow: auto;
+  }
+
+  body.jack-jump-page
+  .level-result-title {
+    font-size: 1.45rem;
+  }
+
+  body.jack-jump-page
+  .level-result-message {
+    margin-top: 5px;
+    font-size: 0.96rem;
+    line-height: 1.25;
+  }
+
+  body.jack-jump-page
+  .level-result-actions {
+    margin-top: 10px;
+  }
+
+  body.jack-jump-page
+  .level-result-overlay[data-jack-choice="bonus"]
+  .level-result-button {
+    min-height: 50px;
+    padding: 10px 14px;
+  }
+}
+
+@media (max-width: 620px) {
+  .jack-jump-page
+  .level-result-overlay[data-jack-choice="bonus"]
+  .level-result-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Correct Jack result panels: never use an internal scrollbar. */
+@media (max-height: 820px) {
+  body.jack-jump-page
+  .level-result-overlay {
+    align-items: center;
+    padding: 12px;
+  }
+
+  body.jack-jump-page
+  .level-result-panel {
+    max-height: none;
+    margin-top: 0;
+    padding: 14px 16px 16px;
+    overflow: visible;
+  }
+
+  /*
+   * Only the larger Level 6 and bonus choice
+   * panels need to sit below the scene crop.
+   */
+  body.jack-jump-page
+  .level-result-overlay[data-jack-choice] {
+    align-items: flex-start;
+    padding-top: 86px;
+    padding-bottom: 4px;
+  }
+
+  body.jack-jump-page
+  .level-result-overlay[data-jack-choice]
+  .level-result-panel {
+    max-height: none;
+    padding: 10px 14px 12px;
+    overflow: visible;
+  }
+
+  body.jack-jump-page
+  .level-result-overlay[data-jack-choice]
+  .level-result-title {
+    font-size: 1.35rem;
+    line-height: 1.1;
+  }
+
+  body.jack-jump-page
+  .level-result-overlay[data-jack-choice]
+  .level-result-message {
+    margin-top: 4px;
+    font-size: 0.9rem;
+    line-height: 1.2;
+  }
+
+  body.jack-jump-page
+  .level-result-overlay[data-jack-choice]
+  .level-result-actions {
+    margin-top: 8px;
+  }
+
+  body.jack-jump-page
+  .level-result-overlay[data-jack-choice]
+  .level-result-button {
+    min-height: 46px;
+    padding: 8px 12px;
+    font-size: 0.92rem;
+  }
+
+  body.jack-jump-page
+  .level-result-overlay[data-jack-choice]
+  .level-result-home {
+    width: 48px;
+    height: 48px;
+  }
+
+  body.jack-jump-page
+  .level-result-overlay[data-jack-choice]
+  .level-result-home-icon {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+

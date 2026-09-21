@@ -5,11 +5,13 @@
   "task2Enabled": true,
   "task3RequiredDragSeconds": 6,
   "task3Enabled": true,
+  "task4RequiredScrollSeconds": 6,
+  "task4Enabled": false,
   "fullscreenRequireClickAndDrag": false,
   "mazeRequireClickAndDrag": false,
   "carRequireClickAndDrag": false,
   "jackRequireClickAndDrag": false,
-  "freezeScreenFeatureEnabled": true,
+  "freezeScreenFeatureEnabled": false,
   "freezeScreenArmed": true,
   "fullscreenGameActive": true,
   "mazeGameActive": true,
@@ -20,6 +22,49 @@
   "dragonDodgeGameActive": true,
   "firefighterRescueGameActive": true,
   "martianMadnessGameActive": true,
+  "monsterLunchGameActive": true,
+  "monsterLunchLevels": [
+    {
+      "goal": 1,
+      "missesAllowed": 3,
+      "choiceCount": 8,
+      "foodSize": 118,
+      "timeLimitEnabled": true,
+      "timeLimit": 20,
+      "moveSpeed": 0,
+      "snatcherDelaySeconds": 0
+    },
+    {
+      "goal": 2,
+      "missesAllowed": 3,
+      "choiceCount": 5,
+      "foodSize": 88,
+      "timeLimitEnabled": false,
+      "timeLimit": 35,
+      "moveSpeed": 0,
+      "snatcherDelaySeconds": 0
+    },
+    {
+      "goal": 8,
+      "missesAllowed": 3,
+      "choiceCount": 5,
+      "foodSize": 88,
+      "timeLimitEnabled": false,
+      "timeLimit": 35,
+      "moveSpeed": 5,
+      "snatcherDelaySeconds": 5
+    },
+    {
+      "goal": 10,
+      "missesAllowed": 3,
+      "choiceCount": 9,
+      "foodSize": 82,
+      "timeLimitEnabled": false,
+      "timeLimit": 30,
+      "moveSpeed": 6,
+      "snatcherDelaySeconds": 3.5
+    }
+  ],
   "soundEnabled": true,
   "trainingPaused": false,
   "jackFlameRainEnabled": true,
@@ -32,29 +77,29 @@
   "jackFlameRainSpeedMin": 210,
   "jackFlameRainSpeedMax": 320,
   "jackFlameRain4": {
-    "enabled": true,
-    "size": 22,
-    "hitRadius": 10,
-    "burstMin": 2,
-    "burstMax": 3,
-    "intervalMin": 700,
-    "intervalMax": 1400,
-    "speedMin": 180,
-    "speedMax": 260
+    "enabled": false,
+    "size": 20,
+    "hitRadius": 9,
+    "burstMin": 1,
+    "burstMax": 5,
+    "intervalMin": 500,
+    "intervalMax": 1000,
+    "speedMin": 30,
+    "speedMax": 100
   },
   "jackFlameRain5": {
-    "enabled": true,
-    "size": 24,
-    "hitRadius": 12,
-    "burstMin": 3,
-    "burstMax": 5,
-    "intervalMin": 520,
-    "intervalMax": 1100,
-    "speedMin": 250,
-    "speedMax": 370
+    "enabled": false,
+    "size": 10,
+    "hitRadius": 4,
+    "burstMin": 1,
+    "burstMax": 2,
+    "intervalMin": 350,
+    "intervalMax": 510,
+    "speedMin": 195,
+    "speedMax": 258
   },
   "jackFlameRain6": {
-    "enabled": true,
+    "enabled": false,
     "size": 26,
     "hitRadius": 13,
     "burstMin": 5,
@@ -127,5 +172,342 @@
     4,
     5,
     6.2
-  ]
+  ],
+  "movingSoundSettings": {
+    "homeMenuVisibility": {
+      "showLightGame": true,
+      "showCarGame": true,
+      "showDragonGame": true,
+      "showFireGame": true,
+      "showMartianGame": true
+    },
+    "arenaLevels": [
+      {
+        "lives": 3,
+        "time": 30,
+        "goal": 10
+      },
+      {
+        "lives": 3,
+        "time": 25,
+        "goal": 12
+      },
+      {
+        "lives": 3,
+        "time": 20,
+        "goal": 15
+      }
+    ],
+    "carLevels": [
+      {
+        "spawnInterval": 1.5,
+        "targetColor": "#38bdf8",
+        "timeLimit": 30,
+        "carCount": 4,
+        "missesAllowed": 3,
+        "goal": 8,
+        "speedMin": 70,
+        "speedMax": 125
+      },
+      {
+        "spawnInterval": 1.2,
+        "targetColor": "#38bdf8",
+        "timeLimit": 26,
+        "carCount": 5,
+        "missesAllowed": 3,
+        "goal": 10,
+        "speedMin": 135,
+        "speedMax": 220
+      },
+      {
+        "spawnInterval": 0.95,
+        "targetColor": "#38bdf8",
+        "timeLimit": 22,
+        "carCount": 6,
+        "missesAllowed": 3,
+        "goal": 12,
+        "speedMin": 240,
+        "speedMax": 360
+      }
+    ],
+    "dragonLevels": [
+      {
+        "dragonCount": 1,
+        "timeLimit": 30,
+        "missesAllowed": 3,
+        "goal": 6,
+        "fireDurationSeconds": 1,
+        "speedMin": 100,
+        "speedMax": 170
+      },
+      {
+        "dragonCount": 2,
+        "timeLimit": 27,
+        "missesAllowed": 3,
+        "goal": 10,
+        "fireDurationSeconds": 0.9,
+        "speedMin": 125,
+        "speedMax": 195
+      },
+      {
+        "dragonCount": 3,
+        "timeLimit": 24,
+        "missesAllowed": 3,
+        "goal": 15,
+        "fireDurationSeconds": 0.75,
+        "speedMin": 150,
+        "speedMax": 225
+      },
+      {
+        "dragonCount": 4,
+        "timeLimit": 22,
+        "missesAllowed": 4,
+        "goal": 18,
+        "fireDurationSeconds": 0.7,
+        "speedMin": 170,
+        "speedMax": 245
+      }
+    ],
+    "fireLevels": [
+      {
+        "timeLimit": 30,
+        "missesAllowed": 3,
+        "goal": 8,
+        "spawnIntervalSeconds": 0.85,
+        "flameDurationSeconds": 1.58,
+        "helpSpawnChance": 0.3
+      },
+      {
+        "timeLimit": 26,
+        "missesAllowed": 3,
+        "goal": 11,
+        "spawnIntervalSeconds": 0.72,
+        "flameDurationSeconds": 1.35,
+        "helpSpawnChance": 0.33
+      },
+      {
+        "timeLimit": 22,
+        "missesAllowed": 3,
+        "goal": 14,
+        "spawnIntervalSeconds": 0.62,
+        "flameDurationSeconds": 1.15,
+        "helpSpawnChance": 0.36
+      }
+    ],
+    "martianLevels": [
+      {
+        "timeLimit": 30,
+        "missesAllowed": 3,
+        "goal": 6,
+        "peopleCount": 6,
+        "ufoCount": 1,
+        "walkerSpeedMin": 42,
+        "walkerSpeedMax": 68,
+        "ufoSpeed": 72,
+        "liftSpeed": 124
+      },
+      {
+        "timeLimit": 26,
+        "missesAllowed": 3,
+        "goal": 9,
+        "peopleCount": 7,
+        "ufoCount": 2,
+        "walkerSpeedMin": 54,
+        "walkerSpeedMax": 82,
+        "ufoSpeed": 86,
+        "liftSpeed": 146
+      },
+      {
+        "timeLimit": 22,
+        "missesAllowed": 4,
+        "goal": 12,
+        "peopleCount": 8,
+        "ufoCount": 3,
+        "walkerSpeedMin": 66,
+        "walkerSpeedMax": 96,
+        "ufoSpeed": 102,
+        "liftSpeed": 168
+      }
+    ],
+    "dragonPrincessEnabledByLevel": [
+      false,
+      false,
+      true,
+      true
+    ],
+    "dragonKnightEnabledByLevel": [
+      false,
+      false,
+      false,
+      true
+    ],
+    "bugMeadowLevels": [
+      {
+        "goal": 5,
+        "timeLimit": 35,
+        "missesAllowed": 3,
+        "birdCount": 0,
+        "birdSpeed": 1
+      },
+      {
+        "goal": 7,
+        "timeLimit": 35,
+        "missesAllowed": 3,
+        "birdCount": 1,
+        "birdSpeed": 2
+      },
+      {
+        "goal": 9,
+        "timeLimit": 30,
+        "missesAllowed": 3,
+        "birdCount": 2,
+        "birdSpeed": 3
+      },
+      {
+        "goal": 12,
+        "timeLimit": 30,
+        "missesAllowed": 4,
+        "birdCount": 3,
+        "birdSpeed": 4
+      }
+    ],
+    "deerRunLevels": [
+      {
+        "goal": 5,
+        "timeLimit": 35,
+        "missesAllowed": 3,
+        "spawnDelayMin": 3,
+        "spawnDelayMax": 4,
+        "rabbitEnabled": true,
+        "rabbitSpeed": 115,
+        "foxEnabled": false,
+        "foxSpeed": 130,
+        "falconEnabled": false,
+        "falconSpeed": 145,
+        "owlEnabled": false,
+        "owlSpeed": 135
+      },
+      {
+        "goal": 7,
+        "timeLimit": 35,
+        "missesAllowed": 3,
+        "spawnDelayMin": 2,
+        "spawnDelayMax": 3,
+        "rabbitEnabled": true,
+        "rabbitSpeed": 120,
+        "foxEnabled": true,
+        "foxSpeed": 130,
+        "falconEnabled": false,
+        "falconSpeed": 145,
+        "owlEnabled": false,
+        "owlSpeed": 135
+      },
+      {
+        "goal": 9,
+        "timeLimit": 30,
+        "missesAllowed": 3,
+        "spawnDelayMin": 2,
+        "spawnDelayMax": 3,
+        "rabbitEnabled": true,
+        "rabbitSpeed": 125,
+        "foxEnabled": true,
+        "foxSpeed": 140,
+        "falconEnabled": true,
+        "falconSpeed": 150,
+        "owlEnabled": false,
+        "owlSpeed": 140
+      },
+      {
+        "goal": 12,
+        "timeLimit": 30,
+        "missesAllowed": 4,
+        "spawnDelayMin": 2,
+        "spawnDelayMax": 2,
+        "rabbitEnabled": true,
+        "rabbitSpeed": 135,
+        "foxEnabled": true,
+        "foxSpeed": 150,
+        "falconEnabled": true,
+        "falconSpeed": 165,
+        "owlEnabled": true,
+        "owlSpeed": 150
+      }
+    ],
+    "fireflyForestLevels": [
+      {
+        "goal": 5,
+        "timeLimit": 35,
+        "missesAllowed": 3,
+        "targetSize": 92,
+        "targetLifetimeSeconds": 0,
+        "decoyCount": 0
+      },
+      {
+        "goal": 8,
+        "timeLimit": 35,
+        "missesAllowed": 3,
+        "targetSize": 56,
+        "targetLifetimeSeconds": 4,
+        "decoyCount": 0
+      },
+      {
+        "goal": 8,
+        "timeLimit": 30,
+        "missesAllowed": 3,
+        "targetSize": 68,
+        "targetLifetimeSeconds": 0,
+        "decoyCount": 0
+      },
+      {
+        "goal": 10,
+        "timeLimit": 30,
+        "missesAllowed": 3,
+        "targetSize": 54,
+        "targetLifetimeSeconds": 0,
+        "decoyCount": 5
+      }
+    ],
+    "monsterLunchLevels": [
+      {
+        "goal": 1,
+        "missesAllowed": 3,
+        "choiceCount": 8,
+        "foodSize": 118,
+        "timeLimitEnabled": true,
+        "timeLimit": 20,
+        "moveSpeed": 0,
+        "snatcherDelaySeconds": 0
+      },
+      {
+        "goal": 2,
+        "missesAllowed": 3,
+        "choiceCount": 5,
+        "foodSize": 88,
+        "timeLimitEnabled": false,
+        "timeLimit": 35,
+        "moveSpeed": 0,
+        "snatcherDelaySeconds": 0
+      },
+      {
+        "goal": 8,
+        "missesAllowed": 3,
+        "choiceCount": 5,
+        "foodSize": 88,
+        "timeLimitEnabled": false,
+        "timeLimit": 35,
+        "moveSpeed": 5,
+        "snatcherDelaySeconds": 5
+      },
+      {
+        "goal": 10,
+        "missesAllowed": 3,
+        "choiceCount": 9,
+        "foodSize": 82,
+        "timeLimitEnabled": false,
+        "timeLimit": 30,
+        "moveSpeed": 6,
+        "snatcherDelaySeconds": 3.5
+      }
+    ]
+  }
 }

@@ -501,6 +501,28 @@ function setSoundEnabled(enabled) {
 }
 
 function getActiveTaskNumber() {
+  /*
+   * Recheck the saved values whenever the next
+   * task is selected. This prevents an older
+   * in-memory value from reopening a disabled task.
+   */
+  task1Enabled = parseTaskEnabled(
+    localStorage.getItem(TASK1_ENABLED_KEY),
+    task1Enabled
+  );
+  task2Enabled = parseTaskEnabled(
+    localStorage.getItem(TASK2_ENABLED_KEY),
+    task2Enabled
+  );
+  task3Enabled = parseTaskEnabled(
+    localStorage.getItem(TASK3_ENABLED_KEY),
+    task3Enabled
+  );
+  task4Enabled = parseTaskEnabled(
+    localStorage.getItem(TASK4_ENABLED_KEY),
+    task4Enabled
+  );
+
   if (task1Enabled && !task1SuccessShown) {
     return 1;
   }
@@ -562,19 +584,34 @@ function applyTaskFlowState() {
 
   if (activeTask !== 1) {
     stopTask1Tracking(true);
+    hideTask1Timer();
   }
 
-  if (activeTask !== 2 && !task2SuccessShown) {
-    resetTask2Attempt();
+  if (activeTask !== 2) {
+    if (!task2SuccessShown) {
+      resetTask2Attempt();
+    }
+    hideTask2Counter();
   }
 
-  if (activeTask !== 3 && !task3SuccessShown) {
-    finishTask3Drag(false);
-    resetTask3Attempt(true);
+  if (activeTask !== 3) {
+    if (!task3SuccessShown) {
+      finishTask3Drag(false);
+      resetTask3Attempt(true);
+    }
+    hideTask3Timer();
+  }
+
+  if (activeTask !== 4) {
+    stopTask4Tracking(true);
+    hideTask4Timer();
   }
 
   if (task3Present) {
-    task3Present.hidden = activeTask !== 3 || trainingPaused;
+    task3Present.hidden =
+      activeTask !== 3 ||
+      trainingPaused ||
+      !task3Enabled;
   }
 
   updateActiveTaskPrompt();
@@ -597,13 +634,13 @@ async function loadTaskRequirements() {
     if (response.ok) {
       const data = await response.json();
       seconds = parseTask1Seconds(data.task1RequiredSeconds);
-      task1IsEnabled = parseTaskEnabled(data.task1Enabled, true);
+      task1IsEnabled = parseTaskEnabled(data.task1Enabled, task1IsEnabled);
       clicks = parseTask2Clicks(data.task2RequiredClicks);
-      task2IsEnabled = parseTaskEnabled(data.task2Enabled, true);
+      task2IsEnabled = parseTaskEnabled(data.task2Enabled, task2IsEnabled);
       dragSeconds = parseTask3Seconds(data.task3RequiredDragSeconds);
-      task3IsEnabled = parseTaskEnabled(data.task3Enabled, true);
+      task3IsEnabled = parseTaskEnabled(data.task3Enabled, task3IsEnabled);
       scrollSeconds = parseTask3Seconds(data.task4RequiredScrollSeconds);
-      task4IsEnabled = parseTaskEnabled(data.task4Enabled, true);
+      task4IsEnabled = parseTaskEnabled(data.task4Enabled, task4IsEnabled);
       const requireClickAndDrag = parseTaskEnabled(
         data.fullscreenRequireClickAndDrag,
         movementGate.isRequireClickAndDragEnabled(FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY)
@@ -677,13 +714,13 @@ async function refreshSharedSettingsLive() {
     if (response.ok) {
       const data = await response.json();
       seconds = parseTask1Seconds(data.task1RequiredSeconds);
-      task1IsEnabled = parseTaskEnabled(data.task1Enabled, true);
+      task1IsEnabled = parseTaskEnabled(data.task1Enabled, task1IsEnabled);
       clicks = parseTask2Clicks(data.task2RequiredClicks);
-      task2IsEnabled = parseTaskEnabled(data.task2Enabled, true);
+      task2IsEnabled = parseTaskEnabled(data.task2Enabled, task2IsEnabled);
       dragSeconds = parseTask3Seconds(data.task3RequiredDragSeconds);
-      task3IsEnabled = parseTaskEnabled(data.task3Enabled, true);
+      task3IsEnabled = parseTaskEnabled(data.task3Enabled, task3IsEnabled);
       scrollSeconds = parseTask3Seconds(data.task4RequiredScrollSeconds);
-      task4IsEnabled = parseTaskEnabled(data.task4Enabled, true);
+      task4IsEnabled = parseTaskEnabled(data.task4Enabled, task4IsEnabled);
       const requireClickAndDrag = parseTaskEnabled(
         data.fullscreenRequireClickAndDrag,
         movementGate.isRequireClickAndDragEnabled(FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY)

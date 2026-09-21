@@ -93,6 +93,7 @@
     }
 
     function getScaledRightHandRange() {
+      const area = getTrackpadArea();
       const range = getRightHandRange();
       const centerX = (range.minX + range.maxX) / 2;
       const centerY = (range.minY + range.maxY) / 2;
@@ -102,7 +103,15 @@
       return {
         minX: clamp(centerX - halfRangeX, 0, sceneWidth),
         maxX: clamp(centerX + halfRangeX, 0, sceneWidth),
-        minY: clamp(centerY - halfRangeY, 0, sceneHeight),
+        /*
+         * Keep the fingertip inside the top edge
+         * of the visible trackpad.
+         */
+        minY: clamp(
+          centerY - halfRangeY,
+          area.y + 12,
+          sceneHeight
+        ),
         maxY: clamp(centerY + halfRangeY, 0, sceneHeight),
       };
     }

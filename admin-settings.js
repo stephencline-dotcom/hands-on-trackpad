@@ -33,7 +33,9 @@ const fireRequireClickToggle = document.getElementById("fireRequireClickToggle")
 const martianRequireClickToggle = document.getElementById("martianRequireClickToggle");
 const bugMeadowRequireClickAndDragToggle = document.getElementById("bugMeadowRequireClickAndDragToggle");
 const deerRunRequireClickAndDragToggle = document.getElementById("deerRunRequireClickAndDragToggle");
-const jackFlameRainInputs = [4, 5, 6].map((level) => ({
+const jackBonusSurvivalInput =
+  document.getElementById("jackBonusSurvivalSeconds");
+const jackFlameRainInputs = [4, 5, 6, 7].map((level) => ({
   enabled: document.getElementById(`jackFlameRain${level}EnabledToggle`),
   size: document.getElementById(`jackFlameRain${level}Size`),
   hitRadius: document.getElementById(`jackFlameRain${level}HitRadius`),
@@ -225,7 +227,7 @@ const FIRE_REQUIRE_CLICK_KEY = "fireRequireClick";
 const MARTIAN_REQUIRE_CLICK_KEY = "martianRequireClick";
 const BUG_MEADOW_REQUIRE_CLICK_AND_DRAG_KEY = "bugMeadowRequireClickAndDrag";
 const DEER_RUN_REQUIRE_CLICK_AND_DRAG_KEY = "deerRunRequireClickAndDrag";
-const JACK_FLAME_RAIN_KEYS = [4, 5, 6].map((level) => ({
+const JACK_FLAME_RAIN_KEYS = [4, 5, 6, 7].map((level) => ({
   enabled: `jackFlameRain${level}Enabled`,
   size: `jackFlameRain${level}SizePx`,
   hitRadius: `jackFlameRain${level}HitRadiusPx`,
@@ -518,6 +520,17 @@ const DEFAULT_JACK_FLAME_RAIN_BY_LEVEL = [
     intervalMax: 700,
     speedMin: 340,
     speedMax: 520,
+  },
+  {
+    enabled: true,
+    size: 24,
+    hitRadius: 12,
+    burstMin: 2,
+    burstMax: 3,
+    intervalMin: 800,
+    intervalMax: 1500,
+    speedMin: 130,
+    speedMax: 210,
   },
 ];
 const SETTINGS_API_PATH = "/api/settings";
@@ -2080,7 +2093,7 @@ async function resetJackToDefaults() {
   });
 
   localStorage.setItem(JACK_REQUIRE_CLICK_AND_DRAG_KEY, String(jackRequireClickAndDrag));
-  [4, 5, 6].forEach((level, idx) => {
+  [4, 5, 6, 7].forEach((level, idx) => {
     const keys = JACK_FLAME_RAIN_KEYS[idx];
     const defaults = jackFlameRainDefaults[idx];
     localStorage.setItem(keys.enabled, String(defaults.enabled));
@@ -2105,6 +2118,8 @@ async function resetJackToDefaults() {
         jackFlameRain4: jackFlameRainDefaults[0],
         jackFlameRain5: jackFlameRainDefaults[1],
         jackFlameRain6: jackFlameRainDefaults[2],
+        jackFlameRain7: jackFlameRainDefaults[3],
+        jackBonusSurvivalSeconds: 20,
       }),
     });
 
@@ -2554,7 +2569,7 @@ async function loadTask1Settings() {
         data.martianRequireClick,
         martianRequireClick
       );
-      [4, 5, 6].forEach((level, idx) => {
+      [4, 5, 6, 7].forEach((level, idx) => {
         const defaults = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[idx];
         const d = data[`jackFlameRain${level}`] || {};
         const burstMin = parseJackFlameRainBurstMin(d.burstMin, defaults.burstMin);
@@ -2645,7 +2660,7 @@ async function loadTask1Settings() {
   localStorage.setItem(DRAGON_REQUIRE_CLICK_KEY, String(dragonRequireClick));
   localStorage.setItem(FIRE_REQUIRE_CLICK_KEY, String(fireRequireClick));
   localStorage.setItem(MARTIAN_REQUIRE_CLICK_KEY, String(martianRequireClick));
-      [4, 5, 6].forEach((level, idx) => {
+      [4, 5, 6, 7].forEach((level, idx) => {
         const keys = JACK_FLAME_RAIN_KEYS[idx];
         const s = jackFlameRainSettings[idx];
         localStorage.setItem(keys.enabled, String(s.enabled));
@@ -2810,7 +2825,7 @@ async function loadTask1Settings() {
   });
   soundEnabledToggle.checked = soundEnabled;
   trainingPausedToggle.checked = trainingPaused;
-  [4, 5, 6].forEach((level, idx) => {
+  [4, 5, 6, 7].forEach((level, idx) => {
     const s = jackFlameRainSettings[idx];
     const inputs = jackFlameRainInputs[idx];
     if (inputs.enabled) inputs.enabled.checked = s.enabled;
@@ -3056,7 +3071,7 @@ async function saveTask1Settings() {
     deerRunRequireClickAndDragToggle &&
     deerRunRequireClickAndDragToggle.checked
   );
-  const jackFlameRainSettingsToSave = [4, 5, 6].map((level, idx) => {
+  const jackFlameRainSettingsToSave = [4, 5, 6, 7].map((level, idx) => {
     const inputs = jackFlameRainInputs[idx];
     const defaults = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[idx];
     const burstMin = parseJackFlameRainBurstMin(
@@ -3237,7 +3252,7 @@ async function saveTask1Settings() {
   }
   localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
   localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
-  [4, 5, 6].forEach((level, idx) => {
+  [4, 5, 6, 7].forEach((level, idx) => {
     const keys = JACK_FLAME_RAIN_KEYS[idx];
     const s = jackFlameRainSettingsToSave[idx];
     localStorage.setItem(keys.enabled, String(s.enabled));
@@ -3343,6 +3358,20 @@ async function saveTask1Settings() {
         jackFlameRain4: jackFlameRainSettingsToSave[0],
         jackFlameRain5: jackFlameRainSettingsToSave[1],
         jackFlameRain6: jackFlameRainSettingsToSave[2],
+        jackFlameRain7: jackFlameRainSettingsToSave[3],
+        jackBonusSurvivalSeconds:
+          Math.min(
+            120,
+            Math.max(
+              5,
+              Number.parseInt(
+                jackBonusSurvivalInput
+                  ? jackBonusSurvivalInput.value
+                  : "20",
+                10
+              ) || 20
+            )
+          ),
         mazeGhostLevelsEnabled,
         mazeGhostLevelsPerLevelCounts,
         carGameLevelsEnabled,
@@ -3366,6 +3395,105 @@ async function saveTask1Settings() {
   setDirtyState(false);
   updateQuickSummary();
 }
+
+
+async function loadJackBonusAdminSettings() {
+  const defaults =
+    DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[3];
+
+  let raw = defaults;
+  let survivalSeconds = Number.parseInt(
+    localStorage.getItem(
+      "jackBonusSurvivalSeconds"
+    ) || "20",
+    10
+  );
+
+  try {
+    const response = await fetch(
+      SETTINGS_API_PATH,
+      { cache: "no-store" }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+
+      raw = {
+        ...defaults,
+        ...(data.jackFlameRain7 || {}),
+      };
+
+      survivalSeconds =
+        Number.parseInt(
+          data.jackBonusSurvivalSeconds,
+          10
+        ) || survivalSeconds;
+    }
+  } catch {
+    /* Local values remain available offline. */
+  }
+
+  const inputs = jackFlameRainInputs[3];
+
+  if (inputs) {
+    if (inputs.enabled) {
+      inputs.enabled.checked =
+        raw.enabled !== false;
+    }
+
+    if (inputs.size) {
+      inputs.size.value =
+        String(raw.size);
+    }
+
+    if (inputs.hitRadius) {
+      inputs.hitRadius.value =
+        String(raw.hitRadius);
+    }
+
+    if (inputs.burstMin) {
+      inputs.burstMin.value =
+        String(raw.burstMin);
+    }
+
+    if (inputs.burstMax) {
+      inputs.burstMax.value =
+        String(raw.burstMax);
+    }
+
+    if (inputs.intervalMin) {
+      inputs.intervalMin.value =
+        String(raw.intervalMin);
+    }
+
+    if (inputs.intervalMax) {
+      inputs.intervalMax.value =
+        String(raw.intervalMax);
+    }
+
+    if (inputs.speedMin) {
+      inputs.speedMin.value =
+        String(raw.speedMin);
+    }
+
+    if (inputs.speedMax) {
+      inputs.speedMax.value =
+        String(raw.speedMax);
+    }
+  }
+
+  survivalSeconds = Math.min(
+    120,
+    Math.max(5, survivalSeconds || 20)
+  );
+
+  if (jackBonusSurvivalInput) {
+    jackBonusSurvivalInput.value =
+      String(survivalSeconds);
+  }
+}
+
+loadJackBonusAdminSettings();
 
 initTabs();
 if (applyPresetsBtn) {
@@ -3419,6 +3547,31 @@ if (resetFullscreenDefaultsBtn) {
 }
 saveTask1Btn.addEventListener("click", saveTask1Settings);
 
+saveTask1Btn.addEventListener("click", () => {
+  if (!jackBonusSurvivalInput) {
+    return;
+  }
+
+  const seconds = Math.min(
+    120,
+    Math.max(
+      5,
+      Number.parseInt(
+        jackBonusSurvivalInput.value,
+        10
+      ) || 20
+    )
+  );
+
+  jackBonusSurvivalInput.value =
+    String(seconds);
+
+  localStorage.setItem(
+    "jackBonusSurvivalSeconds",
+    String(seconds)
+  );
+});
+
 const allInputs = [
   task1DurationInput,
   task2ClicksInput,
@@ -3471,6 +3624,7 @@ const allInputs = [
   ...carGameLevelGasPumpSpawnInputs,
   ...carGameLevelFuelDrainInputs,
   ...jackFlameRainInputs.flatMap((obj) => Object.values(obj)),
+  jackBonusSurvivalInput,
 ];
 
 const allToggles = [
