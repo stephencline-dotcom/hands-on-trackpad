@@ -2714,6 +2714,9 @@ async function loadTask1Settings() {
   if (mazeRequireClickAndDragToggle) mazeRequireClickAndDragToggle.checked = mazeRequireClickAndDrag;
   if (carRequireClickAndDragToggle) carRequireClickAndDragToggle.checked = carRequireClickAndDrag;
   if (jackRequireClickAndDragToggle) jackRequireClickAndDragToggle.checked = jackRequireClickAndDrag;
+  if (freezeScreenFeatureToggle) {
+    freezeScreenFeatureToggle.checked = freezeScreenFeatureEnabled;
+  }
   if (fullscreenGameActiveToggle) fullscreenGameActiveToggle.checked = fullscreenGameActive;
   if (mazeGameActiveToggle) mazeGameActiveToggle.checked = mazeGameActive;
   if (carGameActiveToggle) carGameActiveToggle.checked = carGameActive;
@@ -3161,6 +3164,10 @@ async function saveTask1Settings() {
   localStorage.setItem(MAZE_REQUIRE_CLICK_AND_DRAG_KEY, String(mazeRequireClickAndDrag));
   localStorage.setItem(CAR_REQUIRE_CLICK_AND_DRAG_KEY, String(carRequireClickAndDrag));
   localStorage.setItem(JACK_REQUIRE_CLICK_AND_DRAG_KEY, String(jackRequireClickAndDrag));
+  localStorage.setItem(
+    FREEZE_SCREEN_FEATURE_KEY,
+    String(freezeScreenFeatureEnabled)
+  );
   localStorage.setItem(FULLSCREEN_GAME_ACTIVE_KEY, String(fullscreenGameActive));
   localStorage.setItem(MAZE_GAME_ACTIVE_KEY, String(mazeGameActive));
   localStorage.setItem(CAR_GAME_ACTIVE_KEY, String(carGameActive));
