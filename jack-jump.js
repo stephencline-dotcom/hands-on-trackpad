@@ -2001,6 +2001,23 @@ function initialize() {
         window.location.href = "index.html";
       },
     });
+
+    jackLevelResult.primaryButton.addEventListener(
+      "pointerenter",
+      () => {
+        const buttonLabel =
+          jackLevelResult.primaryButton.textContent.trim();
+
+        if (
+          buttonLabel !== "Level Up" &&
+          buttonLabel !== "Try Again"
+        ) {
+          return;
+        }
+
+        jackLevelResult.primaryButton.click();
+      }
+    );
   }
 
   jackScene.addEventListener("pointermove", onScenePointerMove);
