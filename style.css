@@ -5758,3 +5758,64 @@ body.car-page .car-traffic {
 
 
 
+
+
+/* Haunted Street homepage thumbnail */
+.game-thumb-haunted-street {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(
+      180deg,
+      #12072b 0%,
+      #33105a 58%,
+      #312f3b 59%,
+      #191923 100%
+    );
+}
+
+.haunted-thumb-moon {
+  position: absolute;
+  top: 7%;
+  right: 12%;
+  color: #fff2ad;
+  font-size: 3rem;
+  line-height: 1;
+  text-shadow: 0 0 14px rgba(255, 242, 173, 0.85);
+}
+
+.haunted-thumb-house {
+  position: absolute;
+  left: 50%;
+  bottom: 12%;
+  transform: translateX(-50%);
+  font-size: 4.2rem;
+  line-height: 1;
+  filter: drop-shadow(0 5px 6px rgba(0, 0, 0, 0.55));
+}
+
+.haunted-thumb-bat {
+  position: absolute;
+  font-size: 1.65rem;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
+}
+
+.haunted-thumb-bat-one {
+  top: 14%;
+  left: 14%;
+  transform: rotate(-12deg);
+}
+
+.haunted-thumb-bat-two {
+  top: 34%;
+  left: 29%;
+  transform: scale(0.75) rotate(10deg);
+}
+
+.haunted-thumb-pumpkin {
+  position: absolute;
+  right: 12%;
+  bottom: 8%;
+  font-size: 2.1rem;
+  filter: drop-shadow(0 0 7px rgba(251, 146, 60, 0.75));
+}

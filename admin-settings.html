@@ -82,6 +82,10 @@
                   <input id="deerRunGameActive" type="checkbox" checked />
                   <span>Deer Run is active</span>
                 </label>
+                <label class="admin-toggle-row" for="hauntedStreetGameActive">
+                  <input id="hauntedStreetGameActive" type="checkbox" checked />
+                  <span>Haunted Street is active</span>
+                </label>
               </div>
             </article>
           </section>
@@ -127,6 +131,9 @@
               </button>
               <button class="admin-tab-button" type="button" role="tab" id="tabDeerRun" aria-controls="panelDeerRun" aria-selected="false" data-tab="deerrun">
                 Deer Run
+              </button>
+              <button class="admin-tab-button" type="button" role="tab" id="tabHauntedStreet" aria-controls="panelHauntedStreet" aria-selected="false" data-tab="hauntedstreet">
+                Haunted Street
               </button>
             </div>
           </nav>
@@ -1888,7 +1895,70 @@
             </button>
           </section>
 
-<section class="admin-tab-content" id="panelAdvanced" role="tabpanel" aria-labelledby="tabAdvanced" aria-hidden="true">
+          <section class="admin-tab-content" id="panelHauntedStreet" role="tabpanel" aria-labelledby="tabHauntedStreet" aria-hidden="true">
+            <p class="admin-panel-note">
+              Configure how students control Haunted Street.
+            </p>
+
+            <article class="admin-mini-card admin-mini-card--wide">
+              <h3>Haunted Street Input</h3>
+              <div class="admin-inline-toggles">
+                <label class="admin-toggle-row" for="hauntedStreetRequireClickAndDrag">
+                  <input id="hauntedStreetRequireClickAndDrag" type="checkbox" />
+                  <span>Require click and drag to move</span>
+                </label>
+                <label class="admin-toggle-row" for="hauntedStreetClickToThrow">
+                  <input id="hauntedStreetClickToThrow" type="checkbox" />
+                  <span>Require clicking to throw pumpkins</span>
+                </label>
+                <label class="admin-toggle-row" for="hauntedStreetSoundEnabled">
+                  <input id="hauntedStreetSoundEnabled" type="checkbox" checked />
+                  <span>Enable Haunted Street sound</span>
+                </label>
+              </div>
+              <p class="admin-panel-note">
+                When clicking to throw is off, pumpkins throw automatically.
+              </p>
+            </article>
+            <div class="admin-level-grid">
+              <article class="admin-level-card">
+                <h3>Level 1 — Bat Night</h3>
+                <label class="admin-task-label" for="hauntedStreetSpeed1">Creature speed</label>
+                <input id="hauntedStreetSpeed1" class="admin-task-input" type="number" min="20" max="300" step="1" value="55" />
+                <label class="admin-task-label" for="hauntedStreetMaximum1">Maximum creatures on screen</label>
+                <input id="hauntedStreetMaximum1" class="admin-task-input" type="number" min="1" max="15" step="1" value="3" />
+              </article>
+              <article class="admin-level-card">
+                <h3>Level 2 — Ghostly Streets</h3>
+                <label class="admin-task-label" for="hauntedStreetSpeed2">Creature speed</label>
+                <input id="hauntedStreetSpeed2" class="admin-task-input" type="number" min="20" max="300" step="1" value="66" />
+                <label class="admin-task-label" for="hauntedStreetMaximum2">Maximum creatures on screen</label>
+                <input id="hauntedStreetMaximum2" class="admin-task-input" type="number" min="1" max="15" step="1" value="4" />
+              </article>
+              <article class="admin-level-card">
+                <h3>Level 3 — Witching Hour</h3>
+                <label class="admin-task-label" for="hauntedStreetSpeed3">Creature speed</label>
+                <input id="hauntedStreetSpeed3" class="admin-task-input" type="number" min="20" max="300" step="1" value="79" />
+                <label class="admin-task-label" for="hauntedStreetMaximum3">Maximum creatures on screen</label>
+                <input id="hauntedStreetMaximum3" class="admin-task-input" type="number" min="1" max="15" step="1" value="4" />
+              </article>
+              <article class="admin-level-card">
+                <h3>Level 4 — Midnight Mayhem</h3>
+                <label class="admin-task-label" for="hauntedStreetSpeed4">Creature speed</label>
+                <input id="hauntedStreetSpeed4" class="admin-task-input" type="number" min="20" max="300" step="1" value="94" />
+                <label class="admin-task-label" for="hauntedStreetMaximum4">Maximum creatures on screen</label>
+                <input id="hauntedStreetMaximum4" class="admin-task-input" type="number" min="1" max="15" step="1" value="5" />
+              </article>
+              <article class="admin-level-card">
+                <h3>Level 5 — Haunted Rush</h3>
+                <label class="admin-task-label" for="hauntedStreetSpeed5">Creature speed</label>
+                <input id="hauntedStreetSpeed5" class="admin-task-input" type="number" min="20" max="300" step="1" value="112" />
+                <label class="admin-task-label" for="hauntedStreetMaximum5">Maximum creatures on screen</label>
+                <input id="hauntedStreetMaximum5" class="admin-task-input" type="number" min="1" max="15" step="1" value="6" />
+              </article>
+            </div>
+          </section>
+          <section class="admin-tab-content" id="panelAdvanced" role="tabpanel" aria-labelledby="tabAdvanced" aria-hidden="true">
             <article class="admin-mini-card admin-mini-card--wide">
               <h3>Jack Jump</h3>
               <div class="admin-inline-toggles">

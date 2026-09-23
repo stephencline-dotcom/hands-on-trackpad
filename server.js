@@ -62,6 +62,12 @@ const DEFAULT_SETTINGS = {
   dragonDodgeGameActive: true,
   firefighterRescueGameActive: true,
   martianMadnessGameActive: true,
+  hauntedStreetGameActive: true,
+  hauntedStreetRequireClickAndDrag: false,
+  hauntedStreetClickToThrow: false,
+  hauntedStreetSoundEnabled: true,
+  hauntedStreetLevelSpeeds: [55, 66, 79, 94, 112],
+  hauntedStreetLevelMaximums: [3, 4, 4, 5, 6],
   soundEnabled: true,
   trainingPaused: false,
   jackFlameRainEnabled: true,
@@ -409,6 +415,33 @@ function parseCarLevelNumberArray(value, parser, fallbackArray) {
   return [...fallbackArray];
 }
 
+function parseHauntedStreetLevelNumbers(
+  value,
+  defaults,
+  minimum,
+  maximum
+) {
+  const source = Array.isArray(value)
+    ? value
+    : defaults;
+
+  return defaults.map((fallback, index) => {
+    const parsed = Number.parseInt(
+      source[index],
+      10
+    );
+
+    if (!Number.isFinite(parsed)) {
+      return fallback;
+    }
+
+    return Math.min(
+      maximum,
+      Math.max(minimum, parsed)
+    );
+  });
+}
+
 function loadSettings() {
   ensureSettingsFile();
 
@@ -495,6 +528,36 @@ function loadSettings() {
         data.martianMadnessGameActive,
         DEFAULT_SETTINGS.martianMadnessGameActive
       ),
+      hauntedStreetGameActive: parseTaskEnabled(
+        data.hauntedStreetGameActive,
+        DEFAULT_SETTINGS.hauntedStreetGameActive
+      ),
+      hauntedStreetRequireClickAndDrag: parseTaskEnabled(
+        data.hauntedStreetRequireClickAndDrag,
+        DEFAULT_SETTINGS.hauntedStreetRequireClickAndDrag
+      ),
+      hauntedStreetClickToThrow: parseTaskEnabled(
+        data.hauntedStreetClickToThrow,
+        DEFAULT_SETTINGS.hauntedStreetClickToThrow
+      ),
+      hauntedStreetSoundEnabled: parseTaskEnabled(
+        data.hauntedStreetSoundEnabled,
+        DEFAULT_SETTINGS.hauntedStreetSoundEnabled
+      ),
+      hauntedStreetLevelSpeeds:
+        parseHauntedStreetLevelNumbers(
+          data.hauntedStreetLevelSpeeds,
+          DEFAULT_SETTINGS.hauntedStreetLevelSpeeds,
+          20,
+          300
+        ),
+      hauntedStreetLevelMaximums:
+        parseHauntedStreetLevelNumbers(
+          data.hauntedStreetLevelMaximums,
+          DEFAULT_SETTINGS.hauntedStreetLevelMaximums,
+          1,
+          15
+        ),
       soundEnabled: parseTaskEnabled(data.soundEnabled, true),
       trainingPaused: parseTrainingPaused(data.trainingPaused),
       jackFlameRainEnabled: parseTaskEnabled(data.jackFlameRainEnabled, DEFAULT_SETTINGS.jackFlameRainEnabled),
@@ -650,6 +713,42 @@ function saveSettings(settings) {
       settings.martianMadnessGameActive ?? existing.martianMadnessGameActive,
       DEFAULT_SETTINGS.martianMadnessGameActive
     ),
+    hauntedStreetGameActive: parseTaskEnabled(
+      settings.hauntedStreetGameActive ??
+        existing.hauntedStreetGameActive,
+      DEFAULT_SETTINGS.hauntedStreetGameActive
+    ),
+    hauntedStreetRequireClickAndDrag: parseTaskEnabled(
+      settings.hauntedStreetRequireClickAndDrag ??
+        existing.hauntedStreetRequireClickAndDrag,
+      DEFAULT_SETTINGS.hauntedStreetRequireClickAndDrag
+    ),
+    hauntedStreetClickToThrow: parseTaskEnabled(
+      settings.hauntedStreetClickToThrow ??
+        existing.hauntedStreetClickToThrow,
+      DEFAULT_SETTINGS.hauntedStreetClickToThrow
+    ),
+    hauntedStreetSoundEnabled: parseTaskEnabled(
+      settings.hauntedStreetSoundEnabled ??
+        existing.hauntedStreetSoundEnabled,
+      DEFAULT_SETTINGS.hauntedStreetSoundEnabled
+    ),
+    hauntedStreetLevelSpeeds:
+      parseHauntedStreetLevelNumbers(
+        settings.hauntedStreetLevelSpeeds ??
+          existing.hauntedStreetLevelSpeeds,
+        DEFAULT_SETTINGS.hauntedStreetLevelSpeeds,
+        20,
+        300
+      ),
+    hauntedStreetLevelMaximums:
+      parseHauntedStreetLevelNumbers(
+        settings.hauntedStreetLevelMaximums ??
+          existing.hauntedStreetLevelMaximums,
+        DEFAULT_SETTINGS.hauntedStreetLevelMaximums,
+        1,
+        15
+      ),
 
     monsterLunchGameActive: parseTaskEnabled(
       settings.monsterLunchGameActive ??

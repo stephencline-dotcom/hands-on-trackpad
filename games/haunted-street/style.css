@@ -1,0 +1,323 @@
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body.haunted-street-page {
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  color: #f8fafc;
+  background:
+    radial-gradient(
+      circle at 50% -15%,
+      rgba(126, 34, 206, 0.42),
+      transparent 48%
+    ),
+    linear-gradient(180deg, #08051b, #17072d 58%, #070711);
+}
+
+.haunted-street-shell {
+  width: min(1480px, 100%);
+  margin: 0 auto;
+}
+
+.haunted-street-page .game-header,
+.haunted-street-page .game-stats,
+.haunted-street-page .game-guide {
+  border-color: rgba(249, 115, 22, 0.42);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(26, 13, 48, 0.96),
+      rgba(10, 8, 28, 0.96)
+    );
+}
+
+.haunted-street-page .game-category,
+.haunted-street-page .label {
+  color: #fdba74;
+}
+
+.haunted-street-page .game-title {
+  color: #fff7ed;
+  text-shadow:
+    0 2px 0 #7c2d12,
+    0 0 18px rgba(249, 115, 22, 0.48);
+}
+
+.haunted-street-page .game-instructions {
+  color: #fef3c7;
+}
+
+.haunted-arena {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 20 / 11;
+  min-height: 360px;
+  overflow: hidden;
+  border: 4px solid #fb923c;
+  border-radius: 24px;
+  background: #09051d;
+  box-shadow:
+    inset 0 0 0 2px rgba(254, 215, 170, 0.35),
+    inset 0 -22px 38px rgba(0, 0, 0, 0.5),
+    0 18px 36px rgba(0, 0, 0, 0.35);
+  touch-action: none;
+  user-select: none;
+}
+
+#hauntedCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+
+.haunted-start-panel {
+  position: absolute;
+  z-index: 5;
+  inset: auto 50% 24px auto;
+  display: grid;
+  min-width: min(90%, 390px);
+  gap: 12px;
+  padding: 15px 18px;
+  transform: translateX(50%);
+  border: 2px solid rgba(251, 146, 60, 0.76);
+  border-radius: 18px;
+  background: rgba(10, 8, 28, 0.9);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.38);
+  text-align: center;
+  backdrop-filter: blur(8px);
+}
+
+.haunted-start-panel[hidden] {
+  display: none;
+}
+
+.haunted-status {
+  margin: 0;
+  color: #fef3c7;
+  font-size: clamp(0.92rem, 1.5vw, 1.12rem);
+  font-weight: 800;
+}
+
+.haunted-start-button {
+  min-height: 52px;
+  padding: 10px 24px;
+  border: 3px solid #fed7aa;
+  border-radius: 999px;
+  color: #431407;
+  background:
+    linear-gradient(180deg, #fdba74, #f97316);
+  box-shadow:
+    0 5px 0 #9a3412,
+    0 9px 20px rgba(249, 115, 22, 0.35);
+  font: inherit;
+  font-size: 1.08rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.haunted-start-button:hover,
+.haunted-start-button:focus-visible {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.haunted-start-button:active {
+  transform: translateY(3px);
+  box-shadow:
+    0 2px 0 #9a3412,
+    0 5px 12px rgba(249, 115, 22, 0.28);
+}
+
+.haunted-guide-instruction {
+  position: relative;
+  z-index: 2;
+  margin: -3px 0 5px;
+  color: #fed7aa;
+  font-size: 0.92rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.haunted-street-page
+.imported-trackpad-scene {
+  border-color: rgba(251, 146, 60, 0.6);
+  box-shadow:
+    inset 0 0 20px rgba(124, 45, 18, 0.28),
+    0 0 22px rgba(249, 115, 22, 0.18);
+}
+
+.haunted-street-page
+.level-result-panel {
+  border-color: #fb923c;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(40, 16, 65, 0.98),
+      rgba(10, 8, 28, 0.98)
+    );
+}
+
+.haunted-street-page
+.level-result-button {
+  background:
+    linear-gradient(180deg, #fdba74, #f97316);
+  color: #431407;
+}
+
+@media (max-width: 760px) {
+  .haunted-arena {
+    min-height: 300px;
+    border-radius: 17px;
+  }
+
+  .haunted-start-panel {
+    bottom: 14px;
+    padding: 12px 14px;
+  }
+
+  .haunted-street-page .game-stat {
+    min-width: 76px;
+  }
+}
+
+@media (max-height: 820px) {
+  .haunted-street-shell {
+    gap: 0.32rem;
+  }
+
+  .haunted-arena {
+    min-height: 280px;
+  }
+
+  .haunted-street-page .game-guide {
+    padding-block: 0.28rem;
+  }
+}
+
+
+
+/* Center Haunted Street guide without changing shared layout */
+.haunted-street-page
+.imported-trackpad-guide.game-guide {
+  justify-self: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+/* Haunted Street compact header and guide */
+
+/* Put directions and statistics on one compact row. */
+.haunted-street-page .game-instructions {
+  grid-row: 2;
+  grid-column: 1;
+  justify-self: start;
+  align-self: center;
+  margin: 0;
+  min-width: 0;
+  max-width: 38%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.haunted-street-page .game-stats {
+  grid-row: 2;
+  grid-column: 1;
+  justify-self: end;
+  align-self: center;
+  min-height: 0;
+  margin: 0;
+}
+
+.haunted-street-page .game-stats-row {
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+}
+
+/* Match the compact Home button used by other games. */
+.haunted-street-page
+.game-header
+.back-button {
+  width: 42px;
+  height: 36px;
+  min-width: 42px;
+  min-height: 36px;
+  padding: 0;
+  border-radius: 10px;
+  display: inline-grid;
+  place-items: center;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Keep the house completely inside its button. */
+.haunted-street-page
+.game-header
+.back-button
+.home-btn-icon,
+.haunted-street-page
+.game-header
+.back-button img,
+.haunted-street-page
+.game-header
+.back-button svg {
+  width: 20px;
+  height: 20px;
+  max-width: 20px;
+  max-height: 20px;
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* Hide any text label inside the icon-only Home button. */
+.haunted-street-page
+.game-header
+.back-button
+.home-btn-label {
+  display: none;
+}
+
+/* Remove guide wording while retaining the visual guide. */
+.haunted-street-page
+.game-guide
+.imported-trackpad-guide-label,
+.haunted-street-page
+.game-guide
+.haunted-guide-instruction {
+  display: none;
+}
+
+/* Pull the centered guide closer to the game. */
+.haunted-street-page
+.imported-trackpad-guide.game-guide {
+  margin-top: 8px;
+  gap: 0;
+  padding-top: 0.18rem;
+}
+
+@media (max-width: 1050px) {
+  .haunted-street-page .game-instructions {
+    max-width: 32%;
+    font-size: 0.7rem;
+  }
+
+  .haunted-street-page .game-stat {
+    padding-inline: 0.3rem;
+  }
+}
+
+
+/* Hide Haunted Street score for younger students */
+.haunted-street-page
+.game-stat:has(#hauntedScore) {
+  display: none;
+}

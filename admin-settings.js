@@ -24,6 +24,16 @@ const bugMeadowGameActiveToggle = document.getElementById("bugMeadowGameActive")
 const fireflyForestGameActiveToggle = document.getElementById("fireflyForestGameActive");
 const monsterLunchGameActiveToggle = document.getElementById("monsterLunchGameActive");
 const deerRunGameActiveToggle = document.getElementById("deerRunGameActive");
+const hauntedStreetGameActiveToggle = document.getElementById("hauntedStreetGameActive");
+const hauntedStreetRequireClickAndDragToggle = document.getElementById("hauntedStreetRequireClickAndDrag");
+const hauntedStreetClickToThrowToggle = document.getElementById("hauntedStreetClickToThrow");
+const hauntedStreetSoundEnabledToggle = document.getElementById("hauntedStreetSoundEnabled");
+const hauntedStreetLevelInputs = [1, 2, 3, 4, 5].map((level) => ({
+  speed: document.getElementById(`hauntedStreetSpeed${level}`),
+  maximum: document.getElementById(`hauntedStreetMaximum${level}`),
+}));
+const DEFAULT_HAUNTED_STREET_SPEEDS = [55, 66, 79, 94, 112];
+const DEFAULT_HAUNTED_STREET_MAXIMUMS = [3, 4, 4, 5, 6];
 const soundEnabledToggle = document.getElementById("soundEnabledToggle");
 const trainingPausedToggle = document.getElementById("trainingPausedToggle");
 const lightTapRequireClickToggle = document.getElementById("lightTapRequireClickToggle");
@@ -227,6 +237,12 @@ const FIRE_REQUIRE_CLICK_KEY = "fireRequireClick";
 const MARTIAN_REQUIRE_CLICK_KEY = "martianRequireClick";
 const BUG_MEADOW_REQUIRE_CLICK_AND_DRAG_KEY = "bugMeadowRequireClickAndDrag";
 const DEER_RUN_REQUIRE_CLICK_AND_DRAG_KEY = "deerRunRequireClickAndDrag";
+const HAUNTED_STREET_GAME_ACTIVE_KEY = "hauntedStreetGameActive";
+const HAUNTED_STREET_REQUIRE_CLICK_AND_DRAG_KEY = "hauntedStreetRequireClickAndDrag";
+const HAUNTED_STREET_CLICK_TO_THROW_KEY = "hauntedStreetClickToThrow";
+const HAUNTED_STREET_SOUND_ENABLED_KEY = "hauntedStreetSoundEnabled";
+const HAUNTED_STREET_SPEEDS_KEY = "hauntedStreetLevelSpeeds";
+const HAUNTED_STREET_MAXIMUMS_KEY = "hauntedStreetLevelMaximums";
 const JACK_FLAME_RAIN_KEYS = [4, 5, 6, 7].map((level) => ({
   enabled: `jackFlameRain${level}Enabled`,
   size: `jackFlameRain${level}SizePx`,
@@ -2015,6 +2031,30 @@ async function resetFullscreenToDefaults() {
     DEER_RUN_REQUIRE_CLICK_AND_DRAG_KEY,
     String(deerRunRequireClickAndDrag)
   );
+  localStorage.setItem(
+    HAUNTED_STREET_GAME_ACTIVE_KEY,
+    String(hauntedStreetGameActive)
+  );
+  localStorage.setItem(
+    HAUNTED_STREET_REQUIRE_CLICK_AND_DRAG_KEY,
+    String(hauntedStreetRequireClickAndDrag)
+  );
+  localStorage.setItem(
+    HAUNTED_STREET_CLICK_TO_THROW_KEY,
+    String(hauntedStreetClickToThrow)
+  );
+  localStorage.setItem(
+    HAUNTED_STREET_SOUND_ENABLED_KEY,
+    String(hauntedStreetSoundEnabled)
+  );
+  localStorage.setItem(
+    HAUNTED_STREET_SPEEDS_KEY,
+    JSON.stringify(hauntedStreetLevelSpeeds)
+  );
+  localStorage.setItem(
+    HAUNTED_STREET_MAXIMUMS_KEY,
+    JSON.stringify(hauntedStreetLevelMaximums)
+  );
 
   localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
   localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
@@ -2364,6 +2404,11 @@ async function loadTask1Settings() {
     true
   );
 
+  let hauntedStreetGameActive = parseTaskEnabled(
+    localStorage.getItem(HAUNTED_STREET_GAME_ACTIVE_KEY),
+    true
+  );
+
   let lightTapLevels = loadStoredLightTapLevels();
   let streetCarLevels = loadStoredStreetCarLevels();
   let dragonLevels = loadStoredDragonLevels();
@@ -2405,6 +2450,55 @@ async function loadTask1Settings() {
   let deerRunRequireClickAndDrag = parseTaskEnabled(
     localStorage.getItem(DEER_RUN_REQUIRE_CLICK_AND_DRAG_KEY),
     false
+  );
+
+  let hauntedStreetRequireClickAndDrag = parseTaskEnabled(
+    localStorage.getItem(HAUNTED_STREET_REQUIRE_CLICK_AND_DRAG_KEY),
+    false
+  );
+
+  let hauntedStreetClickToThrow = parseTaskEnabled(
+    localStorage.getItem(HAUNTED_STREET_CLICK_TO_THROW_KEY),
+    false
+  );
+
+  let hauntedStreetSoundEnabled = parseTaskEnabled(
+    localStorage.getItem(HAUNTED_STREET_SOUND_ENABLED_KEY),
+    true
+  );
+
+  let hauntedStreetLevelSpeeds = DEFAULT_HAUNTED_STREET_SPEEDS.map(
+    (fallback, index) => {
+      try {
+        const stored = JSON.parse(
+          localStorage.getItem(HAUNTED_STREET_SPEEDS_KEY) ||
+            "[]"
+        );
+        const value = Number.parseInt(stored[index], 10);
+        return Number.isFinite(value)
+          ? Math.min(300, Math.max(20, value))
+          : fallback;
+      } catch {
+        return fallback;
+      }
+    }
+  );
+
+  let hauntedStreetLevelMaximums = DEFAULT_HAUNTED_STREET_MAXIMUMS.map(
+    (fallback, index) => {
+      try {
+        const stored = JSON.parse(
+          localStorage.getItem(HAUNTED_STREET_MAXIMUMS_KEY) ||
+            "[]"
+        );
+        const value = Number.parseInt(stored[index], 10);
+        return Number.isFinite(value)
+          ? Math.min(15, Math.max(1, value))
+          : fallback;
+      } catch {
+        return fallback;
+      }
+    }
   );
   const jackFlameRainSettings = [4, 5, 6].map((level, idx) => {
     const keys = JACK_FLAME_RAIN_KEYS[idx];
@@ -2514,6 +2608,49 @@ async function loadTask1Settings() {
       mazeRequireClickAndDrag = parseTaskEnabled(data.mazeRequireClickAndDrag, mazeRequireClickAndDrag);
       carRequireClickAndDrag = parseTaskEnabled(data.carRequireClickAndDrag, carRequireClickAndDrag);
       jackRequireClickAndDrag = parseTaskEnabled(data.jackRequireClickAndDrag, jackRequireClickAndDrag);
+      hauntedStreetGameActive = parseTaskEnabled(
+        data.hauntedStreetGameActive,
+        hauntedStreetGameActive
+      );
+      hauntedStreetRequireClickAndDrag = parseTaskEnabled(
+        data.hauntedStreetRequireClickAndDrag,
+        hauntedStreetRequireClickAndDrag
+      );
+      hauntedStreetClickToThrow = parseTaskEnabled(
+        data.hauntedStreetClickToThrow,
+        hauntedStreetClickToThrow
+      );
+      hauntedStreetSoundEnabled = parseTaskEnabled(
+        data.hauntedStreetSoundEnabled,
+        hauntedStreetSoundEnabled
+      );
+      if (Array.isArray(data.hauntedStreetLevelSpeeds)) {
+        hauntedStreetLevelSpeeds = DEFAULT_HAUNTED_STREET_SPEEDS.map(
+          (fallback, index) => {
+            const value = Number.parseInt(
+              data.hauntedStreetLevelSpeeds[index],
+              10
+            );
+            return Number.isFinite(value)
+              ? Math.min(300, Math.max(20, value))
+              : fallback;
+          }
+        );
+      }
+
+      if (Array.isArray(data.hauntedStreetLevelMaximums)) {
+        hauntedStreetLevelMaximums = DEFAULT_HAUNTED_STREET_MAXIMUMS.map(
+          (fallback, index) => {
+            const value = Number.parseInt(
+              data.hauntedStreetLevelMaximums[index],
+              10
+            );
+            return Number.isFinite(value)
+              ? Math.min(15, Math.max(1, value))
+              : fallback;
+          }
+        );
+      }
       freezeScreenFeatureEnabled = parseTaskEnabled(
         data.freezeScreenFeatureEnabled,
         freezeScreenFeatureEnabled
@@ -2747,6 +2884,40 @@ async function loadTask1Settings() {
       deerRunRequireClickAndDrag;
   }
 
+  if (hauntedStreetGameActiveToggle) {
+    hauntedStreetGameActiveToggle.checked =
+      hauntedStreetGameActive;
+  }
+
+  if (hauntedStreetRequireClickAndDragToggle) {
+    hauntedStreetRequireClickAndDragToggle.checked =
+      hauntedStreetRequireClickAndDrag;
+  }
+
+  if (hauntedStreetClickToThrowToggle) {
+    hauntedStreetClickToThrowToggle.checked =
+      hauntedStreetClickToThrow;
+  }
+
+  if (hauntedStreetSoundEnabledToggle) {
+    hauntedStreetSoundEnabledToggle.checked =
+      hauntedStreetSoundEnabled;
+  }
+
+  hauntedStreetLevelInputs.forEach((inputs, index) => {
+    if (inputs.speed) {
+      inputs.speed.value = String(
+        hauntedStreetLevelSpeeds[index]
+      );
+    }
+
+    if (inputs.maximum) {
+      inputs.maximum.value = String(
+        hauntedStreetLevelMaximums[index]
+      );
+    }
+  });
+
   applyDeerRunLevelsToInputs(
     deerRunLevels
   );
@@ -2928,6 +3099,11 @@ async function saveTask1Settings() {
     deerRunGameActiveToggle.checked
   );
 
+  const hauntedStreetGameActive = Boolean(
+    hauntedStreetGameActiveToggle &&
+    hauntedStreetGameActiveToggle.checked
+  );
+
   const deerRunLevels =
     readDeerRunLevelsFromInputs();
 
@@ -3074,6 +3250,47 @@ async function saveTask1Settings() {
     deerRunRequireClickAndDragToggle &&
     deerRunRequireClickAndDragToggle.checked
   );
+
+  const hauntedStreetRequireClickAndDrag = Boolean(
+    hauntedStreetRequireClickAndDragToggle &&
+    hauntedStreetRequireClickAndDragToggle.checked
+  );
+
+  const hauntedStreetClickToThrow = Boolean(
+    hauntedStreetClickToThrowToggle &&
+    hauntedStreetClickToThrowToggle.checked
+  );
+
+  const hauntedStreetSoundEnabled = Boolean(
+    hauntedStreetSoundEnabledToggle &&
+    hauntedStreetSoundEnabledToggle.checked
+  );
+
+  const hauntedStreetLevelSpeeds =
+    hauntedStreetLevelInputs.map((inputs, index) => {
+      const value = Number.parseInt(
+        inputs.speed ? inputs.speed.value :
+          DEFAULT_HAUNTED_STREET_SPEEDS[index],
+        10
+      );
+
+      return Number.isFinite(value)
+        ? Math.min(300, Math.max(20, value))
+        : DEFAULT_HAUNTED_STREET_SPEEDS[index];
+    });
+
+  const hauntedStreetLevelMaximums =
+    hauntedStreetLevelInputs.map((inputs, index) => {
+      const value = Number.parseInt(
+        inputs.maximum ? inputs.maximum.value :
+          DEFAULT_HAUNTED_STREET_MAXIMUMS[index],
+        10
+      );
+
+      return Number.isFinite(value)
+        ? Math.min(15, Math.max(1, value))
+        : DEFAULT_HAUNTED_STREET_MAXIMUMS[index];
+    });
   const jackFlameRainSettingsToSave = [4, 5, 6, 7].map((level, idx) => {
     const inputs = jackFlameRainInputs[idx];
     const defaults = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[idx];
@@ -3372,6 +3589,12 @@ async function saveTask1Settings() {
         fireflyForestLevels,
         monsterLunchGameActive,
         monsterLunchLevels,
+        hauntedStreetGameActive,
+        hauntedStreetRequireClickAndDrag,
+        hauntedStreetClickToThrow,
+        hauntedStreetSoundEnabled,
+        hauntedStreetLevelSpeeds,
+        hauntedStreetLevelMaximums,
         movingSoundSettings:
           getMovingSoundSettingsSnapshot(),
         soundEnabled,
@@ -3664,6 +3887,14 @@ const allToggles = [
   martianMadnessGameActiveToggle,
   bugMeadowGameActiveToggle,
   deerRunGameActiveToggle,
+  hauntedStreetGameActiveToggle,
+  hauntedStreetRequireClickAndDragToggle,
+  hauntedStreetClickToThrowToggle,
+  hauntedStreetSoundEnabledToggle,
+  ...hauntedStreetLevelInputs.flatMap((inputs) => [
+    inputs.speed,
+    inputs.maximum,
+  ]),
   task1EnabledToggle,
   task2EnabledToggle,
   task3EnabledToggle,
