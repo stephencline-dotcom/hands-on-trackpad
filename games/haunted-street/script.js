@@ -26,6 +26,8 @@
   const LEVELS = [
     {
       name: "Bat Night",
+      pumpkinThrowInterval: 650,
+      pumpkinSpeed: 520,
       intro: "Line up beneath the bats and protect the street!",
       goal: 7,
       lives: 4,
@@ -40,6 +42,8 @@
     },
     {
       name: "Ghostly Streets",
+      pumpkinThrowInterval: 650,
+      pumpkinSpeed: 520,
       intro: "Ghosts are drifting into town. Watch how they weave!",
       goal: 10,
       lives: 4,
@@ -54,6 +58,8 @@
     },
     {
       name: "Witching Hour",
+      pumpkinThrowInterval: 650,
+      pumpkinSpeed: 520,
       intro: "Witches take two hits. Keep moving and keep aiming!",
       goal: 13,
       lives: 4,
@@ -68,6 +74,8 @@
     },
     {
       name: "Midnight Mayhem",
+      pumpkinThrowInterval: 650,
+      pumpkinSpeed: 520,
       intro: "The creatures are faster and their flight paths are wild!",
       goal: 17,
       lives: 3,
@@ -82,6 +90,8 @@
     },
     {
       name: "Haunted Rush",
+      pumpkinThrowInterval: 650,
+      pumpkinSpeed: 520,
       intro: "Final level! Survive the fastest night on Haunted Street!",
       goal: 22,
       lives: 3,
@@ -101,6 +111,8 @@
   const SOUND_KEY = "hauntedStreetSoundEnabled";
   const SPEEDS_KEY = "hauntedStreetLevelSpeeds";
   const MAXIMUMS_KEY = "hauntedStreetLevelMaximums";
+  const THROW_INTERVALS_KEY = "hauntedStreetLevelThrowIntervals";
+  const PUMPKIN_SPEEDS_KEY = "hauntedStreetLevelPumpkinSpeeds";
 
   let levelIndex = 0;
   let defeated = 0;
@@ -217,10 +229,24 @@
       const storedMaximums = JSON.parse(
         localStorage.getItem(MAXIMUMS_KEY) || "[]"
       );
+      const storedThrowIntervals = JSON.parse(
+        localStorage.getItem(THROW_INTERVALS_KEY) || "[]"
+      );
+      const storedPumpkinSpeeds = JSON.parse(
+        localStorage.getItem(PUMPKIN_SPEEDS_KEY) || "[]"
+      );
 
       LEVELS.forEach((levelSettings, index) => {
         const speed = Number.parseInt(storedSpeeds[index], 10);
         const maximum = Number.parseInt(storedMaximums[index], 10);
+        const throwInterval = Number.parseInt(
+          storedThrowIntervals[index],
+          10
+        );
+        const pumpkinSpeed = Number.parseInt(
+          storedPumpkinSpeeds[index],
+          10
+        );
 
         if (Number.isFinite(speed)) {
           levelSettings.speed = clamp(speed, 20, 300);
@@ -228,6 +254,16 @@
 
         if (Number.isFinite(maximum)) {
           levelSettings.maxEnemies = clamp(maximum, 1, 15);
+        }
+
+        if (Number.isFinite(throwInterval)) {
+          levelSettings.pumpkinThrowInterval =
+            clamp(throwInterval, 150, 3000);
+        }
+
+        if (Number.isFinite(pumpkinSpeed)) {
+          levelSettings.pumpkinSpeed =
+            clamp(pumpkinSpeed, 150, 1200);
         }
       });
     } catch {
@@ -271,6 +307,32 @@
 
             if (Number.isFinite(value)) {
               levelSettings.maxEnemies = clamp(value, 1, 15);
+            }
+          });
+        }
+
+        if (Array.isArray(settings.hauntedStreetLevelThrowIntervals)) {
+          LEVELS.forEach((levelSettings, index) => {
+            const value = Number.parseInt(
+              settings.hauntedStreetLevelThrowIntervals[index],
+              10
+            );
+            if (Number.isFinite(value)) {
+              levelSettings.pumpkinThrowInterval =
+                clamp(value, 150, 3000);
+            }
+          });
+        }
+
+        if (Array.isArray(settings.hauntedStreetLevelPumpkinSpeeds)) {
+          LEVELS.forEach((levelSettings, index) => {
+            const value = Number.parseInt(
+              settings.hauntedStreetLevelPumpkinSpeeds[index],
+              10
+            );
+            if (Number.isFinite(value)) {
+              levelSettings.pumpkinSpeed =
+                clamp(value, 150, 1200);
             }
           });
         }
@@ -387,7 +449,7 @@
       targetY - startY,
       targetX - startX
     );
-    const speed = 520;
+    const speed = level().pumpkinSpeed;
 
     pumpkins.push({
       x: startX,
@@ -495,7 +557,7 @@
 
     if (
       !clickToThrow &&
-      now - lastThrow >= 650
+      now - lastThrow >= level().pumpkinThrowInterval
     ) {
       throwPumpkin();
     }

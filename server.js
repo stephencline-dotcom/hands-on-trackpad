@@ -68,6 +68,8 @@ const DEFAULT_SETTINGS = {
   hauntedStreetSoundEnabled: true,
   hauntedStreetLevelSpeeds: [55, 66, 79, 94, 112],
   hauntedStreetLevelMaximums: [3, 4, 4, 5, 6],
+  hauntedStreetLevelThrowIntervals: [650, 650, 650, 650, 650],
+  hauntedStreetLevelPumpkinSpeeds: [520, 520, 520, 520, 520],
   soundEnabled: true,
   trainingPaused: false,
   jackFlameRainEnabled: true,
@@ -558,6 +560,20 @@ function loadSettings() {
           1,
           15
         ),
+      hauntedStreetLevelThrowIntervals:
+        parseHauntedStreetLevelNumbers(
+          data.hauntedStreetLevelThrowIntervals,
+          DEFAULT_SETTINGS.hauntedStreetLevelThrowIntervals,
+          150,
+          3000
+        ),
+      hauntedStreetLevelPumpkinSpeeds:
+        parseHauntedStreetLevelNumbers(
+          data.hauntedStreetLevelPumpkinSpeeds,
+          DEFAULT_SETTINGS.hauntedStreetLevelPumpkinSpeeds,
+          150,
+          1200
+        ),
       soundEnabled: parseTaskEnabled(data.soundEnabled, true),
       trainingPaused: parseTrainingPaused(data.trainingPaused),
       jackFlameRainEnabled: parseTaskEnabled(data.jackFlameRainEnabled, DEFAULT_SETTINGS.jackFlameRainEnabled),
@@ -748,6 +764,22 @@ function saveSettings(settings) {
         DEFAULT_SETTINGS.hauntedStreetLevelMaximums,
         1,
         15
+      ),
+    hauntedStreetLevelThrowIntervals:
+      parseHauntedStreetLevelNumbers(
+        settings.hauntedStreetLevelThrowIntervals ??
+          existing.hauntedStreetLevelThrowIntervals,
+        DEFAULT_SETTINGS.hauntedStreetLevelThrowIntervals,
+        150,
+        3000
+      ),
+    hauntedStreetLevelPumpkinSpeeds:
+      parseHauntedStreetLevelNumbers(
+        settings.hauntedStreetLevelPumpkinSpeeds ??
+          existing.hauntedStreetLevelPumpkinSpeeds,
+        DEFAULT_SETTINGS.hauntedStreetLevelPumpkinSpeeds,
+        150,
+        1200
       ),
 
     monsterLunchGameActive: parseTaskEnabled(
