@@ -21,6 +21,7 @@ const dragonDodgeGameActiveToggle = document.getElementById("dragonDodgeGameActi
 const firefighterRescueGameActiveToggle = document.getElementById("firefighterRescueGameActive");
 const martianMadnessGameActiveToggle = document.getElementById("martianMadnessGameActive");
 const bugMeadowGameActiveToggle = document.getElementById("bugMeadowGameActive");
+const senseBuilderGameActiveToggle = document.getElementById("senseBuilderGameActive");
 const fireflyForestGameActiveToggle = document.getElementById("fireflyForestGameActive");
 const monsterLunchGameActiveToggle = document.getElementById("monsterLunchGameActive");
 const deerRunGameActiveToggle = document.getElementById("deerRunGameActive");
@@ -228,6 +229,7 @@ const DRAGON_DODGE_GAME_ACTIVE_KEY = "dragonDodgeGameActive";
 const FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY = "firefighterRescueGameActive";
 const MARTIAN_MADNESS_GAME_ACTIVE_KEY = "martianMadnessGameActive";
 const BUG_MEADOW_GAME_ACTIVE_KEY = "bugMeadowGameActive";
+const SENSE_BUILDER_GAME_ACTIVE_KEY = "senseBuilderGameActive";
 const FIREFLY_FOREST_GAME_ACTIVE_KEY = "fireflyForestGameActive";
 const MONSTER_LUNCH_GAME_ACTIVE_KEY = "monsterLunchGameActive";
 const DEER_RUN_GAME_ACTIVE_KEY = "deerRunGameActive";
@@ -2023,6 +2025,7 @@ async function resetFullscreenToDefaults() {
   localStorage.setItem(FULLSCREEN_GAME_ACTIVE_KEY, String(fullscreenGameActive));
   localStorage.setItem(BUG_MEADOW_GAME_ACTIVE_KEY, String(bugMeadowGameActive));
   localStorage.setItem(FIREFLY_FOREST_GAME_ACTIVE_KEY, String(fireflyForestGameActive));
+  localStorage.setItem(SENSE_BUILDER_GAME_ACTIVE_KEY, String(senseBuilderGameActive));
   localStorage.setItem(MONSTER_LUNCH_GAME_ACTIVE_KEY, String(monsterLunchGameActive));
   localStorage.setItem(
     BUG_MEADOW_REQUIRE_CLICK_AND_DRAG_KEY,
@@ -2403,6 +2406,11 @@ async function loadTask1Settings() {
     true
   );
 
+  let senseBuilderGameActive = parseTaskEnabled(
+    localStorage.getItem(SENSE_BUILDER_GAME_ACTIVE_KEY),
+    true
+  );
+
   let fireflyForestGameActive = parseTaskEnabled(
     localStorage.getItem(FIREFLY_FOREST_GAME_ACTIVE_KEY),
     true
@@ -2736,6 +2744,22 @@ async function loadTask1Settings() {
       dragonDodgeGameActive = parseTaskEnabled(data.dragonDodgeGameActive, dragonDodgeGameActive);
       firefighterRescueGameActive = parseTaskEnabled(data.firefighterRescueGameActive, firefighterRescueGameActive);
       martianMadnessGameActive = parseTaskEnabled(data.martianMadnessGameActive, martianMadnessGameActive);
+      bugMeadowGameActive = parseTaskEnabled(
+        data.bugMeadowGameActive,
+        bugMeadowGameActive
+      );
+      senseBuilderGameActive = parseTaskEnabled(
+        data.senseBuilderGameActive,
+        senseBuilderGameActive
+      );
+      fireflyForestGameActive = parseTaskEnabled(
+        data.fireflyForestGameActive,
+        fireflyForestGameActive
+      );
+      deerRunGameActive = parseTaskEnabled(
+        data.deerRunGameActive,
+        deerRunGameActive
+      );
 
       monsterLunchGameActive =
         parseTaskEnabled(
@@ -2862,6 +2886,9 @@ async function loadTask1Settings() {
       localStorage.setItem(MARTIAN_MADNESS_GAME_ACTIVE_KEY, String(martianMadnessGameActive));
       localStorage.setItem(FIREFLY_FOREST_GAME_ACTIVE_KEY, String(fireflyForestGameActive));
       localStorage.setItem(MONSTER_LUNCH_GAME_ACTIVE_KEY, String(monsterLunchGameActive));
+      localStorage.setItem(BUG_MEADOW_GAME_ACTIVE_KEY, String(bugMeadowGameActive));
+      localStorage.setItem(DEER_RUN_GAME_ACTIVE_KEY, String(deerRunGameActive));
+      localStorage.setItem(SENSE_BUILDER_GAME_ACTIVE_KEY, String(senseBuilderGameActive));
       localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
       localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
       localStorage.setItem(LIGHT_TAP_REQUIRE_CLICK_KEY, String(lightTapRequireClick));
@@ -2938,9 +2965,18 @@ async function loadTask1Settings() {
   if (bugMeadowGameActiveToggle) {
     bugMeadowGameActiveToggle.checked = bugMeadowGameActive;
   }
+  if (senseBuilderGameActiveToggle) {
+    senseBuilderGameActiveToggle.checked =
+      senseBuilderGameActive;
+  }
   if (fireflyForestGameActiveToggle) {
     fireflyForestGameActiveToggle.checked =
       fireflyForestGameActive;
+  }
+
+  if (monsterLunchGameActiveToggle) {
+    monsterLunchGameActiveToggle.checked =
+      monsterLunchGameActive;
   }
   if (bugMeadowRequireClickAndDragToggle) {
     bugMeadowRequireClickAndDragToggle.checked = bugMeadowRequireClickAndDrag;
@@ -3166,6 +3202,11 @@ async function saveTask1Settings() {
   const martianMadnessGameActive = Boolean(martianMadnessGameActiveToggle && martianMadnessGameActiveToggle.checked);
   const bugMeadowGameActive = Boolean(
     bugMeadowGameActiveToggle && bugMeadowGameActiveToggle.checked
+  );
+
+  const senseBuilderGameActive = Boolean(
+    senseBuilderGameActiveToggle &&
+    senseBuilderGameActiveToggle.checked
   );
 
   const fireflyForestGameActive = Boolean(
@@ -3691,12 +3732,14 @@ async function saveTask1Settings() {
         firefighterRescueGameActive,
         martianMadnessGameActive,
         bugMeadowGameActive,
+        senseBuilderGameActive,
         bugMeadowRequireClickAndDrag,
         bugMeadowLevels,
         fireflyForestGameActive,
         fireflyForestLevels,
         monsterLunchGameActive,
         monsterLunchLevels,
+        deerRunGameActive,
         hauntedStreetGameActive,
         hauntedStreetRequireClickAndDrag,
         hauntedStreetClickToThrow,
@@ -3996,6 +4039,9 @@ const allToggles = [
   firefighterRescueGameActiveToggle,
   martianMadnessGameActiveToggle,
   bugMeadowGameActiveToggle,
+  senseBuilderGameActiveToggle,
+  fireflyForestGameActiveToggle,
+  monsterLunchGameActiveToggle,
   deerRunGameActiveToggle,
   hauntedStreetGameActiveToggle,
   hauntedStreetRequireClickAndDragToggle,

@@ -5819,3 +5819,34 @@ body.car-page .car-traffic {
   font-size: 2.1rem;
   filter: drop-shadow(0 0 7px rgba(251, 146, 60, 0.75));
 }
+
+
+/* Clearly mark activities disabled by the teacher. */
+.game-card.activity-disabled,
+.training-tool-link.activity-disabled {
+  position: relative;
+  opacity: 0.34;
+  filter: grayscale(0.9) saturate(0.25);
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none;
+  box-shadow: none;
+}
+
+.game-card.activity-disabled::after,
+.training-tool-link.activity-disabled::after {
+  content: "Not available";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  z-index: 5;
+  transform: translate(-50%, -50%);
+  padding: 0.45rem 0.75rem;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.9);
+  color: #ffffff;
+  font-size: 0.86rem;
+  font-weight: 900;
+  white-space: nowrap;
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.35);
+}

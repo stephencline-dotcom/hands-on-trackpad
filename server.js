@@ -62,6 +62,11 @@ const DEFAULT_SETTINGS = {
   dragonDodgeGameActive: true,
   firefighterRescueGameActive: true,
   martianMadnessGameActive: true,
+  bugMeadowGameActive: true,
+  senseBuilderGameActive: true,
+  fireflyForestGameActive: true,
+  monsterLunchGameActive: true,
+  deerRunGameActive: true,
   hauntedStreetGameActive: true,
   hauntedStreetRequireClickAndDrag: false,
   hauntedStreetClickToThrow: false,
@@ -530,6 +535,26 @@ function loadSettings() {
         data.martianMadnessGameActive,
         DEFAULT_SETTINGS.martianMadnessGameActive
       ),
+      bugMeadowGameActive: parseTaskEnabled(
+        data.bugMeadowGameActive,
+        DEFAULT_SETTINGS.bugMeadowGameActive
+      ),
+      senseBuilderGameActive: parseTaskEnabled(
+        data.senseBuilderGameActive,
+        DEFAULT_SETTINGS.senseBuilderGameActive
+      ),
+      fireflyForestGameActive: parseTaskEnabled(
+        data.fireflyForestGameActive,
+        DEFAULT_SETTINGS.fireflyForestGameActive
+      ),
+      monsterLunchGameActive: parseTaskEnabled(
+        data.monsterLunchGameActive,
+        DEFAULT_SETTINGS.monsterLunchGameActive
+      ),
+      deerRunGameActive: parseTaskEnabled(
+        data.deerRunGameActive,
+        DEFAULT_SETTINGS.deerRunGameActive
+      ),
       hauntedStreetGameActive: parseTaskEnabled(
         data.hauntedStreetGameActive,
         DEFAULT_SETTINGS.hauntedStreetGameActive
@@ -782,10 +807,30 @@ function saveSettings(settings) {
         1200
       ),
 
+    bugMeadowGameActive: parseTaskEnabled(
+      settings.bugMeadowGameActive ??
+        existing.bugMeadowGameActive,
+      DEFAULT_SETTINGS.bugMeadowGameActive
+    ),
+    senseBuilderGameActive: parseTaskEnabled(
+      settings.senseBuilderGameActive ??
+        existing.senseBuilderGameActive,
+      DEFAULT_SETTINGS.senseBuilderGameActive
+    ),
+    fireflyForestGameActive: parseTaskEnabled(
+      settings.fireflyForestGameActive ??
+        existing.fireflyForestGameActive,
+      DEFAULT_SETTINGS.fireflyForestGameActive
+    ),
     monsterLunchGameActive: parseTaskEnabled(
       settings.monsterLunchGameActive ??
         existing.monsterLunchGameActive,
-      true
+      DEFAULT_SETTINGS.monsterLunchGameActive
+    ),
+    deerRunGameActive: parseTaskEnabled(
+      settings.deerRunGameActive ??
+        existing.deerRunGameActive,
+      DEFAULT_SETTINGS.deerRunGameActive
     ),
 
     monsterLunchLevels:
