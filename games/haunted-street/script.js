@@ -114,6 +114,35 @@
   const THROW_INTERVALS_KEY = "hauntedStreetLevelThrowIntervals";
   const PUMPKIN_SPEEDS_KEY = "hauntedStreetLevelPumpkinSpeeds";
 
+  const backgroundMusic = new Audio("/sounds/halloween.mp3");
+  const pumpkinHitSound = new Audio("/sounds/pumpkinhit.mp3");
+  const batSound = new Audio("/sounds/bat.mp3");
+  const ghostSound = new Audio("/sounds/booghost.mp3");
+  const witchSound = new Audio("/sounds/witch.mp3");
+  const fireballSound = new Audio("/sounds/fireball.mp3");
+
+  backgroundMusic.loop = true;
+  backgroundMusic.volume = 0.34;
+  pumpkinHitSound.volume = 0.72;
+  batSound.volume = 0.62;
+  ghostSound.volume = 0.62;
+  witchSound.volume = 0.62;
+  fireballSound.volume = 0.72;
+
+  [
+    backgroundMusic,
+    pumpkinHitSound,
+    batSound,
+    ghostSound,
+    witchSound,
+    fireballSound,
+  ].forEach((audio) => {
+    audio.preload = "auto";
+    audio.load();
+  });
+
+  let nextCreatureSoundAt = 0;
+
   let levelIndex = 0;
   let defeated = 0;
   let lives = 4;
@@ -211,10 +240,110 @@
     }
   }
 
+  function playSound(audio, startAt = 0) {
+    if (!soundEnabled || !audio) {
+      return;
+    }
+
+    try {
+      audio.currentTime = startAt;
+    } catch {
+      audio.currentTime = 0;
+    }
+
+    const playPromise = audio.play();
+
+    if (
+      playPromise &&
+      typeof playPromise.catch === "function"
+    ) {
+      playPromise.catch(() => {});
+    }
+  }
+
+  function startBackgroundMusic() {
+    if (!soundEnabled || !running) {
+      return;
+    }
+
+    const playPromise = backgroundMusic.play();
+
+    if (
+      playPromise &&
+      typeof playPromise.catch === "function"
+    ) {
+      playPromise.catch(() => {});
+    }
+  }
+
+  function stopBackgroundMusic() {
+    backgroundMusic.pause();
+    backgroundMusic.currentTime = 0;
+  }
+
+  function scheduleNextCreatureSound(now) {
+    nextCreatureSoundAt =
+      now + 5000 + Math.random() * 3000;
+  }
+
+  function updateCreatureSounds(now) {
+    if (
+      !soundEnabled ||
+      now < nextCreatureSoundAt
+    ) {
+      return;
+    }
+
+    const visibleTypes = Array.from(
+      new Set(
+        enemies
+          .filter(
+            (enemy) =>
+              enemy.x > -enemy.radius &&
+              enemy.x < canvas.width + enemy.radius &&
+              enemy.y > -enemy.radius &&
+              enemy.y < canvas.height + enemy.radius
+          )
+          .map((enemy) => enemy.type)
+      )
+    );
+
+    if (visibleTypes.length > 0) {
+      const selectedType =
+        visibleTypes[
+          Math.floor(
+            Math.random() * visibleTypes.length
+          )
+        ];
+
+      if (selectedType === "witch") {
+        playSound(witchSound);
+      } else if (selectedType === "ghost") {
+        playSound(ghostSound);
+      } else {
+        playSound(batSound);
+      }
+    }
+
+    scheduleNextCreatureSound(now);
+  }
+
   function updateSound() {
     soundButton.textContent = soundEnabled ? "🔊" : "🔇";
     soundButton.setAttribute("aria-pressed", String(soundEnabled));
     soundButton.title = soundEnabled ? "Sound on" : "Sound off";
+
+    if (!soundEnabled) {
+      stopBackgroundMusic();
+      batSound.pause();
+      ghostSound.pause();
+      witchSound.pause();
+      fireballSound.pause();
+      pumpkinHitSound.pause();
+    } else if (running) {
+      startBackgroundMusic();
+      scheduleNextCreatureSound(performance.now());
+    }
   }
 
   async function loadSettings() {
@@ -450,6 +579,7 @@
       targetX - startX
     );
     const speed = level().pumpkinSpeed;
+    const isFireball = hitStreak >= 3;
 
     pumpkins.push({
       x: startX,
@@ -458,8 +588,12 @@
       vy: Math.sin(angle) * speed,
       radius: 15,
       spin: 0,
-      fireball: hitStreak >= 3,
+      fireball: isFireball,
     });
+
+    if (isFireball) {
+      playSound(fireballSound);
+    }
   }
 
   function burst(x, y, color) {
@@ -477,6 +611,7 @@
 
   function finishSuccess() {
     running = false;
+    stopBackgroundMusic();
     startPanel.hidden = false;
 
     if (levelIndex >= LEVELS.length - 1) {
@@ -493,6 +628,7 @@
 
   function finishFailure() {
     running = false;
+    stopBackgroundMusic();
     startPanel.hidden = false;
     statusText.textContent =
       "The creatures reached the street. Try again!";
@@ -545,6 +681,7 @@
   function update(dt, now) {
     if (!running) return;
 
+    updateCreatureSounds(now);
     updateMummy(now);
 
     if (
@@ -658,6 +795,7 @@
           pumpkin.fireball ? 2 : 1;
 
         enemy.health -= pumpkinDamage;
+        playSound(pumpkinHitSound, 0.32);
         hitStreak += 1;
         burst(
           pumpkin.x,
@@ -1687,6 +1825,8 @@
     lastThrow = 0;
     running = true;
     startPanel.hidden = true;
+    scheduleNextCreatureSound(performance.now());
+    startBackgroundMusic();
     updateHud();
   }
 
@@ -1789,6 +1929,7 @@
       host: arena,
       pauseGame: () => {
         running = false;
+        stopBackgroundMusic();
       },
       onNextLevel: nextLevel,
       onRetry: retryLevel,
@@ -1800,9 +1941,19 @@
     });
   }
 
+  window.addEventListener("beforeunload", () => {
+    stopBackgroundMusic();
+    pumpkinHitSound.pause();
+    batSound.pause();
+    ghostSound.pause();
+    witchSound.pause();
+    fireballSound.pause();
+  });
+
   void loadSettings().then(resetLevel);
   requestAnimationFrame(frame);
 })();
+
 
 
 
