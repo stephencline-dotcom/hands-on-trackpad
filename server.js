@@ -75,6 +75,7 @@ const DEFAULT_SETTINGS = {
   hauntedStreetLevelMaximums: [3, 4, 4, 5, 6],
   hauntedStreetLevelThrowIntervals: [650, 650, 650, 650, 650],
   hauntedStreetLevelPumpkinSpeeds: [520, 520, 520, 520, 520],
+  hauntedStreetLevelGoals: [7, 10, 13, 17, 22],
   soundEnabled: true,
   trainingPaused: false,
   jackFlameRainEnabled: true,
@@ -599,6 +600,13 @@ function loadSettings() {
           150,
           1200
         ),
+      hauntedStreetLevelGoals:
+        parseHauntedStreetLevelNumbers(
+          data.hauntedStreetLevelGoals,
+          DEFAULT_SETTINGS.hauntedStreetLevelGoals,
+          1,
+          100
+        ),
       soundEnabled: parseTaskEnabled(data.soundEnabled, true),
       trainingPaused: parseTrainingPaused(data.trainingPaused),
       jackFlameRainEnabled: parseTaskEnabled(data.jackFlameRainEnabled, DEFAULT_SETTINGS.jackFlameRainEnabled),
@@ -805,6 +813,15 @@ function saveSettings(settings) {
         DEFAULT_SETTINGS.hauntedStreetLevelPumpkinSpeeds,
         150,
         1200
+      ),
+
+    hauntedStreetLevelGoals:
+      parseHauntedStreetLevelNumbers(
+        settings.hauntedStreetLevelGoals ??
+          existing.hauntedStreetLevelGoals,
+        DEFAULT_SETTINGS.hauntedStreetLevelGoals,
+        1,
+        100
       ),
 
     bugMeadowGameActive: parseTaskEnabled(

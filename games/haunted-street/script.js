@@ -113,6 +113,7 @@
   const MAXIMUMS_KEY = "hauntedStreetLevelMaximums";
   const THROW_INTERVALS_KEY = "hauntedStreetLevelThrowIntervals";
   const PUMPKIN_SPEEDS_KEY = "hauntedStreetLevelPumpkinSpeeds";
+  const GOALS_KEY = "hauntedStreetLevelGoals";
 
   const backgroundMusic = new Audio("/sounds/halloween.mp3");
   const pumpkinHitSound = new Audio("/sounds/pumpkinhit.mp3");
@@ -352,6 +353,25 @@
     soundEnabled = bool(localStorage.getItem(SOUND_KEY), true);
 
     try {
+      const storedGoals = JSON.parse(
+        localStorage.getItem(GOALS_KEY) || "[]"
+      );
+
+      LEVELS.forEach((levelSettings, index) => {
+        const value = Number.parseInt(
+          storedGoals[index],
+          10
+        );
+
+        if (Number.isFinite(value)) {
+          levelSettings.goal = clamp(value, 1, 100);
+        }
+      });
+    } catch {
+      // Keep built-in goal defaults.
+    }
+
+    try {
       const storedSpeeds = JSON.parse(
         localStorage.getItem(SPEEDS_KEY) || "[]"
       );
@@ -465,6 +485,19 @@
             }
           });
         }
+        if (Array.isArray(settings.hauntedStreetLevelGoals)) {
+          LEVELS.forEach((levelSettings, index) => {
+            const value = Number.parseInt(
+              settings.hauntedStreetLevelGoals[index],
+              10
+            );
+
+            if (Number.isFinite(value)) {
+              levelSettings.goal = clamp(value, 1, 100);
+            }
+          });
+        }
+
         soundEnabled = bool(
           settings.hauntedStreetSoundEnabled,
           soundEnabled

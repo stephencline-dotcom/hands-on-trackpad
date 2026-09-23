@@ -34,11 +34,13 @@ const hauntedStreetLevelInputs = [1, 2, 3, 4, 5].map((level) => ({
   maximum: document.getElementById(`hauntedStreetMaximum${level}`),
   throwInterval: document.getElementById(`hauntedStreetThrowInterval${level}`),
   pumpkinSpeed: document.getElementById(`hauntedStreetPumpkinSpeed${level}`),
+  goal: document.getElementById(`hauntedStreetGoal${level}`),
 }));
 const DEFAULT_HAUNTED_STREET_SPEEDS = [55, 66, 79, 94, 112];
 const DEFAULT_HAUNTED_STREET_MAXIMUMS = [3, 4, 4, 5, 6];
 const DEFAULT_HAUNTED_STREET_THROW_INTERVALS = [650, 650, 650, 650, 650];
 const DEFAULT_HAUNTED_STREET_PUMPKIN_SPEEDS = [520, 520, 520, 520, 520];
+const DEFAULT_HAUNTED_STREET_GOALS = [7, 10, 13, 17, 22];
 const soundEnabledToggle = document.getElementById("soundEnabledToggle");
 const trainingPausedToggle = document.getElementById("trainingPausedToggle");
 const lightTapRequireClickToggle = document.getElementById("lightTapRequireClickToggle");
@@ -251,6 +253,7 @@ const HAUNTED_STREET_SPEEDS_KEY = "hauntedStreetLevelSpeeds";
 const HAUNTED_STREET_MAXIMUMS_KEY = "hauntedStreetLevelMaximums";
 const HAUNTED_STREET_THROW_INTERVALS_KEY = "hauntedStreetLevelThrowIntervals";
 const HAUNTED_STREET_PUMPKIN_SPEEDS_KEY = "hauntedStreetLevelPumpkinSpeeds";
+const HAUNTED_STREET_GOALS_KEY = "hauntedStreetLevelGoals";
 const JACK_FLAME_RAIN_KEYS = [4, 5, 6, 7].map((level) => ({
   enabled: `jackFlameRain${level}Enabled`,
   size: `jackFlameRain${level}SizePx`,
@@ -2072,6 +2075,10 @@ async function resetFullscreenToDefaults() {
     HAUNTED_STREET_PUMPKIN_SPEEDS_KEY,
     JSON.stringify(hauntedStreetLevelPumpkinSpeeds)
   );
+  localStorage.setItem(
+    HAUNTED_STREET_GOALS_KEY,
+    JSON.stringify(hauntedStreetLevelGoals)
+  );
 
   localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
   localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
@@ -2554,6 +2561,24 @@ async function loadTask1Settings() {
         return fallback;
       }
     });
+
+  let hauntedStreetLevelGoals =
+    DEFAULT_HAUNTED_STREET_GOALS.map((fallback, index) => {
+      try {
+        const stored = JSON.parse(
+          localStorage.getItem(HAUNTED_STREET_GOALS_KEY) ||
+            "[]"
+        );
+        const value = Number.parseInt(stored[index], 10);
+
+        return Number.isFinite(value)
+          ? Math.min(100, Math.max(1, value))
+          : fallback;
+      } catch {
+        return fallback;
+      }
+    });
+
   const jackFlameRainSettings = [4, 5, 6].map((level, idx) => {
     const keys = JACK_FLAME_RAIN_KEYS[idx];
     const defaults = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[idx];
@@ -2731,6 +2756,21 @@ async function loadTask1Settings() {
               : fallback;
           });
       }
+
+      if (Array.isArray(data.hauntedStreetLevelGoals)) {
+        hauntedStreetLevelGoals =
+          DEFAULT_HAUNTED_STREET_GOALS.map((fallback, index) => {
+            const value = Number.parseInt(
+              data.hauntedStreetLevelGoals[index],
+              10
+            );
+
+            return Number.isFinite(value)
+              ? Math.min(100, Math.max(1, value))
+              : fallback;
+          });
+      }
+
       freezeScreenFeatureEnabled = parseTaskEnabled(
         data.freezeScreenFeatureEnabled,
         freezeScreenFeatureEnabled
@@ -3034,6 +3074,12 @@ async function loadTask1Settings() {
     if (inputs.pumpkinSpeed) {
       inputs.pumpkinSpeed.value = String(
         hauntedStreetLevelPumpkinSpeeds[index]
+      );
+    }
+
+    if (inputs.goal) {
+      inputs.goal.value = String(
+        hauntedStreetLevelGoals[index]
       );
     }
   });
@@ -3440,6 +3486,20 @@ async function saveTask1Settings() {
         ? Math.min(1200, Math.max(150, value))
         : DEFAULT_HAUNTED_STREET_PUMPKIN_SPEEDS[index];
     });
+  const hauntedStreetLevelGoals =
+    hauntedStreetLevelInputs.map((inputs, index) => {
+      const value = Number.parseInt(
+        inputs.goal
+          ? inputs.goal.value
+          : DEFAULT_HAUNTED_STREET_GOALS[index],
+        10
+      );
+
+      return Number.isFinite(value)
+        ? Math.min(100, Math.max(1, value))
+        : DEFAULT_HAUNTED_STREET_GOALS[index];
+    });
+
   const jackFlameRainSettingsToSave = [4, 5, 6, 7].map((level, idx) => {
     const inputs = jackFlameRainInputs[idx];
     const defaults = DEFAULT_JACK_FLAME_RAIN_BY_LEVEL[idx];
@@ -3748,6 +3808,7 @@ async function saveTask1Settings() {
         hauntedStreetLevelMaximums,
         hauntedStreetLevelThrowIntervals,
         hauntedStreetLevelPumpkinSpeeds,
+        hauntedStreetLevelGoals,
         movingSoundSettings:
           getMovingSoundSettingsSnapshot(),
         soundEnabled,
@@ -4052,6 +4113,7 @@ const allToggles = [
     inputs.maximum,
     inputs.throwInterval,
     inputs.pumpkinSpeed,
+    inputs.goal,
   ]),
   task1EnabledToggle,
   task2EnabledToggle,
