@@ -1285,7 +1285,33 @@ function resetToStart(message, state = "neutral") {
   headingDeg = 0;
   facingScaleX = 1;
   jackCharacter.src = "images/jack.png";
-  jackWrap.classList.remove("is-running", "is-failed", "is-success");
+
+  jackWrap.classList.remove(
+    "is-running",
+    "is-failed",
+    "is-success",
+    "is-jumping",
+    "is-celebrating"
+  );
+
+  /*
+   * Explicitly restore Jack between levels. Some Chromebook
+   * browsers can retain the final frame of the previous CSS
+   * animation after the result overlay closes.
+   */
+  jackWrap.hidden = false;
+  jackCharacter.hidden = false;
+  jackWrap.style.display = "";
+  jackWrap.style.visibility = "visible";
+  jackWrap.style.opacity = "1";
+  jackCharacter.style.display = "";
+  jackCharacter.style.visibility = "visible";
+  jackCharacter.style.opacity = "1";
+  jackCharacter.style.animation = "none";
+
+  void jackCharacter.offsetWidth;
+  jackCharacter.style.animation = "";
+
   jackGoal.classList.remove("is-success");
   fireSound.pause();
   stopFireLoopGuard();
