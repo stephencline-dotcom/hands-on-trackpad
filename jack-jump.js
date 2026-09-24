@@ -411,6 +411,62 @@ let started = false;
 let gameOver = false;
 let flameResetTimer = null;
 let levelAdvanceTimer = null;
+
+function clearFlameResetTimer() {
+  if (flameResetTimer !== null) {
+    window.clearTimeout(flameResetTimer);
+    flameResetTimer = null;
+  }
+}
+
+function restoreJackNormalVisual() {
+  jackWrap.classList.remove(
+    "is-running",
+    "is-failed",
+    "is-success",
+    "is-jumping",
+    "is-celebrating"
+  );
+
+  jackWrap.hidden = false;
+  jackCharacter.hidden = false;
+
+  jackWrap.style.display = "";
+  jackWrap.style.visibility = "visible";
+  jackWrap.style.opacity = "1";
+
+  jackCharacter.style.display = "";
+  jackCharacter.style.visibility = "visible";
+  jackCharacter.style.opacity = "1";
+  jackCharacter.style.animation = "none";
+
+  if (
+    !jackCharacter.getAttribute("src") ||
+    !jackCharacter
+      .getAttribute("src")
+      .endsWith("images/jack.png")
+  ) {
+    jackCharacter.setAttribute(
+      "src",
+      "images/jack.png"
+    );
+  }
+
+  void jackCharacter.offsetWidth;
+  jackCharacter.style.animation = "";
+
+  if (!jackCharacter.complete) {
+    jackCharacter.addEventListener(
+      "load",
+      () => {
+        jackCharacter.hidden = false;
+        jackCharacter.style.visibility = "visible";
+        jackCharacter.style.opacity = "1";
+      },
+      { once: true }
+    );
+  }
+}
 let levelAdvanceDueAtMs = 0;
 let currentLevelIndex = 0;
 let jackLevelResult = null;
@@ -1270,8 +1326,22 @@ function updatePathProgress(metrics) {
 }
 
 function resetToStart(message, state = "neutral") {
+  clearFlameResetTimer();
+  restoreJackNormalVisual();
+
   const startPoint = scenePathPoints[0];
+
   if (!startPoint) {
+    window.requestAnimationFrame(() => {
+      buildPathCache();
+      createDots();
+      placeSceneObjects();
+
+      if (scenePathPoints[0]) {
+        resetToStart(message, state);
+      }
+    });
+
     return;
   }
 
@@ -1657,7 +1727,11 @@ function triggerFlameFailure() {
   clearFallingFlames();
   playFireSound();
 
-  window.setTimeout(() => {
+  clearFlameResetTimer();
+
+  flameResetTimer = window.setTimeout(() => {
+    flameResetTimer = null;
+
     showJackFailureResult(
       "Jack touched the flame. Try this level again."
     );
@@ -2063,7 +2137,7 @@ initialize();
 
 window.addEventListener("beforeunload", () => {
   clearLevelAdvanceTimer();
-  window.clearTimeout(flameResetTimer);
+  clearFlameResetTimer();
   fireSound.pause();
   stopFireLoopGuard();
   runningFeetSound.pause();
