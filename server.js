@@ -35,6 +35,7 @@ const supabase =
  * the server restarts.
  */
 let liveClassroomState = {
+  freezeScreenFeatureEnabled: false,
   freezeScreenArmed: false,
 };
 
@@ -1069,6 +1070,38 @@ ensureSettingsFile();
 const server = http.createServer(async (req, res) => {
   const requestUrl = new URL(req.url, `http://${req.headers.host || "localhost"}`);
 
+  if (
+    requestUrl.pathname ===
+    "/api/classroom-state"
+  ) {
+    if (req.method !== "GET") {
+      sendJson(
+        res,
+        405,
+        {
+          error: "Method not allowed",
+        }
+      );
+
+      return;
+    }
+
+    sendJson(
+      res,
+      200,
+      {
+        freezeScreenFeatureEnabled:
+          liveClassroomState
+            .freezeScreenFeatureEnabled,
+        freezeScreenArmed:
+          liveClassroomState
+            .freezeScreenArmed,
+      }
+    );
+
+    return;
+  }
+
   if (requestUrl.pathname === "/api/settings") {
     if (req.method === "GET") {
       try {
@@ -1081,6 +1114,11 @@ const server = http.createServer(async (req, res) => {
          */
         const normalized =
           saveSettings(remoteSettings);
+
+        liveClassroomState
+          .freezeScreenFeatureEnabled =
+            normalized
+              .freezeScreenFeatureEnabled;
 
         /*
          * Never restore yesterday's
@@ -1108,6 +1146,11 @@ const server = http.createServer(async (req, res) => {
          */
         const fallbackSettings =
           loadSettings();
+
+        liveClassroomState
+          .freezeScreenFeatureEnabled =
+            fallbackSettings
+              .freezeScreenFeatureEnabled;
 
         fallbackSettings.freezeScreenArmed =
           liveClassroomState
@@ -1175,6 +1218,11 @@ const server = http.createServer(async (req, res) => {
          */
         const normalized =
           saveSettings(parsed);
+
+        liveClassroomState
+          .freezeScreenFeatureEnabled =
+            normalized
+              .freezeScreenFeatureEnabled;
 
         if (
           typeof parsed.freezeScreenArmed ===

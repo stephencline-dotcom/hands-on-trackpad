@@ -2,6 +2,8 @@
   "use strict";
 
   const SETTINGS_API_PATH = "/api/settings";
+  const CLASSROOM_STATE_API_PATH =
+    "/api/classroom-state";
 
   const TEACHER_SESSION_KEY =
     "handsOnTrackpadTeacherSession";
@@ -18,6 +20,7 @@
   let studentLocked = false;
   let studentFreezeArmedAt = 0;
   let studentPollingStarted = false;
+  let studentPollInFlight = false;
 
   function parseEnabled(
     value,
@@ -303,10 +306,19 @@
   }
 
   async function pollStudentFreezeState() {
+    if (
+      studentPollInFlight ||
+      document.hidden
+    ) {
+      return;
+    }
+
+    studentPollInFlight = true;
+
     try {
       const response =
         await fetch(
-          SETTINGS_API_PATH,
+          CLASSROOM_STATE_API_PATH,
           {
             cache: "no-store",
           }
@@ -316,16 +328,21 @@
         return;
       }
 
-      const settings =
+      const classroomState =
         await response.json();
 
       const featureEnabled =
         parseEnabled(
-          settings[
+          classroomState[
             FREEZE_FEATURE_KEY
           ],
           false
         );
+
+      localStorage.setItem(
+        FREEZE_FEATURE_KEY,
+        String(featureEnabled)
+      );
 
       if (!featureEnabled) {
         applyStudentFreezeState(
@@ -337,7 +354,8 @@
 
       applyStudentFreezeState(
         parseEnabled(
-          settings.freezeScreenArmed,
+          classroomState
+            .freezeScreenArmed,
           false
         )
       );
@@ -347,6 +365,8 @@
        * if the server is temporarily
        * unavailable.
        */
+    } finally {
+      studentPollInFlight = false;
     }
   }
 
@@ -379,7 +399,7 @@
 
     window.setInterval(
       pollStudentFreezeState,
-      100
+      500
     );
   }
 
