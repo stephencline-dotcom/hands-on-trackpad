@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Chicken Little | Hands-On Trackpad</title>
+
+    <link
+      rel="stylesheet"
+      href="../moving-sound-mini-game/styles.css"
+    />
+    <link rel="stylesheet" href="../../level-result.css" />
+    <link rel="stylesheet" href="style.css?v=8" />
+    <link rel="stylesheet" href="../../freeze-screen.css" />
+  </head>
+
+  <body
+    class="chicken-little-page"
+    data-game-active-key="chickenLittleGameActive"
+  >
+    <main class="shell game-shell chicken-little-shell">
+      <header class="panel game-header">
+        <div class="game-heading">
+          <p class="eyebrow game-category">Story Adventure</p>
+          <h1 class="game-title">Chicken Little: Sky Dash</h1>
+        </div>
+
+        <div class="game-header-controls">
+          <a
+            class="game-header-button"
+            href="../../index.html"
+            aria-label="Home"
+            title="Home"
+          >
+            <img
+              class="home-btn-icon"
+              src="../../images/home-icon.svg"
+              alt=""
+              aria-hidden="true"
+            />
+          </a>
+        </div>
+      </header>
+
+      <div class="chicken-info-row">
+        <p class="description game-instructions">
+          Hold and drag Chicken Little to dodge the falling acorns.
+        </p>
+
+        <section
+          class="chicken-hud game-stats"
+          aria-live="polite"
+        >
+          <div class="game-stat">
+            <span class="label">Level</span>
+            <span id="chickenLevel" class="value">1</span>
+          </div>
+
+          <div class="game-stat">
+            <span class="label">Hearts</span>
+            <span id="chickenHearts" class="value">3</span>
+          </div>
+
+          <div class="game-stat">
+            <span class="label">Time</span>
+            <span id="chickenTime" class="value">2:00</span>
+          </div>
+        </section>
+      </div>
+
+      <div class="chicken-play-layout">
+
+      <section class="chicken-stage-wrap game-stage-wrap">
+        <div
+          id="chickenArena"
+          class="chicken-arena game-stage"
+          role="application"
+          aria-label="Chicken Little farm adventure"
+        >
+          <canvas
+            id="chickenCanvas"
+            width="1200"
+            height="600"
+            aria-label="Chicken Little running through a farm while dodging falling acorns"
+          ></canvas>
+
+          <div
+            id="chickenStartPanel"
+            class="chicken-start-panel"
+          >
+            <p id="chickenStatus" class="chicken-status">
+              Level 1: Farmyard Dash
+            </p>
+
+            <button
+              id="chickenStartButton"
+              class="chicken-start-button"
+              type="button"
+            >
+              Start Level 1
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="chicken-progress"
+          aria-label="Level progress"
+        >
+          <div
+            id="chickenProgressFill"
+            class="chicken-progress-fill"
+          ></div>
+        </div>
+      </section>
+
+      <section
+        class="imported-trackpad-guide game-guide chicken-guide"
+        aria-label="Trackpad Guide"
+      >
+        <section
+          id="chickenTrackpadScene"
+          class="imported-trackpad-scene"
+          aria-label="Trackpad guide animation"
+        >
+          <img
+            class="imported-trackpad-image"
+            src="../../images/trackpad.png"
+            alt="Trackpad"
+            draggable="false"
+          />
+
+          <img
+            id="chickenTrackpadLeftHand"
+            class="imported-trackpad-hand imported-trackpad-left-hand"
+            src="../../images/left-hand-transparent.png"
+            alt="Left hand"
+            draggable="false"
+          />
+
+          <img
+            id="chickenTrackpadRightHand"
+            class="imported-trackpad-hand imported-trackpad-right-hand"
+            src="../../images/right-hand-transparent.png"
+            alt="Right hand"
+            draggable="false"
+          />
+
+          <div
+            id="chickenTrackpadPressIndicator"
+            class="imported-trackpad-press-indicator"
+            aria-hidden="true"
+          ></div>
+        </section>
+      </section>
+          </div>
+    </main>
+
+    <script src="../../game-access.js"></script>
+    <script src="../../trackpad-guide.js"></script>
+    <script src="../../level-result.js"></script>
+    <script src="../../game-results-store.js"></script>
+    <script src="../../freeze-screen.js"></script>
+    <script src="../../input-device-guard.js"></script>
+    <script src="script.js?v=12"></script>
+  </body>
+</html>
+

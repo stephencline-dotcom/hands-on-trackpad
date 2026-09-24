@@ -1,0 +1,396 @@
+:root {
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body.chicken-little-page {
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background:
+    radial-gradient(
+      circle at 50% 0,
+      rgba(255, 244, 181, 0.9),
+      transparent 34rem
+    ),
+    linear-gradient(180deg, #9fddff, #f9efd0);
+  color: #233018;
+}
+
+.chicken-little-shell {
+  width: min(1500px, calc(100% - 24px));
+  margin: 0 auto;
+  padding: 12px 0 28px;
+}
+
+.chicken-little-page .game-header,
+.chicken-little-page .game-stats,
+.chicken-little-page .game-guide {
+  border-color: rgba(85, 107, 47, 0.35);
+  background: rgba(255, 252, 231, 0.94);
+}
+
+.chicken-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 8px 0;
+}
+
+.chicken-info-row .game-instructions {
+  margin: 0;
+  color: #3c4d25;
+  font-weight: 800;
+}
+
+.chicken-hud {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 8px;
+  margin: 0;
+}
+
+.chicken-stage-wrap {
+  width: 100%;
+}
+
+.chicken-arena {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  min-height: 430px;
+  overflow: hidden;
+  border: 5px solid #6a8f3b;
+  border-radius: 25px;
+  background: #9fddff;
+  box-shadow:
+    inset 0 0 0 3px rgba(255, 255, 255, 0.5),
+    0 12px 30px rgba(61, 74, 28, 0.22);
+  touch-action: none;
+}
+
+#chickenCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+#chickenCanvas.is-dragging {
+  cursor: grabbing;
+}
+
+.chicken-start-panel {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  top: 50%;
+  width: min(540px, calc(100% - 32px));
+  padding: 24px;
+  transform: translate(-50%, -50%);
+  border: 3px solid #78552b;
+  border-radius: 22px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 253, 231, 0.98),
+      rgba(255, 235, 170, 0.98)
+    );
+  box-shadow: 0 16px 42px rgba(47, 40, 19, 0.34);
+  text-align: center;
+}
+
+.chicken-start-panel[hidden] {
+  display: none;
+}
+
+.chicken-status {
+  margin: 0 0 17px;
+  color: #3c2b15;
+  font-size: clamp(1.15rem, 2.3vw, 1.8rem);
+  font-weight: 900;
+}
+
+.chicken-start-button {
+  width: 100%;
+  min-height: 64px;
+  border: 3px solid #6c431b;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffd75d, #f59e0b);
+  color: #422006;
+  font: inherit;
+  font-size: 1.25rem;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 7px 0 #9a5a13;
+}
+
+.chicken-start-button:active {
+  transform: translateY(4px);
+  box-shadow: 0 3px 0 #9a5a13;
+}
+
+.chicken-progress {
+  width: calc(100% - 40px);
+  height: 15px;
+  margin: 8px auto 0;
+  overflow: hidden;
+  border: 2px solid #587331;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.chicken-progress-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background:
+    linear-gradient(90deg, #84cc16, #facc15, #f97316);
+  transition: width 150ms linear;
+}
+
+.chicken-guide {
+  width: min(480px, 100%);
+  margin: 10px auto 0;
+  padding: 5px 10px;
+}
+
+.chicken-guide .imported-trackpad-scene {
+  max-height: 210px;
+  border-color: rgba(106, 143, 59, 0.55);
+}
+
+@media (max-width: 760px) {
+  .chicken-info-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .chicken-hud {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .chicken-arena {
+    min-height: 360px;
+    border-radius: 18px;
+  }
+}
+
+
+/* Chicken Little side-by-side classroom layout */
+.chicken-play-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  grid-template-areas: "guide stage";
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.chicken-stage-wrap {
+  grid-area: stage;
+  min-width: 0;
+  margin: 0;
+}
+
+.chicken-guide {
+  grid-area: guide;
+  width: 100%;
+  max-width: 260px;
+  margin: 0 auto;
+  padding: 6px;
+}
+
+.chicken-guide .imported-trackpad-scene {
+  width: 100%;
+  max-height: none;
+  margin: 0 auto;
+}
+
+@media (min-width: 900px) {
+  html,
+  body.chicken-little-page {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .chicken-little-shell {
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    width: min(1880px, calc(100% - 16px));
+    height: 100dvh;
+    padding: 5px 0 7px;
+  }
+
+  .chicken-little-page .game-header {
+    padding-block: 4px;
+  }
+
+  .chicken-little-page .game-category {
+    margin-bottom: 0;
+  }
+
+  .chicken-little-page .game-title {
+    font-size: clamp(1.2rem, 1.8vw, 1.7rem);
+  }
+
+  .chicken-info-row {
+    min-height: 42px;
+    margin: 2px 0 4px;
+  }
+
+  .chicken-play-layout {
+    min-height: 0;
+    height: 100%;
+  }
+
+  .chicken-arena {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 899px) {
+  .chicken-play-layout {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "stage"
+      "guide";
+  }
+
+  .chicken-guide {
+    width: min(360px, 100%);
+    max-width: 360px;
+  }
+}
+
+
+/* Fit the side-by-side board within short classroom screens. */
+@media (min-width: 900px) {
+  .chicken-play-layout {
+    grid-template-columns: clamp(190px, 17vw, 260px) minmax(0, 1fr);
+  }
+
+  .chicken-stage-wrap {
+    width: min(
+      100%,
+      calc((100dvh - 125px) * 2)
+    );
+    justify-self: center;
+  }
+
+  .chicken-guide {
+    max-width: 240px;
+  }
+}
+
+
+/* Larger Chicken Little gameplay layout */
+@media (min-width: 900px) {
+  .chicken-play-layout {
+    grid-template-columns:
+      clamp(155px, 12vw, 190px)
+      minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .chicken-guide {
+    width: 100%;
+    max-width: 185px;
+    padding: 3px;
+  }
+
+  .chicken-stage-wrap {
+    width: min(
+      100%,
+      calc((100dvh - 75px) * 2)
+    );
+    justify-self: center;
+  }
+}
+
+
+/* Final Chicken Little proportional stage fix */
+@media (min-width: 900px) {
+  .chicken-little-shell {
+    align-content: start;
+  }
+
+  .chicken-play-layout {
+    grid-template-columns:
+      clamp(145px, 11vw, 175px)
+      minmax(0, 1fr);
+    align-items: start;
+    align-self: start;
+    height: auto;
+    gap: 8px;
+  }
+
+  .chicken-stage-wrap {
+    width: 100%;
+    max-width: none;
+    justify-self: stretch;
+    align-self: start;
+  }
+
+  .chicken-arena.game-stage {
+    width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    aspect-ratio: 2 / 1;
+  }
+
+  #chickenCanvas {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 2 / 1;
+  }
+
+  .chicken-guide {
+    width: 100%;
+    max-width: 170px;
+    align-self: center;
+    padding: 3px;
+  }
+}
+
+
+/* Fit proportional Chicken Little board within one screen */
+@media (min-width: 900px) {
+  html,
+  body.chicken-little-page {
+    height: 100%;
+    overflow: hidden !important;
+  }
+
+  .chicken-play-layout {
+    align-items: center;
+    height: auto;
+    min-height: 0;
+  }
+
+  .chicken-stage-wrap {
+    width: min(
+      100%,
+      calc((100dvh - 115px) * 2)
+    );
+    max-width: none;
+    justify-self: center;
+  }
+
+  .chicken-arena.game-stage {
+    width: 100%;
+    height: auto !important;
+    max-height: none !important;
+    aspect-ratio: 2 / 1;
+  }
+
+  .chicken-guide {
+    max-width: 165px;
+  }
+}
