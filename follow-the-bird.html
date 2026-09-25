@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trackpad Hand Trainer - Follow the Bird</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="freeze-screen.css" />
+</head>
+
+<body class="follow-bird-page" data-game-active-key="followBirdGameActive">
+
+  <audio
+    id="followBirdSuccessAudio"
+    src="sounds/success.mp3"
+    preload="auto"
+  ></audio>
+
+  <audio
+    id="followBirdFlapAudio"
+    src="sounds/flying.mp3"
+    preload="auto"
+    loop
+  ></audio>
+
+  <main class="game-shell follow-bird-shell">
+
+    <header class="game-header">
+      <div class="game-heading">
+        <div class="game-category">TRACKPAD TRAINER</div>
+        <h1 class="game-title">Follow the Bird</h1>
+      </div>
+
+      <div class="game-header-controls">
+        <button
+          id="followBirdHomeButton"
+          class="back-button game-header-button"
+          type="button"
+          aria-label="Home"
+          title="Home"
+        >
+          <img
+            class="home-btn-icon"
+            src="images/home-icon.svg"
+            alt=""
+            aria-hidden="true"
+          />
+        </button>
+
+        <button
+          id="followBirdSoundButton"
+          class="sound-toggle-button game-header-button"
+          type="button"
+          aria-pressed="true"
+          aria-label="Sound on"
+          title="Sound on"
+        >
+          🔊
+        </button>
+      </div>
+    </header>
+
+    <p class="game-instructions">
+      Keep your pointer as close to the bird as you can!
+    </p>
+
+    <section class="game-stats" aria-live="polite">
+      <div
+        class="game-stats-row"
+        role="group"
+        aria-label="Follow the Bird stats"
+      >
+        <div class="game-stat">
+          <span class="label">Time</span>
+          <span class="value" id="followBirdTime">1:00</span>
+        </div>
+
+        <div class="game-stat">
+          <span class="label">Tracking</span>
+          <span class="value" id="followBirdTracking">0%</span>
+        </div>
+
+        <div class="game-stat">
+          <span class="label">Speed</span>
+          <span class="value" id="followBirdSpeed">Starting</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="game-stage follow-bird-stage" aria-label="Follow the Bird game area">
+
+      <div
+        id="followBirdArena"
+        class="follow-bird-arena"
+        role="application"
+        aria-label="Move your pointer to follow the flying bird"
+      >
+        <div class="follow-bird-cloud cloud-one"></div>
+        <div class="follow-bird-cloud cloud-two"></div>
+        <div class="follow-bird-cloud cloud-three"></div>
+
+        <div
+  id="followBirdBird"
+  class="follow-bird-bird"
+  aria-hidden="true"
+>
+  <div class="code-bird-visual">
+  <div class="code-bird-tail">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <div class="code-bird-body"></div>
+
+  <div class="code-bird-wing">
+    <span class="code-bird-wing-feather feather-one"></span>
+    <span class="code-bird-wing-feather feather-two"></span>
+    <span class="code-bird-wing-feather feather-three"></span>
+  </div>
+
+  <div class="code-bird-head">
+    <div class="code-bird-eye">
+      <div class="code-bird-pupil"></div>
+    </div>
+  </div>
+
+  <div class="code-bird-beak"></div>
+
+  <div class="code-bird-foot foot-one"></div>
+  <div class="code-bird-foot foot-two"></div>
+  </div>
+</div>
+
+        <div id="followBirdStartPanel" class="follow-bird-start-panel">
+          <h2>Ready?</h2>
+          <p>Follow the bird with your pointer for one minute.</p>
+          <button id="followBirdStartButton" type="button">
+            Start
+          </button>
+        </div>
+
+        <div
+          id="followBirdResultPanel"
+          class="follow-bird-result-panel"
+          hidden
+        >
+          <div class="follow-bird-result-label">
+            Trackpad Control
+          </div>
+
+          <div class="tracking-speed-meter-wrap">
+  <div class="tracking-speed-title">Your Tracking Speed</div>
+
+  <div id="trackingSpeedMeter" class="tracking-speed-meter">
+
+    <div class="speed-meter-level lightning-level" data-speed-level="lightning">
+      <div class="speed-meter-icon speed-lightning">
+        <span class="lightning-bolt"></span>
+      </div>
+      <div class="speed-meter-label">Lightning</div>
+    </div>
+
+    <div class="speed-meter-connector"></div>
+
+    <div class="speed-meter-level cheetah-level" data-speed-level="cheetah">
+      <div class="speed-meter-icon animal-icon cheetah-icon">
+        <span class="animal-body"></span>
+        <span class="animal-head"></span>
+        <span class="animal-tail"></span>
+      </div>
+      <div class="speed-meter-label">Cheetah</div>
+    </div>
+
+    <div class="speed-meter-connector"></div>
+
+    <div class="speed-meter-level rabbit-level" data-speed-level="rabbit">
+      <div class="speed-meter-icon animal-icon rabbit-icon">
+        <span class="animal-body"></span>
+        <span class="animal-head"></span>
+        <span class="rabbit-ear ear-one"></span>
+        <span class="rabbit-ear ear-two"></span>
+      </div>
+      <div class="speed-meter-label">Rabbit</div>
+    </div>
+
+    <div class="speed-meter-connector"></div>
+
+    <div class="speed-meter-level squirrel-level" data-speed-level="squirrel">
+      <div class="speed-meter-icon animal-icon squirrel-icon">
+        <span class="animal-body"></span>
+        <span class="animal-head"></span>
+        <span class="animal-tail"></span>
+      </div>
+      <div class="speed-meter-label">Squirrel</div>
+    </div>
+
+    <div class="speed-meter-connector"></div>
+
+    <div class="speed-meter-level turtle-level" data-speed-level="turtle">
+      <div class="speed-meter-icon animal-icon turtle-icon">
+        <span class="turtle-shell"></span>
+        <span class="turtle-head"></span>
+        <span class="turtle-leg leg-one"></span>
+        <span class="turtle-leg leg-two"></span>
+      </div>
+      <div class="speed-meter-label">Turtle</div>
+    </div>
+
+  </div>
+</div>
+
+<span
+  id="followBirdResultScore"
+  class="game-preserve-only"
+  aria-hidden="true"
+>0</span>
+
+<p id="followBirdResultMessage" class="game-preserve-only"></p>
+
+<button id="followBirdPlayAgainButton" type="button">
+            Play Again
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <section
+      class="imported-trackpad-guide game-guide"
+      aria-label="Trackpad Guide"
+    >
+      <p class="imported-trackpad-guide-label">Trackpad Guide</p>
+
+      <section
+        id="followBirdTrackpadScene"
+        class="imported-trackpad-scene"
+        aria-label="Trackpad guide animation"
+      >
+        <img
+          class="imported-trackpad-image"
+          src="images/trackpad.png"
+          alt="Trackpad"
+          draggable="false"
+        />
+
+        <img
+          id="followBirdTrackpadLeftHand"
+          class="imported-trackpad-hand imported-trackpad-left-hand"
+          src="images/left-hand-transparent.png"
+          alt="Left hand"
+          draggable="false"
+        />
+
+        <img
+          id="followBirdTrackpadRightHand"
+          class="imported-trackpad-hand imported-trackpad-right-hand"
+          src="images/right-hand-transparent.png"
+          alt="Right hand"
+          draggable="false"
+        />
+
+        <div
+          class="imported-trackpad-press-indicator"
+          aria-hidden="true"
+        ></div>
+      </section>
+    </section>
+
+  </main>
+
+  <script src="game-access.js"></script>
+  <script src="trackpad-guide.js"></script>
+  <script src="follow-the-bird.js"></script>
+  <script src="freeze-screen.js"></script>
+  <script src="input-device-guard.js"></script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+

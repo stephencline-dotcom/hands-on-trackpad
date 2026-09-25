@@ -27,11 +27,19 @@
 
     <main class="home-shell">
       <section class="home-hero" aria-label="Game selection">
-        <a class="training-tool-link" href="trackpad-fullscreen.html" aria-label="Open fullscreen trackpad training tool" data-game-active-key="fullscreenGameActive">
-          <img class="training-tool-thumb" src="images/trackpad-hands-composite.png" alt="Fullscreen trackpad training thumbnail" loading="lazy" />
-          <span class="training-tool-title">Fullscreen Trackpad</span>
-          <span class="training-tool-subtitle">Training Tool</span>
-        </a>
+        <div class="training-tools-row">
+          <a class="training-tool-link" href="trackpad-fullscreen.html" aria-label="Open fullscreen trackpad training tool" data-game-active-key="fullscreenGameActive">
+            <img class="training-tool-thumb" src="images/trackpad-hands-composite.png" alt="Fullscreen trackpad training thumbnail" loading="lazy" />
+            <span class="training-tool-title">Fullscreen Trackpad</span>
+            <span class="training-tool-subtitle">Training Tool</span>
+          </a>
+
+          <a class="training-tool-link" href="follow-the-bird.html" aria-label="Open Follow the Bird trackpad trainer" data-game-active-key="followBirdGameActive">
+            <img class="training-tool-thumb follow-bird-tool-thumb" src="images/follow-bird.png" alt="Follow the Bird training thumbnail" loading="lazy" />
+            <span class="training-tool-title">Follow the Bird</span>
+            <span class="training-tool-subtitle">Trackpad Trainer</span>
+          </a>
+        </div>
 
         <div class="home-hero-top">
           <div class="home-hero-text">
@@ -270,3 +278,4 @@
     <script src="input-device-guard.js"></script>
 </body>
 </html>
+

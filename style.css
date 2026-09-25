@@ -5850,3 +5850,1658 @@ body.car-page .car-traffic {
   white-space: nowrap;
   box-shadow: 0 5px 16px rgba(0, 0, 0, 0.35);
 }
+
+/* =========================================================
+   FOLLOW THE BIRD - TRACKPAD TRAINER
+   ========================================================= */
+
+.follow-bird-page .follow-bird-shell {
+  width: min(1100px, calc(100% - 28px));
+}
+
+.follow-bird-page .follow-bird-stage {
+  padding: 0;
+  overflow: hidden;
+}
+
+.follow-bird-arena {
+  position: relative;
+  width: 100%;
+  height: 430px;
+  min-height: 360px;
+  overflow: hidden;
+  border-radius: 16px;
+  cursor: default;
+  user-select: none;
+  touch-action: none;
+
+  background:
+    linear-gradient(
+      to bottom,
+      #67c8f5 0%,
+      #91dcf7 52%,
+      #dff5ff 100%
+    );
+}
+
+/* distant landscape */
+
+.follow-bird-arena::before {
+  content: "";
+  position: absolute;
+  left: -5%;
+  right: -5%;
+  bottom: -45px;
+  height: 125px;
+  border-radius: 50% 50% 0 0;
+  background:
+    linear-gradient(
+      to bottom,
+      #8fd36b 0%,
+      #58aa50 100%
+    );
+  pointer-events: none;
+}
+
+/* lighter hill */
+
+.follow-bird-arena::after {
+  content: "";
+  position: absolute;
+  left: 28%;
+  right: -12%;
+  bottom: -62px;
+  height: 145px;
+  border-radius: 50% 50% 0 0;
+  background:
+    linear-gradient(
+      to bottom,
+      #a7df72 0%,
+      #6bb95a 100%
+    );
+  pointer-events: none;
+}
+
+/* clouds */
+
+.follow-bird-cloud {
+  position: absolute;
+  width: 110px;
+  height: 34px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow:
+    28px -17px 0 -2px rgba(255, 255, 255, 0.88),
+    55px -5px 0 -7px rgba(255, 255, 255, 0.88);
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.follow-bird-cloud.cloud-one {
+  top: 15%;
+  left: 8%;
+  transform: scale(0.75);
+}
+
+.follow-bird-cloud.cloud-two {
+  top: 9%;
+  right: 16%;
+  transform: scale(1.05);
+}
+
+.follow-bird-cloud.cloud-three {
+  top: 43%;
+  right: 5%;
+  transform: scale(0.62);
+  opacity: 0.55;
+}
+
+/* bird */
+
+.follow-bird-bird {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+
+  width: 92px;
+  height: auto;
+
+  object-fit: contain;
+
+  pointer-events: none;
+  user-select: none;
+
+  filter:
+    drop-shadow(0 5px 4px rgba(0, 0, 0, 0.18));
+
+  will-change: transform;
+}
+
+/* start screen */
+
+.follow-bird-start-panel,
+.follow-bird-result-panel {
+  position: absolute;
+  z-index: 30;
+
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  width: min(430px, calc(100% - 40px));
+
+  padding: 26px 30px;
+
+  border: 2px solid rgba(255, 255, 255, 0.78);
+  border-radius: 22px;
+
+  text-align: center;
+
+  color: #17324b;
+
+  background: rgba(255, 255, 255, 0.93);
+
+  box-shadow:
+    0 18px 45px rgba(20, 66, 99, 0.25);
+
+  backdrop-filter: blur(7px);
+}
+
+.follow-bird-start-panel h2 {
+  margin: 0 0 8px;
+  font-size: 2rem;
+  color: #17324b;
+}
+
+.follow-bird-start-panel p,
+.follow-bird-result-panel p {
+  margin: 0 auto 18px;
+  max-width: 34ch;
+  line-height: 1.45;
+  font-weight: 600;
+  color: #41647d;
+}
+
+.follow-bird-start-panel button,
+.follow-bird-result-panel button {
+  min-width: 150px;
+  padding: 11px 24px;
+
+  border: 0;
+  border-radius: 999px;
+
+  background: #176f9f;
+  color: #ffffff;
+
+  font: inherit;
+  font-weight: 800;
+  font-size: 1rem;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 6px 14px rgba(23, 111, 159, 0.28);
+
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.follow-bird-start-panel button:hover,
+.follow-bird-start-panel button:focus-visible,
+.follow-bird-result-panel button:hover,
+.follow-bird-result-panel button:focus-visible {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 9px 18px rgba(23, 111, 159, 0.34);
+}
+
+/* result */
+
+.follow-bird-result-label {
+  margin-bottom: 5px;
+
+  font-size: 0.8rem;
+  font-weight: 900;
+
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  color: #56809a;
+}
+
+.follow-bird-result-rating {
+  margin-bottom: 5px;
+
+  font-size: 2rem;
+  font-weight: 900;
+
+  color: #176f9f;
+}
+
+.follow-bird-result-score {
+  margin-bottom: 12px;
+
+  font-size: 1.35rem;
+  font-weight: 900;
+
+  color: #17324b;
+}
+
+.follow-bird-result-panel[hidden],
+.follow-bird-start-panel[hidden] {
+  display: none;
+}
+
+/* Chromebook-sized screens */
+
+@media (max-height: 800px) {
+  .follow-bird-arena {
+    height: 370px;
+    min-height: 330px;
+  }
+
+  .follow-bird-start-panel,
+  .follow-bird-result-panel {
+    padding: 20px 24px;
+  }
+}
+
+/* very short screens */
+
+@media (max-height: 600px) {
+  .follow-bird-arena {
+    height: 330px;
+    min-height: 310px;
+  }
+}
+
+
+/* =========================================================
+   FOLLOW THE BIRD - FINAL SCREEN LAYOUT
+   Scoped to this trainer only.
+   ========================================================= */
+
+body.follow-bird-page {
+  margin: 0;
+  min-height: 100vh;
+  padding: 14px;
+  box-sizing: border-box;
+}
+
+.follow-bird-page .follow-bird-shell {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Compact header */
+
+.follow-bird-page .game-header {
+  width: 100%;
+  min-height: 58px;
+  padding: 9px 14px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.follow-bird-page .game-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.follow-bird-page .game-category {
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  opacity: 0.72;
+}
+
+.follow-bird-page .game-title {
+  margin: 0;
+  font-size: 1.55rem;
+  line-height: 1.05;
+}
+
+.follow-bird-page .game-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Instruction */
+
+.follow-bird-page .game-instructions {
+  margin: 0;
+  padding: 2px 4px;
+  font-size: 0.95rem;
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+/* Compact horizontal stats */
+
+.follow-bird-page .game-stats {
+  margin: 0;
+  padding: 0;
+}
+
+.follow-bird-page .game-stats-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.follow-bird-page .game-stat {
+  min-width: 112px;
+  padding: 6px 12px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.follow-bird-page .game-stat .label,
+.follow-bird-page .game-stat .value {
+  display: inline;
+}
+
+.follow-bird-page .game-stat .label {
+  font-size: 0.72rem;
+  opacity: 0.72;
+}
+
+.follow-bird-page .game-stat .value {
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+/* Gameplay becomes the visual focus */
+
+.follow-bird-page .follow-bird-stage {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.follow-bird-page .follow-bird-arena {
+  width: 100%;
+  height: 390px;
+  min-height: 0;
+  border-radius: 18px;
+  box-sizing: border-box;
+}
+
+/* Easier for young students to visually track */
+
+.follow-bird-page .follow-bird-bird {
+  width: 130px;
+}
+
+/* Compact Trackpad Guide */
+
+.follow-bird-page .game-guide {
+  margin-top: 2px;
+}
+
+.follow-bird-page .imported-trackpad-guide-label {
+  margin: 0 0 3px;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.follow-bird-page .imported-trackpad-scene {
+  width: 260px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Chromebook / classroom display */
+
+@media (max-height: 800px) {
+  body.follow-bird-page {
+    padding: 8px 12px;
+  }
+
+  .follow-bird-page .follow-bird-shell {
+    gap: 5px;
+  }
+
+  .follow-bird-page .game-header {
+    min-height: 50px;
+    padding: 6px 12px;
+  }
+
+  .follow-bird-page .game-title {
+    font-size: 1.35rem;
+  }
+
+  .follow-bird-page .game-instructions {
+    font-size: 0.88rem;
+  }
+
+  .follow-bird-page .game-stat {
+    padding: 4px 10px;
+  }
+
+  .follow-bird-page .follow-bird-arena {
+    height: 350px;
+  }
+
+  .follow-bird-page .follow-bird-bird {
+    width: 120px;
+  }
+
+  .follow-bird-page .imported-trackpad-scene {
+    width: 230px;
+  }
+}
+
+
+/* =========================================================
+   FOLLOW THE BIRD - COMPACT CLASSROOM LAYOUT
+   ========================================================= */
+
+body.follow-bird-page {
+  padding: 8px 12px !important;
+  overflow-x: hidden;
+}
+
+.follow-bird-page .follow-bird-shell {
+  width: min(1180px, 100%) !important;
+  margin: 0 auto !important;
+  gap: 5px !important;
+}
+
+/* Make sure header stays visible */
+
+.follow-bird-page .game-header {
+  position: relative !important;
+  top: auto !important;
+  margin: 0 !important;
+  min-height: 48px !important;
+  padding: 5px 10px !important;
+}
+
+.follow-bird-page .game-category {
+  font-size: 0.62rem !important;
+}
+
+.follow-bird-page .game-title {
+  margin: 0 !important;
+  font-size: 1.25rem !important;
+  line-height: 1 !important;
+}
+
+/* Instruction */
+
+.follow-bird-page .game-instructions {
+  margin: 0 !important;
+  padding: 2px 4px !important;
+  font-size: 0.85rem !important;
+  line-height: 1.15 !important;
+}
+
+/* Stats */
+
+.follow-bird-page .game-stats {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.follow-bird-page .game-stats-row {
+  gap: 7px !important;
+}
+
+.follow-bird-page .game-stat {
+  min-width: 0 !important;
+  padding: 3px 10px !important;
+}
+
+/* Hide live Tracking stat.
+   We still calculate it in JavaScript. */
+
+.follow-bird-page .game-stat:nth-child(2) {
+  display: none !important;
+}
+
+/* Main play area */
+
+.follow-bird-page .follow-bird-stage {
+  margin: 0 !important;
+}
+
+.follow-bird-page .follow-bird-arena {
+  height: 365px !important;
+  min-height: 0 !important;
+}
+
+/* Bird */
+
+.follow-bird-page .follow-bird-bird {
+  width: 125px !important;
+}
+
+/* Smaller start/result card */
+
+.follow-bird-page .follow-bird-start-panel,
+.follow-bird-page .follow-bird-result-panel {
+  width: min(370px, calc(100% - 32px)) !important;
+  padding: 18px 22px !important;
+}
+
+.follow-bird-page .follow-bird-start-panel h2 {
+  margin-bottom: 5px !important;
+  font-size: 1.65rem !important;
+}
+
+.follow-bird-page .follow-bird-start-panel p,
+.follow-bird-page .follow-bird-result-panel p {
+  margin-bottom: 12px !important;
+}
+
+/* Truly compact Trackpad Guide */
+
+.follow-bird-page .game-guide {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.follow-bird-page .imported-trackpad-guide-label {
+  margin: 0 0 2px !important;
+  font-size: 0.72rem !important;
+}
+
+.follow-bird-page .imported-trackpad-scene {
+  width: 190px !important;
+  max-width: 190px !important;
+  margin: 0 auto !important;
+  transform: none !important;
+}
+
+.follow-bird-page .imported-trackpad-image {
+  width: 100% !important;
+  height: auto !important;
+}
+
+/* Short Chromebook screens */
+
+@media (max-height: 700px) {
+  .follow-bird-page .follow-bird-arena {
+    height: 325px !important;
+  }
+
+  .follow-bird-page .follow-bird-bird {
+    width: 115px !important;
+  }
+
+  .follow-bird-page .imported-trackpad-scene {
+    width: 165px !important;
+    max-width: 165px !important;
+  }
+}
+
+
+/* =========================================================
+   FOLLOW THE BIRD - GUIDE + HEADER CONTROL CORRECTIONS
+   ========================================================= */
+
+/* Approved Home + Sound button appearance */
+
+.follow-bird-page .game-header-controls {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.follow-bird-page .game-header-button {
+  width: 42px !important;
+  height: 36px !important;
+  min-width: 42px !important;
+  padding: 0 !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border: 1px solid rgba(175, 221, 251, 0.36) !important;
+  border-radius: 10px !important;
+
+  background: #172534 !important;
+  color: #ffffff !important;
+
+  box-shadow: none !important;
+}
+
+.follow-bird-page .home-btn-icon {
+  width: 19px !important;
+  height: 19px !important;
+
+  filter: brightness(0) invert(1) !important;
+  pointer-events: none !important;
+}
+
+.follow-bird-page #followBirdSoundButton {
+  font-size: 20px !important;
+  line-height: 1 !important;
+}
+
+/* Restore shared Trackpad Guide geometry.
+   Do not shrink the scene because the hand placement is tuned for it. */
+
+.follow-bird-page .imported-trackpad-scene {
+  width: 300px !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  transform: none !important;
+}
+
+/* Stop our earlier image override from changing guide geometry */
+
+.follow-bird-page .imported-trackpad-image {
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Make guide label centered with guide */
+
+.follow-bird-page .imported-trackpad-guide-label {
+  text-align: center !important;
+  margin: 0 0 3px !important;
+}
+
+/* Remove the previous short-screen shrinking of the guide */
+
+@media (max-height: 700px) {
+  .follow-bird-page .imported-trackpad-scene {
+    width: 300px !important;
+    max-width: 100% !important;
+  }
+}
+
+
+/* =========================================================
+   FOLLOW THE BIRD - CORRECT SHARED TRACKPAD GUIDE GEOMETRY
+   ========================================================= */
+
+.follow-bird-page .imported-trackpad-scene {
+  position: relative !important;
+
+  width: 300px !important;
+  height: auto !important;
+  aspect-ratio: 626 / 437 !important;
+
+  max-width: 100% !important;
+  margin: 0 auto !important;
+
+  overflow: hidden !important;
+}
+
+.follow-bird-page .imported-trackpad-image {
+  position: absolute !important;
+  inset: 0 !important;
+
+  width: 100% !important;
+  height: 100% !important;
+
+  object-fit: contain !important;
+}
+
+.follow-bird-page .imported-trackpad-hand {
+  position: absolute !important;
+  z-index: 3 !important;
+
+  height: auto !important;
+  pointer-events: none !important;
+  user-select: none !important;
+}
+
+.follow-bird-page .imported-trackpad-left-hand {
+  width: 44% !important;
+}
+
+.follow-bird-page .imported-trackpad-right-hand {
+  width: 44% !important;
+}
+
+
+/* =========================================================
+   FOLLOW THE BIRD - FIT COMPLETE TRAINER ON SCREEN
+   ========================================================= */
+
+.follow-bird-page .follow-bird-arena {
+  height: 300px !important;
+  min-height: 300px !important;
+}
+
+.follow-bird-page .follow-bird-bird {
+  width: 105px !important;
+}
+
+/* Keep correct guide proportions, just render the whole
+   coordinate system at a smaller scale. */
+
+.follow-bird-page .imported-trackpad-scene {
+  position: relative !important;
+  width: 220px !important;
+  height: 154px !important;
+  aspect-ratio: 626 / 437 !important;
+  max-width: 220px !important;
+  margin: 0 auto !important;
+  overflow: hidden !important;
+}
+
+.follow-bird-page .imported-trackpad-image {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+}
+
+.follow-bird-page .imported-trackpad-guide-label {
+  margin: 0 0 2px !important;
+  text-align: center !important;
+  font-size: 0.7rem !important;
+}
+
+/* Hands scale with the same scene */
+
+.follow-bird-page .imported-trackpad-left-hand,
+.follow-bird-page .imported-trackpad-right-hand {
+  width: 44% !important;
+  height: auto !important;
+}
+
+/* Override previous short-screen sizes */
+
+@media (max-height: 800px) {
+  .follow-bird-page .follow-bird-arena {
+    height: 300px !important;
+    min-height: 300px !important;
+  }
+
+  .follow-bird-page .imported-trackpad-scene {
+    width: 220px !important;
+    height: 154px !important;
+    max-width: 220px !important;
+  }
+}
+
+
+/* =========================================================
+   FOLLOW THE BIRD - FLYING / FLAPPING ANIMATION
+   ========================================================= */
+
+.follow-bird-page .follow-bird-bird {
+  transform-origin: 48% 55%;
+  animation: followBirdFlap 0.28s ease-in-out infinite alternate;
+}
+
+@keyframes followBirdFlap {
+  0% {
+    scale: 1 0.92;
+    rotate: -2deg;
+  }
+
+  50% {
+    scale: 1.03 1.05;
+    rotate: 2deg;
+  }
+
+  100% {
+    scale: 1 0.95;
+    rotate: -1deg;
+  }
+}
+
+
+.follow-bird-page .follow-bird-bird {
+  --bird-bank: 0deg;
+}
+
+@keyframes followBirdFlap {
+  0% {
+    scale: 1 0.90;
+    rotate: calc(var(--bird-bank) - 3deg);
+  }
+
+  50% {
+    scale: 1.04 1.06;
+    rotate: calc(var(--bird-bank) + 2deg);
+  }
+
+  100% {
+    scale: 1 0.94;
+    rotate: var(--bird-bank);
+  }
+}
+
+
+/* =========================================================
+   FOLLOW THE BIRD - GENTLE FLIGHT MOTION
+   ========================================================= */
+
+.follow-bird-page .follow-bird-bird {
+  animation: followBirdGentleFlight 0.55s ease-in-out infinite alternate !important;
+  transform-origin: 50% 55% !important;
+  rotate: 0deg !important;
+}
+
+@keyframes followBirdGentleFlight {
+  from {
+    scale: 1 0.985;
+  }
+
+  to {
+    scale: 1.01 1.015;
+  }
+}
+
+
+/* =========================================================
+   FOLLOW THE BIRD - CODE BUILT CARTOON BIRD
+   No image file required
+   ========================================================= */
+
+.follow-bird-page .follow-bird-bird {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+
+  width: 112px !important;
+  height: 76px !important;
+
+  z-index: 10 !important;
+
+  animation: none !important;
+  rotate: none !important;
+  scale: none !important;
+
+  transform-origin: center center !important;
+
+  pointer-events: none !important;
+  user-select: none !important;
+
+  filter: drop-shadow(0 6px 5px rgba(0, 0, 0, 0.2));
+
+  will-change: transform;
+}
+
+/* BODY */
+
+.code-bird-body {
+  position: absolute;
+  left: 31px;
+  top: 31px;
+
+  width: 60px;
+  height: 34px;
+
+  border: 4px solid #17324b;
+  border-radius: 55% 52% 48% 52%;
+
+  background:
+    linear-gradient(
+      to bottom,
+      #2389e8 0%,
+      #247ee0 45%,
+      #ff9d22 47%,
+      #ffb52e 100%
+    );
+
+  z-index: 4;
+}
+
+/* HEAD */
+
+.code-bird-head {
+  position: absolute;
+  left: 72px;
+  top: 23px;
+
+  width: 35px;
+  height: 35px;
+
+  border: 4px solid #17324b;
+  border-radius: 50%;
+
+  background: #2b91eb;
+
+  z-index: 7;
+}
+
+/* EYE */
+
+.code-bird-eye {
+  position: absolute;
+  width: 15px;
+  height: 17px;
+
+  right: 4px;
+  top: 5px;
+
+  border: 3px solid #17324b;
+  border-radius: 50%;
+
+  background: #ffffff;
+}
+
+.code-bird-pupil {
+  position: absolute;
+
+  width: 6px;
+  height: 8px;
+
+  right: 1px;
+  top: 3px;
+
+  border-radius: 50%;
+
+  background: #14283a;
+}
+
+/* BEAK */
+
+.code-bird-beak {
+  position: absolute;
+
+  left: 101px;
+  top: 36px;
+
+  width: 0;
+  height: 0;
+
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 18px solid #ffd026;
+
+  z-index: 6;
+
+  filter:
+    drop-shadow(1px 0 0 #17324b)
+    drop-shadow(0 1px 0 #17324b)
+    drop-shadow(0 -1px 0 #17324b);
+}
+
+/* TAIL */
+
+.code-bird-tail {
+  position: absolute;
+
+  left: 5px;
+  top: 42px;
+
+  width: 38px;
+  height: 25px;
+
+  z-index: 2;
+}
+
+.code-bird-tail span {
+  position: absolute;
+
+  left: 8px;
+
+  width: 34px;
+  height: 10px;
+
+  border: 3px solid #17324b;
+  border-radius: 70% 15% 15% 70%;
+
+  background: #256fd5;
+
+  transform-origin: right center;
+}
+
+.code-bird-tail span:nth-child(1) {
+  top: 0;
+  transform: rotate(-18deg);
+}
+
+.code-bird-tail span:nth-child(2) {
+  top: 8px;
+  transform: rotate(0deg);
+}
+
+.code-bird-tail span:nth-child(3) {
+  top: 15px;
+  transform: rotate(15deg);
+}
+
+/* WING */
+
+.code-bird-wing {
+  position: absolute;
+
+  left: 39px;
+  top: 29px;
+
+  width: 48px;
+  height: 34px;
+
+  z-index: 8;
+
+  transform-origin: 38px 25px;
+
+  animation:
+    codeBirdFlap 0.24s
+    ease-in-out
+    infinite alternate;
+}
+
+.code-bird-wing::before {
+  content: "";
+
+  position: absolute;
+
+  left: 11px;
+  top: 7px;
+
+  width: 35px;
+  height: 27px;
+
+  border: 4px solid #17324b;
+  border-radius: 65% 70% 45% 50%;
+
+  background: #166bd2;
+}
+
+.code-bird-wing-feather {
+  position: absolute;
+
+  width: 15px;
+  height: 32px;
+
+  border: 3px solid #17324b;
+  border-radius: 70% 70% 45% 45%;
+
+  background: #2d91ef;
+
+  transform-origin: center bottom;
+}
+
+.code-bird-wing-feather.feather-one {
+  left: 5px;
+  top: -13px;
+  transform: rotate(-25deg);
+}
+
+.code-bird-wing-feather.feather-two {
+  left: 17px;
+  top: -20px;
+  transform: rotate(-8deg);
+}
+
+.code-bird-wing-feather.feather-three {
+  left: 29px;
+  top: -14px;
+  transform: rotate(14deg);
+}
+
+/* FEET */
+
+.code-bird-foot {
+  position: absolute;
+
+  width: 12px;
+  height: 6px;
+
+  border-bottom: 3px solid #49351f;
+
+  z-index: 3;
+}
+
+.code-bird-foot.foot-one {
+  left: 58px;
+  top: 64px;
+  transform: rotate(-13deg);
+}
+
+.code-bird-foot.foot-two {
+  left: 69px;
+  top: 65px;
+  transform: rotate(10deg);
+}
+
+/* Only the wing moves.
+   The bird itself stays smooth and easy to track. */
+
+@keyframes codeBirdFlap {
+  0% {
+    transform:
+      translateY(5px)
+      rotate(28deg)
+      scaleY(0.74);
+  }
+
+  100% {
+    transform:
+      translateY(-4px)
+      rotate(-27deg)
+      scaleY(1.08);
+  }
+}
+
+
+/* =========================================================
+   FOLLOW THE BIRD - FACE FLIGHT DIRECTION
+   ========================================================= */
+
+.follow-bird-page .follow-bird-bird {
+  transform-origin: center center !important;
+}
+
+.follow-bird-page .follow-bird-bird.facing-right {
+  scale: 1 1 !important;
+}
+
+.follow-bird-page .follow-bird-bird.facing-left {
+  scale: -1 1 !important;
+}
+
+
+/* =========================================================
+   FOLLOW THE BIRD - SAFE DIRECTION FLIP
+   Movement stays on outer container.
+   Only artwork flips.
+   ========================================================= */
+
+.follow-bird-page .follow-bird-bird {
+  scale: none !important;
+}
+
+.follow-bird-page .code-bird-visual {
+  position: absolute;
+  inset: 0;
+  transform-origin: center center;
+  transform: scaleX(1);
+}
+
+.follow-bird-page .code-bird-visual.facing-left {
+  transform: scaleX(-1);
+}
+
+/* Disable previous whole-bird direction flip rules */
+
+.follow-bird-page .follow-bird-bird.facing-right,
+.follow-bird-page .follow-bird-bird.facing-left {
+  scale: none !important;
+}
+
+
+/* =========================================================
+   FOLLOW THE BIRD - TRACKING SPEED RESULT METER
+   ========================================================= */
+
+.tracking-speed-meter-wrap {
+  text-align: center;
+}
+
+.tracking-speed-title {
+  margin-bottom: 10px;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #17324b;
+}
+
+.tracking-speed-meter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+
+  width: 180px;
+  margin: 0 auto 14px;
+}
+
+.speed-meter-level {
+  position: relative;
+
+  width: 150px;
+  min-height: 50px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 5px 10px;
+
+  border: 2px solid transparent;
+  border-radius: 14px;
+
+  opacity: 0.3;
+
+  transition:
+    opacity 220ms ease,
+    transform 220ms ease,
+    background 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.speed-meter-level.active {
+  opacity: 1;
+  transform: scale(1.08);
+
+  border-color: #ffd447;
+  background: rgba(255, 244, 186, 0.96);
+
+  box-shadow:
+    0 0 0 4px rgba(255, 212, 71, 0.2),
+    0 8px 20px rgba(0, 0, 0, 0.16);
+}
+
+.speed-meter-level.active::after {
+  content: "";
+
+  position: absolute;
+  inset: -5px;
+
+  border: 2px solid rgba(255, 214, 74, 0.6);
+  border-radius: 18px;
+
+  animation: speedMeterPulse 1s ease-in-out infinite alternate;
+}
+
+.speed-meter-label {
+  flex: 1;
+  text-align: left;
+
+  font-size: 0.9rem;
+  font-weight: 900;
+  color: #17324b;
+}
+
+.speed-meter-connector {
+  width: 5px;
+  height: 13px;
+
+  border-radius: 999px;
+
+  background: #8aa6b8;
+}
+
+/* shared icon space */
+
+.speed-meter-icon {
+  position: relative;
+
+  width: 46px;
+  height: 38px;
+
+  flex: 0 0 46px;
+}
+
+/* lightning */
+
+.speed-lightning {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightning-bolt {
+  width: 20px;
+  height: 31px;
+
+  background: #ffd21f;
+
+  clip-path: polygon(
+    55% 0,
+    18% 52%,
+    47% 52%,
+    32% 100%,
+    82% 40%,
+    52% 40%
+  );
+
+  filter:
+    drop-shadow(1px 0 0 #17324b)
+    drop-shadow(-1px 0 0 #17324b)
+    drop-shadow(0 1px 0 #17324b)
+    drop-shadow(0 -1px 0 #17324b);
+}
+
+/* base animal shapes */
+
+.animal-icon .animal-body {
+  position: absolute;
+
+  left: 8px;
+  top: 15px;
+
+  width: 27px;
+  height: 18px;
+
+  border: 2px solid #17324b;
+  border-radius: 55%;
+
+  background: #d58a42;
+}
+
+.animal-icon .animal-head {
+  position: absolute;
+
+  left: 29px;
+  top: 10px;
+
+  width: 15px;
+  height: 15px;
+
+  border: 2px solid #17324b;
+  border-radius: 50%;
+
+  background: #d58a42;
+}
+
+/* cheetah */
+
+.cheetah-icon .animal-body,
+.cheetah-icon .animal-head {
+  background: #f4b52f;
+}
+
+.cheetah-icon .animal-body::before,
+.cheetah-icon .animal-body::after {
+  content: "";
+
+  position: absolute;
+
+  width: 3px;
+  height: 3px;
+
+  border-radius: 50%;
+  background: #5b4025;
+}
+
+.cheetah-icon .animal-body::before {
+  left: 7px;
+  top: 5px;
+}
+
+.cheetah-icon .animal-body::after {
+  left: 16px;
+  top: 10px;
+}
+
+.cheetah-icon .animal-tail {
+  position: absolute;
+
+  left: 1px;
+  top: 12px;
+
+  width: 18px;
+  height: 6px;
+
+  border: 2px solid #17324b;
+  border-radius: 70% 10% 10% 70%;
+
+  background: #f4b52f;
+
+  transform: rotate(-15deg);
+}
+
+/* rabbit */
+
+.rabbit-icon .animal-body,
+.rabbit-icon .animal-head {
+  background: #e7eef4;
+}
+
+.rabbit-ear {
+  position: absolute;
+
+  width: 6px;
+  height: 17px;
+
+  border: 2px solid #17324b;
+  border-radius: 70%;
+
+  background: #f0f5f8;
+}
+
+.rabbit-icon .ear-one {
+  left: 31px;
+  top: -2px;
+  transform: rotate(-8deg);
+}
+
+.rabbit-icon .ear-two {
+  left: 37px;
+  top: 0;
+  transform: rotate(12deg);
+}
+
+/* squirrel */
+
+.squirrel-icon .animal-body,
+.squirrel-icon .animal-head {
+  background: #c7763c;
+}
+
+.squirrel-icon .animal-tail {
+  position: absolute;
+
+  left: -1px;
+  top: 4px;
+
+  width: 18px;
+  height: 28px;
+
+  border: 3px solid #17324b;
+  border-radius: 60%;
+
+  background: #d78445;
+
+  transform: rotate(-28deg);
+}
+
+/* turtle */
+
+.turtle-shell {
+  position: absolute;
+
+  left: 7px;
+  top: 13px;
+
+  width: 29px;
+  height: 20px;
+
+  border: 2px solid #17324b;
+  border-radius: 50%;
+
+  background: #5da64f;
+}
+
+.turtle-head {
+  position: absolute;
+
+  left: 34px;
+  top: 17px;
+
+  width: 12px;
+  height: 11px;
+
+  border: 2px solid #17324b;
+  border-radius: 50%;
+
+  background: #79bd64;
+}
+
+.turtle-leg {
+  position: absolute;
+
+  width: 8px;
+  height: 5px;
+
+  border: 2px solid #17324b;
+  border-radius: 50%;
+
+  background: #79bd64;
+}
+
+.turtle-icon .leg-one {
+  left: 10px;
+  top: 29px;
+}
+
+.turtle-icon .leg-two {
+  left: 28px;
+  top: 29px;
+}
+
+@keyframes speedMeterPulse {
+  from {
+    opacity: 0.35;
+  }
+
+  to {
+    opacity: 0.9;
+  }
+}
+
+
+/* =========================================================
+   FOLLOW THE BIRD - FIT RESULT METER ON SCREEN
+   ========================================================= */
+
+.follow-bird-page .follow-bird-result-panel {
+  width: min(430px, calc(100% - 40px)) !important;
+  max-height: 265px !important;
+
+  padding: 12px 18px !important;
+
+  overflow: hidden !important;
+
+  top: 50% !important;
+  left: 50% !important;
+
+  transform: translate(-50%, -50%) !important;
+}
+
+/* tighter title */
+
+.follow-bird-page .tracking-speed-title {
+  margin-bottom: 5px !important;
+
+  font-size: 0.95rem !important;
+  line-height: 1.05 !important;
+}
+
+/* tighter whole meter */
+
+.follow-bird-page .tracking-speed-meter {
+  width: 175px !important;
+
+  margin: 0 auto 8px !important;
+}
+
+/* shrink each level */
+
+.follow-bird-page .speed-meter-level {
+  width: 145px !important;
+  min-height: 35px !important;
+
+  gap: 8px !important;
+
+  padding: 2px 8px !important;
+
+  border-radius: 11px !important;
+}
+
+/* smaller icons */
+
+.follow-bird-page .speed-meter-icon {
+  width: 38px !important;
+  height: 30px !important;
+
+  flex: 0 0 38px !important;
+
+  transform: scale(0.82);
+}
+
+/* smaller labels */
+
+.follow-bird-page .speed-meter-label {
+  font-size: 0.76rem !important;
+}
+
+/* shorter connecting line */
+
+.follow-bird-page .speed-meter-connector {
+  width: 4px !important;
+  height: 5px !important;
+}
+
+/* highlighted result stays visible without getting huge */
+
+.follow-bird-page .speed-meter-level.active {
+  transform: scale(1.03) !important;
+}
+
+/* smaller play again button */
+
+.follow-bird-page .follow-bird-result-panel button {
+  min-width: 120px !important;
+
+  padding: 7px 18px !important;
+
+  font-size: 0.82rem !important;
+}
+
+/* short Chromebook screens */
+
+@media (max-height: 700px) {
+  .follow-bird-page .follow-bird-result-panel {
+    max-height: 245px !important;
+    padding: 8px 14px !important;
+  }
+
+  .follow-bird-page .speed-meter-level {
+    min-height: 31px !important;
+    padding: 1px 7px !important;
+  }
+
+  .follow-bird-page .speed-meter-icon {
+    transform: scale(0.75);
+  }
+
+  .follow-bird-page .speed-meter-connector {
+    height: 3px !important;
+  }
+}
+
+
+/* =========================================================
+   HOME - TRAINING TOOLS SIDE BY SIDE
+   ========================================================= */
+
+.home-page .training-tools-row {
+  width: 100%;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
+  flex-wrap: nowrap !important;
+}
+
+.home-page .training-tools-row .training-tool-link {
+  width: 164px !important;
+  flex: 0 0 164px !important;
+  margin: 0 !important;
+}
+
