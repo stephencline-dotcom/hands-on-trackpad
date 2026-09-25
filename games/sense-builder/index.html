@@ -338,6 +338,102 @@
             role="status"
             aria-live="polite"
           ></div>
+
+          <section
+            id="senseRescueArena"
+            class="sense-rescue-arena"
+            aria-label="Five Senses Rescue"
+            hidden
+          >
+            <div class="sense-rescue-sky" aria-hidden="true">
+              <div class="sense-rescue-cloud sense-rescue-cloud-one"></div>
+              <div class="sense-rescue-cloud sense-rescue-cloud-two"></div>
+              <div class="sense-rescue-cloud sense-rescue-cloud-three"></div>
+            </div>
+
+            <div class="sense-rescue-hills" aria-hidden="true"></div>
+            <div class="sense-rescue-ground" aria-hidden="true"></div>
+
+            <div class="sense-rescue-hud">
+              <div class="sense-rescue-target">
+                <span
+                  id="senseRescueTargetIcon"
+                  class="sense-rescue-target-icon"
+                  aria-hidden="true"
+                >👀</span>
+
+                <span
+                  id="senseRescueTargetLabel"
+                  class="sense-rescue-target-label"
+                >SIGHT</span>
+              </div>
+
+              <div
+                id="senseRescueHearts"
+                class="sense-rescue-hearts"
+                aria-label="3 lives"
+              >❤️ ❤️ ❤️</div>
+
+              <div class="sense-rescue-score-wrap">
+                <span class="sense-rescue-score-label">SCORE</span>
+                <span
+                  id="senseRescueScore"
+                  class="sense-rescue-score"
+                >0</span>
+              </div>
+            </div>
+
+            <div
+              id="senseRescuePlayfield"
+              class="sense-rescue-playfield"
+            >
+              <div class="sense-rescue-far-town" aria-hidden="true"></div>
+              <div class="sense-rescue-midtown" aria-hidden="true"></div>
+              <div class="sense-rescue-tree-line" aria-hidden="true"></div>
+              <div class="sense-rescue-fence" aria-hidden="true"></div>
+
+              <div
+                id="senseRescueHero"
+                class="sense-rescue-hero"
+                data-character="boy"
+                aria-label="Player"
+              >
+                <div class="sense-rescue-hero-shadow"></div>
+
+                <div class="sense-rescue-hero-character">
+                  <div class="sense-rescue-hero-head"></div>
+                  <div class="sense-rescue-hero-body"></div>
+                  <div class="sense-rescue-hero-arm sense-rescue-hero-arm-left"></div>
+                  <div class="sense-rescue-hero-arm sense-rescue-hero-arm-right"></div>
+                  <div class="sense-rescue-hero-leg sense-rescue-hero-leg-left"></div>
+                  <div class="sense-rescue-hero-leg sense-rescue-hero-leg-right"></div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              id="senseRescueTransition"
+              class="sense-rescue-transition"
+              hidden
+            >
+              <div class="sense-rescue-transition-card">
+                <div class="sense-rescue-transition-stars" aria-hidden="true">
+                  ✨ ⭐ ✨
+                </div>
+
+                <h2>TRAINING COMPLETE!</h2>
+                <p>FIVE SENSES RESCUE</p>
+
+                <button
+                  id="senseRescueStartButton"
+                  class="sense-rescue-start-button"
+                  type="button"
+                >
+                  START RESCUE!
+                </button>
+              </div>
+            </div>
+          </section>
         </div>
 
       </div>

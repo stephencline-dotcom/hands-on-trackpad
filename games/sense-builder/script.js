@@ -2119,7 +2119,304 @@
       });
   }
 
+  /* ========================================
+     FIVE SENSES RESCUE - PREVIEW MODE
+     Temporary visual test using:
+     ?rescueTest=1
+  ======================================== */
+
+  const rescuePreviewParams =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  if (
+    rescuePreviewParams.get(
+      "rescueTest"
+    ) === "1"
+  ) {
+    const rescueArena =
+      document.getElementById(
+        "senseRescueArena"
+      );
+
+    const rescueTransition =
+      document.getElementById(
+        "senseRescueTransition"
+      );
+
+    const rescueHero =
+      document.getElementById(
+        "senseRescueHero"
+      );
+
+    const previewCharacter =
+      rescuePreviewParams.get(
+        "character"
+      );
+
+    if (
+      rescueHero &&
+      ROUND_ONE_CHARACTERS.includes(
+        previewCharacter
+      )
+    ) {
+      rescueHero.dataset.character =
+        previewCharacter;
+    }
+
+    document.body.classList.add(
+      "sense-rescue-mode"
+    );
+
+    if (rescueArena) {
+      rescueArena.hidden = false;
+    }
+
+    if (rescueTransition) {
+      rescueTransition.hidden = false;
+    }
+  }
+
+  const rescueStartButton =
+    document.getElementById(
+      "senseRescueStartButton"
+    );
+
+  if (rescueStartButton) {
+    rescueStartButton.addEventListener(
+      "click",
+      () => {
+        const rescueTransition =
+          document.getElementById(
+            "senseRescueTransition"
+          );
+
+        const rescueHero =
+          document.getElementById(
+            "senseRescueHero"
+          );
+
+        const rescueTargetIcon =
+          document.getElementById(
+            "senseRescueTargetIcon"
+          );
+
+        const rescueTargetLabel =
+          document.getElementById(
+            "senseRescueTargetLabel"
+          );
+
+        if (rescueTransition) {
+          rescueTransition.hidden = true;
+        }
+
+        if (rescueHero) {
+          rescueHero.dataset.character =
+            roundOneCharacter;
+
+          rescueHero.classList.add(
+            "is-rescue-ready"
+          );
+        }
+
+        if (rescueTargetIcon) {
+          rescueTargetIcon.textContent =
+            "👀";
+        }
+
+        if (rescueTargetLabel) {
+          rescueTargetLabel.textContent =
+            "SIGHT";
+        }
+      }
+    );
+  }
+
+  /* ========================================
+     FIVE SENSES RESCUE - HERO MOVEMENT
+  ======================================== */
+
+  const rescuePlayfield =
+    document.getElementById(
+      "senseRescuePlayfield"
+    );
+
+  const rescueHeroForMovement =
+    document.getElementById(
+      "senseRescueHero"
+    );
+
+  let rescueTargetX = 0.5;
+  let rescueCurrentX = 0.5;
+  let rescueMovementFrame = 0;
+
+  function updateRescueHeroPosition() {
+    if (
+      !document.body.classList.contains(
+        "sense-rescue-mode"
+      ) ||
+      !rescueHeroForMovement ||
+      !rescuePlayfield
+    ) {
+      rescueMovementFrame = 0;
+      return;
+    }
+
+    const rescueMovementDifference =
+      rescueTargetX - rescueCurrentX;
+
+    rescueCurrentX +=
+      rescueMovementDifference *
+      0.22;
+
+    const moving =
+      Math.abs(
+        rescueMovementDifference
+      ) > 0.006;
+
+    rescueHeroForMovement
+      .classList.toggle(
+        "is-moving",
+        moving
+      );
+
+    rescueHeroForMovement
+      .classList.toggle(
+        "is-moving-left",
+        moving &&
+        rescueMovementDifference < 0
+      );
+
+    rescueHeroForMovement
+      .classList.toggle(
+        "is-moving-right",
+        moving &&
+        rescueMovementDifference > 0
+      );
+
+    const playfieldWidth =
+      rescuePlayfield.clientWidth;
+
+    const heroWidth =
+      rescueHeroForMovement.offsetWidth;
+
+    const safePadding =
+      Math.max(16, heroWidth * 0.42);
+
+    const playfieldRect =
+      rescuePlayfield
+        .getBoundingClientRect();
+
+    const rescueGuideElement =
+      document.querySelector(
+        ".imported-trackpad-guide"
+      );
+
+    let rescueLeftBoundary =
+      safePadding;
+
+    if (rescueGuideElement) {
+      const rescueGuideRect =
+        rescueGuideElement
+          .getBoundingClientRect();
+
+      rescueLeftBoundary =
+        Math.max(
+          safePadding,
+          rescueGuideRect.right -
+            playfieldRect.left +
+            heroWidth * 0.5 +
+            18
+        );
+    }
+
+    const rescueRightBoundary =
+      playfieldWidth -
+      safePadding;
+
+    const rescueMovementWidth =
+      Math.max(
+        1,
+        rescueRightBoundary -
+          rescueLeftBoundary
+      );
+
+    const heroCenterX =
+      rescueLeftBoundary +
+      rescueMovementWidth *
+        rescueCurrentX;
+
+    rescueHeroForMovement.style.left =
+      `${heroCenterX}px`;
+
+    rescueMovementFrame =
+      window.requestAnimationFrame(
+        updateRescueHeroPosition
+      );
+  }
+
+  function startRescueHeroMovement() {
+    if (rescueMovementFrame) {
+      return;
+    }
+
+    rescueMovementFrame =
+      window.requestAnimationFrame(
+        updateRescueHeroPosition
+      );
+  }
+
+  if (rescuePlayfield) {
+    rescuePlayfield.addEventListener(
+      "pointermove",
+      (event) => {
+        if (
+          !document.body.classList.contains(
+            "sense-rescue-mode"
+          )
+        ) {
+          return;
+        }
+
+        const rect =
+          rescuePlayfield
+            .getBoundingClientRect();
+
+        if (!rect.width) {
+          return;
+        }
+
+        /* Rescue trackpad guide movement */
+        if (
+          trackpadGuide &&
+          typeof trackpadGuide
+            .updateFromPointerEvent ===
+              "function"
+        ) {
+          trackpadGuide
+            .updateFromPointerEvent(event);
+        }
+
+        rescueTargetX =
+          Math.max(
+            0,
+            Math.min(
+              1,
+              (event.clientX - rect.left) /
+                rect.width
+            )
+          );
+
+        startRescueHeroMovement();
+      }
+    );
+  }
+
+  startRescueHeroMovement();
+
   updateSoundButton();
   resetRound();
   configureCurrentRound();
 })();
+
