@@ -1,4 +1,25 @@
 'use strict';
+/* ========================================
+   DEER RUN - TRACKPAD GUIDE TOGGLE TEST
+   Temporary test:
+   ?trackpadGuide=off
+======================================== */
+
+const deerGuideTestParams =
+  new URLSearchParams(
+    window.location.search
+  );
+
+if (
+  deerGuideTestParams.get(
+    "trackpadGuide"
+  ) === "off"
+) {
+  document.body.classList.add(
+    "deer-trackpad-guide-off"
+  );
+}
+
 
 const deerArena =
   document.getElementById('deerArena');

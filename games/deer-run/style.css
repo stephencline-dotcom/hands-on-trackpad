@@ -723,3 +723,287 @@
       -340px;
   }
 }
+
+/* ========================================
+   DEER RUN - TRACKPAD GUIDE TOGGLE TEST
+======================================== */
+
+body.deer-trackpad-guide-off
+.imported-trackpad-guide {
+  display: none !important;
+}
+
+/*
+ * With the guide removed, allow the shell
+ * to devote the reclaimed space to the game.
+ */
+
+body.deer-trackpad-guide-off
+.deer-run-shell {
+  min-height: 100vh;
+}
+
+body.deer-trackpad-guide-off
+.arena-wrap {
+  flex: 1;
+  min-height: 0;
+}
+
+body.deer-trackpad-guide-off
+.arena-frame {
+  height: calc(100vh - 245px);
+  min-height: 500px;
+  max-height: none;
+}
+
+body.deer-trackpad-guide-off
+.deer-arena {
+  height: 100%;
+  min-height: 500px;
+}
+
+/*
+ * Shorter Chromebook screens.
+ */
+
+@media (max-height: 800px) {
+
+  body.deer-trackpad-guide-off
+  .arena-frame {
+    height: calc(100vh - 215px);
+    min-height: 430px;
+  }
+
+  body.deer-trackpad-guide-off
+  .deer-arena {
+    min-height: 430px;
+  }
+}
+
+/* ========================================
+   DEER RUN - GUIDE OFF COMPACT TOP BAR
+======================================== */
+
+/*
+ * When the Trackpad Guide is disabled,
+ * put directions and stats on one compact row.
+ */
+
+body.deer-trackpad-guide-off
+.deer-run-shell {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+
+  grid-template-rows:
+    auto
+    auto
+    minmax(0, 1fr);
+
+  column-gap: 18px;
+  row-gap: 8px;
+
+  align-items: center;
+}
+
+/* Header still spans the full width. */
+
+body.deer-trackpad-guide-off
+.game-header {
+  grid-column: 1 / -1;
+  grid-row: 1;
+
+  margin-bottom: 0;
+}
+
+/* Directions become the left side of one slim row. */
+
+body.deer-trackpad-guide-off
+.game-instructions {
+  grid-column: 1;
+  grid-row: 2;
+
+  align-self: center;
+
+  min-width: 0;
+
+  margin: 0;
+  padding: 0 4px;
+
+  overflow: hidden;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  font-size:
+    clamp(0.88rem, 1.15vw, 1.05rem);
+
+  line-height: 1.15;
+}
+
+/* Stats sit on the right side of that same row. */
+
+body.deer-trackpad-guide-off
+.game-stats {
+  grid-column: 2;
+  grid-row: 2;
+
+  width: auto;
+
+  margin: 0;
+  padding: 0;
+
+  justify-self: end;
+  align-self: center;
+}
+
+body.deer-trackpad-guide-off
+.game-stats-row {
+  display: flex;
+
+  gap: 6px;
+
+  margin: 0;
+}
+
+body.deer-trackpad-guide-off
+.game-stat {
+  min-width: 0;
+
+  padding:
+    6px 10px;
+
+  border-radius: 999px;
+}
+
+body.deer-trackpad-guide-off
+.game-stat .label {
+  font-size: 0.72rem;
+}
+
+body.deer-trackpad-guide-off
+.game-stat .value {
+  font-size: 1rem;
+}
+
+/* Arena immediately follows the compact bar. */
+
+body.deer-trackpad-guide-off
+.arena-wrap {
+  grid-column: 1 / -1;
+  grid-row: 3;
+
+  align-self: stretch;
+
+  width: 100%;
+  min-height: 0;
+
+  margin: 0;
+}
+
+/*
+ * Use essentially all remaining viewport height.
+ */
+
+body.deer-trackpad-guide-off
+.arena-frame {
+  width: min(100%, 1380px);
+
+  height:
+    calc(100vh - 165px);
+
+  min-height: 500px;
+
+  margin:
+    0 auto;
+
+  max-height: none;
+}
+
+body.deer-trackpad-guide-off
+.deer-arena {
+  width: 100%;
+  height: 100%;
+
+  min-height: 500px;
+}
+
+/* Hide score if the shared layout marks it preserve-only. */
+
+body.deer-trackpad-guide-off
+.game-preserve-only {
+  display: none;
+}
+
+/* Smaller Chromebook displays */
+
+@media (max-height: 800px) {
+
+  body.deer-trackpad-guide-off
+  .deer-run-shell {
+    row-gap: 5px;
+  }
+
+  body.deer-trackpad-guide-off
+  .game-stat {
+    padding:
+      4px 8px;
+  }
+
+  body.deer-trackpad-guide-off
+  .arena-frame {
+    height:
+      calc(100vh - 145px);
+
+    min-height: 430px;
+  }
+
+  body.deer-trackpad-guide-off
+  .deer-arena {
+    min-height: 430px;
+  }
+}
+
+/* ========================================
+   DEER RUN - GUIDE OFF VIEWPORT FIT
+======================================== */
+
+body.deer-trackpad-guide-off {
+  height: 100vh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+body.deer-trackpad-guide-off
+.deer-run-shell {
+  box-sizing: border-box;
+
+  height: 100vh;
+  min-height: 0;
+
+  overflow: hidden;
+}
+
+body.deer-trackpad-guide-off
+.arena-wrap {
+  min-height: 0;
+  overflow: hidden;
+}
+
+body.deer-trackpad-guide-off
+.arena-frame {
+  box-sizing: border-box;
+
+  height: 100%;
+  min-height: 0;
+}
+
+body.deer-trackpad-guide-off
+.deer-arena {
+  box-sizing: border-box;
+
+  height: 100%;
+  min-height: 0;
+}
