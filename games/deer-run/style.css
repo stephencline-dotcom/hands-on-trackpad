@@ -728,7 +728,7 @@
    DEER RUN - TRACKPAD GUIDE TOGGLE TEST
 ======================================== */
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .imported-trackpad-guide {
   display: none !important;
 }
@@ -738,25 +738,25 @@ body.deer-trackpad-guide-off
  * to devote the reclaimed space to the game.
  */
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .deer-run-shell {
   min-height: 100vh;
 }
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .arena-wrap {
   flex: 1;
   min-height: 0;
 }
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .arena-frame {
   height: calc(100vh - 245px);
   min-height: 500px;
   max-height: none;
 }
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .deer-arena {
   height: 100%;
   min-height: 500px;
@@ -768,13 +768,13 @@ body.deer-trackpad-guide-off
 
 @media (max-height: 800px) {
 
-  body.deer-trackpad-guide-off
+  body.trackpad-guide-off
   .arena-frame {
     height: calc(100vh - 215px);
     min-height: 430px;
   }
 
-  body.deer-trackpad-guide-off
+  body.trackpad-guide-off
   .deer-arena {
     min-height: 430px;
   }
@@ -789,7 +789,7 @@ body.deer-trackpad-guide-off
  * put directions and stats on one compact row.
  */
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .deer-run-shell {
   display: grid;
 
@@ -810,7 +810,7 @@ body.deer-trackpad-guide-off
 
 /* Header still spans the full width. */
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .game-header {
   grid-column: 1 / -1;
   grid-row: 1;
@@ -820,7 +820,7 @@ body.deer-trackpad-guide-off
 
 /* Directions become the left side of one slim row. */
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .game-instructions {
   grid-column: 1;
   grid-row: 2;
@@ -845,7 +845,7 @@ body.deer-trackpad-guide-off
 
 /* Stats sit on the right side of that same row. */
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .game-stats {
   grid-column: 2;
   grid-row: 2;
@@ -859,7 +859,7 @@ body.deer-trackpad-guide-off
   align-self: center;
 }
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .game-stats-row {
   display: flex;
 
@@ -868,7 +868,7 @@ body.deer-trackpad-guide-off
   margin: 0;
 }
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .game-stat {
   min-width: 0;
 
@@ -878,19 +878,19 @@ body.deer-trackpad-guide-off
   border-radius: 999px;
 }
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .game-stat .label {
   font-size: 0.72rem;
 }
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .game-stat .value {
   font-size: 1rem;
 }
 
 /* Arena immediately follows the compact bar. */
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .arena-wrap {
   grid-column: 1 / -1;
   grid-row: 3;
@@ -907,7 +907,7 @@ body.deer-trackpad-guide-off
  * Use essentially all remaining viewport height.
  */
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .arena-frame {
   width: min(100%, 1380px);
 
@@ -922,7 +922,7 @@ body.deer-trackpad-guide-off
   max-height: none;
 }
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .deer-arena {
   width: 100%;
   height: 100%;
@@ -932,7 +932,7 @@ body.deer-trackpad-guide-off
 
 /* Hide score if the shared layout marks it preserve-only. */
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .game-preserve-only {
   display: none;
 }
@@ -941,18 +941,18 @@ body.deer-trackpad-guide-off
 
 @media (max-height: 800px) {
 
-  body.deer-trackpad-guide-off
+  body.trackpad-guide-off
   .deer-run-shell {
     row-gap: 5px;
   }
 
-  body.deer-trackpad-guide-off
+  body.trackpad-guide-off
   .game-stat {
     padding:
       4px 8px;
   }
 
-  body.deer-trackpad-guide-off
+  body.trackpad-guide-off
   .arena-frame {
     height:
       calc(100vh - 145px);
@@ -960,7 +960,7 @@ body.deer-trackpad-guide-off
     min-height: 430px;
   }
 
-  body.deer-trackpad-guide-off
+  body.trackpad-guide-off
   .deer-arena {
     min-height: 430px;
   }
@@ -970,13 +970,13 @@ body.deer-trackpad-guide-off
    DEER RUN - GUIDE OFF VIEWPORT FIT
 ======================================== */
 
-body.deer-trackpad-guide-off {
+body.trackpad-guide-off {
   height: 100vh;
   min-height: 0;
   overflow: hidden;
 }
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .deer-run-shell {
   box-sizing: border-box;
 
@@ -986,13 +986,13 @@ body.deer-trackpad-guide-off
   overflow: hidden;
 }
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .arena-wrap {
   min-height: 0;
   overflow: hidden;
 }
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .arena-frame {
   box-sizing: border-box;
 
@@ -1000,7 +1000,7 @@ body.deer-trackpad-guide-off
   min-height: 0;
 }
 
-body.deer-trackpad-guide-off
+body.trackpad-guide-off
 .deer-arena {
   box-sizing: border-box;
 
@@ -1017,7 +1017,7 @@ body.deer-trackpad-guide-off
  * when the Trackpad Guide is visible.
  */
 
-body:not(.deer-trackpad-guide-off)
+body:not(.trackpad-guide-off)
 .deer-run-shell {
   display: grid;
 
@@ -1039,7 +1039,7 @@ body:not(.deer-trackpad-guide-off)
 
 /* Header spans the full page. */
 
-body:not(.deer-trackpad-guide-off)
+body:not(.trackpad-guide-off)
 .game-header {
   grid-column: 1 / -1;
   grid-row: 1;
@@ -1052,12 +1052,12 @@ body:not(.deer-trackpad-guide-off)
 
 /* Slightly tighten the title area. */
 
-body:not(.deer-trackpad-guide-off)
+body:not(.trackpad-guide-off)
 .game-category {
   margin-bottom: 2px;
 }
 
-body:not(.deer-trackpad-guide-off)
+body:not(.trackpad-guide-off)
 .game-title {
   margin: 0;
 
@@ -1066,7 +1066,7 @@ body:not(.deer-trackpad-guide-off)
 
 /* Directions on the left. */
 
-body:not(.deer-trackpad-guide-off)
+body:not(.trackpad-guide-off)
 .game-instructions {
   grid-column: 1;
   grid-row: 2;
@@ -1089,7 +1089,7 @@ body:not(.deer-trackpad-guide-off)
 
 /* Stats on the same row, right side. */
 
-body:not(.deer-trackpad-guide-off)
+body:not(.trackpad-guide-off)
 .game-stats {
   grid-column: 2;
   grid-row: 2;
@@ -1102,7 +1102,7 @@ body:not(.deer-trackpad-guide-off)
   justify-self: end;
 }
 
-body:not(.deer-trackpad-guide-off)
+body:not(.trackpad-guide-off)
 .game-stats-row {
   display: flex;
 
@@ -1111,7 +1111,7 @@ body:not(.deer-trackpad-guide-off)
   margin: 0;
 }
 
-body:not(.deer-trackpad-guide-off)
+body:not(.trackpad-guide-off)
 .game-stat {
   min-width: 0;
 
@@ -1121,19 +1121,19 @@ body:not(.deer-trackpad-guide-off)
   border-radius: 999px;
 }
 
-body:not(.deer-trackpad-guide-off)
+body:not(.trackpad-guide-off)
 .game-stat .label {
   font-size: 0.65rem;
 }
 
-body:not(.deer-trackpad-guide-off)
+body:not(.trackpad-guide-off)
 .game-stat .value {
   font-size: 0.92rem;
 }
 
 /* Game stage directly underneath. */
 
-body:not(.deer-trackpad-guide-off)
+body:not(.trackpad-guide-off)
 .arena-wrap {
   grid-column: 1 / -1;
   grid-row: 3;
@@ -1146,7 +1146,7 @@ body:not(.deer-trackpad-guide-off)
  * and sits closer to the game.
  */
 
-body:not(.deer-trackpad-guide-off)
+body:not(.trackpad-guide-off)
 .imported-trackpad-guide {
   grid-column: 1 / -1;
   grid-row: 4;
@@ -1160,13 +1160,13 @@ body:not(.deer-trackpad-guide-off)
  * without causing extra page scrolling.
  */
 
-body:not(.deer-trackpad-guide-off)
+body:not(.trackpad-guide-off)
 .arena-frame {
   max-height:
     calc(100vh - 330px);
 }
 
-body:not(.deer-trackpad-guide-off)
+body:not(.trackpad-guide-off)
 .deer-arena {
   min-height: 385px;
 }
@@ -1175,35 +1175,35 @@ body:not(.deer-trackpad-guide-off)
 
 @media (max-height: 800px) {
 
-  body:not(.deer-trackpad-guide-off)
+  body:not(.trackpad-guide-off)
   .game-header {
     padding-top: 5px;
     padding-bottom: 5px;
   }
 
-  body:not(.deer-trackpad-guide-off)
+  body:not(.trackpad-guide-off)
   .game-stat {
     padding:
       3px 7px;
   }
 
-  body:not(.deer-trackpad-guide-off)
+  body:not(.trackpad-guide-off)
   .game-stat .label {
     font-size: 0.6rem;
   }
 
-  body:not(.deer-trackpad-guide-off)
+  body:not(.trackpad-guide-off)
   .game-stat .value {
     font-size: 0.84rem;
   }
 
-  body:not(.deer-trackpad-guide-off)
+  body:not(.trackpad-guide-off)
   .arena-frame {
     max-height:
       calc(100vh - 300px);
   }
 
-  body:not(.deer-trackpad-guide-off)
+  body:not(.trackpad-guide-off)
   .deer-arena {
     min-height: 350px;
   }
@@ -1219,7 +1219,7 @@ body:not(.deer-trackpad-guide-off)
  * instead of truncating with an ellipsis.
  */
 
-body:not(.deer-trackpad-guide-off)
+body:not(.trackpad-guide-off)
 .game-instructions {
   overflow: visible;
 
@@ -1236,12 +1236,12 @@ body:not(.deer-trackpad-guide-off)
  * gets more room without changing height.
  */
 
-body:not(.deer-trackpad-guide-off)
+body:not(.trackpad-guide-off)
 .game-stats-row {
   gap: 4px;
 }
 
-body:not(.deer-trackpad-guide-off)
+body:not(.trackpad-guide-off)
 .game-stat {
   padding:
     4px 7px;
@@ -1252,9 +1252,239 @@ body:not(.deer-trackpad-guide-off)
  * while keeping stats visible.
  */
 
-body:not(.deer-trackpad-guide-off)
+body:not(.trackpad-guide-off)
 .deer-run-shell {
   grid-template-columns:
     minmax(0, 1fr)
     max-content;
+}
+
+
+/* ========================================
+   DEER RUN - GUIDE ON FULL ARENA FIX
+======================================== */
+
+/*
+ * Keep the entire Deer Run arena inside its
+ * frame when the Trackpad Guide is visible.
+ * This preserves the Start button and status
+ * at the bottom of the arena.
+ */
+
+body:not(.trackpad-guide-off)
+.arena-frame {
+  box-sizing: border-box;
+
+  height: 430px;
+  min-height: 430px;
+  max-height: 430px;
+
+  overflow: hidden;
+}
+
+body:not(.trackpad-guide-off)
+.deer-arena {
+  box-sizing: border-box;
+
+  width: 100%;
+  height: 100%;
+
+  min-height: 0;
+  max-height: none;
+}
+
+/*
+ * Shorter classroom / Chromebook displays.
+ */
+
+@media (max-height: 800px) {
+
+  body:not(.trackpad-guide-off)
+  .arena-frame {
+    height: 390px;
+    min-height: 390px;
+    max-height: 390px;
+  }
+
+  body:not(.trackpad-guide-off)
+  .deer-arena {
+    height: 100%;
+    min-height: 0;
+  }
+}
+
+/* ========================================
+   DEER RUN - GUIDE ON SIDE DOCK
+======================================== */
+
+/*
+ * Wide screens:
+ * game on the left, Trackpad Guide on the right.
+ */
+
+@media (min-width: 1250px) {
+
+  body:not(.trackpad-guide-off)
+  .deer-run-shell {
+    grid-template-columns:
+      minmax(0, 1fr)
+      285px;
+
+    grid-template-rows:
+      auto
+      auto
+      minmax(0, 1fr);
+
+    column-gap: 18px;
+    row-gap: 6px;
+
+    width: 100%;
+    max-width: none;
+
+    box-sizing: border-box;
+  }
+
+  /*
+   * Header still spans everything.
+   */
+
+  body:not(.trackpad-guide-off)
+  .game-header {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  /*
+   * Directions left, stats right across
+   * the full top row above the game.
+   */
+
+  body:not(.trackpad-guide-off)
+  .game-instructions {
+    grid-column: 1;
+    grid-row: 2;
+
+    align-self: center;
+  }
+
+  body:not(.trackpad-guide-off)
+  .game-stats {
+    grid-column: 2;
+    grid-row: 2;
+
+    justify-self: end;
+  }
+
+  /*
+   * Main Deer Run arena.
+   */
+
+  body:not(.trackpad-guide-off)
+  .arena-wrap {
+    grid-column: 1;
+    grid-row: 3;
+
+    width: 100%;
+    min-width: 0;
+
+    margin: 0;
+
+    align-self: start;
+  }
+
+  body:not(.trackpad-guide-off)
+  .arena-frame {
+    width: 100%;
+
+    height: 500px;
+    min-height: 500px;
+    max-height: 500px;
+
+    margin: 0;
+  }
+
+  body:not(.trackpad-guide-off)
+  .deer-arena {
+    width: 100%;
+    height: 100%;
+
+    min-height: 0;
+  }
+
+  /*
+   * Trackpad Guide becomes a right-side dock.
+   */
+
+  body:not(.trackpad-guide-off)
+  .imported-trackpad-guide {
+    grid-column: 2;
+    grid-row: 3;
+
+    align-self: start;
+    justify-self: stretch;
+
+    width: 100%;
+    max-width: 285px;
+
+    margin: 0;
+
+    box-sizing: border-box;
+  }
+
+  body:not(.trackpad-guide-off)
+  .imported-trackpad-scene {
+    width: 100%;
+
+    box-sizing: border-box;
+  }
+}
+
+/*
+ * Very wide classroom displays:
+ * give the game more room while keeping
+ * the guide comfortably sized.
+ */
+
+@media (min-width: 1600px) {
+
+  body:not(.trackpad-guide-off)
+  .deer-run-shell {
+    grid-template-columns:
+      minmax(0, 1fr)
+      300px;
+
+    column-gap: 22px;
+  }
+
+  body:not(.trackpad-guide-off)
+  .imported-trackpad-guide {
+    max-width: 300px;
+  }
+}
+
+/*
+ * Short but wide displays:
+ * preserve the Start button and status.
+ */
+
+@media (min-width: 1250px) and (max-height: 800px) {
+
+  body:not(.trackpad-guide-off)
+  .arena-frame {
+    height: 440px;
+    min-height: 440px;
+    max-height: 440px;
+  }
+}
+
+/* ========================================
+   DEER RUN - CENTER SIDE TRACKPAD GUIDE
+======================================== */
+
+@media (min-width: 1250px) {
+
+  body:not(.trackpad-guide-off)
+  .imported-trackpad-guide {
+    align-self: center;
+  }
 }

@@ -1,36 +1,4 @@
 'use strict';
-/* ========================================
-   DEER RUN - SHARED TRACKPAD GUIDE SETTING
-======================================== */
-
-async function applyDeerTrackpadGuideSetting() {
-  let trackpadGuideEnabled = true;
-
-  try {
-    const response = await fetch(
-      "/api/settings",
-      { cache: "no-store" }
-    );
-
-    if (response.ok) {
-      const settings =
-        await response.json();
-
-      trackpadGuideEnabled =
-        settings.trackpadGuideEnabled !== false;
-    }
-  } catch {
-    trackpadGuideEnabled = true;
-  }
-
-  document.body.classList.toggle(
-    "deer-trackpad-guide-off",
-    !trackpadGuideEnabled
-  );
-}
-
-applyDeerTrackpadGuideSetting();
-
 const deerArena =
   document.getElementById('deerArena');
 

@@ -108,7 +108,7 @@
       "snatcherDelaySeconds": 3.5
     }
   ],
-  "trackpadGuideEnabled": false,
+  "trackpadGuideEnabled": true,
   "soundEnabled": true,
   "trainingPaused": false,
   "jackFlameRainEnabled": true,
