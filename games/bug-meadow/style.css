@@ -501,3 +501,297 @@
   display: block;
   transform-origin: center;
 }
+
+/* ========================================
+   BUG MEADOW - ADAPTIVE TRACKPAD GUIDE
+======================================== */
+
+/* ---------- COMPACT TOP ---------- */
+
+body.bug-meadow-page
+.bug-meadow-shell {
+  box-sizing: border-box;
+}
+
+body.bug-meadow-page
+.game-header {
+  grid-row: 1 !important;
+
+  margin: 0 !important;
+}
+
+body.bug-meadow-page
+.game-instructions {
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+
+  justify-self: start !important;
+  align-self: center !important;
+
+  margin: 0 !important;
+  padding: 0 4px !important;
+
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+
+  font-size: 0.82rem !important;
+}
+
+body.bug-meadow-page
+.game-stats {
+  position: static !important;
+
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+
+  justify-self: end !important;
+  align-self: center !important;
+
+  width: auto !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+body.bug-meadow-page
+.game-stats-row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+
+  justify-content: flex-end !important;
+
+  gap: 5px !important;
+
+  margin: 0 !important;
+  white-space: nowrap;
+}
+
+body.bug-meadow-page
+.game-stat {
+  flex: 0 0 auto;
+
+  min-width: 0 !important;
+  min-height: 30px !important;
+
+  padding: 4px 8px !important;
+}
+
+body.bug-meadow-page
+.game-stat .label {
+  font-size: 0.64rem !important;
+}
+
+body.bug-meadow-page
+.game-stat .value {
+  font-size: 0.9rem !important;
+}
+
+/* ---------- GUIDE OFF ---------- */
+
+body.bug-meadow-page.trackpad-guide-off {
+  height: 100vh;
+  min-height: 0;
+
+  overflow: hidden;
+}
+
+body.bug-meadow-page.trackpad-guide-off
+.bug-meadow-shell {
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    max-content !important;
+
+  grid-template-rows:
+    auto
+    42px
+    minmax(0, 1fr) !important;
+
+  column-gap: 12px !important;
+  row-gap: 5px !important;
+
+  height: 100vh !important;
+  min-height: 0 !important;
+
+  align-content: stretch !important;
+
+  overflow: hidden !important;
+}
+
+body.bug-meadow-page.trackpad-guide-off
+.game-header {
+  grid-column: 1 / -1 !important;
+}
+
+body.bug-meadow-page.trackpad-guide-off
+.game-instructions {
+  grid-column: 1 !important;
+}
+
+body.bug-meadow-page.trackpad-guide-off
+.game-stats {
+  grid-column: 2 !important;
+}
+
+body.bug-meadow-page.trackpad-guide-off
+.game-stage-wrap {
+  grid-column: 1 / -1 !important;
+  grid-row: 3 !important;
+
+  align-self: stretch !important;
+
+  width: 100% !important;
+
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+}
+
+body.bug-meadow-page.trackpad-guide-off
+.game-stage,
+body.bug-meadow-page.trackpad-guide-off
+.bug-arena {
+  width: 100% !important;
+
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+}
+
+/* ---------- GUIDE ON ---------- */
+
+@media (min-width: 1250px) {
+
+  body.bug-meadow-page:not(.trackpad-guide-off) {
+    height: 100vh;
+    min-height: 0;
+
+    overflow: hidden;
+  }
+
+  body.bug-meadow-page:not(.trackpad-guide-off)
+  .bug-meadow-shell {
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      290px !important;
+
+    grid-template-rows:
+      auto
+      42px
+      minmax(0, 1fr) !important;
+
+    column-gap: 18px !important;
+    row-gap: 5px !important;
+
+    height: 100vh !important;
+    min-height: 0 !important;
+
+    align-content: stretch !important;
+
+    overflow: hidden !important;
+  }
+
+  body.bug-meadow-page:not(.trackpad-guide-off)
+  .game-header {
+    grid-column: 1 / -1 !important;
+  }
+
+  body.bug-meadow-page:not(.trackpad-guide-off)
+  .game-instructions {
+    grid-column: 1 / -1 !important;
+
+    padding-right: 400px !important;
+  }
+
+  body.bug-meadow-page:not(.trackpad-guide-off)
+  .game-stats {
+    grid-column: 1 / -1 !important;
+  }
+
+  body.bug-meadow-page:not(.trackpad-guide-off)
+  .game-stage-wrap {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+
+    align-self: stretch !important;
+
+    width: 100% !important;
+
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body.bug-meadow-page:not(.trackpad-guide-off)
+  .game-stage,
+  body.bug-meadow-page:not(.trackpad-guide-off)
+  .bug-arena {
+    width: 100% !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body.bug-meadow-page:not(.trackpad-guide-off)
+  .imported-trackpad-guide {
+    grid-column: 2 !important;
+    grid-row: 3 !important;
+
+    align-self: center !important;
+    justify-self: stretch !important;
+
+    position: static !important;
+
+    width: 100% !important;
+    max-width: 290px !important;
+
+    margin: 0 !important;
+  }
+
+  body.bug-meadow-page:not(.trackpad-guide-off)
+  .imported-trackpad-scene {
+    width: 100% !important;
+    max-width: 100% !important;
+
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+/*
+ * Leave the Start button's display state alone.
+ * Bug Meadow JavaScript controls it.
+ */
+
+body.bug-meadow-page
+.bug-start-button {
+  bottom: 36px !important;
+}
+

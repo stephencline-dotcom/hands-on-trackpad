@@ -1194,3 +1194,473 @@
   opacity: 1;
   visibility: visible;
 }
+
+/* ========================================
+   MONSTER LUNCH - ADAPTIVE TRACKPAD GUIDE
+======================================== */
+
+/* ---------- COMPACT TOP IN BOTH STATES ---------- */
+
+body.monster-lunch-page
+.monster-lunch-shell {
+  box-sizing: border-box;
+}
+
+body.monster-lunch-page
+.game-header {
+  grid-row: 1 !important;
+  margin: 0 !important;
+}
+
+body.monster-lunch-page
+.game-instructions {
+  grid-row: 2 !important;
+  align-self: center !important;
+
+  margin: 0 !important;
+
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+body.monster-lunch-page
+.game-stats {
+  grid-row: 2 !important;
+
+  justify-self: end !important;
+  align-self: center !important;
+
+  width: auto !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+body.monster-lunch-page
+.game-stats-row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+
+  gap: 5px !important;
+
+  white-space: nowrap;
+}
+
+body.monster-lunch-page
+.game-stat {
+  flex: 0 0 auto;
+
+  min-width: 0 !important;
+  min-height: 30px !important;
+
+  padding: 4px 8px !important;
+}
+
+body.monster-lunch-page
+.game-stat .label {
+  font-size: 0.64rem !important;
+}
+
+body.monster-lunch-page
+.game-stat .value {
+  font-size: 0.9rem !important;
+}
+
+/* ---------- GUIDE OFF ---------- */
+
+body.monster-lunch-page.trackpad-guide-off {
+  height: 100vh;
+  min-height: 0;
+
+  overflow: hidden;
+}
+
+body.monster-lunch-page.trackpad-guide-off
+.monster-lunch-shell {
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    max-content !important;
+
+  grid-template-rows:
+    auto
+    42px
+    minmax(0, 1fr) !important;
+
+  column-gap: 12px !important;
+  row-gap: 5px !important;
+
+  height: 100vh !important;
+  min-height: 0 !important;
+
+  align-content: stretch !important;
+
+  overflow: hidden !important;
+}
+
+body.monster-lunch-page.trackpad-guide-off
+.game-header {
+  grid-column: 1 / -1 !important;
+}
+
+body.monster-lunch-page.trackpad-guide-off
+.game-instructions {
+  grid-column: 1 !important;
+}
+
+body.monster-lunch-page.trackpad-guide-off
+.game-stats {
+  grid-column: 2 !important;
+}
+
+body.monster-lunch-page.trackpad-guide-off
+.game-stage-wrap {
+  grid-column: 1 / -1 !important;
+  grid-row: 3 !important;
+
+  align-self: stretch !important;
+
+  width: 100% !important;
+
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+}
+
+body.monster-lunch-page.trackpad-guide-off
+.game-stage,
+body.monster-lunch-page.trackpad-guide-off
+.monster-arena {
+  width: 100% !important;
+
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+}
+
+/* ---------- GUIDE ON ---------- */
+
+@media (min-width: 1250px) {
+
+  body.monster-lunch-page:not(.trackpad-guide-off) {
+    height: 100vh;
+    min-height: 0;
+
+    overflow: hidden;
+  }
+
+  body.monster-lunch-page:not(.trackpad-guide-off)
+  .monster-lunch-shell {
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      290px !important;
+
+    grid-template-rows:
+      auto
+      42px
+      minmax(0, 1fr) !important;
+
+    column-gap: 18px !important;
+    row-gap: 5px !important;
+
+    height: 100vh !important;
+    min-height: 0 !important;
+
+    align-content: stretch !important;
+
+    overflow: hidden !important;
+  }
+
+  body.monster-lunch-page:not(.trackpad-guide-off)
+  .game-header {
+    grid-column: 1 / -1 !important;
+  }
+
+  body.monster-lunch-page:not(.trackpad-guide-off)
+  .game-instructions {
+    grid-column: 1 / -1 !important;
+
+    padding-right: 470px !important;
+  }
+
+  body.monster-lunch-page:not(.trackpad-guide-off)
+  .game-stats {
+    grid-column: 1 / -1 !important;
+  }
+
+  body.monster-lunch-page:not(.trackpad-guide-off)
+  .game-stage-wrap {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+
+    align-self: stretch !important;
+
+    width: 100% !important;
+
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body.monster-lunch-page:not(.trackpad-guide-off)
+  .game-stage,
+  body.monster-lunch-page:not(.trackpad-guide-off)
+  .monster-arena {
+    width: 100% !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body.monster-lunch-page:not(.trackpad-guide-off)
+  .imported-trackpad-guide {
+    grid-column: 2 !important;
+    grid-row: 3 !important;
+
+    align-self: center !important;
+    justify-self: stretch !important;
+
+    position: static !important;
+
+    width: 100% !important;
+    max-width: 290px !important;
+
+    margin: 0 !important;
+  }
+}
+
+/*
+ * Preserve normal Start-button behavior.
+ * Do NOT force display:block here because
+ * JavaScript needs to hide it after Start.
+ */
+
+body.monster-lunch-page
+.monster-start-button {
+  bottom: 38px !important;
+}
+
+
+/* ========================================
+   MONSTER LUNCH - RAISE STATS ROW
+======================================== */
+
+body.monster-lunch-page
+.game-stats {
+  transform: translateY(-10px);
+}
+
+body.monster-lunch-page
+.game-instructions {
+  transform: translateY(-4px);
+}
+
+
+/* ========================================
+   MONSTER LUNCH - FINAL TOP ROW FIX
+======================================== */
+
+/*
+ * Directions and all stats share one
+ * dedicated row above the game.
+ */
+
+body.monster-lunch-page
+.monster-lunch-shell {
+  grid-template-rows:
+    auto
+    42px
+    minmax(0, 1fr) !important;
+
+  row-gap: 5px !important;
+}
+
+/* Header */
+
+body.monster-lunch-page
+.game-header {
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+}
+
+/* Directions on left side of row 2 */
+
+body.monster-lunch-page
+.game-instructions {
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+
+  justify-self: start !important;
+  align-self: center !important;
+
+  margin: 0 !important;
+  padding: 0 4px !important;
+
+  transform: none !important;
+
+  white-space: nowrap !important;
+}
+
+/* Stats on right side of same row */
+
+body.monster-lunch-page
+.game-stats {
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+
+  justify-self: end !important;
+  align-self: center !important;
+
+  width: auto !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  transform: none !important;
+}
+
+body.monster-lunch-page
+.game-stats-row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+
+  justify-content: flex-end !important;
+
+  gap: 5px !important;
+
+  margin: 0 !important;
+}
+
+body.monster-lunch-page
+.game-stat {
+  flex: 0 0 auto;
+
+  min-width: 0 !important;
+
+  padding:
+    4px 8px !important;
+}
+
+/* Game always begins below the top row */
+
+body.monster-lunch-page
+.game-stage-wrap {
+  grid-row: 3 !important;
+
+  margin-top: 0 !important;
+}
+
+/* Guide OFF = game uses full width */
+
+body.monster-lunch-page.trackpad-guide-off
+.game-stage-wrap {
+  grid-column: 1 / -1 !important;
+}
+
+/* Guide ON = game left, guide right */
+
+@media (min-width: 1250px) {
+
+  body.monster-lunch-page:not(.trackpad-guide-off)
+  .monster-lunch-shell {
+    grid-template-columns:
+      minmax(0, 1fr)
+      290px !important;
+  }
+
+  body.monster-lunch-page:not(.trackpad-guide-off)
+  .game-instructions {
+    padding-right: 470px !important;
+  }
+
+  body.monster-lunch-page:not(.trackpad-guide-off)
+  .game-stage-wrap {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+  }
+
+  body.monster-lunch-page:not(.trackpad-guide-off)
+  .imported-trackpad-guide {
+    grid-column: 2 !important;
+    grid-row: 3 !important;
+
+    align-self: center !important;
+  }
+}
+
+/* ========================================
+   MONSTER LUNCH - RELEASE ABSOLUTE HUD
+======================================== */
+
+/*
+ * Older Monster Lunch CSS absolutely
+ * positioned the HUD. Return it to the
+ * grid so directions and stats can share
+ * the compact row above the arena.
+ */
+
+body.monster-lunch-page
+.game-stats {
+  position: static !important;
+
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+
+  transform: none !important;
+
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+
+  justify-self: end !important;
+  align-self: center !important;
+
+  width: auto !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+body.monster-lunch-page
+.game-instructions {
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+
+  justify-self: start !important;
+  align-self: center !important;
+
+  transform: none !important;
+
+  margin: 0 !important;
+}
+
+body.monster-lunch-page
+.game-stage-wrap {
+  grid-row: 3 !important;
+  margin-top: 0 !important;
+}
+

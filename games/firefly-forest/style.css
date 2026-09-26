@@ -459,3 +459,1218 @@
   position: relative;
   z-index: 5;
 }
+
+/* ========================================
+   FIREFLY FOREST - ADAPTIVE TRACKPAD GUIDE LAYOUT
+======================================== */
+
+/* ---------- GUIDE OFF ---------- */
+
+body.trackpad-guide-off.firefly-forest-page {
+  height: 100vh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+body.trackpad-guide-off
+.game-shell {
+  height: 100vh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+body.trackpad-guide-off
+.game-stage-wrap {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  margin-bottom: 0;
+}
+
+body.trackpad-guide-off
+.game-stage {
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+}
+
+body.trackpad-guide-off
+.firefly-arena {
+  height: 100%;
+  min-height: 0;
+}
+
+/* ---------- GUIDE ON: COMPACT TOP AREA ---------- */
+
+body:not(.trackpad-guide-off).firefly-forest-page .game-shell {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+
+  grid-template-rows:
+    auto
+    auto
+    auto;
+
+  column-gap: 16px;
+  row-gap: 6px;
+
+  align-items: center;
+}
+
+body:not(.trackpad-guide-off).firefly-forest-page .game-header {
+  grid-column: 1 / -1;
+  grid-row: 1;
+
+  margin-bottom: 0;
+}
+
+body:not(.trackpad-guide-off).firefly-forest-page .game-instructions {
+  grid-column: 1;
+  grid-row: 2;
+
+  margin: 0;
+  padding: 0 4px;
+
+  white-space: nowrap;
+
+  font-size:
+    clamp(0.78rem, 0.95vw, 0.95rem);
+
+  line-height: 1.1;
+}
+
+body:not(.trackpad-guide-off).firefly-forest-page .game-stats {
+  grid-column: 2;
+  grid-row: 2;
+
+  width: auto;
+
+  margin: 0;
+  padding: 0;
+
+  justify-self: end;
+}
+
+body:not(.trackpad-guide-off).firefly-forest-page .game-stats-row {
+  display: flex;
+  gap: 5px;
+
+  margin: 0;
+}
+
+body:not(.trackpad-guide-off).firefly-forest-page .game-stat {
+  min-width: 0;
+
+  padding:
+    4px 8px;
+
+  border-radius: 999px;
+}
+
+body:not(.trackpad-guide-off).firefly-forest-page .game-stat .label {
+  font-size: 0.65rem;
+}
+
+body:not(.trackpad-guide-off).firefly-forest-page .game-stat .value {
+  font-size: 0.92rem;
+}
+
+/* ---------- WIDE SCREEN SIDE DOCK ---------- */
+
+@media (min-width: 1250px) {
+
+  body:not(.trackpad-guide-off).firefly-forest-page .game-shell {
+    grid-template-columns:
+      minmax(0, 1fr)
+      285px;
+
+    grid-template-rows:
+      auto
+      auto
+      minmax(0, 1fr);
+
+    column-gap: 18px;
+
+    width: 100%;
+    max-width: none;
+  }
+
+  body:not(.trackpad-guide-off).firefly-forest-page .game-header {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  body:not(.trackpad-guide-off).firefly-forest-page .game-instructions {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  body:not(.trackpad-guide-off).firefly-forest-page .game-stats {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  body:not(.trackpad-guide-off).firefly-forest-page .game-stage-wrap {
+    grid-column: 1;
+    grid-row: 3;
+
+    width: 100%;
+    min-width: 0;
+
+    margin: 0;
+
+    max-height: none;
+  }
+
+  body:not(.trackpad-guide-off).firefly-forest-page .game-stage {
+    width: 100%;
+
+    height: 500px;
+    min-height: 500px;
+    max-height: 500px;
+  }
+
+  body:not(.trackpad-guide-off).firefly-forest-page .firefly-arena {
+    width: 100%;
+    height: 100%;
+
+    min-height: 0;
+  }
+
+  /*
+   * Override Firefly Forest's older
+   * below-the-game guide positioning.
+   */
+
+  body:not(.trackpad-guide-off).firefly-forest-page
+  .imported-trackpad-guide {
+    grid-column: 2;
+    grid-row: 3;
+
+    align-self: center;
+    justify-self: stretch;
+
+    position: static;
+
+    width: 100%;
+    max-width: 285px;
+
+    margin: 0;
+
+    box-sizing: border-box;
+  }
+
+  body:not(.trackpad-guide-off).firefly-forest-page
+  .imported-trackpad-scene {
+    width: 100%;
+    max-width: 100%;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    transform: none;
+  }
+}
+
+/* ---------- VERY WIDE DISPLAYS ---------- */
+
+@media (min-width: 1600px) {
+
+  body:not(.trackpad-guide-off).firefly-forest-page .game-shell {
+    grid-template-columns:
+      minmax(0, 1fr)
+      300px;
+
+    column-gap: 22px;
+  }
+
+  body:not(.trackpad-guide-off).firefly-forest-page
+  .imported-trackpad-guide {
+    max-width: 300px;
+  }
+}
+
+/* ---------- SHORT CLASSROOM DISPLAYS ---------- */
+
+@media (min-width: 1250px) and (max-height: 800px) {
+
+  body:not(.trackpad-guide-off).firefly-forest-page .game-stage {
+    height: 440px;
+    min-height: 440px;
+    max-height: 440px;
+  }
+}
+
+
+/* ========================================
+   FIREFLY FOREST - FINAL GUIDE ON LAYOUT
+======================================== */
+
+@media (min-width: 1250px) {
+
+  /*
+   * Exact Firefly HTML structure:
+   *
+   * header
+   * instructions
+   * stats
+   * stage
+   * trackpad guide
+   */
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .firefly-forest-shell {
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      290px;
+
+    grid-template-rows:
+      auto
+      46px
+      auto;
+
+    column-gap: 18px;
+    row-gap: 6px;
+
+    width: 100%;
+    max-width: none;
+
+    box-sizing: border-box;
+  }
+
+  /* ---------- HEADER ---------- */
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-header {
+    grid-column: 1 / -1;
+    grid-row: 1;
+
+    margin: 0 !important;
+
+    padding-top: 7px;
+    padding-bottom: 7px;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-category {
+    margin-bottom: 1px;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-title {
+    margin: 0;
+    line-height: 1.05;
+  }
+
+  /* ---------- DIRECTIONS + STATS ON SAME ROW ---------- */
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-instructions {
+    grid-column: 1 / -1;
+    grid-row: 2;
+
+    justify-self: start;
+    align-self: center;
+
+    margin: 0 !important;
+    padding: 0 4px;
+
+    white-space: nowrap;
+
+    font-size:
+      clamp(0.78rem, 0.95vw, 0.95rem);
+
+    line-height: 1.1;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-stats {
+    grid-column: 1 / -1;
+    grid-row: 2;
+
+    justify-self: end;
+    align-self: center;
+
+    width: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-stats-row {
+    display: flex;
+
+    gap: 4px;
+
+    margin: 0;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-stat {
+    min-width: 0;
+
+    padding:
+      4px 7px;
+
+    border-radius: 999px;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-stat .label {
+    font-size: 0.62rem;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-stat .value {
+    font-size: 0.88rem;
+  }
+
+  /* ---------- FIREFLY GAME ---------- */
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-stage-wrap {
+    grid-column: 1;
+    grid-row: 3;
+
+    align-self: start;
+
+    width: 100%;
+    min-width: 0;
+
+    height: 540px;
+    min-height: 540px;
+    max-height: 540px !important;
+
+    margin: 0 !important;
+
+    overflow: visible;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-stage {
+    box-sizing: border-box;
+
+    width: 100%;
+
+    height: 540px !important;
+    min-height: 540px !important;
+    max-height: 540px !important;
+
+    margin: 0;
+
+    overflow: hidden;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .firefly-arena {
+    box-sizing: border-box;
+
+    width: 100%;
+    height: 100% !important;
+
+    min-height: 0 !important;
+    max-height: none;
+
+    overflow: hidden;
+  }
+
+  /*
+   * Explicitly preserve the Start button.
+   */
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .firefly-start-button {
+    display: block;
+
+    bottom: 38px;
+  }
+
+  /* ---------- SIDE TRACKPAD GUIDE ---------- */
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .imported-trackpad-guide {
+    grid-column: 2;
+    grid-row: 3;
+
+    align-self: center;
+    justify-self: stretch;
+
+    position: static !important;
+
+    width: 100%;
+    max-width: 290px;
+
+    margin: 0 !important;
+
+    box-sizing: border-box;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .imported-trackpad-scene {
+    width: 100%;
+    max-width: 100%;
+
+    margin:
+      0 auto;
+
+    transform: none !important;
+  }
+}
+
+/* Short classroom / Chromebook displays */
+
+@media (min-width: 1250px) and (max-height: 800px) {
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-stage-wrap {
+    height: 485px;
+    min-height: 485px;
+    max-height: 485px !important;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-stage {
+    height: 485px !important;
+    min-height: 485px !important;
+    max-height: 485px !important;
+  }
+}
+
+
+
+
+/* ========================================
+   FIREFLY FOREST - ALWAYS COMPACT TOP
+======================================== */
+
+/*
+ * Directions and stats always share one row,
+ * regardless of Trackpad Guide setting.
+ */
+
+body.firefly-forest-page
+.firefly-forest-shell {
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    max-content;
+
+  grid-template-rows:
+    auto
+    44px
+    auto;
+
+  column-gap: 12px;
+  row-gap: 4px;
+
+  align-items: center;
+}
+
+body.firefly-forest-page
+.game-header {
+  grid-column: 1 / -1;
+  grid-row: 1;
+
+  margin: 0 !important;
+
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+body.firefly-forest-page
+.game-instructions {
+  grid-column: 1;
+  grid-row: 2;
+
+  align-self: center;
+
+  min-width: 0;
+
+  margin: 0 !important;
+  padding: 0 4px;
+
+  white-space: nowrap;
+
+  overflow: visible;
+  text-overflow: clip;
+
+  font-size:
+    clamp(0.76rem, 0.9vw, 0.94rem);
+
+  line-height: 1.05;
+}
+
+body.firefly-forest-page
+.game-stats {
+  grid-column: 2;
+  grid-row: 2;
+
+  justify-self: end;
+  align-self: center;
+
+  width: auto !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+body.firefly-forest-page
+.game-stats-row {
+  display: flex;
+
+  gap: 4px;
+
+  margin: 0;
+}
+
+body.firefly-forest-page
+.game-stat {
+  min-width: 0;
+
+  padding:
+    4px 7px;
+
+  border-radius: 999px;
+}
+
+body.firefly-forest-page
+.game-stat .label {
+  font-size: 0.62rem;
+}
+
+body.firefly-forest-page
+.game-stat .value {
+  font-size: 0.88rem;
+}
+
+/*
+ * Stage occupies the next row.
+ */
+
+body.firefly-forest-page
+.game-stage-wrap {
+  grid-row: 3;
+
+  margin-top: 0 !important;
+}
+
+/*
+ * When Guide is OFF, stage spans entire width.
+ */
+
+body.firefly-forest-page.trackpad-guide-off
+.game-stage-wrap {
+  grid-column: 1 / -1;
+}
+
+/*
+ * When Guide is ON on a wide screen,
+ * preserve our side-dock layout.
+ */
+
+@media (min-width: 1250px) {
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .firefly-forest-shell {
+    grid-template-columns:
+      minmax(0, 1fr)
+      290px;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-stage-wrap {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .imported-trackpad-guide {
+    grid-column: 2;
+    grid-row: 3;
+
+    align-self: center;
+
+    position: static !important;
+
+    margin: 0 !important;
+  }
+}
+
+/* ========================================
+   FIREFLY FOREST - SHELL CONTRACT OVERRIDE
+======================================== */
+
+/*
+ * Firefly Forest needs a compact horizontal
+ * shell instead of the shared five-row shell.
+ */
+
+body.firefly-forest-page:not(.trackpad-guide-off)
+.firefly-forest-shell {
+  width: 100% !important;
+  max-width: none !important;
+
+  min-height: 0 !important;
+  height: auto !important;
+
+  margin: 0 !important;
+
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    290px !important;
+
+  grid-template-rows:
+    auto
+    38px
+    500px !important;
+
+  column-gap: 18px !important;
+  row-gap: 5px !important;
+
+  align-content: start !important;
+}
+
+/* Header */
+
+body.firefly-forest-page:not(.trackpad-guide-off)
+.game-header {
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+
+  margin: 0 !important;
+}
+
+/* Directions */
+
+body.firefly-forest-page:not(.trackpad-guide-off)
+.game-instructions {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+
+  align-self: center !important;
+
+  margin: 0 !important;
+
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* Stats */
+
+body.firefly-forest-page:not(.trackpad-guide-off)
+.game-stats {
+  grid-column: 2 !important;
+  grid-row: 2 !important;
+
+  justify-self: end !important;
+  align-self: center !important;
+
+  min-height: 0 !important;
+
+  margin: 0 !important;
+}
+
+/* Game */
+
+body.firefly-forest-page:not(.trackpad-guide-off)
+.game-stage-wrap {
+  grid-column: 1 !important;
+  grid-row: 3 !important;
+
+  width: 100% !important;
+
+  height: 500px !important;
+  min-height: 500px !important;
+  max-height: 500px !important;
+
+  margin: 0 !important;
+
+  overflow: visible !important;
+}
+
+body.firefly-forest-page:not(.trackpad-guide-off)
+.game-stage {
+  width: 100% !important;
+
+  height: 500px !important;
+  min-height: 500px !important;
+  max-height: 500px !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+}
+
+body.firefly-forest-page:not(.trackpad-guide-off)
+.firefly-arena {
+  width: 100% !important;
+  height: 100% !important;
+
+  min-height: 0 !important;
+}
+
+/* Start button must remain inside visible arena */
+
+body.firefly-forest-page:not(.trackpad-guide-off)
+.firefly-start-button {
+  bottom: 38px !important;
+}
+
+/* Trackpad Guide */
+
+body.firefly-forest-page:not(.trackpad-guide-off)
+.imported-trackpad-guide {
+  grid-column: 2 !important;
+  grid-row: 3 !important;
+
+  align-self: center !important;
+  justify-self: stretch !important;
+
+  position: static !important;
+
+  width: 100% !important;
+  max-width: 290px !important;
+
+  margin: 0 !important;
+}
+
+/*
+ * Short classroom displays.
+ */
+
+@media (max-height: 800px) {
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .firefly-forest-shell {
+    grid-template-rows:
+      auto
+      36px
+      440px !important;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-stage-wrap,
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-stage {
+    height: 440px !important;
+    min-height: 440px !important;
+    max-height: 440px !important;
+  }
+}
+
+/* ========================================
+   FIREFLY FOREST - FINAL COMPACT STATS ROW
+======================================== */
+
+body.firefly-forest-page:not(.trackpad-guide-off)
+.firefly-forest-shell {
+  grid-template-rows:
+    auto
+    42px
+    500px !important;
+}
+
+/*
+ * Directions and stats share the entire
+ * second row above both game columns.
+ */
+
+body.firefly-forest-page:not(.trackpad-guide-off)
+.game-instructions {
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+
+  justify-self: start !important;
+  align-self: center !important;
+
+  padding-right: 480px !important;
+
+  white-space: nowrap !important;
+
+  font-size: 0.82rem !important;
+}
+
+body.firefly-forest-page:not(.trackpad-guide-off)
+.game-stats {
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+
+  justify-self: end !important;
+  align-self: center !important;
+
+  width: auto !important;
+  min-height: 0 !important;
+}
+
+body.firefly-forest-page:not(.trackpad-guide-off)
+.game-stats-row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+
+  justify-content: flex-end !important;
+
+  gap: 5px !important;
+
+  white-space: nowrap;
+}
+
+body.firefly-forest-page:not(.trackpad-guide-off)
+.game-stat {
+  flex: 0 0 auto;
+
+  min-width: 0 !important;
+  min-height: 30px !important;
+
+  padding:
+    4px 8px !important;
+}
+
+body.firefly-forest-page:not(.trackpad-guide-off)
+.game-stat .label {
+  font-size: 0.64rem !important;
+}
+
+body.firefly-forest-page:not(.trackpad-guide-off)
+.game-stat .value {
+  font-size: 0.9rem !important;
+}
+
+/*
+ * Preserve the working game + guide arrangement.
+ */
+
+body.firefly-forest-page:not(.trackpad-guide-off)
+.game-stage-wrap {
+  grid-column: 1 !important;
+  grid-row: 3 !important;
+}
+
+body.firefly-forest-page:not(.trackpad-guide-off)
+.imported-trackpad-guide {
+  grid-column: 2 !important;
+  grid-row: 3 !important;
+
+  align-self: center !important;
+}
+
+/* Short classroom displays */
+
+@media (max-height: 800px) {
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .firefly-forest-shell {
+    grid-template-rows:
+      auto
+      38px
+      440px !important;
+  }
+}
+
+/* ========================================
+   FIREFLY FOREST - FINAL VIEWPORT FIT
+======================================== */
+
+body.firefly-forest-page:not(.trackpad-guide-off) {
+  height: 100vh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+body.firefly-forest-page:not(.trackpad-guide-off)
+.firefly-forest-shell {
+  box-sizing: border-box;
+
+  height: 100vh !important;
+  min-height: 0 !important;
+
+  overflow: hidden;
+}
+
+body.firefly-forest-page:not(.trackpad-guide-off)
+.game-stage-wrap {
+  min-height: 0 !important;
+}
+
+
+
+/* ========================================
+   FIREFLY FOREST - FINAL STATE LAYOUT RESET
+======================================== */
+
+/*
+ * Shared compact header row.
+ */
+
+body.firefly-forest-page
+.firefly-forest-shell {
+  box-sizing: border-box;
+}
+
+body.firefly-forest-page
+.game-header {
+  grid-row: 1 !important;
+  margin: 0 !important;
+}
+
+body.firefly-forest-page
+.game-instructions {
+  grid-row: 2 !important;
+  align-self: center !important;
+
+  margin: 0 !important;
+
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+body.firefly-forest-page
+.game-stats {
+  grid-row: 2 !important;
+
+  justify-self: end !important;
+  align-self: center !important;
+
+  width: auto !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+body.firefly-forest-page
+.game-stats-row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+
+  gap: 5px !important;
+
+  white-space: nowrap;
+}
+
+/* ========================================
+   GUIDE OFF
+======================================== */
+
+body.firefly-forest-page.trackpad-guide-off {
+  height: 100vh;
+  min-height: 0;
+
+  overflow: hidden;
+}
+
+body.firefly-forest-page.trackpad-guide-off
+.firefly-forest-shell {
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    max-content !important;
+
+  grid-template-rows:
+    auto
+    42px
+    minmax(0, 1fr) !important;
+
+  column-gap: 12px !important;
+  row-gap: 5px !important;
+
+  height: 100vh !important;
+  min-height: 0 !important;
+
+  align-content: stretch !important;
+
+  overflow: hidden !important;
+}
+
+body.firefly-forest-page.trackpad-guide-off
+.game-header {
+  grid-column: 1 / -1 !important;
+}
+
+body.firefly-forest-page.trackpad-guide-off
+.game-instructions {
+  grid-column: 1 !important;
+}
+
+body.firefly-forest-page.trackpad-guide-off
+.game-stats {
+  grid-column: 2 !important;
+}
+
+body.firefly-forest-page.trackpad-guide-off
+.game-stage-wrap {
+  grid-column: 1 / -1 !important;
+  grid-row: 3 !important;
+
+  align-self: stretch !important;
+
+  width: 100% !important;
+
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+}
+
+body.firefly-forest-page.trackpad-guide-off
+.game-stage {
+  box-sizing: border-box;
+
+  width: 100% !important;
+
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+}
+
+body.firefly-forest-page.trackpad-guide-off
+.firefly-arena {
+  width: 100% !important;
+
+  height: 100% !important;
+  min-height: 0 !important;
+
+  overflow: hidden !important;
+}
+
+/* ========================================
+   GUIDE ON - WIDE SCREEN
+======================================== */
+
+@media (min-width: 1250px) {
+
+  body.firefly-forest-page:not(.trackpad-guide-off) {
+    height: 100vh;
+    min-height: 0;
+
+    overflow: hidden;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .firefly-forest-shell {
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      290px !important;
+
+    grid-template-rows:
+      auto
+      42px
+      minmax(0, 1fr) !important;
+
+    column-gap: 18px !important;
+    row-gap: 5px !important;
+
+    height: 100vh !important;
+    min-height: 0 !important;
+
+    align-content: stretch !important;
+
+    overflow: hidden !important;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-header {
+    grid-column: 1 / -1 !important;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-instructions {
+    grid-column: 1 / -1 !important;
+
+    padding-right: 470px !important;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-stats {
+    grid-column: 1 / -1 !important;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-stage-wrap {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+
+    align-self: stretch !important;
+
+    width: 100% !important;
+
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .game-stage {
+    width: 100% !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .firefly-arena {
+    width: 100% !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body.firefly-forest-page:not(.trackpad-guide-off)
+  .imported-trackpad-guide {
+    grid-column: 2 !important;
+    grid-row: 3 !important;
+
+    align-self: center !important;
+    justify-self: stretch !important;
+
+    position: static !important;
+
+    width: 100% !important;
+    max-width: 290px !important;
+
+    margin: 0 !important;
+  }
+}
+
+/*
+ * Do NOT force display on the Start button.
+ * JavaScript must remain free to hide it
+ * after the level begins.
+ */
+
+body.firefly-forest-page
+.firefly-start-button {
+  bottom: 38px !important;
+}
+
