@@ -1007,3 +1007,254 @@ body.deer-trackpad-guide-off
   height: 100%;
   min-height: 0;
 }
+
+/* ========================================
+   DEER RUN - COMPACT GUIDE ON TOP AREA
+======================================== */
+
+/*
+ * Keep directions and stats on one compact row
+ * when the Trackpad Guide is visible.
+ */
+
+body:not(.deer-trackpad-guide-off)
+.deer-run-shell {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+
+  grid-template-rows:
+    auto
+    auto
+    auto
+    auto;
+
+  column-gap: 14px;
+  row-gap: 6px;
+
+  align-items: center;
+}
+
+/* Header spans the full page. */
+
+body:not(.deer-trackpad-guide-off)
+.game-header {
+  grid-column: 1 / -1;
+  grid-row: 1;
+
+  margin-bottom: 0;
+
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+/* Slightly tighten the title area. */
+
+body:not(.deer-trackpad-guide-off)
+.game-category {
+  margin-bottom: 2px;
+}
+
+body:not(.deer-trackpad-guide-off)
+.game-title {
+  margin: 0;
+
+  line-height: 1.05;
+}
+
+/* Directions on the left. */
+
+body:not(.deer-trackpad-guide-off)
+.game-instructions {
+  grid-column: 1;
+  grid-row: 2;
+
+  min-width: 0;
+
+  margin: 0;
+  padding: 0 4px;
+
+  overflow: hidden;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  font-size:
+    clamp(0.82rem, 1vw, 0.98rem);
+
+  line-height: 1.1;
+}
+
+/* Stats on the same row, right side. */
+
+body:not(.deer-trackpad-guide-off)
+.game-stats {
+  grid-column: 2;
+  grid-row: 2;
+
+  width: auto;
+
+  margin: 0;
+  padding: 0;
+
+  justify-self: end;
+}
+
+body:not(.deer-trackpad-guide-off)
+.game-stats-row {
+  display: flex;
+
+  gap: 5px;
+
+  margin: 0;
+}
+
+body:not(.deer-trackpad-guide-off)
+.game-stat {
+  min-width: 0;
+
+  padding:
+    4px 8px;
+
+  border-radius: 999px;
+}
+
+body:not(.deer-trackpad-guide-off)
+.game-stat .label {
+  font-size: 0.65rem;
+}
+
+body:not(.deer-trackpad-guide-off)
+.game-stat .value {
+  font-size: 0.92rem;
+}
+
+/* Game stage directly underneath. */
+
+body:not(.deer-trackpad-guide-off)
+.arena-wrap {
+  grid-column: 1 / -1;
+  grid-row: 3;
+
+  margin-top: 0;
+}
+
+/*
+ * Trackpad Guide gets the full width underneath
+ * and sits closer to the game.
+ */
+
+body:not(.deer-trackpad-guide-off)
+.imported-trackpad-guide {
+  grid-column: 1 / -1;
+  grid-row: 4;
+
+  margin-top: 2px;
+}
+
+/*
+ * Pull a little height out of the arena itself
+ * so more of the Trackpad Guide is visible
+ * without causing extra page scrolling.
+ */
+
+body:not(.deer-trackpad-guide-off)
+.arena-frame {
+  max-height:
+    calc(100vh - 330px);
+}
+
+body:not(.deer-trackpad-guide-off)
+.deer-arena {
+  min-height: 385px;
+}
+
+/* Chromebook / shorter-screen tuning */
+
+@media (max-height: 800px) {
+
+  body:not(.deer-trackpad-guide-off)
+  .game-header {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  body:not(.deer-trackpad-guide-off)
+  .game-stat {
+    padding:
+      3px 7px;
+  }
+
+  body:not(.deer-trackpad-guide-off)
+  .game-stat .label {
+    font-size: 0.6rem;
+  }
+
+  body:not(.deer-trackpad-guide-off)
+  .game-stat .value {
+    font-size: 0.84rem;
+  }
+
+  body:not(.deer-trackpad-guide-off)
+  .arena-frame {
+    max-height:
+      calc(100vh - 300px);
+  }
+
+  body:not(.deer-trackpad-guide-off)
+  .deer-arena {
+    min-height: 350px;
+  }
+}
+
+/* ========================================
+   DEER RUN - FULL DIRECTIONS WITHOUT EXTRA HEIGHT
+======================================== */
+
+/*
+ * Keep the directions on one line,
+ * but let them use the available width
+ * instead of truncating with an ellipsis.
+ */
+
+body:not(.deer-trackpad-guide-off)
+.game-instructions {
+  overflow: visible;
+
+  white-space: nowrap;
+  text-overflow: clip;
+
+  font-size:
+    clamp(0.74rem, 0.92vw, 0.94rem);
+}
+
+/*
+ * Make the stats just a little tighter
+ * horizontally so the instruction text
+ * gets more room without changing height.
+ */
+
+body:not(.deer-trackpad-guide-off)
+.game-stats-row {
+  gap: 4px;
+}
+
+body:not(.deer-trackpad-guide-off)
+.game-stat {
+  padding:
+    4px 7px;
+}
+
+/*
+ * Give the directions column priority
+ * while keeping stats visible.
+ */
+
+body:not(.deer-trackpad-guide-off)
+.deer-run-shell {
+  grid-template-columns:
+    minmax(0, 1fr)
+    max-content;
+}

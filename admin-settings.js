@@ -43,6 +43,7 @@ const DEFAULT_HAUNTED_STREET_PUMPKIN_SPEEDS = [520, 520, 520, 520, 520];
 const DEFAULT_HAUNTED_STREET_GOALS = [7, 10, 13, 17, 22];
 const soundEnabledToggle = document.getElementById("soundEnabledToggle");
 const trainingPausedToggle = document.getElementById("trainingPausedToggle");
+const trackpadGuideEnabledToggle = document.getElementById("trackpadGuideEnabledToggle");
 const lightTapRequireClickToggle = document.getElementById("lightTapRequireClickToggle");
 const streetCarRequireClickToggle = document.getElementById("streetCarRequireClickToggle");
 const dragonRequireClickToggle = document.getElementById("dragonRequireClickToggle");
@@ -2004,6 +2005,10 @@ async function resetFullscreenToDefaults() {
   }
   if (soundEnabledToggle) {
     soundEnabledToggle.checked = soundEnabled;
+  if (trackpadGuideEnabledToggle) {
+    trackpadGuideEnabledToggle.checked =
+      trackpadGuideEnabled;
+  }
   }
   if (trainingPausedToggle) {
     trainingPausedToggle.checked = trainingPaused;
@@ -3395,6 +3400,11 @@ async function saveTask1Settings() {
       })
     )
     : null;
+  const trackpadGuideEnabled = Boolean(
+    trackpadGuideEnabledToggle &&
+    trackpadGuideEnabledToggle.checked
+  );
+
   const soundEnabled = Boolean(soundEnabledToggle.checked);
   const trainingPaused = Boolean(trainingPausedToggle.checked);
   const lightTapRequireClick = Boolean(
@@ -3811,6 +3821,7 @@ async function saveTask1Settings() {
         hauntedStreetLevelGoals,
         movingSoundSettings:
           getMovingSoundSettingsSnapshot(),
+        trackpadGuideEnabled,
         soundEnabled,
         trainingPaused,
         jackFlameRain4: jackFlameRainSettingsToSave[0],
@@ -4118,6 +4129,7 @@ const allToggles = [
   task1EnabledToggle,
   task2EnabledToggle,
   task3EnabledToggle,
+  trackpadGuideEnabledToggle,
   soundEnabledToggle,
   trainingPausedToggle,
   lightTapRequireClickToggle,
@@ -4194,7 +4206,36 @@ allInputs.forEach((inputEl) => {
   });
 });
 
+async function loadTrackpadGuideSetting() {
+  if (!trackpadGuideEnabledToggle) {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      SETTINGS_API_PATH,
+      { cache: "no-store" }
+    );
+
+    if (!response.ok) {
+      throw new Error("Could not load Trackpad Guide setting.");
+    }
+
+    const settings =
+      await response.json();
+
+    trackpadGuideEnabledToggle.checked =
+      settings.trackpadGuideEnabled !== false;
+  } catch {
+    trackpadGuideEnabledToggle.checked = true;
+  }
+}
+
+loadTrackpadGuideSetting();
+
 loadTask1Settings().then(() => {
   updateQuickSummary();
   setDirtyState(false);
 });
+
+

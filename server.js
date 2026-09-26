@@ -77,6 +77,7 @@ const DEFAULT_SETTINGS = {
   hauntedStreetLevelThrowIntervals: [650, 650, 650, 650, 650],
   hauntedStreetLevelPumpkinSpeeds: [520, 520, 520, 520, 520],
   hauntedStreetLevelGoals: [7, 10, 13, 17, 22],
+  trackpadGuideEnabled: true,
   soundEnabled: true,
   trainingPaused: false,
   jackFlameRainEnabled: true,
@@ -608,6 +609,10 @@ function loadSettings() {
           1,
           100
         ),
+      trackpadGuideEnabled: parseTaskEnabled(
+        data.trackpadGuideEnabled,
+        DEFAULT_SETTINGS.trackpadGuideEnabled
+      ),
       soundEnabled: parseTaskEnabled(data.soundEnabled, true),
       trainingPaused: parseTrainingPaused(data.trainingPaused),
       jackFlameRainEnabled: parseTaskEnabled(data.jackFlameRainEnabled, DEFAULT_SETTINGS.jackFlameRainEnabled),
@@ -858,6 +863,11 @@ function saveSettings(settings) {
           ? existing.monsterLunchLevels
           : [],
 
+    trackpadGuideEnabled: parseTaskEnabled(
+      settings.trackpadGuideEnabled ??
+        existing.trackpadGuideEnabled,
+      DEFAULT_SETTINGS.trackpadGuideEnabled
+    ),
     soundEnabled: parseTaskEnabled(settings.soundEnabled ?? existing.soundEnabled, true),
     trainingPaused: parseTrainingPaused(settings.trainingPaused ?? existing.trainingPaused),
     jackFlameRainEnabled: parseTaskEnabled(
@@ -1294,3 +1304,6 @@ server.listen(PORT, HOST, () => {
   // eslint-disable-next-line no-console
   console.log(`hands-on-trackpad running at http://${HOST}:${PORT}`);
 });
+
+
+

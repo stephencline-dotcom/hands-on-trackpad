@@ -22,7 +22,50 @@
   "dragonDodgeGameActive": true,
   "firefighterRescueGameActive": true,
   "martianMadnessGameActive": true,
+  "hauntedStreetGameActive": true,
+  "hauntedStreetRequireClickAndDrag": false,
+  "hauntedStreetClickToThrow": false,
+  "hauntedStreetSoundEnabled": true,
+  "hauntedStreetLevelSpeeds": [
+    55,
+    66,
+    79,
+    94,
+    112
+  ],
+  "hauntedStreetLevelMaximums": [
+    3,
+    4,
+    4,
+    5,
+    6
+  ],
+  "hauntedStreetLevelThrowIntervals": [
+    650,
+    650,
+    650,
+    650,
+    650
+  ],
+  "hauntedStreetLevelPumpkinSpeeds": [
+    520,
+    520,
+    520,
+    520,
+    520
+  ],
+  "hauntedStreetLevelGoals": [
+    7,
+    10,
+    13,
+    17,
+    22
+  ],
+  "bugMeadowGameActive": true,
+  "senseBuilderGameActive": true,
+  "fireflyForestGameActive": true,
   "monsterLunchGameActive": true,
+  "deerRunGameActive": true,
   "monsterLunchLevels": [
     {
       "goal": 1,
@@ -65,6 +108,7 @@
       "snatcherDelaySeconds": 3.5
     }
   ],
+  "trackpadGuideEnabled": false,
   "soundEnabled": true,
   "trainingPaused": false,
   "jackFlameRainEnabled": true,
@@ -109,6 +153,18 @@
     "speedMin": 340,
     "speedMax": 520
   },
+  "jackFlameRain7": {
+    "enabled": true,
+    "size": 24,
+    "hitRadius": 12,
+    "burstMin": 2,
+    "burstMax": 3,
+    "intervalMin": 800,
+    "intervalMax": 1500,
+    "speedMin": 130,
+    "speedMax": 210
+  },
+  "jackBonusSurvivalSeconds": 20,
   "mazeGhostLevelsEnabled": [
     true,
     true,

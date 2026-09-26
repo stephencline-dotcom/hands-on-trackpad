@@ -1,25 +1,35 @@
 'use strict';
 /* ========================================
-   DEER RUN - TRACKPAD GUIDE TOGGLE TEST
-   Temporary test:
-   ?trackpadGuide=off
+   DEER RUN - SHARED TRACKPAD GUIDE SETTING
 ======================================== */
 
-const deerGuideTestParams =
-  new URLSearchParams(
-    window.location.search
-  );
+async function applyDeerTrackpadGuideSetting() {
+  let trackpadGuideEnabled = true;
 
-if (
-  deerGuideTestParams.get(
-    "trackpadGuide"
-  ) === "off"
-) {
-  document.body.classList.add(
-    "deer-trackpad-guide-off"
+  try {
+    const response = await fetch(
+      "/api/settings",
+      { cache: "no-store" }
+    );
+
+    if (response.ok) {
+      const settings =
+        await response.json();
+
+      trackpadGuideEnabled =
+        settings.trackpadGuideEnabled !== false;
+    }
+  } catch {
+    trackpadGuideEnabled = true;
+  }
+
+  document.body.classList.toggle(
+    "deer-trackpad-guide-off",
+    !trackpadGuideEnabled
   );
 }
 
+applyDeerTrackpadGuideSetting();
 
 const deerArena =
   document.getElementById('deerArena');
