@@ -1191,3 +1191,64 @@
   resetLevel();
   window.requestAnimationFrame(frame);
 })();
+
+/* ========================================
+   CHICKEN LITTLE MASTER SOUND CONTROL
+======================================== */
+
+const chickenSoundButton =
+  document.getElementById(
+    "chickenSoundButton"
+  );
+
+let chickenSoundEnabled = true;
+
+function updateChickenSoundButton() {
+  if (!chickenSoundButton) {
+    return;
+  }
+
+  chickenSoundButton.textContent =
+    chickenSoundEnabled
+      ? "🔊"
+      : "🔇";
+
+  chickenSoundButton.setAttribute(
+    "aria-pressed",
+    String(!chickenSoundEnabled)
+  );
+
+  chickenSoundButton.setAttribute(
+    "aria-label",
+    chickenSoundEnabled
+      ? "Sound on"
+      : "Sound off"
+  );
+
+  chickenSoundButton.title =
+    chickenSoundEnabled
+      ? "Sound on"
+      : "Sound off";
+
+  document
+    .querySelectorAll("audio, video")
+    .forEach((media) => {
+      media.muted =
+        !chickenSoundEnabled;
+    });
+}
+
+if (chickenSoundButton) {
+  chickenSoundButton.addEventListener(
+    "click",
+    () => {
+      chickenSoundEnabled =
+        !chickenSoundEnabled;
+
+      updateChickenSoundButton();
+    }
+  );
+
+  updateChickenSoundButton();
+}
+

@@ -7505,3 +7505,94 @@ body.follow-bird-page {
   margin: 0 !important;
 }
 
+
+/* ========================================
+   CHICKEN LITTLE HOME THUMBNAIL
+======================================== */
+
+.game-thumb-chicken-little {
+  position: relative !important;
+  display: block !important;
+  overflow: hidden !important;
+
+  width: 100% !important;
+
+  background:
+    linear-gradient(
+      to bottom,
+      #69c9f0 0%,
+      #a9e2f6 57%,
+      #8dcc62 58%,
+      #4f9f46 100%
+    ) !important;
+}
+
+/* Puffy cloud */
+
+.chicken-little-thumb-sky {
+  position: absolute;
+  left: 12%;
+  top: 13%;
+
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+/* Falling acorn */
+
+.chicken-little-thumb-acorn {
+  position: absolute;
+  right: 20%;
+  top: 12%;
+
+  font-size: 2.4rem;
+  line-height: 1;
+
+  transform: rotate(25deg);
+
+  filter:
+    drop-shadow(
+      0 4px 3px rgba(0, 0, 0, 0.2)
+    );
+}
+
+/* Chicken Little */
+
+.chicken-little-thumb-chicken {
+  position: absolute;
+  left: 50%;
+  bottom: 8%;
+
+  font-size: 4.6rem;
+  line-height: 1;
+
+  transform:
+    translateX(-50%);
+
+  filter:
+    drop-shadow(
+      0 5px 4px rgba(0, 0, 0, 0.25)
+    );
+}
+
+/* Small ground detail */
+
+.game-thumb-chicken-little::after {
+  content: "";
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 14%;
+
+  background:
+    repeating-linear-gradient(
+      110deg,
+      rgba(32, 111, 50, 0.35) 0 6px,
+      transparent 6px 13px
+    );
+}
+
+

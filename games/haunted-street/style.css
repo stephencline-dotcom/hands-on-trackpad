@@ -321,3 +321,278 @@ body.haunted-street-page {
 .game-stat:has(#hauntedScore) {
   display: none;
 }
+
+/* ========================================
+   HAUNTED STREET - ADAPTIVE TRACKPAD GUIDE
+======================================== */
+
+/* ---------- COMPACT TOP ---------- */
+
+body.haunted-street-page
+.haunted-street-shell {
+  box-sizing: border-box;
+}
+
+body.haunted-street-page
+.game-header {
+  grid-row: 1 !important;
+  margin: 0 !important;
+}
+
+body.haunted-street-page
+.game-instructions {
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+
+  justify-self: start !important;
+  align-self: center !important;
+
+  max-width: none !important;
+
+  margin: 0 !important;
+  padding: 0 4px !important;
+
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+
+  font-size: 0.78rem !important;
+}
+
+body.haunted-street-page
+.game-stats {
+  position: static !important;
+
+  grid-column: 1 / -1 !important;
+  grid-row: 2 !important;
+
+  justify-self: end !important;
+  align-self: center !important;
+
+  width: auto !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+body.haunted-street-page
+.game-stats-row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+
+  justify-content: flex-end !important;
+
+  gap: 3px !important;
+
+  margin: 0 !important;
+  white-space: nowrap;
+}
+
+body.haunted-street-page
+.game-stat {
+  flex: 0 0 auto;
+
+  min-width: 0 !important;
+  min-height: 28px !important;
+
+  padding: 3px 6px !important;
+}
+
+body.haunted-street-page
+.game-stat .label {
+  font-size: 0.58rem !important;
+}
+
+body.haunted-street-page
+.game-stat .value {
+  font-size: 0.82rem !important;
+}
+
+/* ---------- GUIDE OFF ---------- */
+
+body.haunted-street-page.trackpad-guide-off {
+  height: 100vh;
+  min-height: 0;
+
+  overflow: hidden;
+}
+
+body.haunted-street-page.trackpad-guide-off
+.haunted-street-shell {
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    max-content !important;
+
+  grid-template-rows:
+    auto
+    40px
+    minmax(0, 1fr) !important;
+
+  column-gap: 12px !important;
+  row-gap: 5px !important;
+
+  height: 100vh !important;
+  min-height: 0 !important;
+
+  align-content: stretch !important;
+
+  overflow: hidden !important;
+}
+
+body.haunted-street-page.trackpad-guide-off
+.game-header {
+  grid-column: 1 / -1 !important;
+}
+
+body.haunted-street-page.trackpad-guide-off
+.game-stage-wrap {
+  grid-column: 1 / -1 !important;
+  grid-row: 3 !important;
+
+  align-self: stretch !important;
+
+  width: 100% !important;
+
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+}
+
+body.haunted-street-page.trackpad-guide-off
+.game-stage,
+body.haunted-street-page.trackpad-guide-off
+.haunted-arena {
+  width: 100% !important;
+
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+}
+
+/* ---------- GUIDE ON ---------- */
+
+@media (min-width: 1250px) {
+
+  body.haunted-street-page:not(.trackpad-guide-off) {
+    height: 100vh;
+    min-height: 0;
+
+    overflow: hidden;
+  }
+
+  body.haunted-street-page:not(.trackpad-guide-off)
+  .haunted-street-shell {
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      290px !important;
+
+    grid-template-rows:
+      auto
+      40px
+      minmax(0, 1fr) !important;
+
+    column-gap: 18px !important;
+    row-gap: 5px !important;
+
+    height: 100vh !important;
+    min-height: 0 !important;
+
+    align-content: stretch !important;
+
+    overflow: hidden !important;
+  }
+
+  body.haunted-street-page:not(.trackpad-guide-off)
+  .game-header {
+    grid-column: 1 / -1 !important;
+  }
+
+  body.haunted-street-page:not(.trackpad-guide-off)
+  .game-instructions {
+    grid-column: 1 / -1 !important;
+
+    padding-right: 540px !important;
+  }
+
+  body.haunted-street-page:not(.trackpad-guide-off)
+  .game-stats {
+    grid-column: 1 / -1 !important;
+  }
+
+  body.haunted-street-page:not(.trackpad-guide-off)
+  .game-stage-wrap {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+
+    align-self: stretch !important;
+
+    width: 100% !important;
+
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body.haunted-street-page:not(.trackpad-guide-off)
+  .game-stage,
+  body.haunted-street-page:not(.trackpad-guide-off)
+  .haunted-arena {
+    width: 100% !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body.haunted-street-page:not(.trackpad-guide-off)
+  .imported-trackpad-guide {
+    grid-column: 2 !important;
+    grid-row: 3 !important;
+
+    align-self: center !important;
+    justify-self: stretch !important;
+
+    position: static !important;
+
+    width: 100% !important;
+    max-width: 290px !important;
+
+    margin: 0 !important;
+  }
+
+  body.haunted-street-page:not(.trackpad-guide-off)
+  .imported-trackpad-scene {
+    width: 100% !important;
+    max-width: 100% !important;
+
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+/*
+ * Leave Haunted Street's Start panel alone.
+ * Its JavaScript controls when it appears.
+ */
+

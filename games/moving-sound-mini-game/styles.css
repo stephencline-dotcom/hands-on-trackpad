@@ -4168,3 +4168,1859 @@ h1 {
   filter: brightness(0) invert(1);
   pointer-events: none;
 }
+
+/* ========================================
+   MARTIAN MADNESS - ADAPTIVE TRACKPAD GUIDE
+======================================== */
+
+/* ---------- GUIDE OFF ---------- */
+
+body.trackpad-guide-off
+#martianGameScreen:not([hidden]) {
+  height: 100vh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+body.trackpad-guide-off
+#martianGameScreen:not([hidden])
+.game-shell {
+  width: 100% !important;
+  max-width: none !important;
+
+  height: 100vh !important;
+  min-height: 0 !important;
+
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto !important;
+
+  grid-template-rows:
+    auto
+    38px
+    minmax(0, 1fr) !important;
+
+  column-gap: 10px !important;
+  row-gap: 4px !important;
+
+  padding:
+    0.35rem
+    0.55rem
+    0.45rem !important;
+
+  overflow: hidden !important;
+}
+
+body.trackpad-guide-off
+#martianGameScreen
+.game-header {
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.trackpad-guide-off
+#martianGameScreen
+.game-instructions {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+
+  align-self: center !important;
+
+  width: auto !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.trackpad-guide-off
+#martianGameScreen
+.game-stats {
+  grid-column: 2 !important;
+  grid-row: 2 !important;
+
+  position: static !important;
+
+  justify-self: end !important;
+  align-self: center !important;
+
+  width: auto !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.trackpad-guide-off
+#martianGameScreen
+.game-stats-row {
+  flex-wrap: nowrap !important;
+  justify-content: flex-end !important;
+}
+
+body.trackpad-guide-off
+#martianGameScreen
+.game-stage-wrap {
+  grid-column: 1 / -1 !important;
+  grid-row: 3 !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  min-height: 0 !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+}
+
+body.trackpad-guide-off
+#martianGameScreen
+.game-stage {
+  width: 100% !important;
+  max-width: none !important;
+
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+
+  margin: 0 !important;
+}
+
+/* ---------- GUIDE ON ---------- */
+
+@media (min-width: 1250px) {
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen:not([hidden]) {
+    height: 100vh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen:not([hidden])
+  .game-shell {
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100vh !important;
+    min-height: 0 !important;
+
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      290px !important;
+
+    grid-template-rows:
+      auto
+      38px
+      minmax(0, 1fr) !important;
+
+    column-gap: 18px !important;
+    row-gap: 4px !important;
+
+    padding:
+      0.35rem
+      0.55rem
+      0.45rem !important;
+
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-header {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-instructions {
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+
+    justify-self: start !important;
+    align-self: center !important;
+
+    width: auto !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+
+    padding-right: 400px !important;
+
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-stats {
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+
+    position: static !important;
+
+    justify-self: end !important;
+    align-self: center !important;
+
+    width: auto !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-stats-row {
+    flex-wrap: nowrap !important;
+    justify-content: flex-end !important;
+
+    gap: 4px !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-stage-wrap {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-stage {
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-guide {
+    grid-column: 2 !important;
+    grid-row: 3 !important;
+
+    position: static !important;
+
+    align-self: center !important;
+    justify-self: stretch !important;
+
+    width: 100% !important;
+    max-width: 290px !important;
+
+    margin: 0 !important;
+    padding: 8px !important;
+
+    border-radius: 18px !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-guide
+  .imported-trackpad-scene {
+    width: 100% !important;
+    max-width: 260px !important;
+
+    margin:
+      0
+      auto !important;
+  }
+}
+
+
+/* ========================================
+   MARTIAN MADNESS - FINAL VIEWPORT LAYOUT
+======================================== */
+
+@media (min-width: 1250px) {
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen:not([hidden]) {
+    height: 100vh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-shell {
+    box-sizing: border-box;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100vh !important;
+    min-height: 0 !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      290px !important;
+
+    grid-template-rows:
+      auto
+      38px
+      minmax(0, 1fr) !important;
+
+    column-gap: 18px !important;
+    row-gap: 4px !important;
+
+    padding:
+      0.3rem
+      0.5rem
+      0.4rem !important;
+
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-instructions {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    justify-self: start !important;
+    align-self: center !important;
+
+    width: auto !important;
+    max-width: 420px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    white-space: nowrap !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-stats {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    justify-self: end !important;
+    align-self: center !important;
+
+    width: auto !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    position: static !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-stats-row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+
+    justify-content: flex-end !important;
+
+    gap: 3px !important;
+
+    width: auto !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-stat {
+    flex: 0 0 auto !important;
+
+    min-width: 0 !important;
+    min-height: 26px !important;
+
+    padding:
+      3px
+      6px !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-stat .label {
+    font-size: 0.58rem !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-stat .value {
+    font-size: 0.82rem !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-stage-wrap {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+
+    min-height: 0 !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-stage {
+    box-sizing: border-box;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .martian-arena {
+    width: 100% !important;
+    height: 100% !important;
+
+    min-height: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-guide {
+    grid-column: 2 !important;
+    grid-row: 3 !important;
+
+    align-self: center !important;
+    justify-self: center !important;
+
+    width: 100% !important;
+    max-width: 270px !important;
+
+    margin: 0 !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-guide
+  .imported-trackpad-scene {
+    width: 100% !important;
+    max-width: 240px !important;
+
+    margin: 0 auto !important;
+  }
+}
+
+/* GUIDE OFF */
+
+body.trackpad-guide-off
+#martianGameScreen:not([hidden]) {
+  height: 100vh !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+body.trackpad-guide-off
+#martianGameScreen
+.game-shell {
+  box-sizing: border-box;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  height: 100vh !important;
+  min-height: 0 !important;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto !important;
+
+  grid-template-rows:
+    auto
+    38px
+    minmax(0, 1fr) !important;
+
+  row-gap: 4px !important;
+
+  padding:
+    0.3rem
+    0.5rem
+    0.4rem !important;
+
+  overflow: hidden !important;
+}
+
+body.trackpad-guide-off
+#martianGameScreen
+.game-instructions {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+
+  align-self: center !important;
+
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.trackpad-guide-off
+#martianGameScreen
+.game-stats {
+  grid-column: 2 !important;
+  grid-row: 2 !important;
+
+  justify-self: end !important;
+  align-self: center !important;
+
+  width: auto !important;
+
+  margin: 0 !important;
+}
+
+body.trackpad-guide-off
+#martianGameScreen
+.game-stats-row {
+  flex-wrap: nowrap !important;
+}
+
+body.trackpad-guide-off
+#martianGameScreen
+.game-stage-wrap {
+  grid-column: 1 / -1 !important;
+  grid-row: 3 !important;
+
+  min-height: 0 !important;
+
+  width: 100% !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+}
+
+body.trackpad-guide-off
+#martianGameScreen
+.game-stage,
+body.trackpad-guide-off
+#martianGameScreen
+.martian-arena {
+  width: 100% !important;
+
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+}
+
+
+
+
+/* ========================================
+   MARTIAN MADNESS - SCORE VISIBILITY FIX
+======================================== */
+
+/*
+ * Martian Madness has four useful HUD pills:
+ * Level, Goal, Misses, Score.
+ *
+ * Score carries the old game-preserve-only class,
+ * so explicitly restore it here.
+ */
+
+#martianGameScreen
+.game-stats-row
+.game-preserve-only {
+  display: flex !important;
+}
+
+/*
+ * Do not bring back the old Status row.
+ * Important feedback already appears in-game.
+ */
+
+#martianGameScreen
+.hud-status-row {
+  display: none !important;
+}
+
+/*
+ * Keep all four pills together.
+ */
+
+#martianGameScreen
+.game-stats {
+  overflow: visible !important;
+}
+
+#martianGameScreen
+.game-stats-row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+
+  width: auto !important;
+  max-width: none !important;
+
+  gap: 5px !important;
+}
+
+#martianGameScreen
+.game-stats-row
+.game-stat {
+  flex: 0 0 auto !important;
+
+  min-width: 0 !important;
+
+  padding:
+    4px
+    8px !important;
+}
+
+
+/* ========================================
+   MARTIAN MADNESS - FULL BOARD VISIBILITY
+======================================== */
+
+/*
+ * Keep the complete Martian playfield visible.
+ * Do not crop the people along the bottom edge.
+ */
+
+@media (min-width: 1250px) {
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-stage-wrap {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+
+    min-height: 0 !important;
+
+    overflow: visible !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .game-stage {
+    width: 100% !important;
+
+    height: calc(100vh - 110px) !important;
+    min-height: 0 !important;
+    max-height: calc(100vh - 110px) !important;
+
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #martianGameScreen
+  .martian-arena {
+    box-sizing: border-box;
+
+    width: 100% !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+
+    overflow: hidden !important;
+  }
+}
+
+/* Same full-board protection when guide is OFF. */
+
+body.trackpad-guide-off
+#martianGameScreen
+.game-stage {
+  height: calc(100vh - 110px) !important;
+  min-height: 0 !important;
+  max-height: calc(100vh - 110px) !important;
+
+  overflow: hidden !important;
+}
+
+body.trackpad-guide-off
+#martianGameScreen
+.martian-arena {
+  width: 100% !important;
+
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+
+  overflow: hidden !important;
+}
+
+
+
+
+/* ========================================
+   STREET CAR - ADAPTIVE GUIDE FINAL
+======================================== */
+
+/* Keep Score, but remove the old Status row. */
+
+#carGameScreen
+.game-stats-row
+.game-preserve-only {
+  display: flex !important;
+}
+
+#carGameScreen
+.hud-status-row {
+  display: none !important;
+}
+
+/* ---------- GUIDE ON ---------- */
+
+@media (min-width: 1250px) {
+
+  body:not(.trackpad-guide-off)
+  #carGameScreen:not([hidden]) {
+    height: 100vh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #carGameScreen
+  .game-shell {
+    box-sizing: border-box;
+
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      290px !important;
+
+    grid-template-rows:
+      auto
+      38px
+      minmax(0, 1fr) !important;
+
+    column-gap: 18px !important;
+    row-gap: 4px !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100vh !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    padding:
+      0.3rem
+      0.5rem
+      0.4rem !important;
+
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #carGameScreen
+  .game-header {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #carGameScreen
+  .game-instructions {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    justify-self: start !important;
+    align-self: center !important;
+
+    width: auto !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #carGameScreen
+  .game-stats {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    position: static !important;
+
+    justify-self: end !important;
+    align-self: center !important;
+
+    width: auto !important;
+    max-width: none !important;
+
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    overflow: visible !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #carGameScreen
+  .game-stats-row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+
+    justify-content: flex-end !important;
+    align-items: center !important;
+
+    width: auto !important;
+    max-width: none !important;
+
+    gap: 3px !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #carGameScreen
+  .game-stat {
+    flex: 0 0 auto !important;
+
+    min-width: 0 !important;
+    min-height: 26px !important;
+
+    padding:
+      3px
+      6px !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #carGameScreen
+  .game-stat .label {
+    font-size: 0.56rem !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #carGameScreen
+  .game-stat .value {
+    font-size: 0.78rem !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #carGameScreen
+  .game-stage-wrap {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    overflow: visible !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #carGameScreen
+  .game-stage {
+    box-sizing: border-box;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: calc(100vh - 110px) !important;
+    min-height: 0 !important;
+    max-height: calc(100vh - 110px) !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #carGameScreen
+  .street-arena {
+    width: 100% !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #carGameScreen
+  .game-guide {
+    grid-column: 2 !important;
+    grid-row: 3 !important;
+
+    position: static !important;
+
+    align-self: center !important;
+    justify-self: center !important;
+
+    width: 100% !important;
+    max-width: 270px !important;
+
+    margin: 0 !important;
+    padding: 8px !important;
+
+    border-radius: 18px !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #carGameScreen
+  .game-guide
+  .imported-trackpad-scene {
+    width: 100% !important;
+    max-width: 240px !important;
+
+    margin: 0 auto !important;
+  }
+}
+
+/* ---------- GUIDE OFF ---------- */
+
+body.trackpad-guide-off
+#carGameScreen:not([hidden]) {
+  height: 100vh !important;
+  min-height: 0 !important;
+
+  overflow: hidden !important;
+}
+
+body.trackpad-guide-off
+#carGameScreen
+.game-shell {
+  box-sizing: border-box;
+
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto !important;
+
+  grid-template-rows:
+    auto
+    38px
+    minmax(0, 1fr) !important;
+
+  row-gap: 4px !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  height: 100vh !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+
+  padding:
+    0.3rem
+    0.5rem
+    0.4rem !important;
+
+  overflow: hidden !important;
+}
+
+body.trackpad-guide-off
+#carGameScreen
+.game-header {
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.trackpad-guide-off
+#carGameScreen
+.game-instructions {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+
+  align-self: center !important;
+
+  width: auto !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.trackpad-guide-off
+#carGameScreen
+.game-stats {
+  grid-column: 2 !important;
+  grid-row: 2 !important;
+
+  position: static !important;
+
+  justify-self: end !important;
+  align-self: center !important;
+
+  width: auto !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.trackpad-guide-off
+#carGameScreen
+.game-stats-row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+
+  justify-content: flex-end !important;
+
+  gap: 4px !important;
+}
+
+body.trackpad-guide-off
+#carGameScreen
+.game-stage-wrap {
+  grid-column: 1 / -1 !important;
+  grid-row: 3 !important;
+
+  width: 100% !important;
+
+  min-height: 0 !important;
+
+  margin: 0 !important;
+
+  overflow: visible !important;
+}
+
+body.trackpad-guide-off
+#carGameScreen
+.game-stage {
+  width: 100% !important;
+
+  height: calc(100vh - 110px) !important;
+  min-height: 0 !important;
+  max-height: calc(100vh - 110px) !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+}
+
+body.trackpad-guide-off
+#carGameScreen
+.street-arena {
+  width: 100% !important;
+
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+
+  overflow: hidden !important;
+}
+
+
+/* ========================================
+   STREET CAR - DIRECTIONS LEFT FIX
+======================================== */
+
+#carGameScreen
+.game-instructions {
+  justify-self: start !important;
+  align-self: center !important;
+
+  text-align: left !important;
+
+  width: auto !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+  padding: 0 4px !important;
+
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+
+/* ========================================
+   DRAGON DODGE - ADAPTIVE GUIDE FINAL
+======================================== */
+
+/* Show Score, but keep the old Status row hidden. */
+
+#dragonGameScreen
+.game-stats-row
+.game-preserve-only {
+  display: flex !important;
+}
+
+#dragonGameScreen
+.hud-status-row {
+  display: none !important;
+}
+
+/* Keep directions aligned left. */
+
+#dragonGameScreen
+.game-instructions {
+  justify-self: start !important;
+  text-align: left !important;
+
+  width: auto !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+  padding: 0 4px !important;
+
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* ---------- GUIDE ON ---------- */
+
+@media (min-width: 1250px) {
+
+  body:not(.trackpad-guide-off)
+  #dragonGameScreen:not([hidden]) {
+    height: 100vh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #dragonGameScreen
+  .game-shell {
+    box-sizing: border-box;
+
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      290px !important;
+
+    grid-template-rows:
+      auto
+      38px
+      minmax(0, 1fr) !important;
+
+    column-gap: 18px !important;
+    row-gap: 4px !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100vh !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    padding:
+      0.3rem
+      0.5rem
+      0.4rem !important;
+
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #dragonGameScreen
+  .game-header {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #dragonGameScreen
+  .game-instructions {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    justify-self: start !important;
+    align-self: center !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #dragonGameScreen
+  .game-stats {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    position: static !important;
+
+    justify-self: end !important;
+    align-self: center !important;
+
+    width: auto !important;
+    max-width: none !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    overflow: visible !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #dragonGameScreen
+  .game-stats-row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+
+    justify-content: flex-end !important;
+    align-items: center !important;
+
+    width: auto !important;
+    max-width: none !important;
+
+    gap: 4px !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #dragonGameScreen
+  .game-stat {
+    flex: 0 0 auto !important;
+
+    min-width: 0 !important;
+    min-height: 26px !important;
+
+    padding:
+      3px
+      7px !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #dragonGameScreen
+  .game-stage-wrap {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    overflow: visible !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #dragonGameScreen
+  .game-stage {
+    box-sizing: border-box;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: calc(100vh - 110px) !important;
+    min-height: 0 !important;
+    max-height: calc(100vh - 110px) !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #dragonGameScreen
+  .dragon-arena {
+    width: 100% !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #dragonGameScreen
+  .game-guide {
+    grid-column: 2 !important;
+    grid-row: 3 !important;
+
+    position: static !important;
+
+    align-self: center !important;
+    justify-self: center !important;
+
+    width: 100% !important;
+    max-width: 270px !important;
+
+    margin: 0 !important;
+    padding: 8px !important;
+
+    border-radius: 18px !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #dragonGameScreen
+  .game-guide
+  .imported-trackpad-scene {
+    width: 100% !important;
+    max-width: 240px !important;
+
+    margin: 0 auto !important;
+  }
+}
+
+/* ---------- GUIDE OFF ---------- */
+
+body.trackpad-guide-off
+#dragonGameScreen:not([hidden]) {
+  height: 100vh !important;
+  min-height: 0 !important;
+
+  overflow: hidden !important;
+}
+
+body.trackpad-guide-off
+#dragonGameScreen
+.game-shell {
+  box-sizing: border-box;
+
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto !important;
+
+  grid-template-rows:
+    auto
+    38px
+    minmax(0, 1fr) !important;
+
+  row-gap: 4px !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  height: 100vh !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+
+  padding:
+    0.3rem
+    0.5rem
+    0.4rem !important;
+
+  overflow: hidden !important;
+}
+
+body.trackpad-guide-off
+#dragonGameScreen
+.game-header {
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.trackpad-guide-off
+#dragonGameScreen
+.game-instructions {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+
+  align-self: center !important;
+}
+
+body.trackpad-guide-off
+#dragonGameScreen
+.game-stats {
+  grid-column: 2 !important;
+  grid-row: 2 !important;
+
+  position: static !important;
+
+  justify-self: end !important;
+  align-self: center !important;
+
+  width: auto !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.trackpad-guide-off
+#dragonGameScreen
+.game-stats-row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+
+  justify-content: flex-end !important;
+
+  gap: 4px !important;
+}
+
+body.trackpad-guide-off
+#dragonGameScreen
+.game-stage-wrap {
+  grid-column: 1 / -1 !important;
+  grid-row: 3 !important;
+
+  width: 100% !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+
+  overflow: visible !important;
+}
+
+body.trackpad-guide-off
+#dragonGameScreen
+.game-stage {
+  width: 100% !important;
+
+  height: calc(100vh - 110px) !important;
+  min-height: 0 !important;
+  max-height: calc(100vh - 110px) !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+}
+
+body.trackpad-guide-off
+#dragonGameScreen
+.dragon-arena {
+  width: 100% !important;
+
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+
+  overflow: hidden !important;
+}
+
+
+/* ========================================
+   FIREFIGHTER RESCUE - ADAPTIVE GUIDE FINAL
+======================================== */
+
+/* Show Score, but keep the old Status row hidden. */
+
+#fireGameScreen
+.game-stats-row
+.game-preserve-only {
+  display: flex !important;
+}
+
+#fireGameScreen
+.hud-status-row {
+  display: none !important;
+}
+
+/* Keep directions aligned left. */
+
+#fireGameScreen
+.game-instructions {
+  justify-self: start !important;
+  text-align: left !important;
+
+  width: auto !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+  padding: 0 4px !important;
+
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* ---------- GUIDE ON ---------- */
+
+@media (min-width: 1250px) {
+
+  body:not(.trackpad-guide-off)
+  #fireGameScreen:not([hidden]) {
+    height: 100vh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #fireGameScreen
+  .game-shell {
+    box-sizing: border-box;
+
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      290px !important;
+
+    grid-template-rows:
+      auto
+      38px
+      minmax(0, 1fr) !important;
+
+    column-gap: 18px !important;
+    row-gap: 4px !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100vh !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    padding:
+      0.3rem
+      0.5rem
+      0.4rem !important;
+
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #fireGameScreen
+  .game-header {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #fireGameScreen
+  .game-instructions {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    justify-self: start !important;
+    align-self: center !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #fireGameScreen
+  .game-stats {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    position: static !important;
+
+    justify-self: end !important;
+    align-self: center !important;
+
+    width: auto !important;
+    max-width: none !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    overflow: visible !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #fireGameScreen
+  .game-stats-row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+
+    justify-content: flex-end !important;
+    align-items: center !important;
+
+    width: auto !important;
+    max-width: none !important;
+
+    gap: 4px !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #fireGameScreen
+  .game-stat {
+    flex: 0 0 auto !important;
+
+    min-width: 0 !important;
+    min-height: 26px !important;
+
+    padding:
+      3px
+      7px !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #fireGameScreen
+  .game-stage-wrap {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    overflow: visible !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #fireGameScreen
+  .game-stage {
+    box-sizing: border-box;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: calc(100vh - 110px) !important;
+    min-height: 0 !important;
+    max-height: calc(100vh - 110px) !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #fireGameScreen
+  .fire-arena {
+    width: 100% !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #fireGameScreen
+  .game-guide {
+    grid-column: 2 !important;
+    grid-row: 3 !important;
+
+    position: static !important;
+
+    align-self: center !important;
+    justify-self: center !important;
+
+    width: 100% !important;
+    max-width: 270px !important;
+
+    margin: 0 !important;
+    padding: 8px !important;
+
+    border-radius: 18px !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #fireGameScreen
+  .game-guide
+  .imported-trackpad-scene {
+    width: 100% !important;
+    max-width: 240px !important;
+
+    margin: 0 auto !important;
+  }
+}
+
+/* ---------- GUIDE OFF ---------- */
+
+body.trackpad-guide-off
+#fireGameScreen:not([hidden]) {
+  height: 100vh !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+body.trackpad-guide-off
+#fireGameScreen
+.game-shell {
+  box-sizing: border-box;
+
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto !important;
+
+  grid-template-rows:
+    auto
+    38px
+    minmax(0, 1fr) !important;
+
+  row-gap: 4px !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  height: 100vh !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+
+  padding:
+    0.3rem
+    0.5rem
+    0.4rem !important;
+
+  overflow: hidden !important;
+}
+
+body.trackpad-guide-off
+#fireGameScreen
+.game-header {
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.trackpad-guide-off
+#fireGameScreen
+.game-instructions {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+
+  align-self: center !important;
+}
+
+body.trackpad-guide-off
+#fireGameScreen
+.game-stats {
+  grid-column: 2 !important;
+  grid-row: 2 !important;
+
+  position: static !important;
+
+  justify-self: end !important;
+  align-self: center !important;
+
+  width: auto !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.trackpad-guide-off
+#fireGameScreen
+.game-stats-row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+
+  justify-content: flex-end !important;
+
+  gap: 4px !important;
+}
+
+body.trackpad-guide-off
+#fireGameScreen
+.game-stage-wrap {
+  grid-column: 1 / -1 !important;
+  grid-row: 3 !important;
+
+  width: 100% !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+
+  overflow: visible !important;
+}
+
+body.trackpad-guide-off
+#fireGameScreen
+.game-stage {
+  width: 100% !important;
+
+  height: calc(100vh - 110px) !important;
+  min-height: 0 !important;
+  max-height: calc(100vh - 110px) !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+}
+
+body.trackpad-guide-off
+#fireGameScreen
+.fire-arena {
+  width: 100% !important;
+
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+
+  overflow: hidden !important;
+}
+

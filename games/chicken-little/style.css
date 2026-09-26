@@ -394,3 +394,467 @@ body.chicken-little-page {
     max-width: 165px;
   }
 }
+
+/* ========================================
+   CHICKEN LITTLE - TRACKPAD GUIDE OFF
+======================================== */
+
+/*
+ * Guide ON keeps the existing Chicken Little
+ * side-by-side classroom layout unchanged.
+ *
+ * Guide OFF removes the guide column and lets
+ * the game reclaim the entire play-layout width.
+ */
+
+body.chicken-little-page.trackpad-guide-off
+.chicken-play-layout {
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr) !important;
+
+  grid-template-areas:
+    "stage" !important;
+
+  gap: 0 !important;
+
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+body.chicken-little-page.trackpad-guide-off
+.chicken-stage-wrap {
+  grid-area: stage;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  justify-self: stretch !important;
+
+  margin: 0 !important;
+}
+
+body.chicken-little-page.trackpad-guide-off
+.chicken-arena.game-stage {
+  width: 100% !important;
+  max-width: none !important;
+
+  min-height: 0 !important;
+}
+
+/*
+ * On classroom-sized displays, use the
+ * available viewport height while preserving
+ * Chicken Little's 2:1 game proportions.
+ */
+
+@media (min-width: 900px) {
+
+  body.chicken-little-page.trackpad-guide-off
+  .chicken-stage-wrap {
+    width: min(
+      100%,
+      calc((100dvh - 115px) * 2)
+    ) !important;
+
+    justify-self: center !important;
+  }
+
+  body.chicken-little-page.trackpad-guide-off
+  .chicken-arena.game-stage {
+    width: 100% !important;
+
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    aspect-ratio: 2 / 1 !important;
+  }
+}
+
+/* ========================================
+   CHICKEN LITTLE - GUIDE RIGHT SIDE
+======================================== */
+
+@media (min-width: 900px) {
+
+  body.chicken-little-page:not(.trackpad-guide-off)
+  .chicken-play-layout {
+    grid-template-columns:
+      minmax(0, 1fr)
+      clamp(145px, 11vw, 175px) !important;
+
+    grid-template-areas:
+      "stage guide" !important;
+
+    gap: 8px !important;
+  }
+
+  body.chicken-little-page:not(.trackpad-guide-off)
+  .chicken-stage-wrap {
+    grid-area: stage;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    justify-self: stretch !important;
+  }
+
+  body.chicken-little-page:not(.trackpad-guide-off)
+  .chicken-guide {
+    grid-area: guide;
+
+    width: 100% !important;
+    max-width: 175px !important;
+
+    align-self: center !important;
+    justify-self: center !important;
+
+    margin: 0 !important;
+  }
+}
+
+/* ========================================
+   CHICKEN LITTLE - HEADER CONTROLS
+======================================== */
+
+.chicken-little-page .game-header-controls {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+}
+
+.chicken-little-page .game-header-button {
+  position: static !important;
+
+  display: inline-grid !important;
+  place-items: center !important;
+
+  width: 74px !important;
+  height: 44px !important;
+  min-width: 74px !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  border: 1px solid rgba(85, 107, 47, 0.5) !important;
+  border-radius: 999px !important;
+
+  background:
+    rgba(38, 61, 48, 0.92) !important;
+
+  color: white !important;
+
+  font-size: 1.05rem !important;
+  line-height: 1 !important;
+
+  cursor: pointer;
+}
+
+.chicken-little-page
+.game-header-button
+.home-btn-icon {
+  display: block !important;
+
+  width: 23px !important;
+  height: 23px !important;
+
+  object-fit: contain;
+
+  filter:
+    brightness(0)
+    invert(1) !important;
+}
+
+.chicken-little-page
+.chicken-sound-button {
+  font-family:
+    Arial,
+    sans-serif;
+}
+
+/* ========================================
+   CHICKEN LITTLE - RIGHT GUIDE VIEWPORT FIT
+======================================== */
+
+@media (min-width: 900px) {
+
+  body.chicken-little-page {
+    height: 100vh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body.chicken-little-page
+  .chicken-little-shell {
+    box-sizing: border-box;
+
+    height: 100vh !important;
+    min-height: 0 !important;
+
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+
+    overflow: hidden !important;
+  }
+
+  body.chicken-little-page
+  .chicken-info-row {
+    min-height: 34px !important;
+    margin: 2px 0 4px !important;
+  }
+
+  body.chicken-little-page:not(.trackpad-guide-off)
+  .chicken-play-layout {
+    min-height: 0 !important;
+    height: auto !important;
+
+    align-items: center !important;
+  }
+
+  body.chicken-little-page:not(.trackpad-guide-off)
+  .chicken-stage-wrap {
+    /*
+     * 118px reserves space for the compact
+     * header + directions/stats row.
+     *
+     * Multiplying by 2 preserves the arena's
+     * existing 2:1 aspect ratio.
+     */
+    width: min(
+      100%,
+      calc((100vh - 118px) * 2)
+    ) !important;
+
+    max-width: none !important;
+
+    justify-self: center !important;
+    align-self: center !important;
+  }
+
+  body.chicken-little-page:not(.trackpad-guide-off)
+  .chicken-arena.game-stage {
+    box-sizing: border-box;
+
+    width: 100% !important;
+    height: auto !important;
+
+    min-height: 0 !important;
+    max-height: calc(100vh - 118px) !important;
+
+    aspect-ratio: 2 / 1 !important;
+
+    margin: 0 !important;
+  }
+
+  body.chicken-little-page:not(.trackpad-guide-off)
+  .chicken-guide {
+    align-self: center !important;
+
+    max-height: calc(100vh - 118px) !important;
+  }
+}
+
+/* ========================================
+   CHICKEN LITTLE - FULLSCREEN VIEWPORT FIT
+======================================== */
+
+@media (min-width: 900px) {
+
+  body.chicken-little-page.trackpad-guide-off {
+    height: 100vh !important;
+    min-height: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body.chicken-little-page.trackpad-guide-off
+  .chicken-little-shell {
+    box-sizing: border-box;
+
+    height: 100vh !important;
+    min-height: 0 !important;
+
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+
+    overflow: hidden !important;
+  }
+
+  body.chicken-little-page.trackpad-guide-off
+  .chicken-info-row {
+    min-height: 34px !important;
+    margin: 2px 0 4px !important;
+  }
+
+  body.chicken-little-page.trackpad-guide-off
+  .chicken-play-layout {
+    width: 100% !important;
+
+    min-height: 0 !important;
+    height: auto !important;
+
+    align-items: center !important;
+    justify-items: center !important;
+  }
+
+  body.chicken-little-page.trackpad-guide-off
+  .chicken-stage-wrap {
+    width: min(
+      100%,
+      calc((100vh - 118px) * 2)
+    ) !important;
+
+    max-width: none !important;
+
+    justify-self: center !important;
+    align-self: center !important;
+
+    margin: 0 !important;
+  }
+
+  body.chicken-little-page.trackpad-guide-off
+  .chicken-arena.game-stage {
+    box-sizing: border-box;
+
+    width: 100% !important;
+    height: auto !important;
+
+    min-height: 0 !important;
+    max-height: calc(100vh - 118px) !important;
+
+    aspect-ratio: 2 / 1 !important;
+
+    margin: 0 !important;
+  }
+}
+
+
+/* ========================================
+   CHICKEN LITTLE - CLEAN TRACKPAD GUIDE
+======================================== */
+
+/*
+ * Match the cleaner Trackpad Guide look
+ * used by the other games.
+ */
+
+body.chicken-little-page:not(.trackpad-guide-off)
+.chicken-guide {
+  box-sizing: border-box;
+
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  width: 100% !important;
+  max-width: 250px !important;
+
+  padding: 10px !important;
+  margin: 0 !important;
+
+  border:
+    2px solid rgba(210, 230, 245, 0.9) !important;
+
+  border-radius: 22px !important;
+
+  background:
+    linear-gradient(
+      160deg,
+      rgba(28, 58, 72, 0.98),
+      rgba(18, 42, 54, 0.98)
+    ) !important;
+
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.28) !important;
+}
+
+/*
+ * Center the trackpad itself.
+ */
+
+body.chicken-little-page:not(.trackpad-guide-off)
+.chicken-guide
+.imported-trackpad-scene {
+  width: 100% !important;
+  max-width: 220px !important;
+
+  margin: 0 auto !important;
+
+  border-radius: 14px !important;
+
+  overflow: hidden !important;
+}
+
+/*
+ * Keep the actual trackpad image contained.
+ */
+
+body.chicken-little-page:not(.trackpad-guide-off)
+.chicken-guide
+.imported-trackpad-image {
+  display: block !important;
+
+  width: 100% !important;
+  height: auto !important;
+
+  object-fit: contain !important;
+}
+
+/*
+ * Preserve hand placement over the trackpad.
+ */
+
+body.chicken-little-page:not(.trackpad-guide-off)
+.chicken-guide
+.imported-trackpad-hand {
+  max-width: none !important;
+}
+
+/*
+ * Give the guide a proper title like the
+ * other games if one exists.
+ */
+
+body.chicken-little-page:not(.trackpad-guide-off)
+.chicken-guide
+.imported-trackpad-guide-label {
+  display: block !important;
+
+  margin: 0 0 6px !important;
+
+  color: white !important;
+
+  font-size: 0.95rem !important;
+  font-weight: 800 !important;
+
+  text-align: center !important;
+}
+
+/*
+ * Classroom display sizing.
+ */
+
+@media (min-width: 900px) {
+
+  body.chicken-little-page:not(.trackpad-guide-off)
+  .chicken-play-layout {
+    grid-template-columns:
+      minmax(0, 1fr)
+      260px !important;
+
+    gap: 16px !important;
+  }
+
+  body.chicken-little-page:not(.trackpad-guide-off)
+  .chicken-guide {
+    max-width: 250px !important;
+
+    align-self: center !important;
+    justify-self: center !important;
+  }
+}
+

@@ -5655,5 +5655,28 @@ void (async () => {
     resetDragon(dragon);
   }
 
-  initializeStudentNameFlow();
+  /*
+   * Direct links from the Hands-On Trackpad home page
+   * should open the requested game immediately.
+   * The old nickname / internal Game Zone flow remains
+   * only when this page is opened without ?game=.
+   */
+  const directGameKeys = new Set([
+    'light',
+    'car',
+    'dragon',
+    'fire',
+    'martian'
+  ]);
+
+  if (directGameKeys.has(selectedGameKey)) {
+    nameScreen.setAttribute('hidden', '');
+    homeScreen.setAttribute('hidden', '');
+    studentBanner.setAttribute('hidden', '');
+
+    openRequestedGameFromUrlIfPresent();
+  } else {
+    initializeStudentNameFlow();
+  }
 })();
+
