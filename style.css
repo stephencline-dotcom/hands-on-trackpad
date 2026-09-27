@@ -9203,3 +9203,153 @@ body.jack-jump-page.trackpad-guide-off
   }
 }
 
+
+/* ========================================
+   FOLLOW THE BIRD - ADAPTIVE SIDE GUIDE FINAL
+======================================== */
+
+@media (min-width: 1250px) {
+
+  body.follow-bird-page:not(.trackpad-guide-off) {
+    height: 100vh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body.follow-bird-page:not(.trackpad-guide-off)
+  .follow-bird-shell {
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr) !important;
+
+    grid-template-rows:
+      auto
+      auto
+      auto
+      minmax(0, 1fr) !important;
+
+    row-gap: 5px !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100vh !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 6px 8px 8px !important;
+
+    overflow: hidden !important;
+  }
+
+  body.follow-bird-page:not(.trackpad-guide-off)
+  .follow-bird-play-layout {
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      290px !important;
+
+    column-gap: 18px !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    align-items: stretch !important;
+
+    overflow: hidden !important;
+  }
+
+  body.follow-bird-page:not(.trackpad-guide-off)
+  .follow-bird-play-layout
+  > .follow-bird-stage {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+  }
+
+  body.follow-bird-page:not(.trackpad-guide-off)
+  .follow-bird-play-layout
+  .follow-bird-arena {
+    width: 100% !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+  }
+
+  body.follow-bird-page:not(.trackpad-guide-off)
+  .follow-bird-play-layout
+  > .imported-trackpad-guide {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+
+    align-self: center !important;
+    justify-self: center !important;
+
+    position: static !important;
+
+    width: 270px !important;
+    max-width: 270px !important;
+
+    margin: 0 !important;
+    padding: 8px !important;
+  }
+
+  body.follow-bird-page:not(.trackpad-guide-off)
+  .follow-bird-play-layout
+  .imported-trackpad-scene {
+    width: 240px !important;
+    max-width: 240px !important;
+
+    height: auto !important;
+
+    aspect-ratio: 626 / 437 !important;
+
+    margin: 0 auto !important;
+  }
+}
+
+
+/* ---------- GUIDE OFF ---------- */
+
+body.follow-bird-page.trackpad-guide-off
+.follow-bird-play-layout {
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr) !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.follow-bird-page.trackpad-guide-off
+.follow-bird-play-layout
+> .follow-bird-stage {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+body.follow-bird-page.trackpad-guide-off
+.follow-bird-play-layout
+> .imported-trackpad-guide {
+  display: none !important;
+}
+
