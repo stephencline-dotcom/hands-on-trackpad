@@ -1368,9 +1368,11 @@
       );
     };
 
-    const hasNextRound =
-      currentRoundIndex <
-      SENSE_ROUNDS.length - 1;
+    /*
+     * The three standard rounds are followed by
+     * Five Senses Rescue as Level 4.
+     */
+    const hasNextRound = true;
 
     showFeedback(
       "correct",
@@ -1406,16 +1408,22 @@
   }
 
   function startNextRound() {
+    /*
+     * After Round 3, continue into
+     * Five Senses Rescue as Level 4.
+     */
     if (
       currentRoundIndex >=
       SENSE_ROUNDS.length - 1
     ) {
+      startRescueRound();
       return;
     }
 
     currentRoundIndex += 1;
     startRound();
   }
+
 
   function playAllRoundsAgain() {
     currentRoundIndex = 0;
@@ -2125,16 +2133,7 @@
      ?rescueTest=1
   ======================================== */
 
-  const rescuePreviewParams =
-    new URLSearchParams(
-      window.location.search
-    );
-
-  if (
-    rescuePreviewParams.get(
-      "rescueTest"
-    ) === "1"
-  ) {
+  function startRescueRound() {
     const rescueArena =
       document.getElementById(
         "senseRescueArena"
@@ -2150,24 +2149,21 @@
         "senseRescueHero"
       );
 
-    const previewCharacter =
-      rescuePreviewParams.get(
-        "character"
-      );
+    gameRunning = false;
 
-    if (
-      rescueHero &&
-      ROUND_ONE_CHARACTERS.includes(
-        previewCharacter
-      )
-    ) {
-      rescueHero.dataset.character =
-        previewCharacter;
-    }
+    document.body.classList.remove(
+      "sense-round-two",
+      "sense-round-three"
+    );
 
     document.body.classList.add(
       "sense-rescue-mode"
     );
+
+    if (rescueHero) {
+      rescueHero.dataset.character =
+        roundOneCharacter;
+    }
 
     if (rescueArena) {
       rescueArena.hidden = false;
@@ -2177,6 +2173,34 @@
       rescueTransition.hidden = false;
     }
   }
+
+  const rescuePreviewParams =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  if (
+    rescuePreviewParams.get(
+      "rescueTest"
+    ) === "1"
+  ) {
+    const previewCharacter =
+      rescuePreviewParams.get(
+        "character"
+      );
+
+    if (
+      ROUND_ONE_CHARACTERS.includes(
+        previewCharacter
+      )
+    ) {
+      roundOneCharacter =
+        previewCharacter;
+    }
+
+    startRescueRound();
+  }
+
 
   const rescueStartButton =
     document.getElementById(
@@ -2308,28 +2332,12 @@
       rescuePlayfield
         .getBoundingClientRect();
 
-    const rescueGuideElement =
-      document.querySelector(
-        ".imported-trackpad-guide"
-      );
-
-    let rescueLeftBoundary =
+    /*
+     * Trackpad Guide now sits outside the Rescue board,
+     * so it should not reduce the hero movement area.
+     */
+    const rescueLeftBoundary =
       safePadding;
-
-    if (rescueGuideElement) {
-      const rescueGuideRect =
-        rescueGuideElement
-          .getBoundingClientRect();
-
-      rescueLeftBoundary =
-        Math.max(
-          safePadding,
-          rescueGuideRect.right -
-            playfieldRect.left +
-            heroWidth * 0.5 +
-            18
-        );
-    }
 
     const rescueRightBoundary =
       playfieldWidth -
@@ -2419,4 +2427,7 @@
   resetRound();
   configureCurrentRound();
 })();
+
+
+
 

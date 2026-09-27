@@ -6320,3 +6320,802 @@ body.sense-builder-page.trackpad-guide-off:not(.sense-rescue-mode)
     rotate(90deg) !important;
 }
 
+
+/* ========================================
+   CHARACTER PICKER VIEWPORT POSITION FIX
+======================================== */
+
+@media (min-width: 761px) {
+
+  .sense-character-chooser {
+    place-items: start center !important;
+    padding-top: 28px !important;
+    padding-bottom: 12px !important;
+  }
+
+  .sense-character-card {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+}
+
+@media (min-width: 761px) and (max-height: 800px) {
+
+  .sense-character-chooser {
+    padding-top: 14px !important;
+  }
+}
+
+
+/* ========================================
+   ROUND 2 WHOLE PERSON VERTICAL POSITION FIX
+   Move head + body together.
+======================================== */
+
+@media (min-width: 761px) {
+
+  body.sense-round-two
+  .sense-person {
+    top: calc(50% + 60px) !important;
+  }
+}
+
+@media (min-width: 761px) and (max-height: 800px) {
+
+  body.sense-round-two
+  .sense-person {
+    top: calc(50% + 52px) !important;
+  }
+}
+
+
+
+
+/* ========================================
+   SENSE BUILDER FULL WIDTH SIDE GUIDE
+======================================== */
+
+@media (min-width: 1250px) {
+
+  body.sense-builder-page:not(.sense-rescue-mode)
+  .sense-builder-shell {
+    width: calc(100% - 18px) !important;
+    max-width: none !important;
+
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+
+/* ========================================
+   RESCUE GIRL - USE REAL GIRLFACE.PNG
+   Hair behind body + facial features
+======================================== */
+
+.sense-rescue-hero[data-character="girl"]
+.sense-rescue-hero-head {
+  top: -12px !important;
+
+  width: 94px !important;
+  height: 118px !important;
+
+  border: none !important;
+  border-radius: 0 !important;
+
+  background:
+    url("../../images/girlface.png")
+    center top /
+    contain
+    no-repeat !important;
+
+  box-shadow: none !important;
+
+  /*
+   * Head/hair behind shirt so the long hair
+   * falls behind the Rescue body.
+   */
+  z-index: 4 !important;
+
+  overflow: visible !important;
+}
+
+
+/* Rescue shirt stays in front of the lower hair. */
+.sense-rescue-hero[data-character="girl"]
+.sense-rescue-hero-body {
+  z-index: 6 !important;
+}
+
+
+/*
+ * Draw the two eyes over girlface.png.
+ */
+.sense-rescue-hero[data-character="girl"]
+.sense-rescue-hero-head::before {
+  content: "" !important;
+
+  display: block !important;
+  position: absolute !important;
+
+  top: 43px !important;
+  left: 50% !important;
+
+  width: 48px !important;
+  height: 15px !important;
+
+  transform: translateX(-50%) !important;
+
+  background:
+    radial-gradient(
+      circle at 23% 50%,
+      #49352a 0 3px,
+      #ffffff 3.5px 8px,
+      transparent 8.5px
+    ),
+    radial-gradient(
+      circle at 77% 50%,
+      #49352a 0 3px,
+      #ffffff 3.5px 8px,
+      transparent 8.5px
+    ) !important;
+
+  z-index: 10 !important;
+
+  pointer-events: none !important;
+}
+
+
+/*
+ * Nose + smile.
+ */
+.sense-rescue-hero[data-character="girl"]
+.sense-rescue-hero-head::after {
+  content: "" !important;
+
+  display: block !important;
+  position: absolute !important;
+
+  left: 50% !important;
+  top: 64px !important;
+
+  width: 28px !important;
+  height: 30px !important;
+
+  transform: translateX(-50%) !important;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 18%,
+      #d98e62 0 4px,
+      transparent 5px
+    ) !important;
+
+  border: 0 !important;
+  border-bottom:
+    4px solid #a54f65 !important;
+
+  border-radius:
+    0 0 18px 18px !important;
+
+  z-index: 10 !important;
+
+  pointer-events: none !important;
+}
+
+
+/* Standing girl faces forward. */
+.sense-rescue-hero[data-character="girl"]:not(.is-moving)
+.sense-rescue-hero-head {
+  transform:
+    translateX(-50%)
+    rotateY(0deg) !important;
+}
+
+
+
+
+/* ========================================
+   RESCUE GIRL - FINAL LEVEL 1 FACE
+======================================== */
+
+/*
+ * The supplied girlface.png contains
+ * the orange hair and peach face.
+ */
+.sense-rescue-hero[data-character="girl"]
+.sense-rescue-hero-head {
+  top: -13px !important;
+  left: 50% !important;
+
+  width: 96px !important;
+  height: 120px !important;
+
+  transform: translateX(-50%) !important;
+
+  border: none !important;
+  border-radius: 0 !important;
+
+  background:
+    url("../../images/girlface.png")
+    center top /
+    contain
+    no-repeat !important;
+
+  box-shadow: none !important;
+
+  /*
+   * Long orange hair stays behind shirt.
+   */
+  z-index: 4 !important;
+
+  overflow: visible !important;
+}
+
+
+/* Pink Rescue body covers the lower hair. */
+.sense-rescue-hero[data-character="girl"]
+.sense-rescue-hero-body {
+  z-index: 6 !important;
+}
+
+
+/*
+ * Absolutely remove ALL old CSS-drawn
+ * Rescue facial features.
+ */
+.sense-rescue-hero[data-character="girl"]
+.sense-rescue-hero-head::before,
+.sense-rescue-hero[data-character="girl"]
+.sense-rescue-hero-head::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+}
+
+
+/* Level 1 face pieces */
+.sense-rescue-hero[data-character="girl"]
+.sense-rescue-girl-eyes,
+.sense-rescue-hero[data-character="girl"]
+.sense-rescue-girl-nose,
+.sense-rescue-hero[data-character="girl"]
+.sense-rescue-girl-mouth {
+  display: block !important;
+  position: absolute !important;
+
+  left: 50% !important;
+
+  z-index: 12 !important;
+
+  width: auto !important;
+  height: auto !important;
+
+  line-height: 1 !important;
+
+  pointer-events: none !important;
+}
+
+
+/*
+ * Fit the Level 1 parts onto the
+ * smaller peach face in Rescue.
+ */
+.sense-rescue-hero[data-character="girl"]
+.sense-rescue-girl-eyes {
+  top: 50px !important;
+
+  transform:
+    translateX(-50%)
+    scale(0.62) !important;
+
+  transform-origin: center !important;
+
+  font-size: 20px !important;
+}
+
+.sense-rescue-hero[data-character="girl"]
+.sense-rescue-girl-nose {
+  top: 67px !important;
+
+  transform:
+    translateX(-50%)
+    scale(0.50) !important;
+
+  transform-origin: center !important;
+
+  font-size: 18px !important;
+}
+
+.sense-rescue-hero[data-character="girl"]
+.sense-rescue-girl-mouth {
+  top: 82px !important;
+
+  transform:
+    translateX(-50%)
+    scale(0.52) !important;
+
+  transform-origin: center !important;
+
+  font-size: 18px !important;
+}
+
+
+/* Standing girl faces forward. */
+.sense-rescue-hero[data-character="girl"]:not(.is-moving)
+.sense-rescue-hero-character {
+  transform:
+    translateY(0)
+    rotateY(0deg)
+    rotateZ(0deg) !important;
+}
+
+
+/* ========================================
+   RESCUE GIRL FACE POSITION CORRECTION
+======================================== */
+
+.sense-rescue-hero[data-character="girl"]
+.sense-rescue-girl-eyes {
+  top: 23px !important;
+
+  transform:
+    translateX(-50%)
+    scale(0.62) !important;
+
+  font-size: 20px !important;
+}
+
+.sense-rescue-hero[data-character="girl"]
+.sense-rescue-girl-nose {
+  top: 40px !important;
+
+  transform:
+    translateX(-50%)
+    scale(0.50) !important;
+
+  font-size: 18px !important;
+}
+
+.sense-rescue-hero[data-character="girl"]
+.sense-rescue-girl-mouth {
+  top: 55px !important;
+
+  transform:
+    translateX(-50%)
+    scale(0.52) !important;
+
+  font-size: 18px !important;
+}
+
+
+/* ========================================
+   RESCUE GIRL NOSE + MOUTH FINAL POSITION
+======================================== */
+
+/* Leave eyes exactly where they are. */
+
+.sense-rescue-hero[data-character="girl"]
+.sense-rescue-girl-nose {
+  top: 34px !important;
+}
+
+.sense-rescue-hero[data-character="girl"]
+.sense-rescue-girl-mouth {
+  top: 47px !important;
+}
+
+
+/* ========================================
+   RESCUE GIRL HEAD FINAL VERTICAL POSITION
+======================================== */
+
+.sense-rescue-hero[data-character="girl"]
+.sense-rescue-hero-head {
+  top: -1px !important;
+}
+
+
+/* ========================================
+   RESCUE MONSTER FACE CLEANUP
+======================================== */
+
+/*
+ * Keep the expressive three-eye face
+ * from the later monster background rule.
+ */
+.sense-rescue-hero[data-character="monster"]
+.sense-rescue-hero-head {
+  width: 72px !important;
+  height: 72px !important;
+
+  border-color: #39754e !important;
+
+  background:
+    radial-gradient(
+      circle at 26% 42%,
+      #33224f 0 3px,
+      #ffffff 3.5px 8px,
+      transparent 9px
+    ),
+    radial-gradient(
+      circle at 50% 37%,
+      #33224f 0 3px,
+      #ffffff 3.5px 8px,
+      transparent 9px
+    ),
+    radial-gradient(
+      circle at 74% 42%,
+      #33224f 0 3px,
+      #ffffff 3.5px 8px,
+      transparent 9px
+    ),
+    radial-gradient(
+      ellipse at 50% 72%,
+      #ffffff 0 8px,
+      #4b2768 8.5px 14px,
+      transparent 15px
+    ),
+    #78db9c !important;
+}
+
+
+/*
+ * Keep only the purple spikes on ::before.
+ */
+.sense-rescue-hero[data-character="monster"]
+.sense-rescue-hero-head::before {
+  content: "" !important;
+
+  display: block !important;
+
+  top: -18px !important;
+  left: 4px !important;
+
+  width: 58px !important;
+  height: 25px !important;
+
+  background: #8356c7 !important;
+
+  clip-path:
+    polygon(
+      0 100%,
+      10% 8%,
+      27% 74%,
+      44% 0,
+      61% 74%,
+      78% 4%,
+      100% 100%
+    ) !important;
+
+  border: 0 !important;
+}
+
+
+/*
+ * Disable the older extra mouth/face overlay.
+ */
+.sense-rescue-hero[data-character="monster"]
+.sense-rescue-hero-head::after {
+  content: none !important;
+  display: none !important;
+}
+
+
+/* Keep monster head facing forward while standing. */
+.sense-rescue-hero[data-character="monster"]:not(.is-moving)
+.sense-rescue-hero-head {
+  transform:
+    translateX(-50%)
+    rotateY(0deg) !important;
+}
+
+
+/* ========================================
+   RESCUE MONSTER - REMOVE EXTRA FACE PARTS
+======================================== */
+
+/* Keep the main monster face background only. */
+
+.sense-rescue-hero[data-character="monster"]
+.sense-rescue-hero-head::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  border: none !important;
+}
+
+
+/*
+ * Keep ::before only for the purple spikes.
+ * Remove any accidental face graphics from it.
+ */
+.sense-rescue-hero[data-character="monster"]
+.sense-rescue-hero-head::before {
+  background: #8356c7 !important;
+
+  border: none !important;
+
+  clip-path:
+    polygon(
+      0 100%,
+      10% 8%,
+      27% 74%,
+      44% 0,
+      61% 74%,
+      78% 4%,
+      100% 100%
+    ) !important;
+}
+
+
+/* ========================================
+   RESCUE - GIRL FACE PARTS GIRL ONLY
+======================================== */
+
+.sense-rescue-hero:not([data-character="girl"])
+.sense-rescue-girl-eyes,
+
+.sense-rescue-hero:not([data-character="girl"])
+.sense-rescue-girl-nose,
+
+.sense-rescue-hero:not([data-character="girl"])
+.sense-rescue-girl-mouth {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+
+/* ========================================
+   FIVE SENSES RESCUE - TRACKPAD FINAL POSITION
+======================================== */
+
+body.sense-rescue-mode
+.imported-trackpad-guide {
+  position: fixed !important;
+
+  top: 145px !important;
+  right: 22px !important;
+  bottom: auto !important;
+  left: auto !important;
+
+  width: 155px !important;
+  max-width: 155px !important;
+
+  margin: 0 !important;
+
+  z-index: 125 !important;
+}
+
+body.sense-rescue-mode
+.imported-trackpad-guide-label {
+  margin: 0 0 3px !important;
+
+  font-size: 0.66rem !important;
+  text-align: center !important;
+}
+
+body.sense-rescue-mode
+.imported-trackpad-scene {
+  width: 100% !important;
+  height: 82px !important;
+
+  min-height: 0 !important;
+
+  border-radius: 11px !important;
+}
+
+
+/* Short classroom screens */
+@media (max-height: 800px) {
+
+  body.sense-rescue-mode
+  .imported-trackpad-guide {
+    top: 122px !important;
+    right: 14px !important;
+
+    bottom: auto !important;
+    left: auto !important;
+
+    width: 138px !important;
+    max-width: 138px !important;
+  }
+
+  body.sense-rescue-mode
+  .imported-trackpad-scene {
+    height: 72px !important;
+  }
+}
+
+
+/* ========================================
+   FIVE SENSES RESCUE - FINAL SIDE GUIDE
+======================================== */
+
+@media (min-width: 1250px) {
+
+  /*
+   * Rescue uses the same game | guide layout
+   * as the other Hands-On Trackpad games.
+   */
+  body.sense-rescue-mode:not(.trackpad-guide-off)
+  .sense-builder-shell {
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      290px !important;
+
+    grid-template-rows:
+      auto
+      minmax(0, 1fr) !important;
+
+    column-gap: 18px !important;
+
+    width: calc(100% - 18px) !important;
+    max-width: none !important;
+
+    margin: 0 auto !important;
+  }
+
+
+  body.sense-rescue-mode:not(.trackpad-guide-off)
+  .game-header {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+  }
+
+
+  body.sense-rescue-mode:not(.trackpad-guide-off)
+  .game-stage-wrap {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+  }
+
+
+  /*
+   * Trackpad Guide sits beside the game,
+   * never over the Rescue world.
+   */
+  body.sense-rescue-mode:not(.trackpad-guide-off)
+  .imported-trackpad-guide {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
+
+    position: static !important;
+
+    align-self: center !important;
+    justify-self: center !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    width: 270px !important;
+    max-width: 270px !important;
+
+    margin: 0 !important;
+    padding: 8px !important;
+
+    transform: none !important;
+
+    z-index: auto !important;
+  }
+
+
+  body.sense-rescue-mode:not(.trackpad-guide-off)
+  .imported-trackpad-guide-label {
+    margin: 0 0 4px !important;
+
+    font-size: 0.9rem !important;
+    text-align: center !important;
+  }
+
+
+  body.sense-rescue-mode:not(.trackpad-guide-off)
+  .imported-trackpad-scene {
+    width: 240px !important;
+    max-width: 240px !important;
+
+    height: auto !important;
+
+    aspect-ratio: 626 / 437 !important;
+
+    margin: 0 auto !important;
+  }
+}
+
+
+/* Teacher Trackpad Guide setting OFF */
+body.sense-rescue-mode.trackpad-guide-off
+.imported-trackpad-guide {
+  display: none !important;
+}
+
+body.sense-rescue-mode.trackpad-guide-off
+.sense-builder-shell {
+  grid-template-columns:
+    minmax(0, 1fr) !important;
+}
+
+
+/* ========================================
+   RESCUE SIDE GUIDE - RESTORE HERO PLAYFIELD
+======================================== */
+
+@media (min-width: 1250px) {
+
+  body.sense-rescue-mode:not(.trackpad-guide-off)
+  .game-stage-wrap {
+    position: relative !important;
+
+    height: calc(100vh - 105px) !important;
+    min-height: 560px !important;
+
+    overflow: hidden !important;
+  }
+
+  body.sense-rescue-mode:not(.trackpad-guide-off)
+  .arena-frame,
+  body.sense-rescue-mode:not(.trackpad-guide-off)
+  .sense-arena,
+  body.sense-rescue-mode:not(.trackpad-guide-off)
+  .sense-rescue-arena,
+  body.sense-rescue-mode:not(.trackpad-guide-off)
+  .sense-rescue-playfield {
+    position: relative !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    max-width: none !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+  }
+
+  /*
+   * Hero belongs to the Rescue playfield.
+   * Restore the normal starting position.
+   */
+  body.sense-rescue-mode:not(.trackpad-guide-off)
+  .sense-rescue-hero {
+    position: absolute !important;
+
+    left: 50%;
+    bottom: 9% !important;
+
+    display: block !important;
+    visibility: visible !important;
+
+    z-index: 20 !important;
+  }
+}
+
+
+/* Short classroom screens */
+@media (min-width: 1250px) and (max-height: 800px) {
+
+  body.sense-rescue-mode:not(.trackpad-guide-off)
+  .game-stage-wrap {
+    height: calc(100vh - 88px) !important;
+    min-height: 470px !important;
+  }
+
+  body.sense-rescue-mode:not(.trackpad-guide-off)
+  .sense-rescue-hero {
+    bottom: 7% !important;
+  }
+}
+
+
