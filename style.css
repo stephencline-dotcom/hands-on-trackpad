@@ -7596,3 +7596,1610 @@ body.follow-bird-page {
 }
 
 
+
+/* ========================================
+   MAZE - ADAPTIVE SIDE TRACKPAD GUIDE
+======================================== */
+
+@media (min-width: 1250px) {
+
+  body.maze-page:not(.trackpad-guide-off) {
+    height: 100vh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body.maze-page:not(.trackpad-guide-off)
+  .maze-game-shell {
+    box-sizing: border-box;
+
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      290px !important;
+
+    grid-template-rows:
+      auto
+      38px
+      minmax(0, 1fr) !important;
+
+    column-gap: 18px !important;
+    row-gap: 5px !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100vh !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    padding:
+      6px
+      8px
+      8px !important;
+
+    overflow: hidden !important;
+  }
+
+  /* Header across full page */
+
+  body.maze-page:not(.trackpad-guide-off)
+  .game-header {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  /* Directions left */
+
+  body.maze-page:not(.trackpad-guide-off)
+  .game-instructions {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    justify-self: start !important;
+    align-self: center !important;
+
+    width: auto !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+    padding: 0 4px !important;
+
+    text-align: left !important;
+    white-space: nowrap !important;
+  }
+
+  /* Level / Hits right */
+
+  body.maze-page:not(.trackpad-guide-off)
+  .game-stats {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    position: static !important;
+
+    justify-self: end !important;
+    align-self: center !important;
+
+    width: auto !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body.maze-page:not(.trackpad-guide-off)
+  .game-stats-row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+
+    justify-content: flex-end !important;
+
+    gap: 5px !important;
+
+    margin: 0 !important;
+  }
+
+  /* Maze board */
+
+  body.maze-page:not(.trackpad-guide-off)
+  .game-stage {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+
+    box-sizing: border-box;
+
+    align-self: stretch !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body.maze-page:not(.trackpad-guide-off)
+  .playfield,
+  body.maze-page:not(.trackpad-guide-off)
+  .maze-ui {
+    width: 100% !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+  }
+
+  /*
+   * Preserve the Maze board proportions so its
+   * collision geometry and wall layout stay intact.
+   */
+
+  body.maze-page:not(.trackpad-guide-off)
+  .maze-board {
+    width: 100% !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+  }
+
+  /* Trackpad Guide right */
+
+  body.maze-page:not(.trackpad-guide-off)
+  .pad-dock {
+    grid-column: 2 !important;
+    grid-row: 3 !important;
+
+    position: static !important;
+
+    align-self: center !important;
+    justify-self: center !important;
+
+    box-sizing: border-box;
+
+    width: 100% !important;
+    max-width: 270px !important;
+
+    height: auto !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 8px !important;
+
+    border-radius: 18px !important;
+
+    overflow: hidden !important;
+  }
+
+  body.maze-page:not(.trackpad-guide-off)
+  .pad-label {
+    margin: 0 0 5px !important;
+
+    text-align: center !important;
+  }
+
+  body.maze-page:not(.trackpad-guide-off)
+  .pad-dock
+  .scene {
+    width: 240px !important;
+    max-width: 100% !important;
+
+    height: auto !important;
+    aspect-ratio: 626 / 437 !important;
+
+    margin: 0 auto !important;
+
+    transform: none !important;
+  }
+}
+
+
+/* ---------- GUIDE OFF ---------- */
+
+body.maze-page.trackpad-guide-off {
+  height: 100vh !important;
+  min-height: 0 !important;
+
+  overflow: hidden !important;
+}
+
+body.maze-page.trackpad-guide-off
+.maze-game-shell {
+  box-sizing: border-box;
+
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr) !important;
+
+  grid-template-rows:
+    auto
+    38px
+    minmax(0, 1fr) !important;
+
+  row-gap: 5px !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  height: 100vh !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+
+  padding:
+    6px
+    8px
+    8px !important;
+
+  overflow: hidden !important;
+}
+
+body.maze-page.trackpad-guide-off
+.game-header {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+body.maze-page.trackpad-guide-off
+.game-instructions {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+
+  justify-self: start !important;
+  align-self: center !important;
+
+  margin: 0 !important;
+}
+
+body.maze-page.trackpad-guide-off
+.game-stats {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+
+  justify-self: end !important;
+  align-self: center !important;
+
+  margin: 0 !important;
+}
+
+body.maze-page.trackpad-guide-off
+.game-stage {
+  grid-column: 1 !important;
+  grid-row: 3 !important;
+
+  width: 100% !important;
+
+  height: 100% !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+}
+
+body.maze-page.trackpad-guide-off
+.playfield,
+body.maze-page.trackpad-guide-off
+.maze-ui,
+body.maze-page.trackpad-guide-off
+.maze-board {
+  width: 100% !important;
+
+  height: 100% !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+}
+
+
+/* ========================================
+   MAZE - FINAL FORCED TWO COLUMN LAYOUT
+======================================== */
+
+@media (min-width: 1250px) {
+
+  body.maze-page:not(.trackpad-guide-off) {
+    height: 100vh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body.maze-page:not(.trackpad-guide-off)
+  .maze-game-shell {
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      300px !important;
+
+    grid-template-rows:
+      auto
+      42px
+      minmax(0, 1fr) !important;
+
+    grid-template-areas:
+      "header header"
+      "info info"
+      "stage guide" !important;
+
+    column-gap: 18px !important;
+    row-gap: 5px !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100vh !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 6px 8px 8px !important;
+
+    justify-items: stretch !important;
+    align-content: stretch !important;
+
+    overflow: hidden !important;
+  }
+
+  /* HEADER */
+
+  body.maze-page:not(.trackpad-guide-off)
+  .game-header {
+    grid-area: header !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+  }
+
+  /* DIRECTIONS */
+
+  body.maze-page:not(.trackpad-guide-off)
+  .game-instructions {
+    grid-area: info !important;
+
+    justify-self: start !important;
+    align-self: center !important;
+
+    width: auto !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+    padding: 0 4px !important;
+
+    text-align: left !important;
+    white-space: nowrap !important;
+  }
+
+  /* STATS */
+
+  body.maze-page:not(.trackpad-guide-off)
+  .game-stats {
+    grid-area: info !important;
+
+    justify-self: end !important;
+    align-self: center !important;
+
+    position: static !important;
+
+    width: auto !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body.maze-page:not(.trackpad-guide-off)
+  .game-stats-row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+
+    gap: 5px !important;
+
+    margin: 0 !important;
+  }
+
+  /* MAZE BOARD */
+
+  body.maze-page:not(.trackpad-guide-off)
+  .game-stage {
+    grid-area: stage !important;
+
+    box-sizing: border-box;
+
+    align-self: stretch !important;
+    justify-self: stretch !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+    padding: 8px !important;
+
+    overflow: hidden !important;
+  }
+
+  body.maze-page:not(.trackpad-guide-off)
+  .game-stage .playfield,
+  body.maze-page:not(.trackpad-guide-off)
+  .game-stage .maze-ui {
+    width: 100% !important;
+    height: 100% !important;
+
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body.maze-page:not(.trackpad-guide-off)
+  .game-stage .maze-board,
+  body.maze-page:not(.trackpad-guide-off)
+  .game-stage #mazeBoard {
+    width: 100% !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+  }
+
+  /* TRACKPAD GUIDE — FORCE INTO RIGHT COLUMN */
+
+  body.maze-page:not(.trackpad-guide-off)
+  .pad-dock.game-guide {
+    grid-area: guide !important;
+
+    position: static !important;
+
+    align-self: center !important;
+    justify-self: center !important;
+
+    box-sizing: border-box;
+
+    width: 290px !important;
+    min-width: 290px !important;
+    max-width: 290px !important;
+
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+    padding: 8px !important;
+
+    display: grid !important;
+    justify-items: center !important;
+
+    gap: 4px !important;
+
+    overflow: hidden !important;
+  }
+
+  body.maze-page:not(.trackpad-guide-off)
+  .pad-dock.game-guide
+  .pad-label {
+    margin: 0 0 4px !important;
+
+    text-align: center !important;
+  }
+
+  body.maze-page:not(.trackpad-guide-off)
+  .pad-dock.game-guide
+  .scene {
+    width: 250px !important;
+    max-width: 250px !important;
+
+    height: auto !important;
+    max-height: none !important;
+
+    aspect-ratio: 626 / 437 !important;
+
+    margin: 0 auto !important;
+
+    transform: none !important;
+  }
+}
+
+
+/* GUIDE OFF */
+
+body.maze-page.trackpad-guide-off
+.maze-game-shell {
+  grid-template-columns:
+    minmax(0, 1fr) !important;
+
+  grid-template-areas:
+    "header"
+    "info"
+    "stage" !important;
+}
+
+body.maze-page.trackpad-guide-off
+.game-header {
+  grid-area: header !important;
+}
+
+body.maze-page.trackpad-guide-off
+.game-instructions,
+body.maze-page.trackpad-guide-off
+.game-stats {
+  grid-area: info !important;
+}
+
+body.maze-page.trackpad-guide-off
+.game-stage {
+  grid-area: stage !important;
+}
+
+
+/* ========================================
+   MAZE - WRAPPER TWO COLUMN FIX
+======================================== */
+
+@media (min-width: 1250px) {
+
+  body.maze-page:not(.trackpad-guide-off)
+  .maze-game-shell {
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr) !important;
+
+    grid-template-rows:
+      auto
+      42px
+      minmax(0, 1fr) !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100vh !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 6px 8px 8px !important;
+
+    overflow: hidden !important;
+  }
+
+  body.maze-page:not(.trackpad-guide-off)
+  .maze-play-layout {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      290px !important;
+
+    column-gap: 18px !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    align-items: stretch !important;
+
+    overflow: hidden !important;
+  }
+
+  body.maze-page:not(.trackpad-guide-off)
+  .maze-play-layout
+  .game-stage {
+    grid-column: 1 !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body.maze-page:not(.trackpad-guide-off)
+  .maze-play-layout
+  .playfield,
+  body.maze-page:not(.trackpad-guide-off)
+  .maze-play-layout
+  .maze-ui,
+  body.maze-page:not(.trackpad-guide-off)
+  .maze-play-layout
+  .maze-board {
+    width: 100% !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+  }
+
+  body.maze-page:not(.trackpad-guide-off)
+  .maze-play-layout
+  .pad-dock.game-guide {
+    grid-column: 2 !important;
+
+    align-self: center !important;
+    justify-self: center !important;
+
+    position: static !important;
+
+    width: 270px !important;
+    min-width: 270px !important;
+    max-width: 270px !important;
+
+    height: auto !important;
+
+    margin: 0 !important;
+    padding: 8px !important;
+  }
+
+  body.maze-page:not(.trackpad-guide-off)
+  .maze-play-layout
+  .pad-dock.game-guide
+  .scene {
+    width: 240px !important;
+    max-width: 240px !important;
+
+    height: auto !important;
+
+    aspect-ratio: 626 / 437 !important;
+
+    margin: 0 auto !important;
+  }
+}
+
+
+/* GUIDE OFF */
+
+body.maze-page.trackpad-guide-off
+.maze-play-layout {
+  display: block !important;
+
+  width: 100% !important;
+  height: 100% !important;
+
+  margin: 0 !important;
+}
+
+body.maze-page.trackpad-guide-off
+.maze-play-layout
+.game-stage {
+  width: 100% !important;
+
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+
+  margin: 0 !important;
+}
+
+
+/* ========================================
+   MAZE - CLEAR OLD GRID AREAS
+======================================== */
+
+@media (min-width: 1250px) {
+
+  body.maze-page:not(.trackpad-guide-off)
+  .maze-play-layout
+  > .game-stage {
+    grid-area: auto !important;
+
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+  }
+
+  body.maze-page:not(.trackpad-guide-off)
+  .maze-play-layout
+  > .pad-dock.game-guide {
+    grid-area: auto !important;
+
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+
+    align-self: center !important;
+    justify-self: center !important;
+  }
+}
+
+
+/* ========================================
+   MAZE - OFF COLLAPSE GUIDE COLUMN
+======================================== */
+
+body.maze-page.trackpad-guide-off
+.maze-play-layout {
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr) !important;
+
+  column-gap: 0 !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.maze-page.trackpad-guide-off
+.maze-play-layout
+> .game-stage {
+  grid-area: auto !important;
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.maze-page.trackpad-guide-off
+.maze-play-layout
+> .pad-dock.game-guide {
+  display: none !important;
+}
+
+
+/* ========================================
+   ROAD DASH - ADAPTIVE SIDE GUIDE FINAL
+======================================== */
+
+@media (min-width: 1250px) {
+
+  body.car-page:not(.trackpad-guide-off) {
+    height: 100vh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body.car-page:not(.trackpad-guide-off)
+  .car-game-shell {
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr) !important;
+
+    grid-template-rows:
+      auto
+      40px
+      minmax(0, 1fr) !important;
+
+    row-gap: 5px !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100vh !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 6px 8px 8px !important;
+
+    overflow: hidden !important;
+  }
+
+  body.car-page:not(.trackpad-guide-off)
+  .game-header {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+  }
+
+  body.car-page:not(.trackpad-guide-off)
+  .game-instructions {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    justify-self: start !important;
+    align-self: center !important;
+
+    width: auto !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+    padding: 0 4px !important;
+
+    text-align: left !important;
+    white-space: nowrap !important;
+  }
+
+  body.car-page:not(.trackpad-guide-off)
+  .game-stats {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    justify-self: end !important;
+    align-self: center !important;
+
+    width: auto !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body.car-page:not(.trackpad-guide-off)
+  .car-play-layout {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      290px !important;
+
+    column-gap: 18px !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    align-items: stretch !important;
+
+    overflow: hidden !important;
+  }
+
+  body.car-page:not(.trackpad-guide-off)
+  .car-play-layout
+  > .game-stage {
+    grid-area: auto !important;
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+    padding: 8px !important;
+
+    overflow: hidden !important;
+  }
+
+  body.car-page:not(.trackpad-guide-off)
+  .car-play-layout
+  .playfield,
+  body.car-page:not(.trackpad-guide-off)
+  .car-play-layout
+  .car-ui,
+  body.car-page:not(.trackpad-guide-off)
+  .car-play-layout
+  .car-board {
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+  }
+
+  body.car-page:not(.trackpad-guide-off)
+  .car-play-layout
+  > .pad-dock.game-guide {
+    grid-area: auto !important;
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+
+    align-self: center !important;
+    justify-self: center !important;
+
+    position: static !important;
+
+    width: 270px !important;
+    min-width: 270px !important;
+    max-width: 270px !important;
+
+    height: auto !important;
+
+    margin: 0 !important;
+    padding: 8px !important;
+  }
+
+  body.car-page:not(.trackpad-guide-off)
+  .car-play-layout
+  .pad-dock.game-guide
+  .scene {
+    width: 240px !important;
+    max-width: 240px !important;
+
+    height: auto !important;
+
+    aspect-ratio: 626 / 437 !important;
+
+    margin: 0 auto !important;
+  }
+}
+
+
+/* ---------- GUIDE OFF ---------- */
+
+body.car-page.trackpad-guide-off
+.car-play-layout {
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr) !important;
+
+  column-gap: 0 !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.car-page.trackpad-guide-off
+.car-play-layout
+> .game-stage {
+  grid-area: auto !important;
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.car-page.trackpad-guide-off
+.car-play-layout
+> .pad-dock.game-guide {
+  display: none !important;
+}
+
+
+/* ========================================
+   ROAD DASH - GUIDE OFF FULL SCREEN FIT
+======================================== */
+
+body.car-page.trackpad-guide-off {
+  height: 100vh !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+body.car-page.trackpad-guide-off
+.car-game-shell {
+  box-sizing: border-box;
+
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr) !important;
+
+  grid-template-rows:
+    auto
+    40px
+    minmax(0, 1fr) !important;
+
+  row-gap: 5px !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  height: 100vh !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+  padding: 6px 8px 8px !important;
+
+  align-content: stretch !important;
+  justify-items: stretch !important;
+
+  overflow: hidden !important;
+}
+
+body.car-page.trackpad-guide-off
+.game-header {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.car-page.trackpad-guide-off
+.game-instructions {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+
+  justify-self: start !important;
+  align-self: center !important;
+
+  width: auto !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+  padding: 0 4px !important;
+
+  text-align: left !important;
+  white-space: nowrap !important;
+}
+
+body.car-page.trackpad-guide-off
+.game-stats {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+
+  justify-self: end !important;
+  align-self: center !important;
+
+  width: auto !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+body.car-page.trackpad-guide-off
+.car-play-layout {
+  grid-column: 1 !important;
+  grid-row: 3 !important;
+
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr) !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  height: 100% !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+
+  align-self: stretch !important;
+
+  overflow: hidden !important;
+}
+
+body.car-page.trackpad-guide-off
+.car-play-layout
+> .game-stage {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+
+  margin: 0 !important;
+  padding: 8px !important;
+
+  overflow: hidden !important;
+}
+
+body.car-page.trackpad-guide-off
+.car-play-layout
+.playfield,
+body.car-page.trackpad-guide-off
+.car-play-layout
+.car-ui,
+body.car-page.trackpad-guide-off
+.car-play-layout
+.car-board {
+  width: 100% !important;
+  max-width: none !important;
+
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+
+  margin: 0 !important;
+}
+
+body.car-page.trackpad-guide-off
+.car-play-layout
+> .pad-dock.game-guide {
+  display: none !important;
+}
+
+
+/* ========================================
+   JACK JUMP - ADAPTIVE SIDE GUIDE FINAL
+======================================== */
+
+@media (min-width: 1250px) {
+
+  body.jack-jump-page:not(.trackpad-guide-off) {
+    height: 100vh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body.jack-jump-page:not(.trackpad-guide-off)
+  .jack-jump-shell {
+    box-sizing: border-box;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    min-height: 100vh !important;
+
+    margin: 0 !important;
+    padding: 6px 8px 8px !important;
+  }
+
+  body.jack-jump-page:not(.trackpad-guide-off)
+  .jack-jump-card {
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr) !important;
+
+    grid-template-rows:
+      auto
+      40px
+      minmax(0, 1fr) !important;
+
+    row-gap: 5px !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: calc(100vh - 14px) !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body.jack-jump-page:not(.trackpad-guide-off)
+  .jack-jump-header {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+  }
+
+  body.jack-jump-page:not(.trackpad-guide-off)
+  .game-instructions {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    justify-self: start !important;
+    align-self: center !important;
+
+    width: auto !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+    padding: 0 4px !important;
+
+    text-align: left !important;
+    white-space: nowrap !important;
+  }
+
+  body.jack-jump-page:not(.trackpad-guide-off)
+  .game-stats {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    justify-self: end !important;
+    align-self: center !important;
+
+    width: auto !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body.jack-jump-page:not(.trackpad-guide-off)
+  .jack-play-layout {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      290px !important;
+
+    column-gap: 18px !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    align-items: stretch !important;
+
+    overflow: hidden !important;
+  }
+
+  body.jack-jump-page:not(.trackpad-guide-off)
+  .jack-play-main {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+
+    display: grid !important;
+
+    grid-template-rows:
+      minmax(0, 1fr)
+      auto !important;
+
+    row-gap: 4px !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body.jack-jump-page:not(.trackpad-guide-off)
+  .jack-play-main
+  .jack-jump-scene {
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+
+    aspect-ratio: auto !important;
+
+    transform: none !important;
+    clip-path: none !important;
+
+    overflow: hidden !important;
+  }
+
+  body.jack-jump-page:not(.trackpad-guide-off)
+  .jack-play-main
+  .jack-status {
+    margin: 0 !important;
+  }
+
+  body.jack-jump-page:not(.trackpad-guide-off)
+  .jack-play-layout
+  > .jack-trackpad-dock {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+
+    align-self: center !important;
+    justify-self: center !important;
+
+    position: static !important;
+
+    width: 270px !important;
+    min-width: 270px !important;
+    max-width: 270px !important;
+
+    height: auto !important;
+
+    margin: 0 !important;
+    padding: 8px !important;
+  }
+
+  body.jack-jump-page:not(.trackpad-guide-off)
+  .jack-trackpad-dock
+  .scene {
+    width: 240px !important;
+    max-width: 240px !important;
+
+    height: auto !important;
+
+    aspect-ratio: 626 / 437 !important;
+
+    margin: 0 auto !important;
+  }
+}
+
+
+/* ---------- GUIDE OFF ---------- */
+
+body.jack-jump-page.trackpad-guide-off
+.jack-play-layout {
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr) !important;
+
+  column-gap: 0 !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.jack-jump-page.trackpad-guide-off
+.jack-play-main {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.jack-jump-page.trackpad-guide-off
+.jack-play-layout
+> .jack-trackpad-dock {
+  display: none !important;
+}
+
+
+/* ========================================
+   JACK JUMP - KEEP STATUS VISIBLE
+======================================== */
+
+@media (min-width: 1250px) {
+
+  body.jack-jump-page:not(.trackpad-guide-off)
+  .jack-play-main {
+    grid-template-rows:
+      minmax(0, 1fr)
+      28px !important;
+  }
+
+  body.jack-jump-page:not(.trackpad-guide-off)
+  .jack-play-main
+  .jack-status {
+    box-sizing: border-box;
+
+    display: flex !important;
+    align-items: center !important;
+
+    min-height: 28px !important;
+
+    margin: 0 !important;
+    padding: 2px 4px !important;
+
+    overflow: visible !important;
+  }
+}
+
+
+/* ========================================
+   JACK JUMP - FILL PLAY AREA
+======================================== */
+
+@media (min-width: 1250px) {
+
+  body.jack-jump-page:not(.trackpad-guide-off)
+  .jack-play-main {
+    grid-template-rows:
+      minmax(0, 1fr)
+      22px !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+
+  body.jack-jump-page:not(.trackpad-guide-off)
+  .jack-play-main
+  .jack-jump-scene {
+    align-self: stretch !important;
+
+    width: 100% !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+
+    aspect-ratio: auto !important;
+  }
+
+  body.jack-jump-page:not(.trackpad-guide-off)
+  .jack-play-main
+  .jack-status {
+    min-height: 22px !important;
+
+    padding: 0 4px !important;
+
+    font-size: 0.82rem !important;
+    line-height: 1 !important;
+  }
+}
+
+
+/* ========================================
+   JACK JUMP - OFF MODE WIDTH ONLY
+======================================== */
+
+body.jack-jump-page.trackpad-guide-off
+.jack-jump-shell {
+  width: 100% !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+}
+
+body.jack-jump-page.trackpad-guide-off
+.jack-jump-card {
+  width: 100% !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.jack-jump-page.trackpad-guide-off
+.jack-play-layout {
+  width: 100% !important;
+  max-width: none !important;
+
+  grid-template-columns:
+    minmax(0, 1fr) !important;
+
+  column-gap: 0 !important;
+}
+
+body.jack-jump-page.trackpad-guide-off
+.jack-play-main {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+body.jack-jump-page.trackpad-guide-off
+.jack-play-main
+.jack-jump-scene {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+body.jack-jump-page.trackpad-guide-off
+.jack-trackpad-dock {
+  display: none !important;
+}
+
+
+/* ========================================
+   JACK JUMP - OFF MODE TALLER BOARD
+======================================== */
+
+@media (min-width: 1250px) {
+
+  body.jack-jump-page.trackpad-guide-off
+  .jack-play-main {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  body.jack-jump-page.trackpad-guide-off
+  .jack-play-main
+  .jack-jump-scene {
+    width: 100% !important;
+
+    height: calc(100vh - 235px) !important;
+    min-height: 430px !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+
+    aspect-ratio: auto !important;
+  }
+
+  body.jack-jump-page.trackpad-guide-off
+  .jack-status {
+    min-height: 24px !important;
+
+    margin: 0 !important;
+    padding: 2px 4px !important;
+  }
+}
+
+
+/* ========================================
+   JACK JUMP - OFF MODE FINAL CLEANUP
+======================================== */
+
+@media (min-width: 1250px) {
+
+  body.jack-jump-page.trackpad-guide-off {
+    height: 100vh !important;
+    max-height: 100vh !important;
+
+    overflow: hidden !important;
+  }
+
+  body.jack-jump-page.trackpad-guide-off
+  .jack-jump-shell {
+    height: 100vh !important;
+    max-height: 100vh !important;
+
+    overflow: hidden !important;
+  }
+
+  body.jack-jump-page.trackpad-guide-off
+  .jack-jump-card {
+    max-height: calc(100vh - 12px) !important;
+
+    overflow: hidden !important;
+  }
+
+  body.jack-jump-page.trackpad-guide-off
+  .jack-play-main {
+    grid-template-rows:
+      minmax(0, 1fr) !important;
+  }
+
+  /* No extra instruction/status row below the board in guide-off mode. */
+  body.jack-jump-page.trackpad-guide-off
+  .jack-status {
+    display: none !important;
+  }
+
+  body.jack-jump-page.trackpad-guide-off
+  .jack-play-main
+  .jack-jump-scene {
+    height: calc(100vh - 220px) !important;
+    max-height: calc(100vh - 220px) !important;
+
+    margin-bottom: 0 !important;
+  }
+}
+

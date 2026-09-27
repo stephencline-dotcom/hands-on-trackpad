@@ -6024,3 +6024,369 @@ body.trackpad-guide-off
   overflow: hidden !important;
 }
 
+
+/* ========================================
+   LIGHT TAP - ADAPTIVE GUIDE FINAL
+======================================== */
+
+/* Show Score, but keep old Status hidden. */
+
+#gameScreen
+.game-stats-row
+.game-preserve-only {
+  display: flex !important;
+}
+
+#gameScreen
+.hud-status-row {
+  display: none !important;
+}
+
+/* Directions left. */
+
+#gameScreen
+.game-instructions {
+  justify-self: start !important;
+  text-align: left !important;
+
+  width: auto !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+  padding: 0 4px !important;
+
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* ---------- GUIDE ON ---------- */
+
+@media (min-width: 1250px) {
+
+  body:not(.trackpad-guide-off)
+  #gameScreen:not([hidden]) {
+    height: 100vh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #gameScreen
+  .game-shell {
+    box-sizing: border-box;
+
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      290px !important;
+
+    grid-template-rows:
+      auto
+      38px
+      minmax(0, 1fr) !important;
+
+    column-gap: 18px !important;
+    row-gap: 4px !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100vh !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    padding:
+      0.3rem
+      0.5rem
+      0.4rem !important;
+
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #gameScreen
+  .game-header {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #gameScreen
+  .game-instructions {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    justify-self: start !important;
+    align-self: center !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #gameScreen
+  .game-stats {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+
+    position: static !important;
+
+    justify-self: end !important;
+    align-self: center !important;
+
+    width: auto !important;
+    max-width: none !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    overflow: visible !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #gameScreen
+  .game-stats-row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+
+    justify-content: flex-end !important;
+    align-items: center !important;
+
+    width: auto !important;
+    max-width: none !important;
+
+    gap: 4px !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #gameScreen
+  .game-stat {
+    flex: 0 0 auto !important;
+
+    min-width: 0 !important;
+    min-height: 26px !important;
+
+    padding:
+      3px
+      7px !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #gameScreen
+  .game-stage-wrap {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    overflow: visible !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #gameScreen
+  .game-stage {
+    box-sizing: border-box;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: calc(100vh - 110px) !important;
+    min-height: 0 !important;
+    max-height: calc(100vh - 110px) !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #gameScreen
+  .arena {
+    width: 100% !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+
+    overflow: hidden !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #gameScreen
+  .game-guide {
+    grid-column: 2 !important;
+    grid-row: 3 !important;
+
+    position: static !important;
+
+    align-self: center !important;
+    justify-self: center !important;
+
+    width: 100% !important;
+    max-width: 270px !important;
+
+    margin: 0 !important;
+    padding: 8px !important;
+
+    border-radius: 18px !important;
+  }
+
+  body:not(.trackpad-guide-off)
+  #gameScreen
+  .game-guide
+  .imported-trackpad-scene {
+    width: 100% !important;
+    max-width: 240px !important;
+
+    margin: 0 auto !important;
+  }
+}
+
+/* ---------- GUIDE OFF ---------- */
+
+body.trackpad-guide-off
+#gameScreen:not([hidden]) {
+  height: 100vh !important;
+  min-height: 0 !important;
+
+  overflow: hidden !important;
+}
+
+body.trackpad-guide-off
+#gameScreen
+.game-shell {
+  box-sizing: border-box;
+
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto !important;
+
+  grid-template-rows:
+    auto
+    38px
+    minmax(0, 1fr) !important;
+
+  row-gap: 4px !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  height: 100vh !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+
+  padding:
+    0.3rem
+    0.5rem
+    0.4rem !important;
+
+  overflow: hidden !important;
+}
+
+body.trackpad-guide-off
+#gameScreen
+.game-header {
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.trackpad-guide-off
+#gameScreen
+.game-instructions {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+
+  align-self: center !important;
+}
+
+body.trackpad-guide-off
+#gameScreen
+.game-stats {
+  grid-column: 2 !important;
+  grid-row: 2 !important;
+
+  position: static !important;
+
+  justify-self: end !important;
+  align-self: center !important;
+
+  width: auto !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+body.trackpad-guide-off
+#gameScreen
+.game-stats-row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+
+  justify-content: flex-end !important;
+
+  gap: 4px !important;
+}
+
+body.trackpad-guide-off
+#gameScreen
+.game-stage-wrap {
+  grid-column: 1 / -1 !important;
+  grid-row: 3 !important;
+
+  width: 100% !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+
+  overflow: visible !important;
+}
+
+body.trackpad-guide-off
+#gameScreen
+.game-stage {
+  width: 100% !important;
+
+  height: calc(100vh - 110px) !important;
+  min-height: 0 !important;
+  max-height: calc(100vh - 110px) !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+}
+
+body.trackpad-guide-off
+#gameScreen
+.arena {
+  width: 100% !important;
+
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+
+  overflow: hidden !important;
+}
+

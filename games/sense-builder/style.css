@@ -6007,3 +6007,316 @@ body.sense-rescue-mode
 .sense-rescue-arena::after {
   display: none !important;
 }
+
+/* ========================================
+   SENSE BUILDER - ADAPTIVE SIDE GUIDE
+======================================== */
+
+/*
+ * Normal Sense Builder rounds:
+ * board on the left, Trackpad Guide on the right.
+ *
+ * Rescue mode has its own specialized layout and
+ * is intentionally excluded from these rules.
+ */
+
+@media (min-width: 1250px) {
+
+  body.sense-builder-page:not(.trackpad-guide-off):not(.sense-rescue-mode) {
+    height: 100vh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  body.sense-builder-page:not(.trackpad-guide-off):not(.sense-rescue-mode)
+  .sense-builder-shell {
+    box-sizing: border-box;
+
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      290px !important;
+
+    grid-template-rows:
+      auto
+      auto
+      minmax(0, 1fr) !important;
+
+    column-gap: 16px !important;
+    row-gap: 5px !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100vh !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    padding:
+      6px
+      8px
+      8px !important;
+
+    overflow: hidden !important;
+  }
+
+  body.sense-builder-page:not(.trackpad-guide-off):not(.sense-rescue-mode)
+  .game-header {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+  }
+
+  /*
+   * Existing Sense Builder top row contains
+   * directions and progress stats.
+   */
+
+  body.sense-builder-page:not(.trackpad-guide-off):not(.sense-rescue-mode)
+  .sense-top-row {
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+  }
+
+  body.sense-builder-page:not(.trackpad-guide-off):not(.sense-rescue-mode)
+  .sense-top-row
+  .game-instructions {
+    text-align: left !important;
+  }
+
+  body.sense-builder-page:not(.trackpad-guide-off):not(.sense-rescue-mode)
+  .sense-top-row
+  .game-stats-row {
+    justify-content: flex-end !important;
+  }
+
+  /*
+   * Main game board.
+   */
+
+  body.sense-builder-page:not(.trackpad-guide-off):not(.sense-rescue-mode)
+  .game-stage-wrap {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+
+    align-self: stretch !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+
+    overflow: hidden !important;
+  }
+
+  body.sense-builder-page:not(.trackpad-guide-off):not(.sense-rescue-mode)
+  .game-stage {
+    box-sizing: border-box;
+
+    width: 100% !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+
+    padding: 6px !important;
+
+    overflow: hidden !important;
+  }
+
+  body.sense-builder-page:not(.trackpad-guide-off):not(.sense-rescue-mode)
+  .sense-arena {
+    width: 100% !important;
+
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    overflow: hidden !important;
+  }
+
+  /*
+   * Trackpad Guide in its own right column.
+   */
+
+  body.sense-builder-page:not(.trackpad-guide-off):not(.sense-rescue-mode)
+  .imported-trackpad-guide {
+    grid-column: 2 !important;
+    grid-row: 3 !important;
+
+    position: static !important;
+
+    align-self: center !important;
+    justify-self: center !important;
+
+    display: grid !important;
+    place-items: center !important;
+
+    width: 100% !important;
+    max-width: 270px !important;
+
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+    padding: 8px !important;
+
+    border-radius: 18px !important;
+
+    transform: none !important;
+  }
+
+  body.sense-builder-page:not(.trackpad-guide-off):not(.sense-rescue-mode)
+  .imported-trackpad-guide-label {
+    width: 100% !important;
+    height: auto !important;
+
+    margin: 0 0 5px !important;
+
+    line-height: normal !important;
+    text-align: center !important;
+  }
+
+  body.sense-builder-page:not(.trackpad-guide-off):not(.sense-rescue-mode)
+  .imported-trackpad-scene {
+    width: 100% !important;
+    max-width: 240px !important;
+
+    height: auto !important;
+    max-height: none !important;
+
+    margin: 0 auto !important;
+
+    transform: none !important;
+  }
+}
+
+
+/* ---------- GUIDE OFF ---------- */
+
+body.sense-builder-page.trackpad-guide-off:not(.sense-rescue-mode) {
+  height: 100vh;
+  min-height: 0;
+
+  overflow: hidden;
+}
+
+body.sense-builder-page.trackpad-guide-off:not(.sense-rescue-mode)
+.sense-builder-shell {
+  box-sizing: border-box;
+
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr) !important;
+
+  grid-template-rows:
+    auto
+    auto
+    minmax(0, 1fr) !important;
+
+  row-gap: 5px !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  height: 100vh !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+
+  padding:
+    6px
+    8px
+    8px !important;
+
+  overflow: hidden !important;
+}
+
+body.sense-builder-page.trackpad-guide-off:not(.sense-rescue-mode)
+.game-header {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+
+  width: 100% !important;
+
+  margin: 0 !important;
+}
+
+body.sense-builder-page.trackpad-guide-off:not(.sense-rescue-mode)
+.sense-top-row {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+
+  width: 100% !important;
+
+  margin: 0 !important;
+}
+
+body.sense-builder-page.trackpad-guide-off:not(.sense-rescue-mode)
+.game-stage-wrap {
+  grid-column: 1 !important;
+  grid-row: 3 !important;
+
+  width: 100% !important;
+
+  height: 100% !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+}
+
+body.sense-builder-page.trackpad-guide-off:not(.sense-rescue-mode)
+.game-stage,
+body.sense-builder-page.trackpad-guide-off:not(.sense-rescue-mode)
+.sense-arena {
+  width: 100% !important;
+
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+
+  margin: 0 !important;
+
+  overflow: hidden !important;
+}
+
+
+/* ========================================
+   BOY OUTWARD HANDS WITH THUMBS UP
+======================================== */
+
+.sense-person.character-boy
+.sense-left-hand-zone
+.sense-placed-picture {
+  transform:
+    scaleY(-1)
+    rotate(-90deg)
+    scaleX(-1) !important;
+}
+
+.sense-person.character-boy
+.sense-right-hand-zone
+.sense-placed-picture {
+  transform:
+    scaleY(-1)
+    rotate(90deg) !important;
+}
+
