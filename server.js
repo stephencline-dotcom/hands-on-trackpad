@@ -65,6 +65,7 @@ const DEFAULT_SETTINGS = {
   martianMadnessGameActive: true,
   bugMeadowGameActive: true,
   senseBuilderGameActive: true,
+  chickenLittleGameActive: true,
   fireflyForestGameActive: true,
   followBirdClickingEnabled: false,
   monsterLunchGameActive: true,
@@ -166,6 +167,17 @@ function ensureSettingsFile() {
   }
 
   if (!fs.existsSync(SETTINGS_FILE)) {
+
+  /* PRESERVE ALL GAME AVAILABILITY FLAGS */
+  Object.entries(settings).forEach(([key, value]) => {
+    if (
+      key.endsWith("GameActive") &&
+      typeof value === "boolean"
+    ) {
+      normalized[key] = value;
+    }
+  });
+
     fs.writeFileSync(SETTINGS_FILE, JSON.stringify(DEFAULT_SETTINGS, null, 2));
   }
 }
@@ -547,6 +559,10 @@ function loadSettings() {
         data.senseBuilderGameActive,
         DEFAULT_SETTINGS.senseBuilderGameActive
       ),
+      chickenLittleGameActive: parseTaskEnabled(
+        data.chickenLittleGameActive,
+        DEFAULT_SETTINGS.chickenLittleGameActive
+      ),
       fireflyForestGameActive: parseTaskEnabled(
         data.fireflyForestGameActive,
         DEFAULT_SETTINGS.fireflyForestGameActive
@@ -845,6 +861,11 @@ function saveSettings(settings) {
         existing.senseBuilderGameActive,
       DEFAULT_SETTINGS.senseBuilderGameActive
     ),
+    chickenLittleGameActive: parseTaskEnabled(
+      settings.chickenLittleGameActive ??
+        existing.chickenLittleGameActive,
+      DEFAULT_SETTINGS.chickenLittleGameActive
+    ),
     fireflyForestGameActive: parseTaskEnabled(
       settings.fireflyForestGameActive ??
         existing.fireflyForestGameActive,
@@ -1126,14 +1147,14 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET") {
       try {
         const remoteSettings =
-          await loadSettingsFromSupabase();
+          loadSettings();
 
         /*
          * Reuse the existing settings
          * normalization logic.
          */
         const normalized =
-          saveSettings(remoteSettings);
+          remoteSettings;
 
         liveClassroomState
           .freezeScreenFeatureEnabled =
@@ -1316,6 +1337,9 @@ server.listen(PORT, HOST, () => {
   // eslint-disable-next-line no-console
   console.log(`hands-on-trackpad running at http://${HOST}:${PORT}`);
 });
+
+
+
 
 
 
