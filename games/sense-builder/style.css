@@ -7119,3 +7119,505 @@ body.sense-rescue-mode.trackpad-guide-off
 }
 
 
+
+/* ========================================
+   FIVE SENSES RESCUE - GAME OBJECTS
+======================================== */
+
+.sense-rescue-object {
+  position: absolute;
+
+  z-index: 12;
+
+  left: 50%;
+  bottom: 42px;
+
+  width: 118px;
+  min-height: 118px;
+
+  transform:
+    translateX(-50%);
+
+  display: grid;
+  place-items: center;
+
+  padding: 8px;
+
+  border:
+    5px solid #ffffff;
+
+  border-radius: 26px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff,
+      #e9f7ff
+    );
+
+  box-shadow:
+    0 7px 0 #39779e,
+    0 12px 20px
+      rgba(23, 78, 116, 0.24);
+
+  cursor: pointer;
+
+  touch-action: manipulation;
+
+  transition:
+    transform 140ms ease,
+    opacity 140ms ease;
+}
+
+.sense-rescue-object:hover {
+  transform:
+    translateX(-50%)
+    translateY(-5px);
+}
+
+.sense-rescue-object:active {
+  transform:
+    translateX(-50%)
+    translateY(3px);
+}
+
+.sense-rescue-object-icon {
+  display: block;
+
+  font-size: 3.8rem;
+  line-height: 1;
+}
+
+.sense-rescue-object-label {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #174d78;
+
+  font-size: 0.85rem;
+  font-weight: 900;
+
+  text-align: center;
+}
+
+.sense-rescue-object.is-rescued {
+  animation:
+    senseRescueObjectSaved
+    600ms ease forwards;
+}
+
+.sense-rescue-object.is-wrong {
+  animation:
+    senseRescueObjectWrong
+    420ms ease;
+}
+
+@keyframes senseRescueObjectSaved {
+  0% {
+    transform:
+      translateX(-50%)
+      scale(1);
+  }
+
+  45% {
+    transform:
+      translateX(-50%)
+      scale(1.28)
+      rotate(6deg);
+  }
+
+  100% {
+    transform:
+      translateX(-50%)
+      translateY(-45px)
+      scale(0.4);
+
+    opacity: 0;
+  }
+}
+
+@keyframes senseRescueObjectWrong {
+  0%,
+  100% {
+    transform:
+      translateX(-50%);
+  }
+
+  25% {
+    transform:
+      translateX(calc(-50% - 12px))
+      rotate(-5deg);
+  }
+
+  75% {
+    transform:
+      translateX(calc(-50% + 12px))
+      rotate(5deg);
+  }
+}
+
+@media (max-height: 800px) {
+
+  .sense-rescue-object {
+    bottom: 28px;
+
+    width: 94px;
+    min-height: 94px;
+
+    border-radius: 21px;
+  }
+
+  .sense-rescue-object-icon {
+    font-size: 3rem;
+  }
+
+  .sense-rescue-object-label {
+    font-size: 0.74rem;
+  }
+}
+
+
+/* ========================================
+   RESCUE - KINDERGARTEN VISUAL CUES
+======================================== */
+
+.sense-rescue-object.is-near {
+  border-color: #ffe14f !important;
+
+  box-shadow:
+    0 0 0 8px rgba(255, 225, 79, 0.32),
+    0 0 26px rgba(255, 215, 40, 0.95),
+    0 7px 0 #39779e,
+    0 12px 20px rgba(23, 78, 116, 0.24);
+
+  animation:
+    senseRescueNearPulse
+    650ms ease-in-out
+    infinite alternate;
+}
+
+@keyframes senseRescueNearPulse {
+  from {
+    transform:
+      translateX(-50%)
+      scale(1);
+  }
+
+  to {
+    transform:
+      translateX(-50%)
+      scale(1.08);
+  }
+}
+
+
+/* Make the current sense picture the main direction. */
+
+body.sense-rescue-mode
+.sense-rescue-target {
+  min-width: 310px !important;
+
+  padding:
+    8px 18px 10px 10px !important;
+}
+
+body.sense-rescue-mode
+.sense-rescue-target-icon {
+  width: 88px !important;
+  height: 88px !important;
+
+  flex: 0 0 88px;
+
+  border-radius: 25px !important;
+
+  font-size: 4.4rem !important;
+}
+
+body.sense-rescue-mode
+.sense-rescue-target-label {
+  font-size: 1rem !important;
+  line-height: 1.25 !important;
+
+  max-width: 210px;
+
+  letter-spacing: 0.045em !important;
+}
+
+
+/* Large visual question cue. */
+
+body.sense-rescue-mode
+.sense-rescue-target::after {
+  content: "?";
+
+  display: grid;
+  place-items: center;
+
+  width: 52px;
+  height: 52px;
+
+  margin-left: 4px;
+
+  border-radius: 50%;
+
+  background: #fff4a7;
+
+  color: #174d78;
+
+  font-size: 2.5rem;
+  font-weight: 1000;
+  line-height: 1;
+
+  box-shadow:
+    0 4px 0 rgba(23, 77, 120, 0.18);
+}
+
+
+/* Rescue interaction correction */
+body.sense-rescue-mode
+.sense-rescue-object {
+  pointer-events: auto !important;
+}
+
+body.sense-rescue-mode
+.sense-rescue-object:not(.is-near) {
+  border-color: #ffffff !important;
+
+  box-shadow:
+    0 7px 0 #39779e,
+    0 12px 20px rgba(23, 78, 116, 0.24) !important;
+
+  animation: none !important;
+}
+
+body.sense-rescue-mode
+.sense-rescue-object.is-near {
+  border-color: #ffe14f !important;
+
+  box-shadow:
+    0 0 0 8px rgba(255, 225, 79, 0.32),
+    0 0 26px rgba(255, 215, 40, 0.95),
+    0 7px 0 #39779e !important;
+
+  animation:
+    senseRescueNearPulse
+    650ms ease-in-out
+    infinite alternate !important;
+}
+
+
+/* ========================================
+   RESCUE - ARCADE POLISH
+======================================== */
+
+.sense-rescue-object.is-arriving {
+  animation:
+    senseRescueCardArrival
+    420ms cubic-bezier(.2,.85,.35,1.2)
+    both;
+}
+
+
+/* Character celebrates a successful rescue. */
+
+.sense-rescue-hero.is-rescue-celebrating
+.sense-rescue-hero-character {
+  animation:
+    senseRescueHeroCelebrate
+    620ms ease-in-out !important;
+}
+
+@keyframes senseRescueHeroCelebrate {
+
+  0%,
+  100% {
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+  30% {
+    transform:
+      translateY(-24px)
+      scale(1.08)
+      rotate(-4deg);
+  }
+
+  60% {
+    transform:
+      translateY(-8px)
+      scale(1.04)
+      rotate(4deg);
+  }
+}
+
+
+/* Score jumps when a rescue is earned. */
+
+.sense-rescue-score.is-score-popping {
+  animation:
+    senseRescueScorePop
+    480ms ease-out;
+}
+
+@keyframes senseRescueScorePop {
+
+  0% {
+    transform: scale(1);
+  }
+
+  40% {
+    transform:
+      scale(1.65)
+      rotate(-7deg);
+  }
+
+  70% {
+    transform:
+      scale(1.28)
+      rotate(4deg);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+
+/* Make the picture clue dominate the instruction. */
+
+body.sense-rescue-mode
+.sense-rescue-target {
+  min-width: 250px !important;
+}
+
+body.sense-rescue-mode
+.sense-rescue-target-icon {
+  width: 100px !important;
+  height: 100px !important;
+
+  flex: 0 0 100px;
+
+  font-size: 5rem !important;
+
+  border:
+    5px solid rgba(255,255,255,0.95);
+
+  box-shadow:
+    0 5px 0 rgba(23,77,120,0.18);
+}
+
+body.sense-rescue-mode
+.sense-rescue-target-label {
+  font-size: 0.92rem !important;
+  line-height: 1.2 !important;
+
+  max-width: 190px;
+}
+
+
+/* Small celebratory stars around the hero. */
+
+.sense-rescue-hero.is-rescue-celebrating::before {
+  content: "⭐ ✨ ⭐";
+
+  position: absolute;
+
+  z-index: 30;
+
+  left: 50%;
+  top: -42px;
+
+  transform:
+    translateX(-50%);
+
+  width: 160px;
+
+  text-align: center;
+
+  font-size: 1.65rem;
+
+  pointer-events: none;
+
+  animation:
+    senseRescueCelebrationStars
+    620ms ease-out forwards;
+}
+
+@keyframes senseRescueCelebrationStars {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(15px)
+      scale(0.6);
+  }
+
+  35% {
+    opacity: 1;
+
+    transform:
+      translateX(-50%)
+      translateY(-8px)
+      scale(1.15);
+  }
+
+  to {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(-32px)
+      scale(1);
+  }
+}
+
+
+/* ========================================
+   RESCUE - STRONG WRONG CARD SHAKE
+======================================== */
+
+body.sense-rescue-mode
+.sense-rescue-object.is-wrong {
+  animation:
+    senseRescueObjectWrongStrong
+    420ms ease-in-out !important;
+}
+
+@keyframes senseRescueObjectWrongStrong {
+
+  0%,
+  100% {
+    transform:
+      translateX(-50%)
+      rotate(0deg);
+  }
+
+  20% {
+    transform:
+      translateX(calc(-50% - 16px))
+      rotate(-6deg);
+  }
+
+  40% {
+    transform:
+      translateX(calc(-50% + 16px))
+      rotate(6deg);
+  }
+
+  60% {
+    transform:
+      translateX(calc(-50% - 12px))
+      rotate(-4deg);
+  }
+
+  80% {
+    transform:
+      translateX(calc(-50% + 12px))
+      rotate(4deg);
+  }
+}
+

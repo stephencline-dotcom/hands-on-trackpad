@@ -2244,17 +2244,666 @@
           );
         }
 
-        if (rescueTargetIcon) {
-          rescueTargetIcon.textContent =
-            "👀";
-        }
-
-        if (rescueTargetLabel) {
-          rescueTargetLabel.textContent =
-            "SIGHT";
-        }
+        beginRescueGame();
       }
     );
+  }
+
+
+  /* ========================================
+     FIVE SENSES RESCUE - GAME ENGINE
+  ======================================== */
+
+  const RESCUE_GOAL = 15;
+  const RESCUE_STARTING_LIVES = 3;
+
+  const RESCUE_SENSES = {
+    sight: {
+      icon: "👀",
+      label: "SIGHT",
+      prompt: "FIND SOMETHING YOU CAN SEE!",
+      objects: [
+        { icon: "🌈", label: "Rainbow" },
+        { icon: "⭐", label: "Star" },
+        { icon: "🖼️", label: "Picture" },
+        { icon: "🔦", label: "Flashlight" },
+        { icon: "🎈", label: "Balloon" },
+        { icon: "🦋", label: "Butterfly" },
+        { icon: "🪁", label: "Kite" },
+        { icon: "📘", label: "Book" },
+        { icon: "🚦", label: "Traffic Light" },
+        { icon: "🌙", label: "Moon" },
+        { icon: "🕶️", label: "Sunglasses" },
+        { icon: "📺", label: "Television" }
+      ]
+    },
+
+    hearing: {
+      icon: "👂",
+      label: "HEARING",
+      prompt: "FIND SOMETHING YOU CAN HEAR!",
+      objects: [
+        { icon: "🔔", label: "Bell" },
+        { icon: "🥁", label: "Drum" },
+        { icon: "📻", label: "Radio" },
+        { icon: "🐦", label: "Bird" },
+        { icon: "📣", label: "Megaphone" },
+        { icon: "🎸", label: "Guitar" },
+        { icon: "⏰", label: "Alarm Clock" },
+        { icon: "🪘", label: "Tambourine" },
+        { icon: "🐕", label: "Barking Dog" },
+        { icon: "🎺", label: "Trumpet" },
+        { icon: "🎹", label: "Piano" },
+        { icon: "☎️", label: "Phone" }
+      ]
+    },
+
+    smell: {
+      icon: "👃",
+      label: "SMELL",
+      prompt: "FIND SOMETHING YOU CAN SMELL!",
+      objects: [
+        { icon: "🌸", label: "Flower" },
+        { icon: "🧴", label: "Perfume" },
+        { icon: "🦨", label: "Skunk" },
+        { icon: "🗑️", label: "Garbage" },
+        { icon: "🧼", label: "Soap" },
+        { icon: "☕", label: "Coffee" },
+        { icon: "🍿", label: "Popcorn" },
+        { icon: "🕯️", label: "Candle" },
+        { icon: "🌲", label: "Pine Tree" },
+        { icon: "🧅", label: "Onion" },
+        { icon: "🧄", label: "Garlic" },
+        { icon: "🍊", label: "Orange" }
+      ]
+    },
+
+    taste: {
+      icon: "👄",
+      label: "TASTE",
+      prompt: "FIND SOMETHING YOU CAN TASTE!",
+      objects: [
+        { icon: "🍎", label: "Apple" },
+        { icon: "🍕", label: "Pizza" },
+        { icon: "🍦", label: "Ice Cream" },
+        { icon: "🍋", label: "Lemon" },
+        { icon: "🧁", label: "Cupcake" },
+        { icon: "🍉", label: "Watermelon" },
+        { icon: "🧀", label: "Cheese" },
+        { icon: "🍓", label: "Strawberry" },
+        { icon: "🥣", label: "Soup" },
+        { icon: "🥕", label: "Carrot" },
+        { icon: "🍌", label: "Banana" },
+        { icon: "🍬", label: "Candy" }
+      ]
+    },
+
+    touch: {
+      icon: "✋",
+      label: "TOUCH",
+      prompt: "FIND SOMETHING YOU CAN TOUCH!",
+      objects: [
+        { icon: "🪶", label: "Feather" },
+        { icon: "🧊", label: "Ice Cube" },
+        { icon: "🌵", label: "Cactus" },
+        { icon: "🧸", label: "Teddy Bear" },
+        { icon: "🧽", label: "Sponge" },
+        { icon: "🪨", label: "Rock" },
+        { icon: "🛏️", label: "Blanket" },
+        { icon: "🫧", label: "Slime" },
+        { icon: "❄️", label: "Snowball" },
+        { icon: "🖌️", label: "Brush" },
+        { icon: "☁️", label: "Cotton Ball" },
+        { icon: "🪵", label: "Sandpaper" }
+      ]
+    }
+  };
+
+  const rescueTargetIcon =
+    document.getElementById("senseRescueTargetIcon");
+
+  const rescueTargetLabel =
+    document.getElementById("senseRescueTargetLabel");
+
+  const rescueScoreDisplay =
+    document.getElementById("senseRescueScore");
+
+  const rescueHeartsDisplay =
+    document.getElementById("senseRescueHearts");
+
+  let rescueScore = 0;
+  let rescueLives = RESCUE_STARTING_LIVES;
+  let rescueActiveSense = null;
+  let rescueSenseBag = [];
+  let rescueChallengeLocked = false;
+
+  const rescueUsedObjects = {
+    sight: [],
+    hearing: [],
+    smell: [],
+    taste: [],
+    touch: []
+  };
+
+  function shuffleRescueArray(values) {
+    const copy = [...values];
+
+    for (let i = copy.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+
+    return copy;
+  }
+
+  function refillRescueSenseBag() {
+    rescueSenseBag = shuffleRescueArray(
+      Object.keys(RESCUE_SENSES)
+    );
+  }
+
+  function getNextRescueSense() {
+    if (rescueSenseBag.length === 0) {
+      refillRescueSenseBag();
+    }
+
+    return rescueSenseBag.shift();
+  }
+
+  function getUnusedRescueObject(senseName) {
+    const sense = RESCUE_SENSES[senseName];
+
+    let available = sense.objects.filter(
+      (item) =>
+        !rescueUsedObjects[senseName].includes(
+          item.label
+        )
+    );
+
+    if (available.length === 0) {
+      rescueUsedObjects[senseName] = [];
+      available = [...sense.objects];
+    }
+
+    const object =
+      available[
+        Math.floor(Math.random() * available.length)
+      ];
+
+    rescueUsedObjects[senseName].push(
+      object.label
+    );
+
+    return object;
+  }
+
+  function getRescueObjectCount() {
+    if (rescueScore >= 12) {
+      return 5;
+    }
+
+    if (rescueScore >= 8) {
+      return 4;
+    }
+
+    if (rescueScore >= 4) {
+      return 3;
+    }
+
+    return 2;
+  }
+
+  function updateRescueHud() {
+    if (rescueScoreDisplay) {
+      rescueScoreDisplay.textContent =
+        String(rescueScore);
+    }
+
+    if (rescueHeartsDisplay) {
+      rescueHeartsDisplay.textContent =
+        Array.from(
+          { length: RESCUE_STARTING_LIVES },
+          (_, index) =>
+            index < rescueLives
+              ? "❤️"
+              : "🖤"
+        ).join(" ");
+
+      rescueHeartsDisplay.setAttribute(
+        "aria-label",
+        `${rescueLives} lives`
+      );
+    }
+  }
+
+  function clearRescueObjects() {
+    if (!rescuePlayfield) {
+      return;
+    }
+
+    rescuePlayfield
+      .querySelectorAll(".sense-rescue-object")
+      .forEach((object) => object.remove());
+  }
+
+  function getRescueHeroCenterX() {
+    if (!rescueHeroForMovement || !rescuePlayfield) {
+      return 0;
+    }
+
+    const heroRect =
+      rescueHeroForMovement.getBoundingClientRect();
+
+    const playfieldRect =
+      rescuePlayfield.getBoundingClientRect();
+
+    return
+      heroRect.left -
+      playfieldRect.left +
+      heroRect.width / 2;
+  }
+
+  function heroIsNearRescueObject(objectElement) {
+    if (!rescuePlayfield) {
+      return false;
+    }
+
+    const objectRect =
+      objectElement.getBoundingClientRect();
+
+    const playfieldRect =
+      rescuePlayfield.getBoundingClientRect();
+
+    const objectCenterX =
+      objectRect.left -
+      playfieldRect.left +
+      objectRect.width / 2;
+
+    const heroCenterX =
+      getRescueHeroCenterX();
+
+    return
+      Math.abs(heroCenterX - objectCenterX) <=
+      Math.max(95, objectRect.width * 0.85);
+  }
+
+  function finishRescueGame(won) {
+    rescueChallengeLocked = true;
+    clearRescueObjects();
+
+    const transition =
+      document.getElementById("senseRescueTransition");
+
+    if (!transition) {
+      return;
+    }
+
+    const title = transition.querySelector("h2");
+    const message = transition.querySelector("p");
+
+    if (title) {
+      title.textContent =
+        won
+          ? "FIVE SENSES RESCUED!"
+          : "RESCUE OVER!";
+    }
+
+    if (message) {
+      message.textContent =
+        won
+          ? `YOU SAVED ${rescueScore} OBJECTS!`
+          : `YOU RESCUED ${rescueScore} OBJECTS!`;
+    }
+
+    if (rescueStartButton) {
+      rescueStartButton.textContent =
+        "PLAY AGAIN";
+    }
+
+    transition.hidden = false;
+  }
+
+  function updateNearbyRescueObjects() {
+    if (
+      !rescuePlayfield ||
+      !rescueHeroForMovement
+    ) {
+      return;
+    }
+
+    const objects = Array.from(
+      rescuePlayfield.querySelectorAll(
+        ".sense-rescue-object"
+      )
+    );
+
+    if (objects.length === 0) {
+      return;
+    }
+
+    const playfieldRect =
+      rescuePlayfield.getBoundingClientRect();
+
+    const heroRect =
+      rescueHeroForMovement.getBoundingClientRect();
+
+    const heroCenterX =
+      heroRect.left -
+      playfieldRect.left +
+      heroRect.width / 2;
+
+    let nearestObject = null;
+    let nearestDistance = Infinity;
+
+    objects.forEach((objectElement) => {
+      objectElement.classList.remove("is-near");
+
+      const objectRect =
+        objectElement.getBoundingClientRect();
+
+      const objectCenterX =
+        objectRect.left -
+        playfieldRect.left +
+        objectRect.width / 2;
+
+      const distance =
+        Math.abs(
+          heroCenterX - objectCenterX
+        );
+
+      if (distance < nearestDistance) {
+        nearestDistance = distance;
+        nearestObject = objectElement;
+      }
+    });
+
+    if (
+      nearestObject &&
+      nearestDistance <= 150
+    ) {
+      nearestObject.classList.add("is-near");
+    }
+  }
+
+  function celebrateRescueSuccess() {
+    if (rescueHeroForMovement) {
+      rescueHeroForMovement.classList.remove(
+        "is-rescue-celebrating"
+      );
+
+      void rescueHeroForMovement.offsetWidth;
+
+      rescueHeroForMovement.classList.add(
+        "is-rescue-celebrating"
+      );
+
+      window.setTimeout(() => {
+        rescueHeroForMovement.classList.remove(
+          "is-rescue-celebrating"
+        );
+      }, 650);
+    }
+
+    if (rescueScoreDisplay) {
+      rescueScoreDisplay.classList.remove(
+        "is-score-popping"
+      );
+
+      void rescueScoreDisplay.offsetWidth;
+
+      rescueScoreDisplay.classList.add(
+        "is-score-popping"
+      );
+
+      window.setTimeout(() => {
+        rescueScoreDisplay.classList.remove(
+          "is-score-popping"
+        );
+      }, 500);
+    }
+  }
+
+  function handleRescueObjectChoice(
+    objectElement,
+    isCorrect
+  ) {
+    if (rescueChallengeLocked) {
+      return;
+    }
+if (isCorrect) {
+      rescueChallengeLocked = true;
+      rescueScore += 1;
+
+            playSound(correctSound);
+      celebrateRescueSuccess();
+objectElement.classList.add(
+        "is-rescued"
+      );
+
+      showFeedback(
+        "correct",
+        "⭐ RESCUED! ⭐"
+      );
+
+      updateRescueHud();
+
+      if (rescueScore >= RESCUE_GOAL) {
+        window.setTimeout(() => {
+          finishRescueGame(true);
+        }, 700);
+        return;
+      }
+
+      window.setTimeout(() => {
+        startNextRescueChallenge();
+      }, 650);
+
+      return;
+    }
+
+    rescueLives -= 1;
+
+        playSound(wrongSound);
+objectElement.classList.remove("is-wrong");
+void objectElement.offsetWidth;
+objectElement.classList.add("is-wrong");
+
+window.setTimeout(() => {
+  objectElement.classList.remove("is-wrong");
+}, 450);
+
+    showFeedback(
+      "wrong",
+      "TRY ANOTHER ONE!"
+    );
+
+    updateRescueHud();
+
+    if (rescueLives <= 0) {
+      rescueChallengeLocked = true;
+
+      window.setTimeout(() => {
+        finishRescueGame(false);
+      }, 700);
+    }
+  }
+
+  function createRescueObject(
+    object,
+    senseName,
+    isCorrect,
+    leftPercent
+  ) {
+    const button =
+      document.createElement("button");
+
+    button.type = "button";
+    button.className = "sense-rescue-object";
+
+    button.classList.add(
+      "is-arriving"
+    );
+
+    button.dataset.sense = senseName;
+    button.dataset.correct =
+      isCorrect ? "true" : "false";
+
+    button.style.left =
+      `${leftPercent}%`;
+
+    button.setAttribute(
+      "aria-label",
+      object.label
+    );
+
+    const icon =
+      document.createElement("span");
+
+    icon.className =
+      "sense-rescue-object-icon";
+
+    icon.textContent = object.icon;
+
+    const label =
+      document.createElement("span");
+
+    label.className =
+      "sense-rescue-object-label";
+
+    label.textContent = object.label;
+
+    button.append(
+      icon,
+      label
+    );
+
+    button.addEventListener("click", () => {
+      handleRescueObjectChoice(
+        button,
+        isCorrect
+      );
+    });
+
+    return button;
+  }
+
+  function startNextRescueChallenge() {
+    if (!rescuePlayfield) {
+      return;
+    }
+
+    rescueChallengeLocked = false;
+    clearRescueObjects();
+
+    rescueActiveSense =
+      getNextRescueSense();
+
+    const sense =
+      RESCUE_SENSES[rescueActiveSense];
+
+    if (rescueTargetIcon) {
+      rescueTargetIcon.textContent =
+        sense.icon;
+    }
+
+    if (rescueTargetLabel) {
+      rescueTargetLabel.textContent =
+        `${sense.label} — ${sense.prompt}`;
+    }
+
+    const objectCount =
+      getRescueObjectCount();
+
+    const choices = [];
+
+    choices.push({
+      object:
+        getUnusedRescueObject(
+          rescueActiveSense
+        ),
+      senseName: rescueActiveSense,
+      correct: true
+    });
+
+    const otherSenses =
+      shuffleRescueArray(
+        Object.keys(RESCUE_SENSES).filter(
+          (senseName) =>
+            senseName !== rescueActiveSense
+        )
+      );
+
+    while (choices.length < objectCount) {
+      const distractorSense =
+        otherSenses[
+          (choices.length - 1) %
+            otherSenses.length
+        ];
+
+      choices.push({
+        object:
+          getUnusedRescueObject(
+            distractorSense
+          ),
+        senseName: distractorSense,
+        correct: false
+      });
+    }
+
+    const shuffledChoices =
+      shuffleRescueArray(choices);
+
+    const positions =
+      shuffleRescueArray(
+        objectCount === 2
+          ? [28, 72]
+          : objectCount === 3
+            ? [18, 50, 82]
+            : objectCount === 4
+              ? [12, 37, 63, 88]
+              : [9, 29, 50, 71, 91]
+      );
+
+    shuffledChoices.forEach(
+      (choice, index) => {
+        const objectElement =
+          createRescueObject(
+            choice.object,
+            choice.senseName,
+            choice.correct,
+            positions[index]
+          );
+
+        rescuePlayfield.appendChild(
+          objectElement
+        );
+      }
+    );
+  }
+
+  function beginRescueGame() {
+    rescueScore = 0;
+    rescueLives = RESCUE_STARTING_LIVES;
+    rescueActiveSense = null;
+    rescueSenseBag = [];
+    rescueChallengeLocked = false;
+
+    Object.keys(rescueUsedObjects).forEach(
+      (senseName) => {
+        rescueUsedObjects[senseName] = [];
+      }
+    );
+
+    rescueCurrentX = 0.5;
+    rescueTargetX = 0.5;
+
+    if (rescueStartButton) {
+      rescueStartButton.textContent =
+        "START RESCUE!";
+    }
+
+    updateRescueHud();
+    startNextRescueChallenge();
   }
 
   /* ========================================
@@ -2357,6 +3006,7 @@
 
     rescueHeroForMovement.style.left =
       `${heroCenterX}px`;
+    updateNearbyRescueObjects();
 
     rescueMovementFrame =
       window.requestAnimationFrame(
@@ -2427,6 +3077,10 @@
   resetRound();
   configureCurrentRound();
 })();
+
+
+
+
 
 
 
