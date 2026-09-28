@@ -39,6 +39,96 @@
     document.querySelectorAll(".sense-drop-zone")
   );
 
+  const SENSE_PICTURE_POOLS = {
+    sight: [
+      { symbol: "🌈", label: "Rainbow" },
+      { symbol: "⭐", label: "Star" },
+      { symbol: "🖼️", label: "Picture" },
+      { symbol: "🔦", label: "Flashlight" },
+      { symbol: "🎈", label: "Balloon" },
+      { symbol: "🦋", label: "Butterfly" },
+      { symbol: "🪁", label: "Kite" },
+      { symbol: "📘", label: "Book" },
+      { symbol: "🚦", label: "Traffic Light" },
+      { symbol: "🌙", label: "Moon" },
+      { symbol: "🕶️", label: "Sunglasses" },
+      { symbol: "📺", label: "Television" }
+    ],
+
+    hearing: [
+      { symbol: "🔔", label: "Bell" },
+      { symbol: "🥁", label: "Drum" },
+      { symbol: "📻", label: "Radio" },
+      { symbol: "🐦", label: "Bird" },
+      { symbol: "📣", label: "Megaphone" },
+      { symbol: "🎸", label: "Guitar" },
+      { symbol: "⏰", label: "Alarm Clock" },
+      { symbol: "🪘", label: "Tambourine" },
+      { symbol: "🐕", label: "Barking Dog" },
+      { symbol: "🎺", label: "Trumpet" },
+      { symbol: "🎹", label: "Piano" },
+      { symbol: "☎️", label: "Phone" }
+    ],
+
+    smell: [
+      { symbol: "🌸", label: "Flower" },
+      { symbol: "🧴", label: "Perfume" },
+      { symbol: "🦨", label: "Skunk" },
+      { symbol: "🗑️", label: "Garbage" },
+      { symbol: "🧼", label: "Soap" },
+      { symbol: "☕", label: "Coffee" },
+      { symbol: "🍿", label: "Popcorn" },
+      { symbol: "🕯️", label: "Candle" },
+      { symbol: "🌲", label: "Pine Tree" },
+      { symbol: "🧅", label: "Onion" },
+      { symbol: "🧄", label: "Garlic" },
+      { symbol: "🍊", label: "Orange" }
+    ],
+
+    taste: [
+      { symbol: "🍎", label: "Apple" },
+      { symbol: "🍕", label: "Pizza" },
+      { symbol: "🍦", label: "Ice Cream" },
+      { symbol: "🍋", label: "Lemon" },
+      { symbol: "🧁", label: "Cupcake" },
+      { symbol: "🍉", label: "Watermelon" },
+      { symbol: "🧀", label: "Cheese" },
+      { symbol: "🍓", label: "Strawberry" },
+      { symbol: "🥣", label: "Soup" },
+      { symbol: "🥕", label: "Carrot" },
+      { symbol: "🍌", label: "Banana" },
+      { symbol: "🍬", label: "Candy" }
+    ],
+
+    touch: [
+      { symbol: "🪶", label: "Feather" },
+      { symbol: "🧊", label: "Ice Cube" },
+      { symbol: "🌵", label: "Cactus" },
+      { symbol: "🧸", label: "Teddy Bear" },
+      { symbol: "🧽", label: "Sponge" },
+      { symbol: "🪨", label: "Rock" },
+      { symbol: "🛏️", label: "Blanket" },
+      { symbol: "🫧", label: "Slime" },
+      { symbol: "❄️", label: "Snowball" },
+      { symbol: "🖌️", label: "Brush" },
+      { symbol: "☁️", label: "Cotton Ball" },
+      { symbol: "🪵", label: "Sandpaper" }
+    ]
+  };
+
+  function randomSensePicture(senseName) {
+    const pool =
+      SENSE_PICTURE_POOLS[senseName] || [];
+
+    if (pool.length === 0) {
+      return null;
+    }
+
+    return pool[
+      Math.floor(Math.random() * pool.length)
+    ];
+  }
+
   const SENSE_ROUNDS = [
     {
       number: 1,
@@ -580,6 +670,52 @@
     });
   }
 
+  function randomizeRoundThreeVisiblePictures() {
+    if (currentRoundIndex !== 2) {
+      return;
+    }
+
+    pieces.forEach((piece) => {
+      if (piece.hidden) {
+        return;
+      }
+
+      const senseName =
+        piece.dataset.match ||
+        piece.dataset.piece ||
+        "";
+
+      if (!SENSE_PICTURE_POOLS[senseName]) {
+        return;
+      }
+
+      const picture =
+        randomSensePicture(senseName);
+
+      if (!picture) {
+        return;
+      }
+
+      const symbol =
+        piece.querySelector("span");
+
+      if (symbol) {
+        symbol.textContent =
+          picture.symbol;
+      }
+
+      piece.setAttribute(
+        "aria-label",
+        picture.label
+      );
+
+      piece.dataset.randomLabel =
+        picture.label;
+    });
+
+    shuffleVisiblePieces();
+  }
+
   function configureMonsterChallenge(
     monsterIndex
   ) {
@@ -708,6 +844,7 @@
 
     shuffleVisiblePieces();
     updateStats();
+    randomizeRoundThreeVisiblePictures();
   }
 
   function applyRoundOneCharacter() {
@@ -744,6 +881,39 @@
       character;
   }
 
+  function randomizeSenseRoundPictures() {
+    if (
+      currentRoundIndex !== 1 &&
+      currentRoundIndex !== 2
+    ) {
+      return;
+    }
+
+    const round =
+      SENSE_ROUNDS[currentRoundIndex];
+
+    if (!round) {
+      return;
+    }
+
+    round.pieces.forEach((piece) => {
+      const picture =
+        randomSensePicture(piece.match);
+
+      if (!picture) {
+        return;
+      }
+
+      piece.symbol = picture.symbol;
+      piece.label = picture.label;
+      piece.id =
+        `${piece.match}-${picture.label
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "")}`;
+    });
+  }
+
   function configureCurrentRound() {
     const round =
       SENSE_ROUNDS[currentRoundIndex];
@@ -768,6 +938,7 @@
     );
 
     applyRoundOneCharacter();
+    randomizeSenseRoundPictures();
 
     roundGoal =
       round.pieces.length;
