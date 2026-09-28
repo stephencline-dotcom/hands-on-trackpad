@@ -697,58 +697,38 @@
     }
   }
 
-  function updateClickingSkillDisplay() {
+  function updateClickingSkillDisplay(reactionTime = null, missed = false) {
     if (selectedFollowBirdMode !== "clicking") {
       return;
     }
 
-    const attempts =
-      clickingHits + clickingMisses;
+    if (missed) {
+      speedDisplay.textContent = "Miss";
+      return;
+    }
 
-    if (attempts <= 0) {
+    if (reactionTime === null) {
       speedDisplay.textContent = "Ready";
       return;
     }
 
-    const recentReactions =
-      clickingReactionTimes.slice(-5);
-
-    const averageReaction =
-      recentReactions.length > 0
-        ? recentReactions.reduce(
-            (sum, value) => sum + value,
-            0
-          ) / recentReactions.length
-        : CLICK_WINDOW_MAX;
-
-    const accuracy =
-      clickingHits / attempts;
+    const seconds =
+      (reactionTime / 1000).toFixed(2);
 
     let label = "Slow";
 
-    if (
-      averageReaction <= 600 &&
-      accuracy >= 0.9
-    ) {
-      label = "Lightning";
-    } else if (
-      averageReaction <= 850 &&
-      accuracy >= 0.82
-    ) {
+    if (reactionTime <= 550) {
+      label = "⚡";
+    } else if (reactionTime <= 800) {
       label = "Fast";
-    } else if (
-      averageReaction <= 1150 &&
-      accuracy >= 0.72
-    ) {
+    } else if (reactionTime <= 1100) {
       label = "Good";
-    } else if (
-      averageReaction <= 1500 &&
-      accuracy >= 0.6
-    ) {
+    } else if (reactionTime <= 1450) {
       label = "Steady";
     }
 
-    speedDisplay.textContent = label;
+    speedDisplay.textContent =
+      `${label} ${seconds}s`;
   }
 
   function updateClickingBird(now, deltaSeconds) {
@@ -1009,6 +989,7 @@
 
     clickingHits += 1;
     clickingReactionTimes.push(reactionTime);
+    updateClickingSkillDisplay(reactionTime);
 
     adaptClickWindow(true, reactionTime);
     setBirdClickable(false, now);
@@ -1341,6 +1322,9 @@
 
   initializeFollowBird();
 })();
+
+
+
 
 
 
