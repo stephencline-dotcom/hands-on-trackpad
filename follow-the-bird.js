@@ -5,6 +5,18 @@
   const startPanel = document.getElementById("followBirdStartPanel");
   const startButton = document.getElementById("followBirdStartButton");
 
+  const normalStart =
+    document.getElementById("followBirdNormalStart");
+
+  const modeChooser =
+    document.getElementById("followBirdModeChooser");
+
+  const slidingModeButton =
+    document.getElementById("followBirdSlidingModeButton");
+
+  const clickingModeButton =
+    document.getElementById("followBirdClickingModeButton");
+
   const resultPanel = document.getElementById("followBirdResultPanel");
   const resultRating = document.getElementById("followBirdResultRating");
   const resultScore = document.getElementById("followBirdResultScore");
@@ -21,6 +33,59 @@
   const successAudio = document.getElementById("followBirdSuccessAudio");
 
   let soundOn = true;
+
+  let followBirdClickingEnabled = false;
+  let selectedFollowBirdMode = "sliding";
+
+  async function loadFollowBirdModeSetting() {
+    try {
+      const response = await fetch("/api/settings", {
+        cache: "no-store"
+      });
+
+      if (response.ok) {
+        const settings = await response.json();
+
+        followBirdClickingEnabled =
+          Boolean(
+            settings &&
+            settings.followBirdClickingEnabled
+          );
+
+        localStorage.setItem(
+          "followBirdClickingEnabled",
+          String(followBirdClickingEnabled)
+        );
+
+        return;
+      }
+    } catch (error) {
+      console.warn(
+        "Follow the Bird settings could not be loaded from the server:",
+        error
+      );
+    }
+
+    followBirdClickingEnabled =
+      localStorage.getItem(
+        "followBirdClickingEnabled"
+      ) === "true";
+  }
+
+  function updateFollowBirdStartChoice() {
+    if (!normalStart || !modeChooser) {
+      return;
+    }
+
+    if (followBirdClickingEnabled) {
+      normalStart.hidden = true;
+      modeChooser.hidden = false;
+    } else {
+      normalStart.hidden = false;
+      modeChooser.hidden = true;
+      selectedFollowBirdMode = "sliding";
+    }
+  }
 
   function updateSoundButton() {
     if (!soundButton) {
@@ -73,6 +138,26 @@
   let targetY = 0;
 
   let currentSpeed = START_SPEED;
+
+  /* Clicking mode */
+  const CLICK_WINDOW_START = 2200;
+  const CLICK_WINDOW_MIN = 650;
+  const CLICK_WINDOW_MAX = 3000;
+  const CLICKING_END_SPEED = 360;
+
+  let clickWindowMs = CLICK_WINDOW_START;
+  let clickingState = "flying";
+  let clickableSince = 0;
+
+  let clickingHits = 0;
+  let clickingMisses = 0;
+  let clickingReactionTimes = [];
+  let recentClickReactions = [];
+
+  let recentClickPresses = [];
+  const activeClickPointers = new Set();
+  let clickWarningTimer = null;
+  let suppressClickUntil = 0;
 
 
 
@@ -474,24 +559,60 @@
 
     timeDisplay.textContent = "0:00";
 
-    const score = getFinalScore();
-    resultScore.textContent = String(score);
+    const score =
+      selectedFollowBirdMode === "clicking"
+        ? getClickingScore()
+        : getFinalScore();
 
-    const achievedSpeed =
-      settledSpeedSamples > 0
-        ? settledSpeedSum / settledSpeedSamples
-        : currentSpeed;
+    resultScore.textContent = String(score);
 
     let achievedLevel = "turtle";
 
-    if (achievedSpeed >= 310) {
-      achievedLevel = "lightning";
-    } else if (achievedSpeed >= 240) {
-      achievedLevel = "cheetah";
-    } else if (achievedSpeed >= 185) {
-      achievedLevel = "rabbit";
-    } else if (achievedSpeed >= 125) {
-      achievedLevel = "squirrel";
+    if (selectedFollowBirdMode === "clicking") {
+      if (score >= 90) {
+        achievedLevel = "lightning";
+      } else if (score >= 75) {
+        achievedLevel = "cheetah";
+      } else if (score >= 60) {
+        achievedLevel = "rabbit";
+      } else if (score >= 40) {
+        achievedLevel = "squirrel";
+      }
+
+      if (resultRating) {
+        resultRating.textContent =
+          "Clicking Skill";
+      }
+
+      if (resultMessage) {
+        const attempts =
+          clickingHits + clickingMisses;
+
+        const accuracy =
+          attempts > 0
+            ? Math.round(
+                clickingHits / attempts * 100
+              )
+            : 0;
+
+        resultMessage.textContent =
+          `${accuracy}% accurate • ${clickingHits} successful clicks`;
+      }
+    } else {
+      const achievedSpeed =
+        settledSpeedSamples > 0
+          ? settledSpeedSum / settledSpeedSamples
+          : currentSpeed;
+
+      if (achievedSpeed >= 310) {
+        achievedLevel = "lightning";
+      } else if (achievedSpeed >= 240) {
+        achievedLevel = "cheetah";
+      } else if (achievedSpeed >= 185) {
+        achievedLevel = "rabbit";
+      } else if (achievedSpeed >= 125) {
+        achievedLevel = "squirrel";
+      }
     }
 
     document
@@ -514,6 +635,211 @@
     }
   }
 
+  function setBirdClickable(clickable, now = performance.now()) {
+    clickingState = clickable ? "waiting" : "flying";
+
+    bird.classList.toggle(
+      "follow-bird-click-target",
+      clickable
+    );
+
+    if (clickable) {
+      clickableSince = now;
+    } else {
+      clickableSince = 0;
+      chooseTarget();
+    }
+  }
+
+  function adaptClickWindow(success, reactionTime = null) {
+    if (!success) {
+      clickWindowMs = Math.min(
+        CLICK_WINDOW_MAX,
+        clickWindowMs + 220
+      );
+
+      recentClickReactions = [];
+    } else {
+      recentClickReactions.push(reactionTime);
+
+      if (recentClickReactions.length > 4) {
+        recentClickReactions.shift();
+      }
+
+      const average =
+        recentClickReactions.reduce(
+          (sum, value) => sum + value,
+          0
+        ) / recentClickReactions.length;
+
+      if (recentClickReactions.length >= 2) {
+        if (average <= 650) {
+          clickWindowMs -= 220;
+        } else if (average <= 900) {
+          clickWindowMs -= 150;
+        } else if (average <= 1200) {
+          clickWindowMs -= 80;
+        } else if (average >= clickWindowMs * 0.85) {
+          clickWindowMs += 100;
+        }
+      }
+
+      clickWindowMs = clamp(
+        clickWindowMs,
+        CLICK_WINDOW_MIN,
+        CLICK_WINDOW_MAX
+      );
+    }
+
+    if (selectedFollowBirdMode === "clicking") {
+      trackingDisplay.textContent =
+        `${(clickWindowMs / 1000).toFixed(1)}s`;
+    }
+  }
+
+  function updateClickingSkillDisplay() {
+    if (selectedFollowBirdMode !== "clicking") {
+      return;
+    }
+
+    const attempts =
+      clickingHits + clickingMisses;
+
+    if (attempts <= 0) {
+      speedDisplay.textContent = "Ready";
+      return;
+    }
+
+    const recentReactions =
+      clickingReactionTimes.slice(-5);
+
+    const averageReaction =
+      recentReactions.length > 0
+        ? recentReactions.reduce(
+            (sum, value) => sum + value,
+            0
+          ) / recentReactions.length
+        : CLICK_WINDOW_MAX;
+
+    const accuracy =
+      clickingHits / attempts;
+
+    let label = "Slow";
+
+    if (
+      averageReaction <= 600 &&
+      accuracy >= 0.9
+    ) {
+      label = "Lightning";
+    } else if (
+      averageReaction <= 850 &&
+      accuracy >= 0.82
+    ) {
+      label = "Fast";
+    } else if (
+      averageReaction <= 1150 &&
+      accuracy >= 0.72
+    ) {
+      label = "Good";
+    } else if (
+      averageReaction <= 1500 &&
+      accuracy >= 0.6
+    ) {
+      label = "Steady";
+    }
+
+    speedDisplay.textContent = label;
+  }
+
+  function updateClickingBird(now, deltaSeconds) {
+    if (clickingState === "waiting") {
+      if (now - clickableSince >= clickWindowMs) {
+        clickingMisses += 1;
+        adaptClickWindow(false);
+        setBirdClickable(false, now);
+      }
+
+      return;
+    }
+
+    const dx = targetX - birdX;
+    const dy = targetY - birdY;
+    const distance = Math.hypot(dx, dy);
+
+    if (distance < 35) {
+      birdX = targetX;
+      birdY = targetY;
+      placeBird();
+      setBirdClickable(true, now);
+      return;
+    }
+
+    const directionX = dx / distance;
+    const directionY = dy / distance;
+
+    const moveDistance =
+      currentSpeed * deltaSeconds;
+
+    birdX += directionX * moveDistance;
+    birdY += directionY * moveDistance;
+
+    const birdVisual =
+      bird.querySelector(".code-bird-visual");
+
+    if (birdVisual) {
+      if (directionX < -0.05) {
+        birdVisual.classList.add("facing-left");
+      } else if (directionX > 0.05) {
+        birdVisual.classList.remove("facing-left");
+      }
+    }
+
+    placeBird();
+  }
+
+  function getClickingScore() {
+    const attempts = clickingHits + clickingMisses;
+
+    if (attempts <= 0) {
+      return 0;
+    }
+
+    const accuracy = clickingHits / attempts;
+
+    const averageReaction =
+      clickingReactionTimes.length > 0
+        ? clickingReactionTimes.reduce(
+            (sum, value) => sum + value,
+            0
+          ) / clickingReactionTimes.length
+        : CLICK_WINDOW_MAX;
+
+    const reactionScore = clamp(
+      1 -
+        (averageReaction - CLICK_WINDOW_MIN) /
+          (CLICK_WINDOW_MAX - CLICK_WINDOW_MIN),
+      0,
+      1
+    );
+
+    const difficultyScore = clamp(
+      (CLICK_WINDOW_START - clickWindowMs) /
+        (CLICK_WINDOW_START - CLICK_WINDOW_MIN),
+      0,
+      1
+    );
+
+    return Math.round(
+      clamp(
+        accuracy * 55 +
+        reactionScore * 30 +
+        difficultyScore * 15,
+        0,
+        100
+      )
+    );
+  }
+
   function gameLoop(now) {
     if (!running) {
       return;
@@ -533,9 +859,28 @@
 
     const remaining = updateTimer(now);
 
-    updateBird(deltaSeconds);
-    recordTrackingSample();
-    adaptSpeed(now);
+    if (selectedFollowBirdMode === "clicking") {
+      const clickingRoundProgress =
+        clamp(
+          (now - startTime) /
+            (ROUND_LENGTH * 1000),
+          0,
+          1
+        );
+
+      currentSpeed =
+        START_SPEED +
+        (
+          CLICKING_END_SPEED -
+          START_SPEED
+        ) * clickingRoundProgress;
+
+      updateClickingBird(now, deltaSeconds);
+    } else {
+      updateBird(deltaSeconds);
+      recordTrackingSample();
+      adaptSpeed(now);
+    }
 
     if (remaining <= 0) {
       finishRound();
@@ -559,6 +904,30 @@
 
     currentSpeed = START_SPEED;
 
+    clickWindowMs = CLICK_WINDOW_START;
+    clickingState = "flying";
+    clickableSince = 0;
+
+    clickingHits = 0;
+    clickingMisses = 0;
+    clickingReactionTimes = [];
+    recentClickReactions = [];
+    recentClickPresses = [];
+    activeClickPointers.clear();
+
+    if (clickWarningTimer) {
+      clearTimeout(clickWarningTimer);
+      clickWarningTimer = null;
+    }
+
+    if (clickInputWarning) {
+      clickInputWarning.hidden = true;
+    }
+
+    bird.classList.remove(
+      "follow-bird-click-target"
+    );
+
     totalTrackingSamples = 0;
     closeTrackingSamples = 0;
     excellentSamples = 0;
@@ -575,7 +944,10 @@
 
     timeDisplay.textContent = "1:00";
     trackingDisplay.textContent = "0%";
-    speedDisplay.textContent = "Starting";
+    speedDisplay.textContent =
+      selectedFollowBirdMode === "clicking"
+        ? "Ready"
+        : "Starting";
 
     resultPanel.hidden = true;
 
@@ -605,6 +977,230 @@
       requestAnimationFrame(gameLoop);
   }
 
+
+
+  const clickInputWarning = document.createElement("div");
+  clickInputWarning.className = "follow-bird-input-warning";
+  clickInputWarning.hidden = true;
+  arena.appendChild(clickInputWarning);
+
+  function showClickInputWarning(message) {
+    clickInputWarning.textContent = message;
+    clickInputWarning.hidden = false;
+
+    if (clickWarningTimer) {
+      clearTimeout(clickWarningTimer);
+    }
+
+    clickWarningTimer = window.setTimeout(() => {
+      clickInputWarning.hidden = true;
+    }, 1400);
+  }
+
+  function registerClickingHit(now) {
+    if (clickingState !== "waiting") {
+      return;
+    }
+
+    const reactionTime = now - clickableSince;
+
+    /* Remove the glow immediately. */
+    bird.classList.remove("follow-bird-click-target");
+
+    clickingHits += 1;
+    clickingReactionTimes.push(reactionTime);
+
+    adaptClickWindow(true, reactionTime);
+    setBirdClickable(false, now);
+  }
+
+
+  function releaseClickPointer(event) {
+    activeClickPointers.delete(event.pointerId);
+  }
+
+  arena.addEventListener("pointerup", releaseClickPointer);
+  arena.addEventListener("pointercancel", releaseClickPointer);
+  arena.addEventListener("pointerleave", releaseClickPointer);
+
+
+
+  /*
+   * Clicking mode input is handled here so invalid
+   * presses can never accidentally count as hits.
+   */
+  arena.addEventListener(
+    "pointerdown",
+    event => {
+      if (
+        !running ||
+        selectedFollowBirdMode !== "clicking"
+      ) {
+        return;
+      }
+
+      const now = performance.now();
+
+      activeClickPointers.add(
+        event.pointerId
+      );
+
+      /*
+       * A two-finger trackpad press commonly arrives
+       * as a secondary/right click. Touch devices may
+       * expose the extra finger as another pointer.
+       */
+      const invalidFingerInput =
+        activeClickPointers.size > 1 ||
+        event.isPrimary === false ||
+        event.button !== 0;
+
+      if (invalidFingerInput) {
+        suppressClickUntil =
+          now + 700;
+
+        recentClickPresses = [];
+
+        showClickInputWarning(
+          "☝️ Use one finger!"
+        );
+
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        return;
+      }
+
+      /*
+       * Watch for repeated rapid clicking.
+       */
+      recentClickPresses =
+        recentClickPresses.filter(
+          time => now - time <= 650
+        );
+
+      recentClickPresses.push(now);
+
+      if (recentClickPresses.length >= 3) {
+        suppressClickUntil =
+          now + 500;
+
+        recentClickPresses = [];
+
+        showClickInputWarning(
+          "⚠️ Too many clicks! Wait for the glow."
+        );
+
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        return;
+      }
+
+      /*
+       * Clicking while the bird is flying does
+       * nothing. Students must wait for the glow.
+       */
+      if (clickingState !== "waiting") {
+        return;
+      }
+
+      const arenaRect =
+        arena.getBoundingClientRect();
+
+      const birdCenter =
+        getBirdCenter();
+
+      const clickX =
+        event.clientX -
+        arenaRect.left;
+
+      const clickY =
+        event.clientY -
+        arenaRect.top;
+
+      const distance =
+        Math.hypot(
+          clickX - birdCenter.x,
+          clickY - birdCenter.y
+        );
+
+      const birdSize =
+        getBirdSize();
+
+      /*
+       * The glowing ring counts as part of the
+       * clickable target.
+       */
+      const clickRadius =
+        Math.max(
+          70,
+          Math.max(
+            birdSize.width,
+            birdSize.height
+          ) * 0.8
+        );
+
+      if (distance > clickRadius) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      registerClickingHit(now);
+    },
+    true
+  );
+
+
+  /*
+   * Prevent a blocked pointer press from later
+   * becoming a browser-generated click.
+   */
+  arena.addEventListener(
+    "click",
+    event => {
+      if (
+        selectedFollowBirdMode === "clicking" &&
+        performance.now() < suppressClickUntil
+      ) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    },
+    true
+  );
+
+
+  /*
+   * A two-finger Chromebook trackpad click commonly
+   * generates a contextmenu event.
+   */
+  arena.addEventListener(
+    "contextmenu",
+    event => {
+      if (
+        !running ||
+        selectedFollowBirdMode !== "clicking"
+      ) {
+        return;
+      }
+
+      suppressClickUntil =
+        performance.now() + 700;
+
+      recentClickPresses = [];
+
+      showClickInputWarning(
+        "☝️ Use one finger!"
+      );
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    },
+    true
+  );
   arena.addEventListener("pointermove", event => {
     if (!running) {
       return;
@@ -647,8 +1243,31 @@
 
   startButton.addEventListener(
     "click",
-    startRound
+    () => {
+      selectedFollowBirdMode = "sliding";
+      startRound();
+    }
   );
+
+  if (slidingModeButton) {
+    slidingModeButton.addEventListener(
+      "click",
+      () => {
+        selectedFollowBirdMode = "sliding";
+        startRound();
+      }
+    );
+  }
+
+  if (clickingModeButton) {
+    clickingModeButton.addEventListener(
+      "click",
+      () => {
+        selectedFollowBirdMode = "clicking";
+        startRound();
+      }
+    );
+  }
 
   playAgainButton.addEventListener(
     "click",
@@ -714,8 +1333,25 @@
     );
   }
 
-  resetBirdPosition();
+  async function initializeFollowBird() {
+    await loadFollowBirdModeSetting();
+    updateFollowBirdStartChoice();
+    resetBirdPosition();
+  }
+
+  initializeFollowBird();
 })();
+
+
+
+
+
+
+
+
+
+
+
 
 
 

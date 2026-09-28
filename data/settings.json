@@ -6,7 +6,7 @@
   "task3RequiredDragSeconds": 6,
   "task3Enabled": true,
   "task4RequiredScrollSeconds": 6,
-  "task4Enabled": false,
+  "task4Enabled": true,
   "fullscreenRequireClickAndDrag": false,
   "mazeRequireClickAndDrag": false,
   "carRequireClickAndDrag": false,
@@ -64,21 +64,22 @@
   "bugMeadowGameActive": true,
   "senseBuilderGameActive": true,
   "fireflyForestGameActive": true,
+  "followBirdClickingEnabled": true,
   "monsterLunchGameActive": true,
   "deerRunGameActive": true,
   "monsterLunchLevels": [
     {
-      "goal": 1,
+      "goal": 5,
       "missesAllowed": 3,
-      "choiceCount": 8,
+      "choiceCount": 3,
       "foodSize": 118,
-      "timeLimitEnabled": true,
-      "timeLimit": 20,
+      "timeLimitEnabled": false,
+      "timeLimit": 35,
       "moveSpeed": 0,
       "snatcherDelaySeconds": 0
     },
     {
-      "goal": 2,
+      "goal": 7,
       "missesAllowed": 3,
       "choiceCount": 5,
       "foodSize": 88,
@@ -92,7 +93,7 @@
       "missesAllowed": 3,
       "choiceCount": 5,
       "foodSize": 88,
-      "timeLimitEnabled": false,
+      "timeLimitEnabled": true,
       "timeLimit": 35,
       "moveSpeed": 5,
       "snatcherDelaySeconds": 5
@@ -102,13 +103,13 @@
       "missesAllowed": 3,
       "choiceCount": 9,
       "foodSize": 82,
-      "timeLimitEnabled": false,
+      "timeLimitEnabled": true,
       "timeLimit": 30,
       "moveSpeed": 6,
       "snatcherDelaySeconds": 3.5
     }
   ],
-  "trackpadGuideEnabled": false,
+  "trackpadGuideEnabled": true,
   "soundEnabled": true,
   "trainingPaused": false,
   "jackFlameRainEnabled": true,
@@ -121,29 +122,29 @@
   "jackFlameRainSpeedMin": 210,
   "jackFlameRainSpeedMax": 320,
   "jackFlameRain4": {
-    "enabled": false,
-    "size": 20,
-    "hitRadius": 9,
-    "burstMin": 1,
-    "burstMax": 5,
-    "intervalMin": 500,
-    "intervalMax": 1000,
-    "speedMin": 30,
-    "speedMax": 100
+    "enabled": true,
+    "size": 22,
+    "hitRadius": 10,
+    "burstMin": 2,
+    "burstMax": 3,
+    "intervalMin": 700,
+    "intervalMax": 1400,
+    "speedMin": 180,
+    "speedMax": 260
   },
   "jackFlameRain5": {
-    "enabled": false,
-    "size": 10,
-    "hitRadius": 4,
-    "burstMin": 1,
-    "burstMax": 2,
-    "intervalMin": 350,
-    "intervalMax": 510,
-    "speedMin": 195,
-    "speedMax": 258
+    "enabled": true,
+    "size": 24,
+    "hitRadius": 12,
+    "burstMin": 3,
+    "burstMax": 5,
+    "intervalMin": 520,
+    "intervalMax": 1100,
+    "speedMin": 250,
+    "speedMax": 370
   },
   "jackFlameRain6": {
-    "enabled": false,
+    "enabled": true,
     "size": 26,
     "hitRadius": 13,
     "burstMin": 5,
@@ -175,11 +176,11 @@
   ],
   "mazeGhostLevelsPerLevelCounts": [
     1,
-    2,
-    3,
-    4,
-    5,
-    6
+    1,
+    1,
+    1,
+    1,
+    1
   ],
   "carGameLevelsEnabled": [
     true,
@@ -525,17 +526,17 @@
     ],
     "monsterLunchLevels": [
       {
-        "goal": 1,
+        "goal": 5,
         "missesAllowed": 3,
-        "choiceCount": 8,
+        "choiceCount": 3,
         "foodSize": 118,
-        "timeLimitEnabled": true,
-        "timeLimit": 20,
+        "timeLimitEnabled": false,
+        "timeLimit": 35,
         "moveSpeed": 0,
         "snatcherDelaySeconds": 0
       },
       {
-        "goal": 2,
+        "goal": 7,
         "missesAllowed": 3,
         "choiceCount": 5,
         "foodSize": 88,
@@ -549,7 +550,7 @@
         "missesAllowed": 3,
         "choiceCount": 5,
         "foodSize": 88,
-        "timeLimitEnabled": false,
+        "timeLimitEnabled": true,
         "timeLimit": 35,
         "moveSpeed": 5,
         "snatcherDelaySeconds": 5
@@ -559,7 +560,7 @@
         "missesAllowed": 3,
         "choiceCount": 9,
         "foodSize": 82,
-        "timeLimitEnabled": false,
+        "timeLimitEnabled": true,
         "timeLimit": 30,
         "moveSpeed": 6,
         "snatcherDelaySeconds": 3.5

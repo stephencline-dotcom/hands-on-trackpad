@@ -135,11 +135,51 @@
 </div>
 
         <div id="followBirdStartPanel" class="follow-bird-start-panel">
-          <h2>Ready?</h2>
-          <p>Follow the bird with your pointer for one minute.</p>
-          <button id="followBirdStartButton" type="button">
-            Start
-          </button>
+
+          <div
+            id="followBirdNormalStart"
+            class="follow-bird-normal-start"
+          >
+            <h2>Ready?</h2>
+            <p>Follow the bird with your pointer for one minute.</p>
+            <button id="followBirdStartButton" type="button">
+              Start
+            </button>
+          </div>
+
+          <div
+            id="followBirdModeChooser"
+            class="follow-bird-mode-chooser"
+            hidden
+          >
+            <h2>Choose Your Challenge</h2>
+            <p>Practice smooth sliding or quick clicking.</p>
+
+            <div class="follow-bird-mode-buttons">
+
+              <button
+                id="followBirdSlidingModeButton"
+                class="follow-bird-mode-button"
+                type="button"
+              >
+                <span class="follow-bird-mode-icon">☝️</span>
+                <strong>Sliding</strong>
+                <span>Follow the flying bird.</span>
+              </button>
+
+              <button
+                id="followBirdClickingModeButton"
+                class="follow-bird-mode-button"
+                type="button"
+              >
+                <span class="follow-bird-mode-icon">🎯</span>
+                <strong>Clicking</strong>
+                <span>Click the bird when it stops.</span>
+              </button>
+
+            </div>
+          </div>
+
         </div>
 
         <div
@@ -281,6 +321,8 @@
 
 </body>
 </html>
+
+
 
 
 

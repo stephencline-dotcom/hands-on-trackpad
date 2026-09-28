@@ -66,6 +66,7 @@ const DEFAULT_SETTINGS = {
   bugMeadowGameActive: true,
   senseBuilderGameActive: true,
   fireflyForestGameActive: true,
+  followBirdClickingEnabled: false,
   monsterLunchGameActive: true,
   deerRunGameActive: true,
   hauntedStreetGameActive: true,
@@ -550,6 +551,10 @@ function loadSettings() {
         data.fireflyForestGameActive,
         DEFAULT_SETTINGS.fireflyForestGameActive
       ),
+      followBirdClickingEnabled: parseTaskEnabled(
+        data.followBirdClickingEnabled,
+        DEFAULT_SETTINGS.followBirdClickingEnabled
+      ),
       monsterLunchGameActive: parseTaskEnabled(
         data.monsterLunchGameActive,
         DEFAULT_SETTINGS.monsterLunchGameActive
@@ -844,6 +849,11 @@ function saveSettings(settings) {
       settings.fireflyForestGameActive ??
         existing.fireflyForestGameActive,
       DEFAULT_SETTINGS.fireflyForestGameActive
+    ),
+    followBirdClickingEnabled: parseTaskEnabled(
+      settings.followBirdClickingEnabled ??
+        existing.followBirdClickingEnabled,
+      DEFAULT_SETTINGS.followBirdClickingEnabled
     ),
     monsterLunchGameActive: parseTaskEnabled(
       settings.monsterLunchGameActive ??
@@ -1254,9 +1264,11 @@ const server = http.createServer(async (req, res) => {
         delete persistentSettings
           .freezeScreenArmed;
 
-        await saveSettingsToSupabase(
-          persistentSettings
-        );
+        if (supabase) {
+          await saveSettingsToSupabase(
+            persistentSettings
+          );
+        }
 
         normalized.freezeScreenArmed =
           liveClassroomState
@@ -1304,6 +1316,9 @@ server.listen(PORT, HOST, () => {
   // eslint-disable-next-line no-console
   console.log(`hands-on-trackpad running at http://${HOST}:${PORT}`);
 });
+
+
+
 
 
 

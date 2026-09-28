@@ -23,6 +23,7 @@ const martianMadnessGameActiveToggle = document.getElementById("martianMadnessGa
 const bugMeadowGameActiveToggle = document.getElementById("bugMeadowGameActive");
 const senseBuilderGameActiveToggle = document.getElementById("senseBuilderGameActive");
 const fireflyForestGameActiveToggle = document.getElementById("fireflyForestGameActive");
+const followBirdClickingEnabledToggle = document.getElementById("followBirdClickingEnabled");
 const monsterLunchGameActiveToggle = document.getElementById("monsterLunchGameActive");
 const deerRunGameActiveToggle = document.getElementById("deerRunGameActive");
 const hauntedStreetGameActiveToggle = document.getElementById("hauntedStreetGameActive");
@@ -234,6 +235,7 @@ const MARTIAN_MADNESS_GAME_ACTIVE_KEY = "martianMadnessGameActive";
 const BUG_MEADOW_GAME_ACTIVE_KEY = "bugMeadowGameActive";
 const SENSE_BUILDER_GAME_ACTIVE_KEY = "senseBuilderGameActive";
 const FIREFLY_FOREST_GAME_ACTIVE_KEY = "fireflyForestGameActive";
+const FOLLOW_BIRD_CLICKING_ENABLED_KEY = "followBirdClickingEnabled";
 const MONSTER_LUNCH_GAME_ACTIVE_KEY = "monsterLunchGameActive";
 const DEER_RUN_GAME_ACTIVE_KEY = "deerRunGameActive";
 const SOUND_ENABLED_KEY = "trackpadSoundEnabled";
@@ -2428,6 +2430,17 @@ async function loadTask1Settings() {
     true
   );
 
+  let followBirdClickingEnabled = parseTaskEnabled(
+    localStorage.getItem(FOLLOW_BIRD_CLICKING_ENABLED_KEY),
+    false
+  );
+
+      followBirdClickingEnabled =
+        parseTaskEnabled(
+          data.followBirdClickingEnabled,
+          followBirdClickingEnabled
+        );
+
   let monsterLunchGameActive = parseTaskEnabled(
     localStorage.getItem(MONSTER_LUNCH_GAME_ACTIVE_KEY),
     true
@@ -2801,6 +2814,11 @@ async function loadTask1Settings() {
         data.fireflyForestGameActive,
         fireflyForestGameActive
       );
+
+      followBirdClickingEnabled = parseTaskEnabled(
+        data.followBirdClickingEnabled,
+        followBirdClickingEnabled
+      );
       deerRunGameActive = parseTaskEnabled(
         data.deerRunGameActive,
         deerRunGameActive
@@ -2933,6 +2951,10 @@ async function loadTask1Settings() {
       localStorage.setItem(MONSTER_LUNCH_GAME_ACTIVE_KEY, String(monsterLunchGameActive));
       localStorage.setItem(BUG_MEADOW_GAME_ACTIVE_KEY, String(bugMeadowGameActive));
       localStorage.setItem(DEER_RUN_GAME_ACTIVE_KEY, String(deerRunGameActive));
+      localStorage.setItem(
+        FOLLOW_BIRD_CLICKING_ENABLED_KEY,
+        String(followBirdClickingEnabled)
+      );
       localStorage.setItem(SENSE_BUILDER_GAME_ACTIVE_KEY, String(senseBuilderGameActive));
       localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
       localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
@@ -3017,6 +3039,11 @@ async function loadTask1Settings() {
   if (fireflyForestGameActiveToggle) {
     fireflyForestGameActiveToggle.checked =
       fireflyForestGameActive;
+  }
+
+  if (followBirdClickingEnabledToggle) {
+    followBirdClickingEnabledToggle.checked =
+      followBirdClickingEnabled;
   }
 
   if (monsterLunchGameActiveToggle) {
@@ -3263,6 +3290,16 @@ async function saveTask1Settings() {
   const fireflyForestGameActive = Boolean(
     fireflyForestGameActiveToggle &&
     fireflyForestGameActiveToggle.checked
+  );
+
+  const followBirdClickingEnabled = Boolean(
+    followBirdClickingEnabledToggle &&
+    followBirdClickingEnabledToggle.checked
+  );
+
+  localStorage.setItem(
+    FOLLOW_BIRD_CLICKING_ENABLED_KEY,
+    String(followBirdClickingEnabled)
   );
 
   const monsterLunchGameActive = Boolean(
@@ -3807,6 +3844,7 @@ async function saveTask1Settings() {
         bugMeadowLevels,
         fireflyForestGameActive,
         fireflyForestLevels,
+        followBirdClickingEnabled,
         monsterLunchGameActive,
         monsterLunchLevels,
         deerRunGameActive,
@@ -4113,6 +4151,7 @@ const allToggles = [
   bugMeadowGameActiveToggle,
   senseBuilderGameActiveToggle,
   fireflyForestGameActiveToggle,
+  followBirdClickingEnabledToggle,
   monsterLunchGameActiveToggle,
   deerRunGameActiveToggle,
   hauntedStreetGameActiveToggle,
@@ -4238,4 +4277,47 @@ loadTask1Settings().then(() => {
   setDirtyState(false);
 });
 
+
+
+
+
+
+/* ========================================
+   FOLLOW BIRD CLICKING MODE - FINAL LOAD
+======================================== */
+
+window.addEventListener("load", async () => {
+  if (!followBirdClickingEnabledToggle) {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      SETTINGS_API_PATH,
+      { cache: "no-store" }
+    );
+
+    if (!response.ok) {
+      return;
+    }
+
+    const settings = await response.json();
+
+    const enabled =
+      settings.followBirdClickingEnabled === true;
+
+    followBirdClickingEnabledToggle.checked =
+      enabled;
+
+    localStorage.setItem(
+      FOLLOW_BIRD_CLICKING_ENABLED_KEY,
+      String(enabled)
+    );
+  } catch {
+    followBirdClickingEnabledToggle.checked =
+      localStorage.getItem(
+        FOLLOW_BIRD_CLICKING_ENABLED_KEY
+      ) === "true";
+  }
+});
 
