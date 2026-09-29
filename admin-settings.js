@@ -4318,3 +4318,79 @@ window.addEventListener("load", async () => {
 
 
 
+
+/* ========================================
+   CHICKEN LITTLE CHECKBOX DISPLAY SYNC
+   Display-only synchronization.
+   Saving remains handled by the unified
+   game availability controller.
+======================================== */
+
+async function syncChickenLittleAvailabilityCheckbox() {
+  const toggle =
+    document.getElementById(
+      "chickenLittleGameActive"
+    );
+
+  if (!toggle) {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      "/api/settings",
+      {
+        cache: "no-store"
+      }
+    );
+
+    if (!response.ok) {
+      return;
+    }
+
+    const settings =
+      await response.json();
+
+    if (
+      typeof settings
+        .chickenLittleGameActive ===
+        "boolean"
+    ) {
+      toggle.checked =
+        settings.chickenLittleGameActive;
+
+      localStorage.setItem(
+        "chickenLittleGameActive",
+        String(
+          settings
+            .chickenLittleGameActive
+        )
+      );
+    }
+  } catch (error) {
+    console.warn(
+      "Could not sync Chicken Little checkbox.",
+      error
+    );
+  }
+}
+
+window.addEventListener(
+  "load",
+  syncChickenLittleAvailabilityCheckbox
+);
+
+window.addEventListener(
+  "pageshow",
+  syncChickenLittleAvailabilityCheckbox
+);
+
+/*
+ * Run once after the other Settings
+ * initialization has completed.
+ */
+window.setTimeout(
+  syncChickenLittleAvailabilityCheckbox,
+  250
+);
+
