@@ -22,7 +22,6 @@ const firefighterRescueGameActiveToggle = document.getElementById("firefighterRe
 const martianMadnessGameActiveToggle = document.getElementById("martianMadnessGameActive");
 const bugMeadowGameActiveToggle = document.getElementById("bugMeadowGameActive");
 const senseBuilderGameActiveToggle = document.getElementById("senseBuilderGameActive");
-const chickenLittleGameActiveToggle = document.getElementById("chickenLittleGameActive");
 const fireflyForestGameActiveToggle = document.getElementById("fireflyForestGameActive");
 const followBirdClickingEnabledToggle = document.getElementById("followBirdClickingEnabled");
 const monsterLunchGameActiveToggle = document.getElementById("monsterLunchGameActive");
@@ -235,7 +234,6 @@ const FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY = "firefighterRescueGameActive";
 const MARTIAN_MADNESS_GAME_ACTIVE_KEY = "martianMadnessGameActive";
 const BUG_MEADOW_GAME_ACTIVE_KEY = "bugMeadowGameActive";
 const SENSE_BUILDER_GAME_ACTIVE_KEY = "senseBuilderGameActive";
-const CHICKEN_LITTLE_GAME_ACTIVE_KEY = "chickenLittleGameActive";
 const FIREFLY_FOREST_GAME_ACTIVE_KEY = "fireflyForestGameActive";
 const FOLLOW_BIRD_CLICKING_ENABLED_KEY = "followBirdClickingEnabled";
 const MONSTER_LUNCH_GAME_ACTIVE_KEY = "monsterLunchGameActive";
@@ -2437,11 +2435,6 @@ async function loadTask1Settings() {
     false
   );
 
-      followBirdClickingEnabled =
-        parseTaskEnabled(
-          data.followBirdClickingEnabled,
-          followBirdClickingEnabled
-        );
 
   let monsterLunchGameActive = parseTaskEnabled(
     localStorage.getItem(MONSTER_LUNCH_GAME_ACTIVE_KEY),
@@ -2958,7 +2951,6 @@ async function loadTask1Settings() {
         String(followBirdClickingEnabled)
       );
       localStorage.setItem(SENSE_BUILDER_GAME_ACTIVE_KEY, String(senseBuilderGameActive));
-      localStorage.setItem(CHICKEN_LITTLE_GAME_ACTIVE_KEY, String(chickenLittleGameActive));
       localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
       localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
       localStorage.setItem(LIGHT_TAP_REQUIRE_CLICK_KEY, String(lightTapRequireClick));
@@ -3843,7 +3835,6 @@ async function saveTask1Settings() {
         martianMadnessGameActive,
         bugMeadowGameActive,
         senseBuilderGameActive,
-        chickenLittleGameActive,
         bugMeadowRequireClickAndDrag,
         bugMeadowLevels,
         fireflyForestGameActive,
@@ -4154,7 +4145,6 @@ const allToggles = [
   martianMadnessGameActiveToggle,
   bugMeadowGameActiveToggle,
   senseBuilderGameActiveToggle,
-  chickenLittleGameActiveToggle,
   fireflyForestGameActiveToggle,
   followBirdClickingEnabledToggle,
   monsterLunchGameActiveToggle,
@@ -4327,235 +4317,4 @@ window.addEventListener("load", async () => {
 });
 
 
-
-
-/* ============================================================
-   UNIFIED GAME AVAILABILITY CONTROLLER
-
-   Every checkbox whose id ends in:
-     GameActive
-     GameActiveToggle
-
-   is treated as a student-home availability setting.
-
-   This keeps server, localStorage and checkboxes synchronized.
-============================================================ */
-
-(() => {
-  const SETTINGS_URL = "/api/settings";
-
-  function getAvailabilityToggles() {
-    return Array.from(
-      document.querySelectorAll(
-        'input[type="checkbox"]'
-      )
-    ).filter((toggle) =>
-      /GameActive(?:Toggle)?$/.test(toggle.id)
-    );
-  }
-
-  function getAvailabilityKey(toggle) {
-    return toggle.id.replace(/Toggle$/, "");
-  }
-
-  function parseAvailability(
-    value,
-    fallback = true
-  ) {
-    if (typeof value === "boolean") {
-      return value;
-    }
-
-    if (
-      value === null ||
-      typeof value === "undefined"
-    ) {
-      return fallback;
-    }
-
-    return String(value) !== "false";
-  }
-
-  async function loadGameAvailability() {
-    const toggles =
-      getAvailabilityToggles();
-
-    let serverSettings = null;
-
-    try {
-      const response = await fetch(
-        SETTINGS_URL,
-        {
-          cache: "no-store"
-        }
-      );
-
-      if (response.ok) {
-        serverSettings =
-          await response.json();
-      }
-    } catch (error) {
-      console.warn(
-        "Game availability server load failed.",
-        error
-      );
-    }
-
-    toggles.forEach((toggle) => {
-      const key =
-        getAvailabilityKey(toggle);
-
-      const localValue =
-        localStorage.getItem(key);
-
-      let active =
-        parseAvailability(
-          localValue,
-          toggle.checked
-        );
-
-      if (
-        serverSettings &&
-        Object.prototype.hasOwnProperty.call(
-          serverSettings,
-          key
-        )
-      ) {
-        active =
-          parseAvailability(
-            serverSettings[key],
-            active
-          );
-      }
-
-      toggle.checked = active;
-
-      localStorage.setItem(
-        key,
-        String(active)
-      );
-    });
-  }
-
-  async function saveGameAvailability() {
-    const toggles =
-      getAvailabilityToggles();
-
-    const payload = {};
-
-    toggles.forEach((toggle) => {
-      const key =
-        getAvailabilityKey(toggle);
-
-      const active =
-        Boolean(toggle.checked);
-
-      payload[key] = active;
-
-      localStorage.setItem(
-        key,
-        String(active)
-      );
-    });
-
-    try {
-      const response = await fetch(
-        SETTINGS_URL,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-          body: JSON.stringify(payload)
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(
-          "Availability save failed."
-        );
-      }
-
-      const saved =
-        await response.json();
-
-      toggles.forEach((toggle) => {
-        const key =
-          getAvailabilityKey(toggle);
-
-        if (
-          Object.prototype.hasOwnProperty.call(
-            saved,
-            key
-          )
-        ) {
-          const active =
-            parseAvailability(
-              saved[key],
-              toggle.checked
-            );
-
-          toggle.checked =
-            active;
-
-          localStorage.setItem(
-            key,
-            String(active)
-          );
-        }
-      });
-    } catch (error) {
-      console.warn(
-        "Game availability server save failed.",
-        error
-      );
-    }
-  }
-
-  getAvailabilityToggles()
-    .forEach((toggle) => {
-      toggle.addEventListener(
-        "change",
-        () => {
-          const key =
-            getAvailabilityKey(toggle);
-
-          localStorage.setItem(
-            key,
-            String(toggle.checked)
-          );
-        }
-      );
-    });
-
-  const mainSaveButton =
-    document.getElementById(
-      "saveTask1Btn"
-    );
-
-  if (mainSaveButton) {
-    mainSaveButton.addEventListener(
-      "click",
-      () => {
-        /*
-         * Let the existing settings save run,
-         * then immediately guarantee availability
-         * flags are persisted as their own update.
-         */
-        window.setTimeout(
-          saveGameAvailability,
-          100
-        );
-      }
-    );
-  }
-
-  window.addEventListener(
-    "pageshow",
-    loadGameAvailability
-  );
-
-  loadGameAvailability();
-})();
 
