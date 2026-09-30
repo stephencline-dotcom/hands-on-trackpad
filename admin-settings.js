@@ -23,6 +23,7 @@ const martianMadnessGameActiveToggle = document.getElementById("martianMadnessGa
 const bugMeadowGameActiveToggle = document.getElementById("bugMeadowGameActive");
 const senseBuilderGameActiveToggle = document.getElementById("senseBuilderGameActive");
 const fireflyForestGameActiveToggle = document.getElementById("fireflyForestGameActive");
+const chickenLittleGameActiveToggle = document.getElementById("chickenLittleGameActive");
 const followBirdClickingEnabledToggle = document.getElementById("followBirdClickingEnabled");
 const monsterLunchGameActiveToggle = document.getElementById("monsterLunchGameActive");
 const deerRunGameActiveToggle = document.getElementById("deerRunGameActive");
@@ -3287,6 +3288,11 @@ async function saveTask1Settings() {
     fireflyForestGameActiveToggle.checked
   );
 
+  const chickenLittleGameActive = Boolean(
+    chickenLittleGameActiveToggle &&
+    chickenLittleGameActiveToggle.checked
+  );
+
   const followBirdClickingEnabled = Boolean(
     followBirdClickingEnabledToggle &&
     followBirdClickingEnabledToggle.checked
@@ -3838,6 +3844,7 @@ async function saveTask1Settings() {
         bugMeadowRequireClickAndDrag,
         bugMeadowLevels,
         fireflyForestGameActive,
+        chickenLittleGameActive,
         fireflyForestLevels,
         followBirdClickingEnabled,
         monsterLunchGameActive,
@@ -4146,6 +4153,7 @@ const allToggles = [
   bugMeadowGameActiveToggle,
   senseBuilderGameActiveToggle,
   fireflyForestGameActiveToggle,
+  chickenLittleGameActiveToggle,
   followBirdClickingEnabledToggle,
   monsterLunchGameActiveToggle,
   deerRunGameActiveToggle,
