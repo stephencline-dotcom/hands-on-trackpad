@@ -1146,15 +1146,27 @@ const server = http.createServer(async (req, res) => {
   if (requestUrl.pathname === "/api/settings") {
     if (req.method === "GET") {
       try {
-        const remoteSettings =
+        /*
+         * Use Supabase as permanent storage when
+         * it is configured, such as on Render.
+         * Keep the local settings file as the
+         * fallback/default settings source.
+         */
+        const localSettings =
           loadSettings();
 
-        /*
-         * Reuse the existing settings
-         * normalization logic.
-         */
+        const remoteSettings =
+          supabase
+            ? await loadSettingsFromSupabase()
+            : null;
+
         const normalized =
-          remoteSettings;
+          remoteSettings
+            ? {
+                ...localSettings,
+                ...remoteSettings,
+              }
+            : localSettings;
 
         liveClassroomState
           .freezeScreenFeatureEnabled =
