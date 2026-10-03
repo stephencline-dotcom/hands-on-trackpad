@@ -374,10 +374,15 @@
           "Level 2 complete! Ducky Lucky heard the news and is joining the flock!";
         startButton.textContent = "Start Level 3";
         pendingLevel = 3;
+      } else if (currentLevel === 3) {
+        statusText.textContent =
+          "Level 3 complete! Henny Penny is joining the flock!";
+        startButton.textContent = "Start Level 4";
+        pendingLevel = 4;
       } else {
         statusText.textContent =
-          "Level 3 complete! Chicken Little, Turkey Lurky, and Ducky Lucky made it safely!";
-        startButton.textContent = "Play Level 3 Again";
+          "Level 4 complete! The whole flock made it safely!";
+        startButton.textContent = "Play Level 4 Again";
         pendingLevel = null;
       }
     } else {
@@ -529,6 +534,17 @@
           y: duck.y - 60 - jumpHeight,
           radiusX: 42,
           radiusY: 50,
+        });
+      }
+
+      if (currentLevel >= 4) {
+        const henny = getHennyPosition();
+
+        runners.push({
+          x: henny.x,
+          y: henny.y - 63 - jumpHeight,
+          radiusX: 42,
+          radiusY: 52,
         });
       }
 
@@ -1449,7 +1465,7 @@
     }
   }
   function drawLevel3Foreground() {
-    if (currentLevel < 3) {
+    if (currentLevel !== 3) {
       return;
     }
 
@@ -1510,7 +1526,343 @@
       0.92
     );
   }
+  function drawLevel4Background() {
+    const sky = ctx.createLinearGradient(
+      0,
+      0,
+      0,
+      390
+    );
+
+    sky.addColorStop(0, "#69b7dc");
+    sky.addColorStop(0.62, "#d2edee");
+    sky.addColorStop(1, "#f7e6b6");
+
+    ctx.fillStyle = sky;
+    ctx.fillRect(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
+    // Sun
+    ctx.fillStyle = "#ffe58a";
+    ctx.beginPath();
+    ctx.arc(
+      1000,
+      88,
+      39,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    // Distant hills
+    ctx.fillStyle = "#7ca466";
+    ctx.beginPath();
+    ctx.moveTo(0, 310);
+
+    for (
+      let x = 0;
+      x <= 1200;
+      x += 180
+    ) {
+      ctx.quadraticCurveTo(
+        x + 90,
+        255 +
+          Math.sin(
+            (x + worldOffset * 0.12) / 165
+          ) * 25,
+        x + 180,
+        310
+      );
+    }
+
+    ctx.lineTo(1200, 395);
+    ctx.lineTo(0, 395);
+    ctx.closePath();
+    ctx.fill();
+
+    // Grass
+    const grass = ctx.createLinearGradient(
+      0,
+      330,
+      0,
+      600
+    );
+
+    grass.addColorStop(0, "#77ad52");
+    grass.addColorStop(1, "#4f7b3a");
+
+    ctx.fillStyle = grass;
+    ctx.fillRect(
+      0,
+      330,
+      1200,
+      270
+    );
+
+    function drawVillageHouse(
+      x,
+      y,
+      bodyColor,
+      roofColor
+    ) {
+      ctx.save();
+      ctx.translate(x, y);
+
+      ctx.fillStyle = bodyColor;
+      ctx.fillRect(
+        0,
+        -95,
+        125,
+        95
+      );
+
+      ctx.fillStyle = roofColor;
+      ctx.beginPath();
+      ctx.moveTo(-14, -92);
+      ctx.lineTo(62, -150);
+      ctx.lineTo(140, -92);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = "#79533b";
+      ctx.fillRect(
+        50,
+        -53,
+        28,
+        53
+      );
+
+      ctx.fillStyle = "#bfe1ed";
+
+      ctx.fillRect(
+        15,
+        -70,
+        24,
+        25
+      );
+
+      ctx.fillRect(
+        90,
+        -70,
+        24,
+        25
+      );
+
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 3;
+
+      ctx.strokeRect(
+        15,
+        -70,
+        24,
+        25
+      );
+
+      ctx.strokeRect(
+        90,
+        -70,
+        24,
+        25
+      );
+
+      ctx.restore();
+    }
+
+    function drawVillageTree(
+      x,
+      y,
+      scale
+    ) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(scale, scale);
+
+      ctx.fillStyle = "#715033";
+      ctx.fillRect(
+        -10,
+        -80,
+        20,
+        84
+      );
+
+      ctx.fillStyle = "#497d42";
+
+      [
+        [-25, -86, 31],
+        [5, -108, 38],
+        [32, -82, 30],
+        [2, -67, 35],
+      ].forEach(
+        ([cx, cy, radius]) => {
+          ctx.beginPath();
+          ctx.arc(
+            cx,
+            cy,
+            radius,
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
+        }
+      );
+
+      ctx.restore();
+    }
+
+    // Village scenery
+    const villageCycle = 1500;
+    const villageOffset =
+      -((worldOffset * 0.42) % villageCycle);
+
+    for (
+      let base =
+        villageOffset - villageCycle;
+      base < 2400;
+      base += villageCycle
+    ) {
+      drawVillageHouse(
+        base + 100,
+        350,
+        "#e8c990",
+        "#a6503d"
+      );
+
+      drawVillageTree(
+        base + 310,
+        355,
+        0.76
+      );
+
+      drawVillageHouse(
+        base + 520,
+        350,
+        "#d9dbc7",
+        "#6e7181"
+      );
+
+      drawVillageTree(
+        base + 760,
+        355,
+        0.86
+      );
+
+      drawVillageHouse(
+        base + 980,
+        350,
+        "#e7b692",
+        "#824d3d"
+      );
+
+      drawVillageTree(
+        base + 1210,
+        355,
+        0.73
+      );
+    }
+
+    // Hedge along village edge
+    const hedgeOffset =
+      -((worldOffset * 0.7) % 115);
+
+    for (
+      let x = hedgeOffset - 115;
+      x < 1350;
+      x += 115
+    ) {
+      ctx.fillStyle = "#386d3d";
+
+      ctx.beginPath();
+      ctx.arc(
+        x + 30,
+        400,
+        38,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(
+        x + 72,
+        397,
+        42,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+    }
+
+    // Country lane
+    const lane = ctx.createLinearGradient(
+      0,
+      450,
+      0,
+      600
+    );
+
+    lane.addColorStop(0, "#c8a070");
+    lane.addColorStop(1, "#9a724e");
+
+    ctx.fillStyle = lane;
+    ctx.beginPath();
+    ctx.moveTo(0, 470);
+    ctx.quadraticCurveTo(
+      600,
+      440,
+      1200,
+      474
+    );
+    ctx.lineTo(1200, 600);
+    ctx.lineTo(0, 600);
+    ctx.closePath();
+    ctx.fill();
+
+    // Lane stones
+    const stoneOffset =
+      -((worldOffset * 1.28) % 120);
+
+    for (
+      let x = stoneOffset - 120;
+      x < 1320;
+      x += 120
+    ) {
+      ctx.fillStyle =
+        "rgba(96,72,54,0.28)";
+
+      ctx.beginPath();
+      ctx.ellipse(
+        x + 30,
+        550,
+        16,
+        5,
+        0,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.ellipse(
+        x + 78,
+        515,
+        9,
+        4,
+        0.1,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+    }
+  }
   function drawBackground() {
+    if (currentLevel >= 4) {
+      drawLevel4Background();
+      return;
+    }
     if (currentLevel >= 3) {
       drawLevel3Background();
       return;
@@ -2016,6 +2368,233 @@
     ctx.restore();
   }
 
+  function getHennyPosition() {
+    return {
+      x: clamp(
+        player.x - 355 * facingDirection,
+        50,
+        canvas.width - 50
+      ),
+      y: player.y + 10,
+    };
+  }
+
+  function drawHenny(now) {
+    if (currentLevel < 4) {
+      return;
+    }
+
+    const henny = getHennyPosition();
+
+    const runningPhase =
+      now * 0.014 + 3.1;
+
+    const stride =
+      Math.sin(runningPhase);
+
+    const bob =
+      Math.abs(
+        Math.sin(runningPhase)
+      ) * 4;
+
+    const flashing =
+      now < invulnerableUntil &&
+      Math.floor(now / 100) % 2 === 0;
+
+    if (flashing) {
+      return;
+    }
+
+    ctx.save();
+
+    ctx.translate(
+      henny.x,
+      henny.y - 63 - bob - jumpHeight
+    );
+
+    const depthScale =
+      0.78 +
+      clamp(
+        (henny.y - 330) / 190,
+        0,
+        1
+      ) * 0.22;
+
+    ctx.scale(
+      depthScale * facingDirection,
+      depthScale
+    );
+
+    // Shadow
+    ctx.fillStyle =
+      "rgba(45,48,35,0.24)";
+
+    ctx.beginPath();
+
+    ctx.ellipse(
+      0,
+      57 + bob + jumpHeight,
+      Math.max(
+        23,
+        38 - jumpHeight * 0.07
+      ),
+      12,
+      0,
+      0,
+      Math.PI * 2
+    );
+
+    ctx.fill();
+
+    function drawHennyLeg(
+      offsetX,
+      phase
+    ) {
+      const swing =
+        Math.sin(
+          runningPhase + phase
+        ) * 15;
+
+      ctx.save();
+      ctx.translate(
+        offsetX,
+        30
+      );
+
+      ctx.rotate(
+        (swing * Math.PI) / 180
+      );
+
+      ctx.strokeStyle = "#d47a24";
+      ctx.lineWidth = 6;
+      ctx.lineCap = "round";
+
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(0, 23);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(0, 23);
+      ctx.lineTo(13, 28);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    drawHennyLeg(-11, 0);
+    drawHennyLeg(11, Math.PI);
+
+    // Body
+    ctx.fillStyle = "#c8793d";
+
+    ctx.beginPath();
+
+    ctx.ellipse(
+      0,
+      4,
+      39,
+      40,
+      -0.08,
+      0,
+      Math.PI * 2
+    );
+
+    ctx.fill();
+
+    // Wing
+    ctx.save();
+    ctx.translate(-15, 5);
+    ctx.rotate(
+      -0.35 + stride * 0.17
+    );
+
+    ctx.fillStyle = "#9f582f";
+
+    ctx.beginPath();
+
+    ctx.ellipse(
+      0,
+      10,
+      15,
+      27,
+      0,
+      0,
+      Math.PI * 2
+    );
+
+    ctx.fill();
+    ctx.restore();
+
+    // Head
+    ctx.fillStyle = "#d9924c";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      17,
+      -40,
+      28,
+      0,
+      Math.PI * 2
+    );
+
+    ctx.fill();
+
+    // Comb
+    ctx.fillStyle = "#d84a40";
+
+    [
+      [5, -66],
+      [16, -70],
+      [27, -65],
+    ].forEach(([x, y]) => {
+      ctx.beginPath();
+      ctx.arc(
+        x,
+        y,
+        7,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+    });
+
+    // Beak
+    ctx.fillStyle = "#ed9b2d";
+
+    ctx.beginPath();
+    ctx.moveTo(40, -43);
+    ctx.lineTo(68, -34);
+    ctx.lineTo(40, -26);
+    ctx.closePath();
+    ctx.fill();
+
+    // Eye
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(
+      26,
+      -49,
+      8,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    ctx.fillStyle = "#172033";
+    ctx.beginPath();
+    ctx.arc(
+      29,
+      -48,
+      3.5,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    ctx.restore();
+  }
   function getDuckyPosition() {
     return {
       x: clamp(
@@ -2679,6 +3258,7 @@
     }
 
     drawEffects();
+    drawHenny(now);
     drawDucky(now);
     drawTurkey(now);
     drawChicken(now);
