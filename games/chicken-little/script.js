@@ -23,6 +23,8 @@
   const GROUND_Y = 560;
 
   let running = false;
+  let currentLevel = 1;
+  let pendingLevel = null;
   let dragging = false;
   let pointerId = null;
   let pointerPressX = 0;
@@ -184,14 +186,18 @@
     }
   }
 
-  function hitPlayer(now) {
+  function hitPlayer(
+    now,
+    impactX = player.x,
+    impactY = player.y
+  ) {
     if (now < invulnerableUntil) {
       return;
     }
 
     hearts -= 1;
     invulnerableUntil = now + 1800;
-    createImpact(player.x, player.y, "#ef4444");
+    createImpact(impactX, impactY, "#ef4444");
     updateHud();
 
     if (hearts <= 0) {
@@ -206,13 +212,24 @@
     startPanel.hidden = false;
 
     if (success) {
-      statusText.textContent =
-        "Farmyard Dash complete! Chicken Little made it safely!";
-      startButton.textContent = "Play Level 1 Again";
+      if (currentLevel === 1) {
+        statusText.textContent =
+          "Chicken Little made it! Turkey Lurky is joining the run!";
+        startButton.textContent = "Start Level 2";
+        pendingLevel = 2;
+      } else {
+        statusText.textContent =
+          "Level 2 complete! Chicken Little and Turkey Lurky made it safely!";
+        startButton.textContent = "Play Level 2 Again";
+        pendingLevel = null;
+      }
     } else {
       statusText.textContent =
-        "The falling acorns caught Chicken Little. Try again!";
+        currentLevel === 1
+          ? "The falling acorns caught Chicken Little. Try again!"
+          : "The falling acorns caught the flock. Try Level 2 again!";
       startButton.textContent = "Try Again";
+      pendingLevel = null;
     }
   }
 
@@ -237,6 +254,11 @@
   }
 
   function startLevel() {
+    if (pendingLevel !== null) {
+      currentLevel = pendingLevel;
+      pendingLevel = null;
+    }
+
     resetLevel();
     running = true;
     previousFrameTime = performance.now();
@@ -297,17 +319,49 @@
         continue;
       }
 
-      const dx =
-        (acorn.x - player.x) / 43;
-      const dy =
-        (
-          acorn.y -
-          (player.y - 65 - jumpHeight)
-        ) / 52;
+      const runners = [
+        {
+          x: player.x,
+          y: player.y - 65 - jumpHeight,
+          radiusX: 43,
+          radiusY: 52,
+        },
+      ];
 
-      if (dx * dx + dy * dy <= 1) {
+      if (currentLevel >= 2) {
+        const turkey = getTurkeyPosition();
+
+        runners.push({
+          x: turkey.x,
+          y: turkey.y - 72 - jumpHeight,
+          radiusX: 48,
+          radiusY: 59,
+        });
+      }
+
+      let struckRunner = null;
+
+      for (const runner of runners) {
+        const dx =
+          (acorn.x - runner.x) /
+          runner.radiusX;
+        const dy =
+          (acorn.y - runner.y) /
+          runner.radiusY;
+
+        if (dx * dx + dy * dy <= 1) {
+          struckRunner = runner;
+          break;
+        }
+      }
+
+      if (struckRunner) {
         acorns.splice(index, 1);
-        hitPlayer(now);
+        hitPlayer(
+          now,
+          struckRunner.x,
+          struckRunner.y
+        );
         continue;
       }
 
@@ -856,6 +910,251 @@
     ctx.restore();
   }
 
+  function getTurkeyPosition() {
+    return {
+      x: clamp(
+        player.x - 105,
+        58,
+        canvas.width - 58
+      ),
+      y: player.y + 8,
+    };
+  }
+
+  function drawTurkey(now) {
+    if (currentLevel < 2) {
+      return;
+    }
+
+    const turkey = getTurkeyPosition();
+    const runningPhase = now * 0.013 + 1.2;
+    const stride = Math.sin(runningPhase);
+    const bob =
+      Math.abs(Math.sin(runningPhase)) * 5;
+    const flashing =
+      now < invulnerableUntil &&
+      Math.floor(now / 100) % 2 === 0;
+
+    if (flashing) {
+      return;
+    }
+
+    ctx.save();
+    ctx.translate(
+      turkey.x,
+      turkey.y - 72 - bob - jumpHeight
+    );
+
+    const depthScale =
+      0.78 +
+      clamp(
+        (turkey.y - 330) / 190,
+        0,
+        1
+      ) * 0.22;
+
+    ctx.scale(depthScale, depthScale);
+
+    ctx.fillStyle = "rgba(45, 48, 35, 0.24)";
+    ctx.beginPath();
+    ctx.ellipse(
+      0,
+      68 + bob + jumpHeight,
+      Math.max(
+        28,
+        49 - jumpHeight * 0.08
+      ),
+      14,
+      0,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    function drawTurkeyLeg(offsetX, phase) {
+      const swing =
+        Math.sin(runningPhase + phase) * 14;
+
+      ctx.save();
+      ctx.translate(offsetX, 39);
+      ctx.rotate((swing * Math.PI) / 180);
+
+      ctx.strokeStyle = "#c96c24";
+      ctx.lineWidth = 8;
+      ctx.lineCap = "round";
+
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(0, 28);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(0, 28);
+      ctx.lineTo(15, 34);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    drawTurkeyLeg(-15, 0);
+    drawTurkeyLeg(15, Math.PI);
+
+    ctx.save();
+    ctx.translate(-34, -1);
+
+    const tailColors = [
+      "#8b4513",
+      "#b9682b",
+      "#d99a3d",
+      "#8b4513",
+      "#b9682b",
+    ];
+
+    for (let index = 0; index < 5; index += 1) {
+      ctx.save();
+      const angle = -0.9 + index * 0.34;
+      ctx.rotate(angle);
+      ctx.fillStyle = tailColors[index];
+
+      ctx.beginPath();
+      ctx.ellipse(
+        -5,
+        -25,
+        18,
+        42,
+        0,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    ctx.restore();
+
+    ctx.fillStyle = "#8b4a2b";
+    ctx.beginPath();
+    ctx.ellipse(
+      0,
+      8,
+      48,
+      51,
+      -0.08,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    ctx.fillStyle = "#b96834";
+    ctx.beginPath();
+    ctx.ellipse(
+      15,
+      12,
+      29,
+      39,
+      -0.25,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    ctx.save();
+    ctx.translate(-17, 5);
+    ctx.rotate(-0.35 + stride * 0.16);
+
+    ctx.fillStyle = "#6f3825";
+    ctx.beginPath();
+    ctx.ellipse(
+      0,
+      15,
+      18,
+      34,
+      0,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    ctx.restore();
+
+    ctx.fillStyle = "#a95435";
+    ctx.beginPath();
+    ctx.ellipse(
+      23,
+      -37,
+      22,
+      35,
+      -0.12,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    ctx.fillStyle = "#b96845";
+    ctx.beginPath();
+    ctx.arc(
+      28,
+      -65,
+      25,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    ctx.fillStyle = "#d94438";
+    ctx.beginPath();
+    ctx.ellipse(
+      36,
+      -40,
+      9,
+      20,
+      -0.22,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    ctx.fillStyle = "#e4a11b";
+    ctx.beginPath();
+    ctx.moveTo(50, -69);
+    ctx.lineTo(76, -60);
+    ctx.lineTo(50, -53);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(
+      36,
+      -72,
+      8,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    ctx.fillStyle = "#172033";
+    ctx.beginPath();
+    ctx.arc(
+      39,
+      -71,
+      3.5,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    ctx.strokeStyle = "#542b20";
+    ctx.lineWidth = 3;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(28, -83);
+    ctx.lineTo(43, -86);
+    ctx.stroke();
+
+    ctx.restore();
+  }
   function drawChicken(now) {
     const runningPhase = now * 0.014;
     const stride = Math.sin(runningPhase);
@@ -1043,6 +1342,7 @@
     }
 
     drawEffects();
+    drawTurkey(now);
     drawChicken(now);
   }
 
