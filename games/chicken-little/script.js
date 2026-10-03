@@ -18,6 +18,8 @@
     document.getElementById("chickenTime");
   const progressFill =
     document.getElementById("chickenProgressFill");
+  const skyFallingAudio =
+    document.getElementById("chickenSkyFallingAudio");
 
   const DEFAULT_LEVEL_TIMES = [45, 45, 45, 45];
   const DEFAULT_LEVEL_SPEEDS = [100, 100, 100, 100];
@@ -404,6 +406,19 @@
     }
 
     resetLevel();
+    if (skyFallingAudio) {
+      skyFallingAudio.currentTime = 0;
+
+      const playPromise =
+        skyFallingAudio.play();
+
+      if (
+        playPromise &&
+        typeof playPromise.catch === "function"
+      ) {
+        playPromise.catch(() => {});
+      }
+    }
     running = true;
     previousFrameTime = performance.now();
     nextAcornAt = previousFrameTime + 900;
