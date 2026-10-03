@@ -369,17 +369,26 @@
           "Chicken Little made it! Turkey Lurky is joining the run!";
         startButton.textContent = "Start Level 2";
         pendingLevel = 2;
+      } else if (currentLevel === 2) {
+        statusText.textContent =
+          "Level 2 complete! Ducky Lucky heard the news and is joining the flock!";
+        startButton.textContent = "Start Level 3";
+        pendingLevel = 3;
       } else {
         statusText.textContent =
-          "Level 2 complete! Chicken Little and Turkey Lurky made it safely!";
-        startButton.textContent = "Play Level 2 Again";
+          "Level 3 complete! Chicken Little, Turkey Lurky, and Ducky Lucky made it safely!";
+        startButton.textContent = "Play Level 3 Again";
         pendingLevel = null;
       }
     } else {
-      statusText.textContent =
-        currentLevel === 1
-          ? "The falling acorns caught Chicken Little. Try again!"
-          : "The falling acorns caught the flock. Try Level 2 again!";
+      if (currentLevel === 1) {
+        statusText.textContent =
+          "The falling acorns caught Chicken Little. Try again!";
+      } else {
+        statusText.textContent =
+          `The falling acorns caught the flock. Try Level ${currentLevel} again!`;
+      }
+
       startButton.textContent = "Try Again";
       pendingLevel = null;
     }
@@ -509,6 +518,17 @@
           y: turkey.y - 72 - jumpHeight,
           radiusX: 48,
           radiusY: 59,
+        });
+      }
+
+      if (currentLevel >= 3) {
+        const duck = getDuckyPosition();
+
+        runners.push({
+          x: duck.x,
+          y: duck.y - 60 - jumpHeight,
+          radiusX: 42,
+          radiusY: 50,
         });
       }
 
@@ -1104,7 +1124,398 @@
       10
     );
   }
+  function drawLevel3Background() {
+    const sky = ctx.createLinearGradient(
+      0,
+      0,
+      0,
+      390
+    );
+
+    sky.addColorStop(0, "#74b6d8");
+    sky.addColorStop(0.65, "#cce8d4");
+    sky.addColorStop(1, "#f4e7b5");
+
+    ctx.fillStyle = sky;
+    ctx.fillRect(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
+    // Soft sun through the trees
+    const sunGlow = ctx.createRadialGradient(
+      995,
+      90,
+      12,
+      995,
+      90,
+      90
+    );
+
+    sunGlow.addColorStop(
+      0,
+      "rgba(255,240,155,0.9)"
+    );
+
+    sunGlow.addColorStop(
+      1,
+      "rgba(255,240,155,0)"
+    );
+
+    ctx.fillStyle = sunGlow;
+    ctx.beginPath();
+    ctx.arc(
+      995,
+      90,
+      90,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    // Distant hills
+    ctx.fillStyle = "#6f9d67";
+    ctx.beginPath();
+    ctx.moveTo(0, 320);
+
+    for (
+      let x = 0;
+      x <= 1200;
+      x += 170
+    ) {
+      ctx.quadraticCurveTo(
+        x + 85,
+        250 +
+          Math.sin(
+            (x + worldOffset * 0.1) / 150
+          ) * 24,
+        x + 170,
+        320
+      );
+    }
+
+    ctx.lineTo(1200, 410);
+    ctx.lineTo(0, 410);
+    ctx.closePath();
+    ctx.fill();
+
+    // Forest floor
+    const floorGradient =
+      ctx.createLinearGradient(
+        0,
+        330,
+        0,
+        600
+      );
+
+    floorGradient.addColorStop(
+      0,
+      "#668d4b"
+    );
+    floorGradient.addColorStop(
+      0.6,
+      "#496f3d"
+    );
+    floorGradient.addColorStop(
+      1,
+      "#355a35"
+    );
+
+    ctx.fillStyle = floorGradient;
+    ctx.fillRect(
+      0,
+      330,
+      1200,
+      270
+    );
+
+    function drawForestTree(
+      x,
+      y,
+      scale,
+      trunkWidth = 34
+    ) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(scale, scale);
+
+      ctx.fillStyle = "#69482f";
+      ctx.fillRect(
+        -trunkWidth / 2,
+        -165,
+        trunkWidth,
+        172
+      );
+
+      ctx.fillStyle = "#315f3b";
+
+      [
+        [-45, -150, 48],
+        [0, -190, 57],
+        [48, -150, 46],
+        [-18, -118, 52],
+        [30, -112, 45],
+      ].forEach(
+        ([cx, cy, radius]) => {
+          ctx.beginPath();
+          ctx.arc(
+            cx,
+            cy,
+            radius,
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
+        }
+      );
+
+      ctx.fillStyle =
+        "rgba(142,190,108,0.42)";
+
+      ctx.beginPath();
+      ctx.arc(
+        -18,
+        -177,
+        19,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    // Rear forest layer
+    const farTreeOffset =
+      -((worldOffset * 0.34) % 240);
+
+    for (
+      let x = farTreeOffset - 240;
+      x < 1450;
+      x += 240
+    ) {
+      drawForestTree(
+        x + 70,
+        365,
+        0.62
+      );
+    }
+
+    // Winding forest trail
+    const trail = ctx.createLinearGradient(
+      0,
+      430,
+      0,
+      600
+    );
+
+    trail.addColorStop(
+      0,
+      "#b89564"
+    );
+    trail.addColorStop(
+      1,
+      "#8c6748"
+    );
+
+    ctx.fillStyle = trail;
+    ctx.beginPath();
+    ctx.moveTo(0, 470);
+    ctx.quadraticCurveTo(
+      280,
+      430,
+      570,
+      474
+    );
+    ctx.quadraticCurveTo(
+      880,
+      520,
+      1200,
+      466
+    );
+    ctx.lineTo(
+      1200,
+      600
+    );
+    ctx.lineTo(
+      0,
+      600
+    );
+    ctx.closePath();
+    ctx.fill();
+
+    // Ferns and bushes
+    const bushOffset =
+      -((worldOffset * 0.78) % 190);
+
+    for (
+      let x = bushOffset - 190;
+      x < 1400;
+      x += 190
+    ) {
+      ctx.fillStyle = "#2f6c3c";
+
+      [
+        [x + 20, 435, 26],
+        [x + 48, 425, 31],
+        [x + 75, 438, 24],
+      ].forEach(
+        ([cx, cy, radius]) => {
+          ctx.beginPath();
+          ctx.arc(
+            cx,
+            cy,
+            radius,
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
+        }
+      );
+    }
+// Mushrooms / flowers
+    const detailOffset =
+      -((worldOffset * 1.18) % 250);
+
+    for (
+      let x = detailOffset - 250;
+      x < 1450;
+      x += 250
+    ) {
+      ctx.fillStyle = "#efe4c8";
+      ctx.fillRect(
+        x + 140,
+        510,
+        5,
+        18
+      );
+
+      ctx.fillStyle = "#d85d4b";
+      ctx.beginPath();
+      ctx.arc(
+        x + 142,
+        508,
+        11,
+        Math.PI,
+        Math.PI * 2
+      );
+      ctx.fill();
+
+      ctx.fillStyle = "#ffffff";
+
+      ctx.beginPath();
+      ctx.arc(
+        x + 137,
+        504,
+        2,
+        0,
+        Math.PI * 2
+      );
+      ctx.arc(
+        x + 146,
+        502,
+        2,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+    }
+
+    // Trail stones
+    const stoneOffset =
+      -((worldOffset * 1.3) % 115);
+
+    for (
+      let x = stoneOffset - 115;
+      x < 1320;
+      x += 115
+    ) {
+      ctx.fillStyle =
+        "rgba(79,65,53,0.32)";
+
+      ctx.beginPath();
+      ctx.ellipse(
+        x + 25,
+        550,
+        17,
+        6,
+        0,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+    }
+  }
+  function drawLevel3Foreground() {
+    if (currentLevel < 3) {
+      return;
+    }
+
+    function drawForegroundTree(
+      x,
+      y,
+      scale
+    ) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(scale, scale);
+
+      ctx.fillStyle = "#69482f";
+      ctx.fillRect(
+        -18,
+        -150,
+        36,
+        160
+      );
+
+      ctx.fillStyle = "#315f3b";
+
+      [
+        [-38, -138, 40],
+        [0, -175, 48],
+        [40, -138, 39],
+        [-15, -108, 43],
+        [25, -104, 38],
+      ].forEach(
+        ([cx, cy, radius]) => {
+          ctx.beginPath();
+          ctx.arc(
+            cx,
+            cy,
+            radius,
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
+        }
+      );
+
+      ctx.restore();
+    }
+
+    const edgeDrift =
+      (worldOffset * 0.55) % 120;
+
+    drawForegroundTree(
+      -25 - edgeDrift,
+      520,
+      0.92
+    );
+
+    drawForegroundTree(
+      canvas.width + 30 - edgeDrift,
+      520,
+      0.92
+    );
+  }
   function drawBackground() {
+    if (currentLevel >= 3) {
+      drawLevel3Background();
+      return;
+    }
+
     if (currentLevel >= 2) {
       drawLevel2Background();
       return;
@@ -1605,6 +2016,237 @@
     ctx.restore();
   }
 
+  function getDuckyPosition() {
+    return {
+      x: clamp(
+        player.x - 255 * facingDirection,
+        52,
+        canvas.width - 52
+      ),
+      y: player.y + 13,
+    };
+  }
+
+  function drawDucky(now) {
+    if (currentLevel < 3) {
+      return;
+    }
+
+    const duck = getDuckyPosition();
+    const runningPhase =
+      now * 0.015 + 2.15;
+    const stride =
+      Math.sin(runningPhase);
+    const bob =
+      Math.abs(
+        Math.sin(runningPhase)
+      ) * 4;
+
+    const flashing =
+      now < invulnerableUntil &&
+      Math.floor(now / 100) % 2 === 0;
+
+    if (flashing) {
+      return;
+    }
+
+    ctx.save();
+
+    ctx.translate(
+      duck.x,
+      duck.y - 60 - bob - jumpHeight
+    );
+
+    const depthScale =
+      0.78 +
+      clamp(
+        (duck.y - 330) / 190,
+        0,
+        1
+      ) * 0.22;
+
+    ctx.scale(
+      depthScale * facingDirection,
+      depthScale
+    );
+
+    // Shadow
+    ctx.fillStyle =
+      "rgba(45,48,35,0.24)";
+    ctx.beginPath();
+    ctx.ellipse(
+      0,
+      54 + bob + jumpHeight,
+      Math.max(
+        22,
+        36 - jumpHeight * 0.07
+      ),
+      11,
+      0,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    function drawDuckLeg(
+      offsetX,
+      phase
+    ) {
+      const swing =
+        Math.sin(
+          runningPhase + phase
+        ) * 16;
+
+      ctx.save();
+      ctx.translate(
+        offsetX,
+        28
+      );
+      ctx.rotate(
+        (swing * Math.PI) / 180
+      );
+
+      ctx.strokeStyle = "#dd7b20";
+      ctx.lineWidth = 6;
+      ctx.lineCap = "round";
+
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(0, 22);
+      ctx.stroke();
+
+      ctx.fillStyle = "#e88b21";
+      ctx.beginPath();
+      ctx.ellipse(
+        8,
+        24,
+        14,
+        5,
+        -0.1,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    drawDuckLeg(-10, 0);
+    drawDuckLeg(10, Math.PI);
+
+    // Body
+    ctx.fillStyle = "#f2d34f";
+    ctx.beginPath();
+    ctx.ellipse(
+      -2,
+      4,
+      37,
+      36,
+      -0.08,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    // Wing
+    ctx.save();
+    ctx.translate(
+      -13,
+      4
+    );
+
+    ctx.rotate(
+      -0.35 + stride * 0.18
+    );
+
+    ctx.fillStyle = "#d9b52c";
+    ctx.beginPath();
+    ctx.ellipse(
+      0,
+      10,
+      14,
+      25,
+      0,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    ctx.restore();
+
+    // Neck / head
+    ctx.fillStyle = "#f6db5b";
+    ctx.beginPath();
+    ctx.arc(
+      18,
+      -38,
+      27,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    // Beak
+    ctx.fillStyle = "#ed8b23";
+    ctx.beginPath();
+    ctx.moveTo(
+      41,
+      -42
+    );
+    ctx.lineTo(
+      70,
+      -33
+    );
+    ctx.lineTo(
+      41,
+      -25
+    );
+    ctx.closePath();
+    ctx.fill();
+
+    // Eye
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(
+      27,
+      -47,
+      8,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    ctx.fillStyle = "#182133";
+    ctx.beginPath();
+    ctx.arc(
+      30,
+      -46,
+      3.5,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    // Small head tuft
+    ctx.strokeStyle = "#d1ad2d";
+    ctx.lineWidth = 4;
+    ctx.lineCap = "round";
+
+    ctx.beginPath();
+    ctx.moveTo(
+      4,
+      -63
+    );
+    ctx.quadraticCurveTo(
+      8,
+      -76,
+      15,
+      -70
+    );
+    ctx.stroke();
+
+    ctx.restore();
+  }
   function getTurkeyPosition() {
     return {
       x: clamp(
@@ -2037,8 +2679,10 @@
     }
 
     drawEffects();
+    drawDucky(now);
     drawTurkey(now);
     drawChicken(now);
+    drawLevel3Foreground();
   }
 
   function frame(now) {
