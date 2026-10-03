@@ -19,7 +19,18 @@
   const progressFill =
     document.getElementById("chickenProgressFill");
 
-  const LEVEL_DURATION_MS = 120000;
+  const DEFAULT_LEVEL_TIMES = [45, 45, 45, 45];
+  const DEFAULT_LEVEL_SPEEDS = [100, 100, 100, 100];
+  const DEFAULT_LEVEL_HITS = [3, 3, 3, 3];
+
+  const CHICKEN_SETTINGS_STORAGE_KEY =
+    "chicken-little-level-settings-v1";
+
+  let levelTimes = DEFAULT_LEVEL_TIMES.slice();
+  let levelSpeeds = DEFAULT_LEVEL_SPEEDS.slice();
+  let levelHits = DEFAULT_LEVEL_HITS.slice();
+  let requireClickAndDrag = false;
+  let facingDirection = 1;
   const GROUND_Y = 560;
 
   let running = false;
@@ -80,6 +91,137 @@
     );
   }
 
+  function currentLevelIndex() {
+    return clamp(
+      currentLevel - 1,
+      0,
+      DEFAULT_LEVEL_TIMES.length - 1
+    );
+  }
+
+  function currentLevelDurationMs() {
+    return (
+      levelTimes[currentLevelIndex()] *
+      1000
+    );
+  }
+
+  function currentLevelSpeedMultiplier() {
+    return (
+      levelSpeeds[currentLevelIndex()] /
+      100
+    );
+  }
+
+  function currentLevelHitsAllowed() {
+    return levelHits[currentLevelIndex()];
+  }
+
+  function normalizeSettingArray(
+    values,
+    defaults,
+    minimum,
+    maximum
+  ) {
+    return defaults.map((fallback, index) => {
+      const value = Number.parseInt(
+        Array.isArray(values)
+          ? values[index]
+          : undefined,
+        10
+      );
+
+      return Number.isFinite(value)
+        ? clamp(value, minimum, maximum)
+        : fallback;
+    });
+  }
+
+  function applyChickenSettings(settings) {
+    if (!settings || typeof settings !== "object") {
+      return;
+    }
+    requireClickAndDrag =
+      settings.chickenLittleRequireClickAndDrag === true;
+
+
+    levelTimes = normalizeSettingArray(
+      settings.chickenLittleLevelTimes,
+      DEFAULT_LEVEL_TIMES,
+      20,
+      120
+    );
+
+    levelSpeeds = normalizeSettingArray(
+      settings.chickenLittleLevelSpeeds,
+      DEFAULT_LEVEL_SPEEDS,
+      50,
+      200
+    );
+
+    levelHits = normalizeSettingArray(
+      settings.chickenLittleLevelHits,
+      DEFAULT_LEVEL_HITS,
+      1,
+      10
+    );
+  }
+
+  function saveChickenSettingsFallback() {
+    try {
+      localStorage.setItem(
+        CHICKEN_SETTINGS_STORAGE_KEY,
+        JSON.stringify({
+          chickenLittleLevelTimes: levelTimes,
+          chickenLittleLevelSpeeds: levelSpeeds,
+          chickenLittleLevelHits: levelHits,
+        })
+      );
+    } catch {
+      // Local storage is only a fallback.
+    }
+  }
+
+  function loadChickenSettingsFallback() {
+    try {
+      const stored = JSON.parse(
+        localStorage.getItem(
+          CHICKEN_SETTINGS_STORAGE_KEY
+        ) || "null"
+      );
+
+      applyChickenSettings(stored);
+    } catch {
+      // Defaults remain active.
+    }
+  }
+
+  async function loadChickenSettings() {
+    loadChickenSettingsFallback();
+
+    try {
+      const response = await fetch(
+        "/api/settings",
+        {
+          cache: "no-store",
+        }
+      );
+
+      if (!response.ok) {
+        return;
+      }
+
+      const settings = await response.json();
+      applyChickenSettings(settings);
+      saveChickenSettingsFallback();
+    } catch (error) {
+      console.warn(
+        "Could not load Chicken Little settings.",
+        error
+      );
+    }
+  }
+
   function formatTime(milliseconds) {
     const seconds = Math.max(
       0,
@@ -96,12 +238,12 @@
   function updateHud() {
     heartsText.textContent = String(hearts);
     timeText.textContent = formatTime(
-      LEVEL_DURATION_MS - elapsedMs
+      currentLevelDurationMs() - elapsedMs
     );
 
     progressFill.style.width =
       `${clamp(
-        elapsedMs / LEVEL_DURATION_MS,
+        elapsedMs / currentLevelDurationMs(),
         0,
         1
       ) * 100}%`;
@@ -145,7 +287,7 @@
     }
 
     const progress = clamp(
-      elapsedMs / LEVEL_DURATION_MS,
+      elapsedMs / currentLevelDurationMs(),
       0,
       1
     );
@@ -162,7 +304,9 @@
       landingY,
       depthScale,
       warningMs: 950,
-      speed: 235 + progress * 145,
+      speed:
+        (235 + progress * 145) *
+        currentLevelSpeedMultiplier(),
       rotation: Math.random() * Math.PI * 2,
       rotationSpeed:
         (Math.random() - 0.5) * 7,
@@ -234,7 +378,7 @@
   }
 
   function resetLevel() {
-    hearts = 3;
+    hearts = currentLevelHitsAllowed();
     elapsedMs = 0;
     worldOffset = 0;
     acorns = [];
@@ -274,10 +418,18 @@
     elapsedMs += deltaSeconds * 1000;
     worldOffset +=
       deltaSeconds *
-      (175 + elapsedMs / LEVEL_DURATION_MS * 60);
+      (175 + elapsedMs / currentLevelDurationMs() * 60);
+
+    const horizontalTravel =
+      player.targetX - player.x;
+
+    if (Math.abs(horizontalTravel) > 2) {
+      facingDirection =
+        horizontalTravel < 0 ? -1 : 1;
+    }
 
     player.x +=
-      (player.targetX - player.x) * 0.17;
+      horizontalTravel * 0.17;
     player.y +=
       (player.targetY - player.y) * 0.17;
 
@@ -388,7 +540,7 @@
 
     updateHud();
 
-    if (elapsedMs >= LEVEL_DURATION_MS) {
+    if (elapsedMs >= currentLevelDurationMs()) {
       finishLevel(true);
     }
   }
@@ -413,7 +565,529 @@
     ctx.restore();
   }
 
+  function drawLevel2Background() {
+    const sky = ctx.createLinearGradient(
+      0,
+      0,
+      0,
+      390
+    );
+
+    sky.addColorStop(0, "#71c7ef");
+    sky.addColorStop(0.62, "#d7f3ff");
+    sky.addColorStop(1, "#fff3c4");
+
+    ctx.fillStyle = sky;
+    ctx.fillRect(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
+    // Sun
+    const sunGlow = ctx.createRadialGradient(
+      975,
+      90,
+      10,
+      975,
+      90,
+      82
+    );
+
+    sunGlow.addColorStop(
+      0,
+      "rgba(255,245,160,0.95)"
+    );
+    sunGlow.addColorStop(
+      1,
+      "rgba(255,245,160,0)"
+    );
+
+    ctx.fillStyle = sunGlow;
+    ctx.beginPath();
+    ctx.arc(
+      975,
+      90,
+      82,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    ctx.fillStyle = "#ffe88a";
+    ctx.beginPath();
+    ctx.arc(
+      975,
+      90,
+      40,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    // Clouds
+    for (
+      let index = -1;
+      index < 7;
+      index += 1
+    ) {
+      const cloudX =
+        (
+          (
+            index * 285 -
+            worldOffset * 0.1
+          ) %
+            1995 +
+          1995
+        ) %
+          1995 -
+        250;
+
+      drawCloud(
+        cloudX,
+        62 + (index % 3) * 54,
+        0.65 + (index % 2) * 0.14
+      );
+    }
+
+    // Far hills
+    ctx.fillStyle = "#8fc374";
+    ctx.beginPath();
+    ctx.moveTo(0, 310);
+
+    for (
+      let x = 0;
+      x <= 1200;
+      x += 180
+    ) {
+      ctx.quadraticCurveTo(
+        x + 90,
+        235 +
+          Math.sin(
+            (
+              x +
+              worldOffset * 0.1
+            ) /
+              180
+          ) *
+            25,
+        x + 180,
+        310
+      );
+    }
+
+    ctx.lineTo(1200, 390);
+    ctx.lineTo(0, 390);
+    ctx.closePath();
+    ctx.fill();
+
+    // Near hills
+    ctx.fillStyle = "#67a857";
+    ctx.beginPath();
+    ctx.moveTo(0, 340);
+
+    for (
+      let x = 0;
+      x <= 1200;
+      x += 150
+    ) {
+      ctx.quadraticCurveTo(
+        x + 75,
+        285 +
+          Math.sin(
+            (
+              x +
+              worldOffset * 0.22
+            ) /
+              135
+          ) *
+            20,
+        x + 150,
+        340
+      );
+    }
+
+    ctx.lineTo(1200, 425);
+    ctx.lineTo(0, 425);
+    ctx.closePath();
+    ctx.fill();
+
+    // Meadow
+    const meadow = ctx.createLinearGradient(
+      0,
+      335,
+      0,
+      600
+    );
+
+    meadow.addColorStop(
+      0,
+      "#7fbd55"
+    );
+    meadow.addColorStop(
+      0.55,
+      "#72ad48"
+    );
+    meadow.addColorStop(
+      1,
+      "#538936"
+    );
+
+    ctx.fillStyle = meadow;
+    ctx.fillRect(
+      0,
+      335,
+      1200,
+      265
+    );
+
+    function drawRoadTree(
+      x,
+      y,
+      scale
+    ) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(scale, scale);
+
+      ctx.fillStyle = "#70502e";
+      ctx.fillRect(
+        -11,
+        -78,
+        22,
+        82
+      );
+
+      ctx.fillStyle = "#3f7f3e";
+
+      [
+        [-27, -87, 33],
+        [4, -111, 42],
+        [34, -83, 31],
+        [4, -67, 38],
+      ].forEach(
+        ([cx, cy, radius]) => {
+          ctx.beginPath();
+          ctx.arc(
+            cx,
+            cy,
+            radius,
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
+        }
+      );
+
+      ctx.fillStyle =
+        "rgba(255,255,255,0.16)";
+      ctx.beginPath();
+      ctx.arc(
+        -8,
+        -103,
+        13,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function drawCottage(x) {
+      ctx.save();
+      ctx.translate(x, 0);
+
+      ctx.fillStyle = "#f1d29a";
+      ctx.fillRect(
+        0,
+        245,
+        135,
+        92
+      );
+
+      ctx.fillStyle = "#924d35";
+      ctx.beginPath();
+      ctx.moveTo(-14, 248);
+      ctx.lineTo(68, 192);
+      ctx.lineTo(149, 248);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = "#8f5b37";
+      ctx.fillRect(
+        53,
+        282,
+        30,
+        55
+      );
+
+      ctx.fillStyle = "#bce3f2";
+      ctx.fillRect(
+        16,
+        268,
+        25,
+        25
+      );
+      ctx.fillRect(
+        96,
+        268,
+        25,
+        25
+      );
+
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(
+        16,
+        268,
+        25,
+        25
+      );
+      ctx.strokeRect(
+        96,
+        268,
+        25,
+        25
+      );
+
+      ctx.restore();
+    }
+
+    // Distant scenery
+    const sceneryCycle = 1550;
+    const sceneryOffset =
+      -(
+        (
+          worldOffset * 0.42
+        ) %
+          sceneryCycle
+      );
+
+    for (
+      let base =
+        sceneryOffset -
+        sceneryCycle;
+      base < 2300;
+      base += sceneryCycle
+    ) {
+      drawCottage(base + 160);
+
+      drawRoadTree(
+        base + 390,
+        350,
+        0.7
+      );
+
+      drawRoadTree(
+        base + 610,
+        355,
+        0.82
+      );
+
+      drawRoadTree(
+        base + 930,
+        350,
+        0.68
+      );
+
+      drawRoadTree(
+        base + 1190,
+        355,
+        0.88
+      );
+    }
+
+    // Fence
+    const fenceOffset =
+      -(
+        (
+          worldOffset * 0.66
+        ) %
+          165
+      );
+
+    ctx.strokeStyle = "#ead6a5";
+    ctx.lineCap = "round";
+
+    ctx.lineWidth = 10;
+
+    for (
+      let x =
+        fenceOffset - 165;
+      x < 1370;
+      x += 165
+    ) {
+      ctx.beginPath();
+      ctx.moveTo(x, 335);
+      ctx.lineTo(x, 420);
+      ctx.stroke();
+    }
+
+    ctx.lineWidth = 8;
+
+    ctx.beginPath();
+    ctx.moveTo(0, 360);
+    ctx.lineTo(1200, 360);
+    ctx.moveTo(0, 400);
+    ctx.lineTo(1200, 400);
+    ctx.stroke();
+
+    // Wildflowers
+    const flowerOffset =
+      -(
+        (
+          worldOffset * 0.92
+        ) %
+          210
+      );
+
+    const flowerColors = [
+      "#ffffff",
+      "#fde68a",
+      "#f9a8d4",
+      "#bfdbfe",
+      "#c4b5fd",
+    ];
+
+    for (
+      let x =
+        flowerOffset - 210;
+      x < 1410;
+      x += 210
+    ) {
+      for (
+        let index = 0;
+        index < 5;
+        index += 1
+      ) {
+        const flowerX =
+          x + 35 + index * 30;
+        const flowerY =
+          440 +
+          (index % 3) * 18;
+
+        ctx.strokeStyle =
+          "#39733a";
+        ctx.lineWidth = 3;
+
+        ctx.beginPath();
+        ctx.moveTo(
+          flowerX,
+          flowerY + 14
+        );
+        ctx.lineTo(
+          flowerX,
+          flowerY
+        );
+        ctx.stroke();
+
+        ctx.fillStyle =
+          flowerColors[index];
+
+        ctx.beginPath();
+        ctx.arc(
+          flowerX,
+          flowerY,
+          6,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+      }
+    }
+
+    // Dirt country road
+    const roadGradient =
+      ctx.createLinearGradient(
+        0,
+        470,
+        0,
+        600
+      );
+
+    roadGradient.addColorStop(
+      0,
+      "#c99b67"
+    );
+    roadGradient.addColorStop(
+      1,
+      "#a87445"
+    );
+
+    ctx.fillStyle = roadGradient;
+
+    ctx.beginPath();
+    ctx.moveTo(0, 487);
+    ctx.quadraticCurveTo(
+      600,
+      455,
+      1200,
+      490
+    );
+    ctx.lineTo(1200, 600);
+    ctx.lineTo(0, 600);
+    ctx.closePath();
+    ctx.fill();
+
+    // Moving road marks / stones
+    const stoneOffset =
+      -(
+        (
+          worldOffset * 1.3
+        ) %
+          125
+      );
+
+    for (
+      let x =
+        stoneOffset - 125;
+      x < 1325;
+      x += 125
+    ) {
+      ctx.fillStyle =
+        "rgba(105,74,45,0.35)";
+
+      ctx.beginPath();
+      ctx.ellipse(
+        x + 30,
+        550,
+        18,
+        6,
+        -0.1,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.ellipse(
+        x + 82,
+        520,
+        10,
+        4,
+        0.15,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+    }
+
+    // Foreground grass edge
+    ctx.fillStyle = "#4d7d31";
+    ctx.fillRect(
+      0,
+      590,
+      1200,
+      10
+    );
+  }
   function drawBackground() {
+    if (currentLevel >= 2) {
+      drawLevel2Background();
+      return;
+    }
     const sky = ctx.createLinearGradient(
       0,
       0,
@@ -913,7 +1587,7 @@
   function getTurkeyPosition() {
     return {
       x: clamp(
-        player.x - 105,
+        player.x - 105 * facingDirection,
         58,
         canvas.width - 58
       ),
@@ -953,7 +1627,7 @@
         1
       ) * 0.22;
 
-    ctx.scale(depthScale, depthScale);
+    ctx.scale(depthScale * facingDirection, depthScale);
 
     ctx.fillStyle = "rgba(45, 48, 35, 0.24)";
     ctx.beginPath();
@@ -1181,7 +1855,7 @@
         1
       ) * 0.22;
 
-    ctx.scale(depthScale, depthScale);
+    ctx.scale(depthScale * facingDirection, depthScale);
 
     ctx.fillStyle = "rgba(45, 48, 35, 0.24)";
     ctx.beginPath();
@@ -1389,20 +2063,23 @@
       (point.y - chickenCenterY) /
       (78 * depthScale);
 
-    dragging = true;
     pointerId = event.pointerId;
     pointerPressX = point.x;
     pointerPressY = point.y;
     pointerPressTime = performance.now();
     pointerMoved = false;
+
     pressStartedOnChicken =
       chickenDx * chickenDx +
         chickenDy * chickenDy <=
       1;
 
-    canvas.classList.add("is-dragging");
-    canvas.setPointerCapture(event.pointerId);
-    setTargetFromPointer(event);
+    if (requireClickAndDrag) {
+      dragging = true;
+      canvas.classList.add("is-dragging");
+      canvas.setPointerCapture(event.pointerId);
+      setTargetFromPointer(event);
+    }
 
     if (guide) {
       guide.updateFromPointerEvent(event);
@@ -1413,6 +2090,32 @@
   function pointerMove(event) {
     if (guide) {
       guide.updateFromPointerEvent(event);
+    }
+
+    if (!running) {
+      return;
+    }
+
+    if (!requireClickAndDrag) {
+      setTargetFromPointer(event);
+
+      if (
+        pointerId !== null &&
+        event.pointerId === pointerId
+      ) {
+        const point = canvasPoint(event);
+
+        if (
+          Math.hypot(
+            point.x - pointerPressX,
+            point.y - pointerPressY
+          ) > 14
+        ) {
+          pointerMoved = true;
+        }
+      }
+
+      return;
     }
 
     if (
@@ -1488,8 +2191,10 @@
     startLevel
   );
 
-  resetLevel();
-  window.requestAnimationFrame(frame);
+  loadChickenSettings().finally(() => {
+    resetLevel();
+    window.requestAnimationFrame(frame);
+  });
 })();
 
 /* ========================================

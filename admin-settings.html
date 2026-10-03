@@ -153,6 +153,9 @@
               <button class="admin-tab-button" type="button" role="tab" id="tabDeerRun" aria-controls="panelDeerRun" aria-selected="false" data-tab="deerrun">
                 Deer Run
               </button>
+              <button class="admin-tab-button" type="button" role="tab" id="tabChickenLittle" aria-controls="panelChickenLittle" aria-selected="false" data-tab="chickenlittle">
+                Chicken Little
+              </button>
               <button class="admin-tab-button" type="button" role="tab" id="tabHauntedStreet" aria-controls="panelHauntedStreet" aria-selected="false" data-tab="hauntedstreet">
                 Haunted Street
               </button>
@@ -1923,6 +1926,80 @@
             </button>
           </section>
 
+          <section class="admin-tab-content" id="panelChickenLittle" role="tabpanel" aria-labelledby="tabChickenLittle" aria-hidden="true">
+            <p class="admin-panel-note">
+              Configure the time, falling acorn speed, and hits allowed for each Chicken Little level.
+            </p>
+
+            <article class="admin-mini-card admin-mini-card--wide">
+              <h3>Chicken Little Controls</h3>
+              <label class="admin-toggle-row" for="chickenLittleRequireClickAndDrag">
+                <input id="chickenLittleRequireClickAndDrag" type="checkbox" />
+                <span>Require click and drag to move</span>
+              </label>
+              <p class="admin-panel-note">
+                When off, students move the flock by sliding the cursor without clicking.
+              </p>
+            </article>
+
+            <div class="admin-level-grid">
+              <article class="admin-level-card">
+                <h3>Level 1 — Chicken Little</h3>
+
+                <label class="admin-task-label" for="chickenLittleTime1">Level time (seconds)</label>
+                <input id="chickenLittleTime1" class="admin-task-input" type="number" min="20" max="120" step="5" value="45" />
+
+                <label class="admin-task-label" for="chickenLittleSpeed1">Acorn speed (%)</label>
+                <input id="chickenLittleSpeed1" class="admin-task-input" type="number" min="50" max="200" step="5" value="100" />
+                <p class="admin-panel-note">100% keeps the normal acorn speed.</p>
+
+                <label class="admin-task-label" for="chickenLittleHits1">Hits allowed</label>
+                <input id="chickenLittleHits1" class="admin-task-input" type="number" min="1" max="10" step="1" value="3" />
+              </article>
+
+              <article class="admin-level-card">
+                <h3>Level 2 — Turkey Lurky</h3>
+
+                <label class="admin-task-label" for="chickenLittleTime2">Level time (seconds)</label>
+                <input id="chickenLittleTime2" class="admin-task-input" type="number" min="20" max="120" step="5" value="45" />
+
+                <label class="admin-task-label" for="chickenLittleSpeed2">Acorn speed (%)</label>
+                <input id="chickenLittleSpeed2" class="admin-task-input" type="number" min="50" max="200" step="5" value="100" />
+                <p class="admin-panel-note">100% keeps the normal acorn speed.</p>
+
+                <label class="admin-task-label" for="chickenLittleHits2">Hits allowed</label>
+                <input id="chickenLittleHits2" class="admin-task-input" type="number" min="1" max="10" step="1" value="3" />
+              </article>
+
+              <article class="admin-level-card">
+                <h3>Level 3 — Ducky Lucky</h3>
+
+                <label class="admin-task-label" for="chickenLittleTime3">Level time (seconds)</label>
+                <input id="chickenLittleTime3" class="admin-task-input" type="number" min="20" max="120" step="5" value="45" />
+
+                <label class="admin-task-label" for="chickenLittleSpeed3">Acorn speed (%)</label>
+                <input id="chickenLittleSpeed3" class="admin-task-input" type="number" min="50" max="200" step="5" value="100" />
+                <p class="admin-panel-note">100% keeps the normal acorn speed.</p>
+
+                <label class="admin-task-label" for="chickenLittleHits3">Hits allowed</label>
+                <input id="chickenLittleHits3" class="admin-task-input" type="number" min="1" max="10" step="1" value="3" />
+              </article>
+
+              <article class="admin-level-card">
+                <h3>Level 4 — Henny Penny</h3>
+
+                <label class="admin-task-label" for="chickenLittleTime4">Level time (seconds)</label>
+                <input id="chickenLittleTime4" class="admin-task-input" type="number" min="20" max="120" step="5" value="45" />
+
+                <label class="admin-task-label" for="chickenLittleSpeed4">Acorn speed (%)</label>
+                <input id="chickenLittleSpeed4" class="admin-task-input" type="number" min="50" max="200" step="5" value="100" />
+                <p class="admin-panel-note">100% keeps the normal acorn speed.</p>
+
+                <label class="admin-task-label" for="chickenLittleHits4">Hits allowed</label>
+                <input id="chickenLittleHits4" class="admin-task-input" type="number" min="1" max="10" step="1" value="3" />
+              </article>
+            </div>
+          </section>
           <section class="admin-tab-content" id="panelHauntedStreet" role="tabpanel" aria-labelledby="tabHauntedStreet" aria-hidden="true">
             <p class="admin-panel-note">
               Configure how students control Haunted Street.

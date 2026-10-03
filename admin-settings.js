@@ -25,6 +25,15 @@ const senseBuilderGameActiveToggle = document.getElementById("senseBuilderGameAc
 const senseBuilderRequireClickAndDragToggle = document.getElementById("senseBuilderRequireClickAndDrag");
 const fireflyForestGameActiveToggle = document.getElementById("fireflyForestGameActive");
 const chickenLittleGameActiveToggle = document.getElementById("chickenLittleGameActive");
+const chickenLittleRequireClickAndDragToggle = document.getElementById("chickenLittleRequireClickAndDrag");
+const chickenLittleLevelInputs = [1, 2, 3, 4].map((level) => ({
+  time: document.getElementById(`chickenLittleTime${level}`),
+  speed: document.getElementById(`chickenLittleSpeed${level}`),
+  hits: document.getElementById(`chickenLittleHits${level}`),
+}));
+const DEFAULT_CHICKEN_LITTLE_TIMES = [45, 45, 45, 45];
+const DEFAULT_CHICKEN_LITTLE_SPEEDS = [100, 100, 100, 100];
+const DEFAULT_CHICKEN_LITTLE_HITS = [3, 3, 3, 3];
 const followBirdClickingEnabledToggle = document.getElementById("followBirdClickingEnabled");
 const monsterLunchGameActiveToggle = document.getElementById("monsterLunchGameActive");
 const deerRunGameActiveToggle = document.getElementById("deerRunGameActive");
@@ -2440,6 +2449,14 @@ async function loadTask1Settings() {
     localStorage.getItem(FIREFLY_FOREST_GAME_ACTIVE_KEY),
     true
   );
+  let chickenLittleRequireClickAndDrag = false;
+
+  let chickenLittleLevelTimes =
+    DEFAULT_CHICKEN_LITTLE_TIMES.slice();
+  let chickenLittleLevelSpeeds =
+    DEFAULT_CHICKEN_LITTLE_SPEEDS.slice();
+  let chickenLittleLevelHits =
+    DEFAULT_CHICKEN_LITTLE_HITS.slice();
 
   let followBirdClickingEnabled = parseTaskEnabled(
     localStorage.getItem(FOLLOW_BIRD_CLICKING_ENABLED_KEY),
@@ -2831,6 +2848,60 @@ async function loadTask1Settings() {
         data.fireflyForestGameActive,
         fireflyForestGameActive
       );
+      chickenLittleRequireClickAndDrag =
+        parseTaskEnabled(
+          data.chickenLittleRequireClickAndDrag,
+          chickenLittleRequireClickAndDrag
+        );
+
+
+      if (Array.isArray(data.chickenLittleLevelTimes)) {
+        chickenLittleLevelTimes =
+          DEFAULT_CHICKEN_LITTLE_TIMES.map(
+            (fallback, index) => {
+              const value = Number.parseInt(
+                data.chickenLittleLevelTimes[index],
+                10
+              );
+
+              return Number.isFinite(value)
+                ? Math.min(120, Math.max(20, value))
+                : fallback;
+            }
+          );
+      }
+
+      if (Array.isArray(data.chickenLittleLevelSpeeds)) {
+        chickenLittleLevelSpeeds =
+          DEFAULT_CHICKEN_LITTLE_SPEEDS.map(
+            (fallback, index) => {
+              const value = Number.parseInt(
+                data.chickenLittleLevelSpeeds[index],
+                10
+              );
+
+              return Number.isFinite(value)
+                ? Math.min(200, Math.max(50, value))
+                : fallback;
+            }
+          );
+      }
+
+      if (Array.isArray(data.chickenLittleLevelHits)) {
+        chickenLittleLevelHits =
+          DEFAULT_CHICKEN_LITTLE_HITS.map(
+            (fallback, index) => {
+              const value = Number.parseInt(
+                data.chickenLittleLevelHits[index],
+                10
+              );
+
+              return Number.isFinite(value)
+                ? Math.min(10, Math.max(1, value))
+                : fallback;
+            }
+          );
+      }
 
       followBirdClickingEnabled = parseTaskEnabled(
         data.followBirdClickingEnabled,
@@ -3085,6 +3156,31 @@ async function loadTask1Settings() {
     deerRunRequireClickAndDragToggle.checked =
       deerRunRequireClickAndDrag;
   }
+  if (chickenLittleRequireClickAndDragToggle) {
+    chickenLittleRequireClickAndDragToggle.checked =
+      chickenLittleRequireClickAndDrag;
+  }
+
+
+  chickenLittleLevelInputs.forEach((inputs, index) => {
+    if (inputs.time) {
+      inputs.time.value = String(
+        chickenLittleLevelTimes[index]
+      );
+    }
+
+    if (inputs.speed) {
+      inputs.speed.value = String(
+        chickenLittleLevelSpeeds[index]
+      );
+    }
+
+    if (inputs.hits) {
+      inputs.hits.value = String(
+        chickenLittleLevelHits[index]
+      );
+    }
+  });
 
   if (hauntedStreetGameActiveToggle) {
     hauntedStreetGameActiveToggle.checked =
@@ -3328,6 +3424,53 @@ async function saveTask1Settings() {
     chickenLittleGameActiveToggle &&
     chickenLittleGameActiveToggle.checked
   );
+  const chickenLittleRequireClickAndDrag = Boolean(
+    chickenLittleRequireClickAndDragToggle &&
+    chickenLittleRequireClickAndDragToggle.checked
+  );
+
+
+  const chickenLittleLevelTimes =
+    chickenLittleLevelInputs.map((inputs, index) => {
+      const value = Number.parseInt(
+        inputs.time
+          ? inputs.time.value
+          : DEFAULT_CHICKEN_LITTLE_TIMES[index],
+        10
+      );
+
+      return Number.isFinite(value)
+        ? Math.min(120, Math.max(20, value))
+        : DEFAULT_CHICKEN_LITTLE_TIMES[index];
+    });
+
+  const chickenLittleLevelSpeeds =
+    chickenLittleLevelInputs.map((inputs, index) => {
+      const value = Number.parseInt(
+        inputs.speed
+          ? inputs.speed.value
+          : DEFAULT_CHICKEN_LITTLE_SPEEDS[index],
+        10
+      );
+
+      return Number.isFinite(value)
+        ? Math.min(200, Math.max(50, value))
+        : DEFAULT_CHICKEN_LITTLE_SPEEDS[index];
+    });
+
+  const chickenLittleLevelHits =
+    chickenLittleLevelInputs.map((inputs, index) => {
+      const value = Number.parseInt(
+        inputs.hits
+          ? inputs.hits.value
+          : DEFAULT_CHICKEN_LITTLE_HITS[index],
+        10
+      );
+
+      return Number.isFinite(value)
+        ? Math.min(10, Math.max(1, value))
+        : DEFAULT_CHICKEN_LITTLE_HITS[index];
+    });
 
   const followBirdClickingEnabled = Boolean(
     followBirdClickingEnabledToggle &&
@@ -3882,6 +4025,10 @@ async function saveTask1Settings() {
         bugMeadowLevels,
         fireflyForestGameActive,
         chickenLittleGameActive,
+        chickenLittleRequireClickAndDrag,
+        chickenLittleLevelTimes,
+        chickenLittleLevelSpeeds,
+        chickenLittleLevelHits,
         fireflyForestLevels,
         followBirdClickingEnabled,
         monsterLunchGameActive,
@@ -4192,6 +4339,7 @@ const allToggles = [
   senseBuilderRequireClickAndDragToggle,
   fireflyForestGameActiveToggle,
   chickenLittleGameActiveToggle,
+  chickenLittleRequireClickAndDragToggle,
   followBirdClickingEnabledToggle,
   monsterLunchGameActiveToggle,
   deerRunGameActiveToggle,

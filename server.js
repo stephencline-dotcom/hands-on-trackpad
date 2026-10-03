@@ -67,6 +67,10 @@ const DEFAULT_SETTINGS = {
   senseBuilderGameActive: true,
   senseBuilderRequireClickAndDrag: false,
   chickenLittleGameActive: true,
+  chickenLittleRequireClickAndDrag: false,
+  chickenLittleLevelTimes: [45, 45, 45, 45],
+  chickenLittleLevelSpeeds: [100, 100, 100, 100],
+  chickenLittleLevelHits: [3, 3, 3, 3],
   fireflyForestGameActive: true,
   followBirdClickingEnabled: false,
   monsterLunchGameActive: true,
@@ -568,6 +572,31 @@ function loadSettings() {
         data.chickenLittleGameActive,
         DEFAULT_SETTINGS.chickenLittleGameActive
       ),
+      chickenLittleRequireClickAndDrag: parseTaskEnabled(
+        data.chickenLittleRequireClickAndDrag,
+        DEFAULT_SETTINGS.chickenLittleRequireClickAndDrag
+      ),
+      chickenLittleLevelTimes:
+        parseHauntedStreetLevelNumbers(
+          data.chickenLittleLevelTimes,
+          DEFAULT_SETTINGS.chickenLittleLevelTimes,
+          20,
+          120
+        ),
+      chickenLittleLevelSpeeds:
+        parseHauntedStreetLevelNumbers(
+          data.chickenLittleLevelSpeeds,
+          DEFAULT_SETTINGS.chickenLittleLevelSpeeds,
+          50,
+          200
+        ),
+      chickenLittleLevelHits:
+        parseHauntedStreetLevelNumbers(
+          data.chickenLittleLevelHits,
+          DEFAULT_SETTINGS.chickenLittleLevelHits,
+          1,
+          10
+        ),
       fireflyForestGameActive: parseTaskEnabled(
         data.fireflyForestGameActive,
         DEFAULT_SETTINGS.fireflyForestGameActive
@@ -876,6 +905,35 @@ function saveSettings(settings) {
         existing.chickenLittleGameActive,
       DEFAULT_SETTINGS.chickenLittleGameActive
     ),
+    chickenLittleRequireClickAndDrag: parseTaskEnabled(
+      settings.chickenLittleRequireClickAndDrag ??
+        existing.chickenLittleRequireClickAndDrag,
+      DEFAULT_SETTINGS.chickenLittleRequireClickAndDrag
+    ),
+    chickenLittleLevelTimes:
+      parseHauntedStreetLevelNumbers(
+        settings.chickenLittleLevelTimes ??
+          existing.chickenLittleLevelTimes,
+        DEFAULT_SETTINGS.chickenLittleLevelTimes,
+        20,
+        120
+      ),
+    chickenLittleLevelSpeeds:
+      parseHauntedStreetLevelNumbers(
+        settings.chickenLittleLevelSpeeds ??
+          existing.chickenLittleLevelSpeeds,
+        DEFAULT_SETTINGS.chickenLittleLevelSpeeds,
+        50,
+        200
+      ),
+    chickenLittleLevelHits:
+      parseHauntedStreetLevelNumbers(
+        settings.chickenLittleLevelHits ??
+          existing.chickenLittleLevelHits,
+        DEFAULT_SETTINGS.chickenLittleLevelHits,
+        1,
+        10
+      ),
     fireflyForestGameActive: parseTaskEnabled(
       settings.fireflyForestGameActive ??
         existing.fireflyForestGameActive,
@@ -1359,12 +1417,4 @@ server.listen(PORT, HOST, () => {
   // eslint-disable-next-line no-console
   console.log(`hands-on-trackpad running at http://${HOST}:${PORT}`);
 });
-
-
-
-
-
-
-
-
 
