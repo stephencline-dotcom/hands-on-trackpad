@@ -238,6 +238,12 @@
   }
 
   function updateHud() {
+    const levelDisplay = document.getElementById("chickenLevel");
+
+    if (levelDisplay) {
+      levelDisplay.textContent = String(currentLevel);
+    }
+
     heartsText.textContent = String(hearts);
     timeText.textContent = formatTime(
       currentLevelDurationMs() - elapsedMs
