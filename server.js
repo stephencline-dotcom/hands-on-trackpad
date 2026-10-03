@@ -65,6 +65,7 @@ const DEFAULT_SETTINGS = {
   martianMadnessGameActive: true,
   bugMeadowGameActive: true,
   senseBuilderGameActive: true,
+  senseBuilderRequireClickAndDrag: false,
   chickenLittleGameActive: true,
   fireflyForestGameActive: true,
   followBirdClickingEnabled: false,
@@ -559,6 +560,10 @@ function loadSettings() {
         data.senseBuilderGameActive,
         DEFAULT_SETTINGS.senseBuilderGameActive
       ),
+      senseBuilderRequireClickAndDrag: parseTaskEnabled(
+        data.senseBuilderRequireClickAndDrag,
+        DEFAULT_SETTINGS.senseBuilderRequireClickAndDrag
+      ),
       chickenLittleGameActive: parseTaskEnabled(
         data.chickenLittleGameActive,
         DEFAULT_SETTINGS.chickenLittleGameActive
@@ -860,6 +865,11 @@ function saveSettings(settings) {
       settings.senseBuilderGameActive ??
         existing.senseBuilderGameActive,
       DEFAULT_SETTINGS.senseBuilderGameActive
+    ),
+    senseBuilderRequireClickAndDrag: parseTaskEnabled(
+      settings.senseBuilderRequireClickAndDrag ??
+        existing.senseBuilderRequireClickAndDrag,
+      DEFAULT_SETTINGS.senseBuilderRequireClickAndDrag
     ),
     chickenLittleGameActive: parseTaskEnabled(
       settings.chickenLittleGameActive ??

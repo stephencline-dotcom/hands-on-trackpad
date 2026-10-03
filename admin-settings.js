@@ -22,6 +22,7 @@ const firefighterRescueGameActiveToggle = document.getElementById("firefighterRe
 const martianMadnessGameActiveToggle = document.getElementById("martianMadnessGameActive");
 const bugMeadowGameActiveToggle = document.getElementById("bugMeadowGameActive");
 const senseBuilderGameActiveToggle = document.getElementById("senseBuilderGameActive");
+const senseBuilderRequireClickAndDragToggle = document.getElementById("senseBuilderRequireClickAndDrag");
 const fireflyForestGameActiveToggle = document.getElementById("fireflyForestGameActive");
 const chickenLittleGameActiveToggle = document.getElementById("chickenLittleGameActive");
 const followBirdClickingEnabledToggle = document.getElementById("followBirdClickingEnabled");
@@ -235,6 +236,7 @@ const FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY = "firefighterRescueGameActive";
 const MARTIAN_MADNESS_GAME_ACTIVE_KEY = "martianMadnessGameActive";
 const BUG_MEADOW_GAME_ACTIVE_KEY = "bugMeadowGameActive";
 const SENSE_BUILDER_GAME_ACTIVE_KEY = "senseBuilderGameActive";
+const SENSE_BUILDER_REQUIRE_CLICK_AND_DRAG_KEY = "senseBuilderRequireClickAndDrag";
 const FIREFLY_FOREST_GAME_ACTIVE_KEY = "fireflyForestGameActive";
 const FOLLOW_BIRD_CLICKING_ENABLED_KEY = "followBirdClickingEnabled";
 const MONSTER_LUNCH_GAME_ACTIVE_KEY = "monsterLunchGameActive";
@@ -2421,6 +2423,14 @@ async function loadTask1Settings() {
     true
   );
 
+  let senseBuilderRequireClickAndDrag =
+    parseTaskEnabled(
+      localStorage.getItem(
+        SENSE_BUILDER_REQUIRE_CLICK_AND_DRAG_KEY
+      ),
+      false
+    );
+
   let senseBuilderGameActive = parseTaskEnabled(
     localStorage.getItem(SENSE_BUILDER_GAME_ACTIVE_KEY),
     true
@@ -2802,6 +2812,17 @@ async function loadTask1Settings() {
         data.bugMeadowGameActive,
         bugMeadowGameActive
       );
+      senseBuilderRequireClickAndDrag =
+        parseTaskEnabled(
+          data.senseBuilderRequireClickAndDrag,
+          senseBuilderRequireClickAndDrag
+        );
+
+      localStorage.setItem(
+        SENSE_BUILDER_REQUIRE_CLICK_AND_DRAG_KEY,
+        String(senseBuilderRequireClickAndDrag)
+      );
+
       senseBuilderGameActive = parseTaskEnabled(
         data.senseBuilderGameActive,
         senseBuilderGameActive
@@ -3028,6 +3049,11 @@ async function loadTask1Settings() {
   if (bugMeadowGameActiveToggle) {
     bugMeadowGameActiveToggle.checked = bugMeadowGameActive;
   }
+  if (senseBuilderRequireClickAndDragToggle) {
+    senseBuilderRequireClickAndDragToggle.checked =
+      senseBuilderRequireClickAndDrag;
+  }
+
   if (senseBuilderGameActiveToggle) {
     senseBuilderGameActiveToggle.checked =
       senseBuilderGameActive;
@@ -3276,6 +3302,16 @@ async function saveTask1Settings() {
   const martianMadnessGameActive = Boolean(martianMadnessGameActiveToggle && martianMadnessGameActiveToggle.checked);
   const bugMeadowGameActive = Boolean(
     bugMeadowGameActiveToggle && bugMeadowGameActiveToggle.checked
+  );
+
+  const senseBuilderRequireClickAndDrag = Boolean(
+    senseBuilderRequireClickAndDragToggle &&
+    senseBuilderRequireClickAndDragToggle.checked
+  );
+
+  localStorage.setItem(
+    SENSE_BUILDER_REQUIRE_CLICK_AND_DRAG_KEY,
+    String(senseBuilderRequireClickAndDrag)
   );
 
   const senseBuilderGameActive = Boolean(
@@ -3841,6 +3877,7 @@ async function saveTask1Settings() {
         martianMadnessGameActive,
         bugMeadowGameActive,
         senseBuilderGameActive,
+        senseBuilderRequireClickAndDrag,
         bugMeadowRequireClickAndDrag,
         bugMeadowLevels,
         fireflyForestGameActive,
@@ -4152,6 +4189,7 @@ const allToggles = [
   martianMadnessGameActiveToggle,
   bugMeadowGameActiveToggle,
   senseBuilderGameActiveToggle,
+  senseBuilderRequireClickAndDragToggle,
   fireflyForestGameActiveToggle,
   chickenLittleGameActiveToggle,
   followBirdClickingEnabledToggle,

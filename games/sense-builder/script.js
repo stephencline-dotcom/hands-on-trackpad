@@ -342,6 +342,55 @@
   let resultController = null;
   let trackpadGuide = null;
 
+  /*
+   * Sense Builder input mode.
+   * Default: slide without clicking.
+   * Teacher option: require click-and-drag.
+   */
+  let senseBuilderRequireClickAndDrag =
+    localStorage.getItem(
+      "senseBuilderRequireClickAndDrag"
+    ) === "true";
+
+  async function loadSenseBuilderInputMode() {
+    try {
+      const response = await fetch(
+        "/api/settings",
+        {
+          cache: "no-store",
+        }
+      );
+
+      if (!response.ok) {
+        return;
+      }
+
+      const settings =
+        await response.json();
+
+      if (
+        typeof settings
+          .senseBuilderRequireClickAndDrag ===
+          "boolean"
+      ) {
+        senseBuilderRequireClickAndDrag =
+          settings
+            .senseBuilderRequireClickAndDrag;
+
+        localStorage.setItem(
+          "senseBuilderRequireClickAndDrag",
+          String(
+            senseBuilderRequireClickAndDrag
+          )
+        );
+      }
+    } catch {
+      /* Keep local/default value. */
+    }
+  }
+
+  loadSenseBuilderInputMode();
+
   const dragState = {
     piece: null,
     pointerId: null,
@@ -1615,6 +1664,14 @@
     const piece =
       event.currentTarget;
 
+    const automaticPointerPickup =
+      !senseBuilderRequireClickAndDrag &&
+      event.type === "pointerenter";
+
+    if (dragState.piece) {
+      return;
+    }
+
     if (
       !gameRunning ||
       piece.hidden ||
@@ -1626,6 +1683,7 @@
     }
 
     if (
+      !automaticPointerPickup &&
       event.button !== 0 &&
       event.pointerType !== "touch"
     ) {
@@ -1792,6 +1850,22 @@
       event.clientX,
       event.clientY
     );
+
+    if (!senseBuilderRequireClickAndDrag) {
+      const pieceMatch =
+        piece.dataset.piece || "";
+
+      const touchedZone =
+        getZoneAtPoint(
+          event.clientX,
+          event.clientY,
+          pieceMatch
+        );
+
+      if (touchedZone) {
+        handlePiecePointerEnd(event);
+      }
+    }
   }
 
   function handlePiecePointerEnd(
@@ -1799,6 +1873,13 @@
   ) {
     const piece =
       dragState.piece;
+
+    if (
+      !senseBuilderRequireClickAndDrag &&
+      event.type !== "pointermove"
+    ) {
+      return;
+    }
 
     if (
       !piece ||
@@ -2148,11 +2229,18 @@
 
     showFeedback(
       "correct",
-      "☝️ DRAG!"
+      senseBuilderRequireClickAndDrag
+        ? "☝️ DRAG!"
+        : "↔️ SLIDE!"
     );
   }
 
   pieces.forEach((piece) => {
+    piece.addEventListener(
+      "pointerenter",
+      handlePiecePointerDown
+    );
+
     piece.addEventListener(
       "pointerdown",
       handlePiecePointerDown
@@ -2173,6 +2261,33 @@
       handlePiecePointerEnd
     );
   });
+
+  document.addEventListener(
+    "pointermove",
+    (event) => {
+      if (
+        senseBuilderRequireClickAndDrag ||
+        !dragState.piece
+      ) {
+        return;
+      }
+
+      const eventTarget = event.target;
+
+      /*
+       * The piece already has its own pointermove
+       * listener. Avoid processing that same event twice.
+       */
+      if (
+        eventTarget &&
+        dragState.piece.contains(eventTarget)
+      ) {
+        return;
+      }
+
+      handlePiecePointerMove(event);
+    }
+  );
 
   startButton.addEventListener(
     "click",
