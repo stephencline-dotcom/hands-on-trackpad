@@ -21,6 +21,20 @@
   const skyFallingAudio =
     document.getElementById("chickenSkyFallingAudio");
 
+  const chickenBackgroundAudio =
+    document.getElementById("chickenBackgroundAudio");
+
+  const chickenFoxyAudio =
+    document.getElementById("chickenFoxyAudio");
+
+  if (chickenBackgroundAudio) {
+    chickenBackgroundAudio.volume = 0.16;
+  }
+
+  if (chickenFoxyAudio) {
+    chickenFoxyAudio.volume = 1;
+  }
+
   const DEFAULT_LEVEL_TIMES = [45, 45, 45, 45];
   const DEFAULT_LEVEL_SPEEDS = [100, 100, 100, 100];
   const DEFAULT_LEVEL_HITS = [3, 3, 3, 3];
@@ -63,6 +77,37 @@
 
   let acorns = [];
   let effects = [];
+
+  // Level 5: Foxy Loxy boss state
+  let activeFlockMembers = [
+    "chicken",
+    "turkey",
+    "ducky",
+    "henny",
+  ];
+
+  let capturedFlockMembers = [];
+
+  let foxy = {
+    x: 930,
+    y: 440,
+    targetX: 930,
+    state: "patrol",
+    facing: -1,
+    nextChargeAt: 0,
+    chargeStartedAt: 0,
+    stunnedUntil: 0,
+    warningUntil: 0,
+    retreatUntil: 0,
+    patrolDirection: 1,
+    carrying: null,
+    health: 100,
+    maxHealth: 100,
+  };
+
+  let playerAcorns = [];
+  let nextAutomaticShotAt = 0;
+  let level5AutomaticShooting = false;
 
   const guide =
     window.trackpadGuide &&
@@ -277,6 +322,44 @@
     player.targetY = clamp(point.y, 400, 540);
   }
 
+  function shootLevel5Acorn() {
+    if (
+      !running ||
+      currentLevel !== 5 ||
+      activeFlockMembers.length === 0
+    ) {
+      return;
+    }
+
+    const startX =
+      player.x + 38 * facingDirection;
+
+    const startY =
+      player.y - 78;
+
+    const dx =
+      foxy.x - startX;
+
+    const dy =
+      (foxy.y - 65) - startY;
+
+    const distance =
+      Math.max(
+        1,
+        Math.hypot(dx, dy)
+      );
+
+    const speed = 720;
+
+    playerAcorns.push({
+      x: startX,
+      y: startY,
+      vx: (dx / distance) * speed,
+      vy: (dy / distance) * speed,
+      rotation: 0,
+      life: 2.2,
+    });
+  }
   function startJump() {
     if (
       !running ||
@@ -358,6 +441,11 @@
   }
 
   function finishLevel(success) {
+    if (chickenBackgroundAudio) {
+      chickenBackgroundAudio.pause();
+      chickenBackgroundAudio.currentTime = 0;
+    }
+
     running = false;
     dragging = false;
     canvas.classList.remove("is-dragging");
@@ -379,10 +467,15 @@
           "Level 3 complete! Henny Penny is joining the flock!";
         startButton.textContent = "Start Level 4";
         pendingLevel = 4;
+      } else if (currentLevel === 4) {
+        statusText.textContent =
+          "The flock made it through! But Foxy Loxy is waiting ahead!";
+        startButton.textContent = "Face Foxy Loxy";
+        pendingLevel = 5;
       } else {
         statusText.textContent =
-          "Level 4 complete! The whole flock made it safely!";
-        startButton.textContent = "Play Level 4 Again";
+          "You saved the flock from Foxy Loxy!";
+        startButton.textContent = "Play Again";
         pendingLevel = null;
       }
     } else {
@@ -400,7 +493,10 @@
   }
 
   function resetLevel() {
-    hearts = currentLevelHitsAllowed();
+    hearts =
+      currentLevel === 5
+        ? 4
+        : currentLevelHitsAllowed();
     elapsedMs = 0;
     worldOffset = 0;
     acorns = [];
@@ -408,6 +504,38 @@
     invulnerableUntil = 0;
     jumpHeight = 0;
     jumpVelocity = 0;
+
+    if (currentLevel === 5) {
+      activeFlockMembers = [
+        "chicken",
+        "turkey",
+        "ducky",
+        "henny",
+      ];
+
+      capturedFlockMembers = [];
+      playerAcorns = [];
+
+      foxy = {
+        x: 930,
+        y: 440,
+        targetX: 930,
+        state: "patrol",
+        facing: -1,
+        nextChargeAt: performance.now() + 1800,
+        chargeStartedAt: 0,
+        stunnedUntil: 0,
+        warningUntil: 0,
+        retreatUntil: 0,
+        patrolDirection: 1,
+        carrying: null,
+        health: 100,
+        maxHealth: 100,
+      };
+
+      nextAutomaticShotAt =
+        performance.now() + 900;
+    }
 
     player = {
       x: 275,
@@ -426,8 +554,57 @@
     }
 
     resetLevel();
+
+    if (chickenBackgroundAudio) {
+      chickenBackgroundAudio.currentTime = 0;
+
+      const backgroundPromise =
+        chickenBackgroundAudio.play();
+
+      if (
+        backgroundPromise &&
+        typeof backgroundPromise.catch === "function"
+      ) {
+        backgroundPromise.catch(() => {});
+      }
+    }
+
+    if (chickenFoxyAudio) {
+      chickenFoxyAudio.pause();
+      chickenFoxyAudio.currentTime = 0;
+    }
+
     if (skyFallingAudio) {
       skyFallingAudio.currentTime = 0;
+
+      const playFoxyAfterSky = () => {
+        skyFallingAudio.removeEventListener(
+          "ended",
+          playFoxyAfterSky
+        );
+
+        if (
+          currentLevel === 5 &&
+          chickenFoxyAudio
+        ) {
+          chickenFoxyAudio.currentTime = 0;
+
+          const foxyPromise =
+            chickenFoxyAudio.play();
+
+          if (
+            foxyPromise &&
+            typeof foxyPromise.catch === "function"
+          ) {
+            foxyPromise.catch(() => {});
+          }
+        }
+      };
+
+      skyFallingAudio.addEventListener(
+        "ended",
+        playFoxyAfterSky
+      );
 
       const playPromise =
         skyFallingAudio.play();
@@ -439,14 +616,437 @@
         playPromise.catch(() => {});
       }
     }
+
     running = true;
     previousFrameTime = performance.now();
     nextAcornAt = previousFrameTime + 900;
     startPanel.hidden = true;
   }
+  function updateLevel5Boss(
+    deltaSeconds,
+    now
+  ) {
+    // The flock has reached Foxy's den.
+    // The world no longer scrolls.
 
+    player.x +=
+      (player.targetX - player.x) * 0.17;
+
+    player.y +=
+      (player.targetY - player.y) * 0.17;
+
+    const horizontalTravel =
+      player.targetX - player.x;
+
+    if (
+      Math.abs(horizontalTravel) > 2
+    ) {
+      facingDirection =
+        horizontalTravel < 0 ? -1 : 1;
+    }
+
+    // Foxy patrols vertically in front of his den.
+    if (now >= foxy.stunnedUntil) {
+      if (foxy.state === "patrol") {
+        const patrolSpeed = 105;
+
+        foxy.y +=
+          patrolSpeed *
+          foxy.patrolDirection *
+          deltaSeconds;
+
+        if (foxy.y <= 350) {
+          foxy.y = 350;
+          foxy.patrolDirection = 1;
+        }
+
+        if (foxy.y >= 510) {
+          foxy.y = 510;
+          foxy.patrolDirection = -1;
+        }
+
+        foxy.x = 930;
+        foxy.facing = -1;
+
+        if (now >= foxy.nextChargeAt) {
+          foxy.state = "warning";
+          foxy.warningUntil = now + 850;
+        }
+      } else if (foxy.state === "warning") {
+        // Brief pause so the student can see
+        // that Foxy is about to attack.
+        foxy.facing =
+          player.x < foxy.x ? -1 : 1;
+
+        if (now >= foxy.warningUntil) {
+          foxy.state = "charge";
+          foxy.chargeStartedAt = now;
+        }
+      } else if (foxy.state === "charge") {
+        // Foxy commits to a long attack across the clearing.
+        const targetX =
+          player.x - 90;
+
+        const targetY =
+          player.y;
+
+        const dx =
+          targetX - foxy.x;
+
+        const dy =
+          targetY - foxy.y;
+
+        const distance =
+          Math.max(
+            1,
+            Math.hypot(dx, dy)
+          );
+
+        const chargeSpeed = 900;
+
+        foxy.x +=
+          (dx / distance) *
+          chargeSpeed *
+          deltaSeconds;
+
+        foxy.y +=
+          (dy / distance) *
+          chargeSpeed *
+          deltaSeconds;
+
+        foxy.facing =
+          dx < 0 ? -1 : 1;
+
+        // Check Foxy against every bird still in the flock,
+        // rather than only Chicken Little's control point.
+        const flockTargets = [];
+
+        if (
+          activeFlockMembers.includes(
+            "chicken"
+          )
+        ) {
+          flockTargets.push({
+            x: player.x,
+            y: player.y - 65,
+            radius: 38,
+          });
+        }
+
+        if (
+          activeFlockMembers.includes(
+            "turkey"
+          )
+        ) {
+          const turkey =
+            getTurkeyPosition();
+
+          flockTargets.push({
+            x: turkey.x,
+            y: turkey.y - 72,
+            radius: 42,
+          });
+        }
+
+        if (
+          activeFlockMembers.includes(
+            "ducky"
+          )
+        ) {
+          const duck =
+            getDuckyPosition();
+
+          flockTargets.push({
+            x: duck.x,
+            y: duck.y - 60,
+            radius: 36,
+          });
+        }
+
+        if (
+          activeFlockMembers.includes(
+            "henny"
+          )
+        ) {
+          const henny =
+            getHennyPosition();
+
+          flockTargets.push({
+            x: henny.x,
+            y: henny.y - 63,
+            radius: 38,
+          });
+        }
+
+        let touchedFlock = false;
+
+        for (const target of flockTargets) {
+          const touchDistance =
+            Math.hypot(
+              foxy.x - target.x,
+              (foxy.y - 60) - target.y
+            );
+
+          if (
+            touchDistance <=
+            target.radius + 30
+          ) {
+            touchedFlock = true;
+            break;
+          }
+        }
+
+        if (touchedFlock) {
+          const captured =
+            activeFlockMembers.pop();
+
+          if (captured) {
+            capturedFlockMembers.push(
+              captured
+            );
+
+            foxy.carrying =
+              captured;
+
+            hearts =
+              activeFlockMembers.length;
+
+            createImpact(
+              foxy.x,
+              foxy.y - 45,
+              "#ef7d32"
+            );
+
+            updateHud();
+          }
+
+          if (
+            activeFlockMembers.length === 0
+          ) {
+            running = false;
+            dragging = false;
+
+            canvas.classList.remove(
+              "is-dragging"
+            );
+
+            statusText.textContent =
+              "Foxy Loxy caught the whole flock! Try again!";
+
+            startButton.textContent =
+              "Try Foxy Loxy Again";
+
+            pendingLevel = null;
+            startPanel.hidden = false;
+
+            return;
+          }
+
+          foxy.state = "retreat";
+          foxy.retreatUntil =
+            now + 2200;
+        } else if (
+          now - foxy.chargeStartedAt >
+          5200
+        ) {
+          // Foxy made a full lunge but missed.
+          foxy.state = "retreat";
+          foxy.retreatUntil =
+            now + 1500;
+        }      } else if (foxy.state === "retreat") {
+        const denX = 1010;
+        const denY = 420;
+
+        const dx = denX - foxy.x;
+        const dy = denY - foxy.y;
+
+        const distance =
+          Math.max(
+            1,
+            Math.hypot(dx, dy)
+          );
+
+        const retreatSpeed = 360;
+
+        foxy.x +=
+          (dx / distance) *
+          retreatSpeed *
+          deltaSeconds;
+
+        foxy.y +=
+          (dy / distance) *
+          retreatSpeed *
+          deltaSeconds;
+
+        foxy.facing =
+          dx < 0 ? -1 : 1;
+
+        if (
+          distance <= 22 ||
+          now >= foxy.retreatUntil
+        ) {
+          foxy.x = 930;
+          foxy.y = 420;
+          foxy.facing = -1;
+          foxy.carrying = null;
+          foxy.state = "patrol";
+
+          foxy.nextChargeAt =
+            now +
+            3000 +
+            Math.random() * 2200;
+        }
+      }
+    }
+    // Update player-thrown acorns.
+    for (const shot of playerAcorns) {
+      shot.x +=
+        shot.vx * deltaSeconds;
+
+      shot.y +=
+        shot.vy * deltaSeconds;
+
+      shot.rotation +=
+        8 * deltaSeconds;
+
+      shot.life -=
+        deltaSeconds;
+    }
+
+    for (
+      let index =
+        playerAcorns.length - 1;
+      index >= 0;
+      index -= 1
+    ) {
+      const shot =
+        playerAcorns[index];
+
+      const dx =
+        shot.x - foxy.x;
+
+      const dy =
+        shot.y - (foxy.y - 65);
+
+      if (
+        dx * dx + dy * dy <=
+        48 * 48
+      ) {
+        playerAcorns.splice(
+          index,
+          1
+        );
+
+        createImpact(
+          foxy.x,
+          foxy.y - 65,
+          "#d8a13a"
+        );
+
+        foxy.stunnedUntil =
+          now + 550;
+
+        foxy.health = Math.max(
+          0,
+          foxy.health - 5
+        );
+
+        if (foxy.health <= 0) {
+          running = false;
+          dragging = false;
+
+          canvas.classList.remove(
+            "is-dragging"
+          );
+
+          statusText.textContent =
+            "You saved the flock from Foxy Loxy!";
+
+          startButton.textContent =
+            "Play Again";
+
+          pendingLevel = null;
+          startPanel.hidden = false;
+          updateHud();
+          return;
+        }
+
+        // A good hit interrupts Foxy's attack
+        // and knocks him back toward his den.
+        foxy.x = Math.min(
+          1010,
+          foxy.x + 70
+        );
+
+        foxy.facing = -1;
+
+        if (
+          foxy.state === "warning" ||
+          foxy.state === "charge"
+        ) {
+          foxy.state = "retreat";
+          foxy.retreatUntil =
+            now + 1100;
+        }
+
+        continue;
+      }
+
+      if (
+        shot.life <= 0 ||
+        shot.x < -80 ||
+        shot.x > canvas.width + 80 ||
+        shot.y < -80 ||
+        shot.y > canvas.height + 80
+      ) {
+        playerAcorns.splice(
+          index,
+          1
+        );
+      }
+    }
+
+    if (
+      level5AutomaticShooting &&
+      now >= nextAutomaticShotAt
+    ) {
+      shootLevel5Acorn();
+
+      nextAutomaticShotAt =
+        now + 850;
+    }
+
+    for (const effect of effects) {
+      effect.x +=
+        effect.vx * deltaSeconds;
+
+      effect.y +=
+        effect.vy * deltaSeconds;
+
+      effect.vy +=
+        310 * deltaSeconds;
+
+      effect.life -=
+        deltaSeconds;
+    }
+
+    effects = effects.filter(
+      (effect) => effect.life > 0
+    );
+
+    updateHud();
+  }
   function update(deltaSeconds, now) {
     if (!running) {
+      return;
+    }
+
+    if (currentLevel === 5) {
+      elapsedMs += deltaSeconds * 1000;
+      updateLevel5Boss(
+        deltaSeconds,
+        now
+      );
       return;
     }
 
@@ -597,7 +1197,10 @@
 
     updateHud();
 
-    if (elapsedMs >= currentLevelDurationMs()) {
+    if (
+      currentLevel !== 5 &&
+      elapsedMs >= currentLevelDurationMs()
+    ) {
       finishLevel(true);
     }
   }
@@ -1858,7 +2461,285 @@
       ctx.fill();
     }
   }
+  function drawLevel5Background() {
+    const sky = ctx.createLinearGradient(
+      0,
+      0,
+      0,
+      600
+    );
+
+    sky.addColorStop(0, "#263952");
+    sky.addColorStop(0.55, "#536b69");
+    sky.addColorStop(1, "#9a8b62");
+
+    ctx.fillStyle = sky;
+    ctx.fillRect(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
+    // Moon glow
+    const moonGlow = ctx.createRadialGradient(
+      1040,
+      100,
+      12,
+      1040,
+      100,
+      85
+    );
+
+    moonGlow.addColorStop(
+      0,
+      "rgba(250,245,195,0.85)"
+    );
+
+    moonGlow.addColorStop(
+      1,
+      "rgba(250,245,195,0)"
+    );
+
+    ctx.fillStyle = moonGlow;
+    ctx.beginPath();
+    ctx.arc(
+      1040,
+      100,
+      85,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    ctx.fillStyle = "#efe9bd";
+    ctx.beginPath();
+    ctx.arc(
+      1040,
+      100,
+      36,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    // Distant forest
+    ctx.fillStyle = "#294a3a";
+
+    const farTreeOffset =
+      -((worldOffset * 0.16) % 170);
+
+    for (
+      let x = farTreeOffset - 170;
+      x < 1400;
+      x += 170
+    ) {
+      ctx.beginPath();
+      ctx.moveTo(x + 60, 145);
+      ctx.lineTo(x, 355);
+      ctx.lineTo(x + 120, 355);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(x + 60, 205);
+      ctx.lineTo(x + 10, 390);
+      ctx.lineTo(x + 110, 390);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Ground
+    const ground = ctx.createLinearGradient(
+      0,
+      340,
+      0,
+      600
+    );
+
+    ground.addColorStop(0, "#4f6841");
+    ground.addColorStop(1, "#2f4930");
+
+    ctx.fillStyle = ground;
+    ctx.fillRect(
+      0,
+      340,
+      1200,
+      260
+    );
+
+    // Path toward Foxy's den
+    ctx.fillStyle = "#80654b";
+    ctx.beginPath();
+    ctx.moveTo(0, 485);
+    ctx.quadraticCurveTo(
+      590,
+      435,
+      1200,
+      490
+    );
+    ctx.lineTo(1200, 600);
+    ctx.lineTo(0, 600);
+    ctx.closePath();
+    ctx.fill();
+
+    // Den hill
+    ctx.fillStyle = "#435338";
+    ctx.beginPath();
+    ctx.ellipse(
+      1060,
+      375,
+      180,
+      135,
+      0,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    // Den opening
+    const denGradient =
+      ctx.createRadialGradient(
+        1050,
+        415,
+        15,
+        1050,
+        415,
+        95
+      );
+
+    denGradient.addColorStop(
+      0,
+      "#111315"
+    );
+
+    denGradient.addColorStop(
+      1,
+      "#302d27"
+    );
+
+    ctx.fillStyle = denGradient;
+    ctx.beginPath();
+    ctx.ellipse(
+      1050,
+      420,
+      92,
+      78,
+      0,
+      Math.PI,
+      Math.PI * 2
+    );
+    ctx.lineTo(
+      1142,
+      470
+    );
+    ctx.lineTo(
+      958,
+      470
+    );
+    ctx.closePath();
+    ctx.fill();
+
+    // Rocks around den
+    ctx.fillStyle = "#68645b";
+
+    [
+      [950, 445, 37, 24],
+      [1150, 448, 42, 27],
+      [980, 372, 31, 25],
+      [1120, 370, 35, 26],
+    ].forEach(
+      ([x, y, rx, ry]) => {
+        ctx.beginPath();
+        ctx.ellipse(
+          x,
+          y,
+          rx,
+          ry,
+          0,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+      }
+    );
+
+    // Twisted foreground bushes
+    const bushOffset =
+      -((worldOffset * 0.48) % 220);
+
+    for (
+      let x = bushOffset - 220;
+      x < 1450;
+      x += 220
+    ) {
+      ctx.fillStyle = "#243f2d";
+
+      ctx.beginPath();
+      ctx.arc(
+        x + 25,
+        435,
+        35,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(
+        x + 67,
+        442,
+        29,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+    }
+
+    // Ground stones
+    const stoneOffset =
+      -((worldOffset * 1.08) % 130);
+
+    for (
+      let x = stoneOffset - 130;
+      x < 1350;
+      x += 130
+    ) {
+      ctx.fillStyle =
+        "rgba(38,34,31,0.38)";
+
+      ctx.beginPath();
+      ctx.ellipse(
+        x + 35,
+        550,
+        18,
+        6,
+        0,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+    }
+
+    // Den label
+    ctx.save();
+    ctx.font =
+      "bold 20px Arial, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#f1d69a";
+    ctx.fillText(
+      "FOXY'S DEN",
+      1050,
+      325
+    );
+    ctx.restore();
+  }
   function drawBackground() {
+    if (currentLevel >= 5) {
+      drawLevel5Background();
+      return;
+    }
+
     if (currentLevel >= 4) {
       drawLevel4Background();
       return;
@@ -2380,6 +3261,12 @@
   }
 
   function drawHenny(now) {
+    if (
+      currentLevel === 5 &&
+      !activeFlockMembers.includes("henny")
+    ) {
+      return;
+    }
     if (currentLevel < 4) {
       return;
     }
@@ -2387,7 +3274,7 @@
     const henny = getHennyPosition();
 
     const runningPhase =
-      now * 0.014 + 3.1;
+      currentLevel === 5 ? 0 : now * 0.014 + 3.1;
 
     const stride =
       Math.sin(runningPhase);
@@ -2607,13 +3494,19 @@
   }
 
   function drawDucky(now) {
+    if (
+      currentLevel === 5 &&
+      !activeFlockMembers.includes("ducky")
+    ) {
+      return;
+    }
     if (currentLevel < 3) {
       return;
     }
 
     const duck = getDuckyPosition();
     const runningPhase =
-      now * 0.015 + 2.15;
+      currentLevel === 5 ? 0 : now * 0.015 + 2.15;
     const stride =
       Math.sin(runningPhase);
     const bob =
@@ -2714,7 +3607,7 @@
     drawDuckLeg(10, Math.PI);
 
     // Body
-    ctx.fillStyle = "#f2d34f";
+    ctx.fillStyle = "#b8b5aa";
     ctx.beginPath();
     ctx.ellipse(
       -2,
@@ -2727,6 +3620,20 @@
     );
     ctx.fill();
 
+    // Mallard chest
+    ctx.fillStyle = "#8a4f32";
+
+    ctx.beginPath();
+    ctx.ellipse(
+      18,
+      5,
+      22,
+      27,
+      -0.08,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
     // Wing
     ctx.save();
     ctx.translate(
@@ -2738,7 +3645,7 @@
       -0.35 + stride * 0.18
     );
 
-    ctx.fillStyle = "#d9b52c";
+    ctx.fillStyle = "#6f6a61";
     ctx.beginPath();
     ctx.ellipse(
       0,
@@ -2754,7 +3661,7 @@
     ctx.restore();
 
     // Neck / head
-    ctx.fillStyle = "#f6db5b";
+    ctx.fillStyle = "#17664f";
     ctx.beginPath();
     ctx.arc(
       18,
@@ -2765,24 +3672,28 @@
     );
     ctx.fill();
 
-    // Beak
-    ctx.fillStyle = "#ed8b23";
+    // Wide, flat duck bill
+    ctx.fillStyle = "#e8bd32";
+
     ctx.beginPath();
-    ctx.moveTo(
-      41,
-      -42
+    ctx.ellipse(
+      48,
+      -29,
+      25,
+      10,
+      0,
+      0,
+      Math.PI * 2
     );
-    ctx.lineTo(
-      70,
-      -33
-    );
-    ctx.lineTo(
-      41,
-      -25
-    );
-    ctx.closePath();
     ctx.fill();
 
+    ctx.strokeStyle = "#b88a18";
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+    ctx.moveTo(29, -27);
+    ctx.lineTo(66, -27);
+    ctx.stroke();
     // Eye
     ctx.fillStyle = "#ffffff";
     ctx.beginPath();
@@ -2838,12 +3749,18 @@
   }
 
   function drawTurkey(now) {
+    if (
+      currentLevel === 5 &&
+      !activeFlockMembers.includes("turkey")
+    ) {
+      return;
+    }
     if (currentLevel < 2) {
       return;
     }
 
     const turkey = getTurkeyPosition();
-    const runningPhase = now * 0.013 + 1.2;
+    const runningPhase = currentLevel === 5 ? 0 : now * 0.013 + 1.2;
     const stride = Math.sin(runningPhase);
     const bob =
       Math.abs(Math.sin(runningPhase)) * 5;
@@ -3072,7 +3989,13 @@
     ctx.restore();
   }
   function drawChicken(now) {
-    const runningPhase = now * 0.014;
+    if (
+      currentLevel === 5 &&
+      !activeFlockMembers.includes("chicken")
+    ) {
+      return;
+    }
+    const runningPhase = currentLevel === 5 ? 0 : now * 0.014;
     const stride = Math.sin(runningPhase);
     const bob = Math.abs(Math.sin(runningPhase)) * 4;
     const flashing =
@@ -3249,6 +4172,374 @@
     }
   }
 
+  function drawFoxy(now) {
+    if (currentLevel !== 5) {
+      return;
+    }
+
+    const runningPhase =
+      now * 0.012;
+
+    const bob =
+      Math.abs(
+        Math.sin(runningPhase)
+      ) * 4;
+
+    ctx.save();
+
+    ctx.translate(
+      foxy.x,
+      foxy.y - 60 - bob
+    );
+
+    ctx.scale(
+      foxy.facing,
+      1
+    );
+
+    // Shadow
+    ctx.fillStyle =
+      "rgba(20,20,20,0.28)";
+
+    ctx.beginPath();
+    ctx.ellipse(
+      0,
+      62 + bob,
+      54,
+      14,
+      0,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    // Tail
+    ctx.fillStyle = "#c95d27";
+
+    ctx.beginPath();
+    ctx.moveTo(-35, 8);
+    ctx.quadraticCurveTo(
+      -92,
+      -22,
+      -104,
+      24
+    );
+    ctx.quadraticCurveTo(
+      -76,
+      50,
+      -30,
+      28
+    );
+    ctx.closePath();
+    ctx.fill();
+
+    // White tail tip
+    ctx.fillStyle = "#f4e5cf";
+
+    ctx.beginPath();
+    ctx.ellipse(
+      -91,
+      20,
+      20,
+      16,
+      -0.3,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    // Body
+    ctx.fillStyle = "#c85b28";
+
+    ctx.beginPath();
+    ctx.ellipse(
+      0,
+      5,
+      48,
+      50,
+      -0.08,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    // Chest
+    ctx.fillStyle = "#efd6b6";
+
+    ctx.beginPath();
+    ctx.ellipse(
+      19,
+      13,
+      23,
+      35,
+      -0.2,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    // Legs
+    ctx.strokeStyle = "#7d3a20";
+    ctx.lineWidth = 10;
+    ctx.lineCap = "round";
+
+    ctx.beginPath();
+    ctx.moveTo(-18, 36);
+    ctx.lineTo(-24, 65);
+    ctx.moveTo(18, 36);
+    ctx.lineTo(25, 65);
+    ctx.stroke();
+
+    // Head
+    ctx.fillStyle = "#d9672c";
+
+    ctx.beginPath();
+    ctx.arc(
+      26,
+      -45,
+      34,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    // Muzzle
+    ctx.fillStyle = "#efcfad";
+
+    ctx.beginPath();
+    ctx.ellipse(
+      51,
+      -34,
+      27,
+      18,
+      -0.06,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    // Nose
+    ctx.fillStyle = "#252020";
+
+    ctx.beginPath();
+    ctx.arc(
+      73,
+      -38,
+      8,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    // Ears
+    ctx.fillStyle = "#b94e24";
+
+    ctx.beginPath();
+    ctx.moveTo(4, -70);
+    ctx.lineTo(10, -106);
+    ctx.lineTo(31, -76);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(31, -76);
+    ctx.lineTo(50, -101);
+    ctx.lineTo(53, -66);
+    ctx.closePath();
+    ctx.fill();
+
+    // Eye
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(
+      40,
+      -53,
+      8,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    ctx.fillStyle = "#172033";
+    ctx.beginPath();
+    ctx.arc(
+      43,
+      -52,
+      4,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    // Eyebrow
+    ctx.strokeStyle = "#4d281d";
+    ctx.lineWidth = 4;
+
+    ctx.beginPath();
+    ctx.moveTo(
+      31,
+      -66
+    );
+    ctx.lineTo(
+      47,
+      -70
+    );
+    ctx.stroke();
+
+    ctx.restore();
+  }
+  function drawFoxyHealthBar() {
+    if (
+      currentLevel !== 5 ||
+      !foxy
+    ) {
+      return;
+    }
+
+    const x = 390;
+    const y = 24;
+    const width = 420;
+    const height = 28;
+
+    const healthRatio =
+      clamp(
+        foxy.health / foxy.maxHealth,
+        0,
+        1
+      );
+
+    ctx.save();
+
+    ctx.font =
+      "bold 18px Arial, sans-serif";
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#ffffff";
+
+    ctx.fillText(
+      "FOXY LOXY",
+      x + width / 2,
+      y - 7
+    );
+
+    ctx.fillStyle =
+      "rgba(20,20,20,0.75)";
+
+    ctx.fillRect(
+      x - 4,
+      y - 4,
+      width + 8,
+      height + 8
+    );
+
+    ctx.fillStyle = "#3a2320";
+
+    ctx.fillRect(
+      x,
+      y,
+      width,
+      height
+    );
+
+    const healthGradient =
+      ctx.createLinearGradient(
+        x,
+        y,
+        x + width,
+        y
+      );
+
+    healthGradient.addColorStop(
+      0,
+      "#f59e0b"
+    );
+
+    healthGradient.addColorStop(
+      1,
+      "#ef4444"
+    );
+
+    ctx.fillStyle =
+      healthGradient;
+
+    ctx.fillRect(
+      x,
+      y,
+      width * healthRatio,
+      height
+    );
+
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 3;
+
+    ctx.strokeRect(
+      x,
+      y,
+      width,
+      height
+    );
+
+    ctx.fillStyle = "#ffffff";
+
+    ctx.font =
+      "bold 15px Arial, sans-serif";
+
+    ctx.fillText(
+      `${foxy.health} / ${foxy.maxHealth}`,
+      x + width / 2,
+      y + 20
+    );
+
+    ctx.restore();
+  }
+  function drawPlayerAcorns() {
+    if (currentLevel !== 5) {
+      return;
+    }
+
+    for (const shot of playerAcorns) {
+      ctx.save();
+
+      ctx.translate(
+        shot.x,
+        shot.y
+      );
+
+      ctx.rotate(
+        shot.rotation
+      );
+
+      ctx.fillStyle = "#9a632e";
+
+      ctx.beginPath();
+      ctx.ellipse(
+        0,
+        3,
+        10,
+        13,
+        0,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+
+      ctx.fillStyle = "#5c3a20";
+
+      ctx.beginPath();
+      ctx.ellipse(
+        0,
+        -5,
+        11,
+        5,
+        0,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
   function draw(now) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBackground();
@@ -3258,6 +4549,9 @@
     }
 
     drawEffects();
+    drawFoxy(now);
+    drawPlayerAcorns();
+    drawFoxyHealthBar();
     drawHenny(now);
     drawDucky(now);
     drawTurkey(now);
@@ -3286,6 +4580,18 @@
       event.pointerType === "touch" ||
       !running
     ) {
+      return;
+    }
+
+
+    if (currentLevel === 5) {
+      shootLevel5Acorn();
+
+      if (guide) {
+        guide.updateFromPointerEvent(event);
+        guide.setPressed(true);
+      }
+
       return;
     }
 
