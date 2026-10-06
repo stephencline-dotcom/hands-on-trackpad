@@ -1,353 +1,158 @@
 (() => {
   "use strict";
 
+  const TOTAL_CLAMS = 5;
+
   const stage =
     document.getElementById("beachStage");
 
-  const patches =
-    Array.from(
-      document.querySelectorAll(
-        ".clam-patch"
-      )
-    );
-
-  const diggingStick =
-    document.getElementById(
-      "diggingStick"
-    );
+  const stick =
+    document.getElementById("diggingStick");
 
   const clam =
-    document.getElementById("clam");
+    document.getElementById("foundClam");
 
   const basket =
-    document.getElementById("basket");
+    document.getElementById("clamBasket");
 
-  const basketClam =
-    document.getElementById(
-      "basketClam"
+  const basketFill =
+    document.getElementById("basketFill");
+
+  const patches =
+    Array.from(
+      document.querySelectorAll(".clam-patch")
     );
 
-  const digProgress =
-    document.getElementById(
-      "digProgress"
+  const clamDots =
+    Array.from(
+      document.querySelectorAll("#clamDots span")
     );
 
-  const digProgressFill =
-    document.getElementById(
-      "digProgressFill"
-    );
+  const clamCount =
+    document.getElementById("clamCount");
 
   const instructionText =
-    document.getElementById(
-      "instructionText"
-    );
+    document.getElementById("instructionText");
 
-  const instructionIcon =
-    document.getElementById(
-      "instructionIcon"
-    );
+  const reactionSpeaker =
+    document.getElementById("reactionSpeaker");
 
-  const reactionBubble =
-    document.getElementById(
-      "reactionBubble"
-    );
+  const reactionText =
+    document.getElementById("reactionText");
 
-  const animalElements =
-    Array.from(
-      document.querySelectorAll(
-        ".story-animal"
-      )
-    );
+  const predatorGull =
+    document.getElementById("predatorGull");
 
-  const sandPuffs =
-    document.getElementById(
-      "sandPuffs"
-    );
-
-  const demoHand =
-    document.getElementById(
-      "demoHand"
-    );
-
-  const demoLabel =
-    document.getElementById(
-      "demoLabel"
-    );
+  const gullWarning =
+    document.getElementById("gullWarning");
 
   const startOverlay =
-    document.getElementById(
-      "startOverlay"
-    );
+    document.getElementById("startOverlay");
 
-  const completeOverlay =
-    document.getElementById(
-      "completeOverlay"
-    );
+  const winOverlay =
+    document.getElementById("winOverlay");
 
   const startButton =
-    document.getElementById(
-      "startButton"
-    );
+    document.getElementById("startButton");
 
   const playAgainButton =
-    document.getElementById(
-      "playAgainButton"
+    document.getElementById("playAgainButton");
+
+  const soundToggle =
+    document.getElementById("soundToggle");
+
+  const liveStatus =
+    document.getElementById("liveStatus");
+
+  const characters =
+    Array.from(
+      document.querySelectorAll(".story-animal")
     );
 
-  const soundButton =
-    document.getElementById(
-      "soundButton"
-    );
-
-  const gameLive =
-    document.getElementById(
-      "gameLive"
-    );
-
-  const DIG_TARGET = 135;
-
-  const layouts = [
-    {
-      patchIndex: 0,
-      basketSide: "right",
-      stickSide: "left",
-    },
-    {
-      patchIndex: 1,
-      basketSide: "right",
-      stickSide: "left",
-    },
-    {
-      patchIndex: 2,
-      basketSide: "left",
-      stickSide: "right",
-    },
-    {
-      patchIndex: 1,
-      basketSide: "left",
-      stickSide: "right",
-    },
+  const ATTACK_DELAYS = [
+    3200,
+    2600,
+    2100,
+    1600,
+    1100
   ];
 
-  const digReactions = [
-    "Gull: I saw water spurt there!",
-    "Crow: Something is under the sand!",
-    "Bear: Keep digging!",
+  const GULL_SPEEDS = [
+    0.26,
+    0.31,
+    0.36,
+    0.42,
+    0.48
   ];
 
-  const successReactions = [
-    "Bear: A clam!",
-    "Gull: You found it!",
-    "Crow: Into the basket it goes!",
-  ];
+  const state = {
+    running: false,
+    phase: "idle",
+    collected: 0,
+    activePatch: null,
+    digProgress: 0,
+    pointerId: null,
+    dragType: null,
+    lastX: 0,
+    lastY: 0,
+    clamHomeX: 0,
+    clamHomeY: 0,
+    attackTimer: 0,
+    gullFrame: 0,
+    gullActive: false,
+    gullX: 0,
+    gullY: 0,
+    lastFrameTime: 0,
+    patchBag: [],
+    soundOn: true,
+    audioContext: null
+  };
 
-  let soundEnabled = true;
-  let gameStarted = false;
-  let completed = false;
+  function shuffle(values) {
+    const copy = values.slice();
 
-  let activePatch = null;
-  let lastLayoutIndex = -1;
-
-  let dragState = null;
-
-  let digAmount = 0;
-  let lastDigPoint = null;
-  let clamHome = null;
-
-  let demoAnimation = null;
-  let demoTimer = 0;
-
-  let audioContext = null;
-
-  function randomItem(items) {
-    return items[
-      Math.floor(
-        Math.random() * items.length
-      )
-    ];
-  }
-
-  function chooseLayout() {
-    let index =
-      Math.floor(
-        Math.random() *
-          layouts.length
-      );
-
-    if (
-      layouts.length > 1 &&
-      index === lastLayoutIndex
+    for (
+      let i = copy.length - 1;
+      i > 0;
+      i -= 1
     ) {
-      index =
-        (index + 1) %
-        layouts.length;
+      const j =
+        Math.floor(
+          Math.random() * (i + 1)
+        );
+
+      [
+        copy[i],
+        copy[j]
+      ] = [
+        copy[j],
+        copy[i]
+      ];
     }
 
-    lastLayoutIndex = index;
-
-    return layouts[index];
+    return copy;
   }
 
-  function setInstruction(
-    text,
-    icon = "☝️"
-  ) {
-    instructionText.textContent = text;
-    instructionIcon.textContent = icon;
-    gameLive.textContent = text;
+  function ensurePatchBag() {
+    if (!state.patchBag.length) {
+      state.patchBag = shuffle(patches);
+    }
   }
 
-  function setReaction(text) {
-    reactionBubble.textContent = text;
+  function announce(message) {
+    liveStatus.textContent = "";
 
-    reactionBubble.classList.remove(
-      "is-pop"
+    window.setTimeout(
+      () => {
+        liveStatus.textContent = message;
+      },
+      20
     );
-
-    void reactionBubble.offsetWidth;
-
-    reactionBubble.classList.add(
-      "is-pop"
-    );
   }
 
-  function getAudioContext() {
-    if (!soundEnabled) {
-      return null;
-    }
-
-    if (!audioContext) {
-      const Context =
-        window.AudioContext ||
-        window.webkitAudioContext;
-
-      if (!Context) {
-        return null;
-      }
-
-      audioContext =
-        new Context();
-    }
-
+  function speak(message) {
     if (
-      audioContext.state === "suspended"
-    ) {
-      audioContext.resume();
-    }
-
-    return audioContext;
-  }
-
-  function playTone(
-    frequency = 440,
-    duration = 0.08,
-    type = "sine",
-    volume = 0.05
-  ) {
-    const context =
-      getAudioContext();
-
-    if (!context) {
-      return;
-    }
-
-    const oscillator =
-      context.createOscillator();
-
-    const gain =
-      context.createGain();
-
-    oscillator.type = type;
-    oscillator.frequency.value =
-      frequency;
-
-    gain.gain.value = volume;
-
-    oscillator.connect(gain);
-    gain.connect(
-      context.destination
-    );
-
-    oscillator.start();
-
-    gain.gain.exponentialRampToValueAtTime(
-      0.0001,
-      context.currentTime +
-        duration
-    );
-
-    oscillator.stop(
-      context.currentTime +
-        duration
-    );
-  }
-
-  function playPickupSound() {
-    playTone(390, 0.07, "triangle", 0.045);
-
-    window.setTimeout(() => {
-      playTone(
-        510,
-        0.07,
-        "triangle",
-        0.04
-      );
-    }, 55);
-  }
-
-  function playDigSound() {
-    playTone(
-      145 + Math.random() * 30,
-      0.04,
-      "square",
-      0.012
-    );
-  }
-
-  function playRevealSound() {
-    playTone(430, 0.1, "sine", 0.045);
-
-    window.setTimeout(() => {
-      playTone(
-        620,
-        0.11,
-        "sine",
-        0.05
-      );
-    }, 85);
-
-    window.setTimeout(() => {
-      playTone(
-        810,
-        0.16,
-        "sine",
-        0.055
-      );
-    }, 170);
-  }
-
-  function playSuccessSound() {
-    [
-      523,
-      659,
-      784,
-    ].forEach(
-      (frequency, index) => {
-        window.setTimeout(() => {
-          playTone(
-            frequency,
-            0.18,
-            "triangle",
-            0.055
-          );
-        }, index * 105);
-      }
-    );
-  }
-
-  function speak(text) {
-    if (
-      !soundEnabled ||
+      !state.soundOn ||
       !("speechSynthesis" in window)
     ) {
       return;
@@ -357,16 +162,157 @@
 
     const utterance =
       new SpeechSynthesisUtterance(
-        text
+        message
       );
 
-    utterance.rate = 0.9;
+    utterance.rate = 0.95;
     utterance.pitch = 1.04;
-    utterance.volume = 0.95;
 
     window.speechSynthesis.speak(
       utterance
     );
+  }
+
+  function tone(
+    frequency,
+    duration = 0.08,
+    type = "sine",
+    volume = 0.035
+  ) {
+    if (!state.soundOn) {
+      return;
+    }
+
+    try {
+      if (!state.audioContext) {
+        state.audioContext =
+          new (
+            window.AudioContext ||
+            window.webkitAudioContext
+          )();
+      }
+
+      if (
+        state.audioContext.state ===
+        "suspended"
+      ) {
+        state.audioContext.resume();
+      }
+
+      const oscillator =
+        state.audioContext.createOscillator();
+
+      const gain =
+        state.audioContext.createGain();
+
+      oscillator.type = type;
+      oscillator.frequency.value =
+        frequency;
+
+      gain.gain.value = volume;
+
+      oscillator.connect(gain);
+      gain.connect(
+        state.audioContext.destination
+      );
+
+      const now =
+        state.audioContext.currentTime;
+
+      gain.gain.setValueAtTime(
+        volume,
+        now
+      );
+
+      gain.gain
+        .exponentialRampToValueAtTime(
+          0.0001,
+          now + duration
+        );
+
+      oscillator.start(now);
+      oscillator.stop(
+        now + duration
+      );
+    }
+    catch {
+      // Sound is optional.
+    }
+  }
+
+  function successSound() {
+    tone(
+      520,
+      0.09,
+      "triangle",
+      0.05
+    );
+
+    window.setTimeout(
+      () => {
+        tone(
+          660,
+          0.10,
+          "triangle",
+          0.05
+        );
+      },
+      90
+    );
+
+    window.setTimeout(
+      () => {
+        tone(
+          820,
+          0.14,
+          "triangle",
+          0.05
+        );
+      },
+      180
+    );
+  }
+
+  function setInstruction(
+    message,
+    spoken = false
+  ) {
+    instructionText.textContent =
+      message;
+
+    announce(message);
+
+    if (spoken) {
+      speak(message);
+    }
+  }
+
+  function react(
+    speaker,
+    message,
+    celebrate = false
+  ) {
+    reactionSpeaker.textContent =
+      `${speaker}:`;
+
+    reactionText.textContent =
+      message;
+
+    if (celebrate) {
+      characters.forEach(
+        (character) => {
+          character.classList.remove(
+            "celebrate"
+          );
+
+          void character.offsetWidth;
+
+          character.classList.add(
+            "celebrate"
+          );
+        }
+      );
+    }
   }
 
   function stagePoint(
@@ -377,1021 +323,1170 @@
       stage.getBoundingClientRect();
 
     return {
-      x: clientX - rect.left,
-      y: clientY - rect.top,
+      x: Math.max(
+        0,
+        Math.min(
+          rect.width,
+          clientX - rect.left
+        )
+      ),
+
+      y: Math.max(
+        0,
+        Math.min(
+          rect.height,
+          clientY - rect.top
+        )
+      )
     };
   }
 
-  function setDraggedPosition(
+  function setCenter(
     element,
-    clientX,
-    clientY
+    x,
+    y
   ) {
-    const point =
-      stagePoint(
-        clientX,
-        clientY
-      );
-
-    const x =
-      Math.max(
-        24,
-        Math.min(
-          stage.clientWidth - 24,
-          point.x
-        )
-      );
-
-    const y =
-      Math.max(
-        24,
-        Math.min(
-          stage.clientHeight - 24,
-          point.y
-        )
-      );
-
     element.style.left =
       `${x}px`;
 
-    element.style.right =
-      "auto";
-
     element.style.top =
       `${y}px`;
-
-    element.style.bottom =
-      "auto";
   }
 
-  function clearDraggedPosition(
-    element
-  ) {
-    element.style.left = "";
-    element.style.right = "";
-    element.style.top = "";
-    element.style.bottom = "";
-  }
-
-  function expandedContains(
-    rect,
-    x,
-    y,
-    padding = 45
-  ) {
-    return (
-      x >= rect.left - padding &&
-      x <= rect.right + padding &&
-      y >= rect.top - padding &&
-      y <= rect.bottom + padding
-    );
-  }
-
-  function isPointInPatch(
-    clientX,
-    clientY
-  ) {
-    if (!activePatch) {
-      return false;
-    }
-
-    const rect =
-      activePatch
-        .getBoundingClientRect();
-
-    return expandedContains(
-      rect,
-      clientX,
-      clientY,
-      22
-    );
-  }
-
-  function positionDigMeter() {
-    if (!activePatch) {
-      return;
-    }
-
+  function elementCenter(element) {
     const stageRect =
       stage.getBoundingClientRect();
 
-    const patchRect =
-      activePatch
-        .getBoundingClientRect();
+    const rect =
+      element.getBoundingClientRect();
 
-    digProgress.style.left =
-      `${
-        patchRect.left -
+    return {
+      x:
+        rect.left -
         stageRect.left +
-        patchRect.width / 2 -
-        56
-      }px`;
+        rect.width / 2,
 
-    digProgress.style.top =
-      `${
-        patchRect.top -
-        stageRect.top -
-        22
-      }px`;
+      y:
+        rect.top -
+        stageRect.top +
+        rect.height / 2
+    };
   }
 
-  function updateDigMeter() {
-    const percent =
-      Math.max(
-        0,
-        Math.min(
-          100,
-          (digAmount /
-            DIG_TARGET) *
-            100
-        )
-      );
-
-    digProgressFill.style.width =
-      `${percent}%`;
-  }
-
-  function createSandPuff(
+  function pointInRect(
     clientX,
-    clientY
+    clientY,
+    rect,
+    padding = 0
   ) {
-    const point =
-      stagePoint(
-        clientX,
-        clientY
-      );
-
-    const puff =
-      document.createElement(
-        "span"
-      );
-
-    puff.className =
-      "sand-puff";
-
-    puff.style.left =
-      `${point.x - 8}px`;
-
-    puff.style.top =
-      `${point.y - 8}px`;
-
-    sandPuffs.appendChild(
-      puff
+    return (
+      clientX >= rect.left - padding &&
+      clientX <= rect.right + padding &&
+      clientY >= rect.top - padding &&
+      clientY <= rect.bottom + padding
     );
-
-    window.setTimeout(() => {
-      puff.remove();
-    }, 520);
   }
 
-  function cancelDemo() {
-    window.clearTimeout(
-      demoTimer
+  function resetStickPosition() {
+    stick.style.left = "";
+    stick.style.top = "";
+
+    stick.classList.remove(
+      "is-dragging"
+    );
+  }
+
+  function resetClamVisual() {
+    clam.hidden = true;
+
+    clam.classList.remove(
+      "is-dragging",
+      "is-revealed",
+      "is-wrong"
     );
 
-    if (demoAnimation) {
-      demoAnimation.cancel();
-      demoAnimation = null;
+    clam.style.left = "";
+    clam.style.top = "";
+  }
+
+  function updateProgress() {
+    clamCount.textContent =
+      `${state.collected} / ${TOTAL_CLAMS}`;
+
+    clamDots.forEach(
+      (dot, index) => {
+        dot.classList.toggle(
+          "filled",
+          index < state.collected
+        );
+      }
+    );
+  }
+
+  function updateBasketFill() {
+    basketFill.innerHTML = "";
+
+    const positions = [
+      [8, 35, -9],
+      [39, 28, 8],
+      [70, 37, -5],
+      [23, 55, 10],
+      [56, 55, -8]
+    ];
+
+    for (
+      let i = 0;
+      i < state.collected;
+      i += 1
+    ) {
+      const mini =
+        document.createElement(
+          "span"
+        );
+
+      mini.className =
+        "mini-clam";
+
+      const [
+        left,
+        top,
+        rotate
+      ] = positions[i];
+
+      mini.style.left =
+        `${left}%`;
+
+      mini.style.top =
+        `${top}%`;
+
+      mini.style.rotate =
+        `${rotate}deg`;
+
+      basketFill.appendChild(
+        mini
+      );
     }
+  }
 
-    demoHand.classList.remove(
-      "is-visible",
-      "is-pressing"
-    );
+  function clearPatchState() {
+    patches.forEach(
+      (patch) => {
+        patch.classList.remove(
+          "is-active",
+          "is-digging"
+        );
 
-    demoLabel.classList.remove(
-      "is-visible"
+        patch.style.setProperty(
+          "--dig-progress",
+          "0%"
+        );
+      }
     );
   }
 
-  function runDragDemo() {
-    cancelDemo();
+  function nextPatch() {
+    ensurePatchBag();
+
+    let next =
+      state.patchBag.shift();
 
     if (
-      !gameStarted ||
-      completed ||
-      !activePatch
+      next === state.activePatch &&
+      patches.length > 1
+    ) {
+      ensurePatchBag();
+
+      const alternate =
+        state.patchBag.shift();
+
+      state.patchBag.unshift(next);
+
+      next = alternate;
+    }
+
+    return next;
+  }
+
+  function startDigRound() {
+    if (
+      !state.running ||
+      state.collected >= TOTAL_CLAMS
     ) {
       return;
     }
 
-    const stageRect =
-      stage.getBoundingClientRect();
+    cancelGullAttack();
+    clearPatchState();
+    resetClamVisual();
+    resetStickPosition();
 
-    const stickRect =
-      diggingStick
-        .getBoundingClientRect();
+    state.phase = "digging";
+    state.digProgress = 0;
+    state.activePatch = nextPatch();
 
-    const patchRect =
-      activePatch
-        .getBoundingClientRect();
-
-    const startX =
-      stickRect.left -
-      stageRect.left +
-      stickRect.width / 2;
-
-    const startY =
-      stickRect.top -
-      stageRect.top +
-      stickRect.height * 0.28;
-
-    const targetX =
-      patchRect.left -
-      stageRect.left +
-      patchRect.width / 2;
-
-    const targetY =
-      patchRect.top -
-      stageRect.top +
-      patchRect.height / 2;
-
-    demoHand.style.left =
-      `${startX}px`;
-
-    demoHand.style.top =
-      `${startY}px`;
-
-    demoHand.classList.add(
-      "is-visible",
-      "is-pressing"
+    state.activePatch.classList.add(
+      "is-active"
     );
 
-    demoLabel.classList.add(
-      "is-visible"
+    const lines = [
+      [
+        "Gull",
+        "Look! Water is spurting from the wet sand."
+      ],
+      [
+        "Crow",
+        "I see another clue in the sand!"
+      ],
+      [
+        "Bear",
+        "Use the digging stick right over the spurt."
+      ]
+    ];
+
+    const line =
+      lines[
+        state.collected %
+        lines.length
+      ];
+
+    react(
+      line[0],
+      line[1]
     );
 
-    demoAnimation =
-      demoHand.animate(
-        [
-          {
-            left: `${startX}px`,
-            top: `${startY}px`,
-            opacity: 0,
-          },
-          {
-            left: `${startX}px`,
-            top: `${startY}px`,
-            opacity: 1,
-            offset: 0.18,
-          },
-          {
-            left:
-              `${
-                startX +
-                (targetX - startX) *
-                  0.46
-              }px`,
-            top:
-              `${
-                startY +
-                (targetY - startY) *
-                  0.46
-              }px`,
-            opacity: 1,
-            offset: 0.55,
-          },
-          {
-            left: `${targetX}px`,
-            top: `${targetY}px`,
-            opacity: 1,
-            offset: 0.82,
-          },
-          {
-            left: `${targetX}px`,
-            top: `${targetY}px`,
-            opacity: 0,
-          },
-        ],
-        {
-          duration: 2600,
-          easing: "ease-in-out",
-        }
-      );
-
-    demoAnimation.onfinish =
-      () => {
-        demoHand.classList.remove(
-          "is-visible",
-          "is-pressing"
-        );
-
-        demoLabel.classList.remove(
-          "is-visible"
-        );
-
-        demoAnimation = null;
-      };
-  }
-
-  function positionClamAtPatch() {
-    if (!activePatch) {
-      return;
-    }
-
-    const stageRect =
-      stage.getBoundingClientRect();
-
-    const patchRect =
-      activePatch
-        .getBoundingClientRect();
-
-    clamHome = {
-      x:
-        patchRect.left -
-        stageRect.left +
-        patchRect.width / 2,
-      y:
-        patchRect.top -
-        stageRect.top +
-        patchRect.height / 2,
-    };
-
-    clam.style.left =
-      `${clamHome.x}px`;
-
-    clam.style.top =
-      `${clamHome.y}px`;
-
-    clam.style.right = "auto";
-    clam.style.bottom = "auto";
-    clam.style.transform =
-      "translate(-50%, -50%)";
+    setInstruction(
+      "Click, hold, and drag the digging stick over the squirting sand.",
+      state.collected === 0
+    );
   }
 
   function revealClam() {
     if (
-      clam.hidden === false ||
-      completed
+      state.phase !== "digging"
     ) {
       return;
     }
 
-    digAmount = DIG_TARGET;
+    state.phase = "clam-ready";
 
-    updateDigMeter();
+    resetStickPosition();
 
-    activePatch.classList.remove(
-      "is-digging"
+    const patchCenter =
+      elementCenter(
+        state.activePatch
+      );
+
+    state.clamHomeX =
+      patchCenter.x;
+
+    state.clamHomeY =
+      patchCenter.y + 3;
+
+    setCenter(
+      clam,
+      state.clamHomeX,
+      state.clamHomeY
     );
-
-    activePatch.classList.add(
-      "is-found"
-    );
-
-    diggingStick.classList.remove(
-      "is-dragging"
-    );
-
-    clearDraggedPosition(
-      diggingStick
-    );
-
-    dragState = null;
-    lastDigPoint = null;
-
-    positionClamAtPatch();
 
     clam.hidden = false;
+
+    clam.classList.remove(
+      "is-revealed"
+    );
+
+    void clam.offsetWidth;
 
     clam.classList.add(
       "is-revealed"
     );
 
-    digProgress.classList.remove(
-      "is-visible"
+    state.activePatch.classList.remove(
+      "is-digging"
+    );
+
+    tone(
+      410,
+      0.08,
+      "triangle",
+      0.04
+    );
+
+    window.setTimeout(
+      () => {
+        tone(
+          620,
+          0.12,
+          "triangle",
+          0.04
+        );
+      },
+      80
+    );
+
+    react(
+      "Crow",
+      "A clam! Get it to the basket!",
+      true
     );
 
     setInstruction(
-      "Drag the clam into the basket.",
-      "🐚"
+      "Quick! Drag the clam to the basket before the sneaky gull gets it!",
+      true
     );
 
-    setReaction(
-      randomItem(
-        successReactions
-      )
-    );
-
-    playRevealSound();
-
-    speak(
-      "You found a clam! Click and hold the clam. Drag it into the basket, then release."
-    );
+    scheduleGullAttack();
   }
 
-  function doDig(
-    clientX,
-    clientY
-  ) {
+  function scheduleGullAttack() {
+    window.clearTimeout(
+      state.attackTimer
+    );
+
+    gullWarning.hidden = false;
+
+    const index =
+      Math.min(
+        state.collected,
+        ATTACK_DELAYS.length - 1
+      );
+
+    state.attackTimer =
+      window.setTimeout(
+        () => {
+          gullWarning.hidden = true;
+          startGullAttack();
+        },
+        ATTACK_DELAYS[index]
+      );
+  }
+
+  function startGullAttack() {
     if (
-      dragState?.kind !==
-        "stick" ||
-      clam.hidden === false
+      !state.running ||
+      state.phase !== "clam-ready"
     ) {
       return;
     }
 
-    const inside =
-      isPointInPatch(
-        clientX,
-        clientY
+    const stageRect =
+      stage.getBoundingClientRect();
+
+    const fromLeft =
+      Math.random() < 0.5;
+
+    state.gullX =
+      fromLeft
+        ? -70
+        : stageRect.width + 70;
+
+    state.gullY =
+      stageRect.height *
+      (
+        0.18 +
+        Math.random() * 0.14
       );
 
-    activePatch.classList.toggle(
-      "is-digging",
-      inside
+    state.gullActive = true;
+
+    state.lastFrameTime =
+      performance.now();
+
+    predatorGull.hidden = false;
+
+    predatorGull.classList.remove(
+      "has-clam"
     );
 
-    if (!inside) {
-      lastDigPoint = null;
+    setCenter(
+      predatorGull,
+      state.gullX,
+      state.gullY
+    );
+
+    react(
+      "Gull",
+      "Oh no - another gull is coming for the clam!"
+    );
+
+    tone(
+      220,
+      0.16,
+      "sawtooth",
+      0.035
+    );
+
+    state.gullFrame =
+      window.requestAnimationFrame(
+        moveGull
+      );
+  }
+
+  function moveGull(now) {
+    if (
+      !state.gullActive ||
+      state.phase !== "clam-ready" ||
+      clam.hidden
+    ) {
       return;
     }
 
-    if (!lastDigPoint) {
-      lastDigPoint = {
-        x: clientX,
-        y: clientY,
-      };
+    const target =
+      elementCenter(clam);
 
-      return;
-    }
+    const dx =
+      target.x - state.gullX;
+
+    const dy =
+      target.y - state.gullY;
 
     const distance =
-      Math.hypot(
-        clientX -
-          lastDigPoint.x,
-        clientY -
-          lastDigPoint.y
+      Math.max(
+        1,
+        Math.hypot(dx, dy)
       );
 
-    lastDigPoint = {
-      x: clientX,
-      y: clientY,
-    };
+    const delta =
+      Math.min(
+        40,
+        now - state.lastFrameTime
+      );
 
-    if (distance < 2) {
+    state.lastFrameTime = now;
+
+    const speed =
+      GULL_SPEEDS[
+        Math.min(
+          state.collected,
+          GULL_SPEEDS.length - 1
+        )
+      ];
+
+    const step =
+      Math.min(
+        distance,
+        speed * delta
+      );
+
+    state.gullX +=
+      (dx / distance) * step;
+
+    state.gullY +=
+      (dy / distance) * step;
+
+    setCenter(
+      predatorGull,
+      state.gullX,
+      state.gullY
+    );
+
+    predatorGull.style.transform =
+      `scaleX(${dx < 0 ? -1 : 1})`;
+
+    if (distance < 48) {
+      gullStealsClam();
       return;
     }
 
-    digAmount +=
-      Math.min(
-        13,
-        distance * 0.85
+    state.gullFrame =
+      window.requestAnimationFrame(
+        moveGull
       );
-
-    digProgress.classList.add(
-      "is-visible"
-    );
-
-    updateDigMeter();
-
-    if (
-      Math.random() < 0.54
-    ) {
-      createSandPuff(
-        clientX,
-        clientY
-      );
-
-      playDigSound();
-    }
-
-    if (
-      digAmount >
-        DIG_TARGET * 0.42 &&
-      digAmount <
-        DIG_TARGET * 0.49
-    ) {
-      setReaction(
-        randomItem(
-          digReactions
-        )
-      );
-    }
-
-    if (
-      digAmount >=
-      DIG_TARGET
-    ) {
-      revealClam();
-    }
   }
 
-  function startDrag(
-    event,
-    kind,
-    element
-  ) {
+  function cancelGullAttack() {
+    window.clearTimeout(
+      state.attackTimer
+    );
+
+    state.attackTimer = 0;
+
+    if (state.gullFrame) {
+      window.cancelAnimationFrame(
+        state.gullFrame
+      );
+    }
+
+    state.gullFrame = 0;
+    state.gullActive = false;
+
+    predatorGull
+      .getAnimations()
+      .forEach(
+        (animation) => {
+          animation.cancel();
+        }
+      );
+
+    predatorGull.hidden = true;
+
+    predatorGull.classList.remove(
+      "has-clam"
+    );
+
+    predatorGull.style.transform = "";
+
+    gullWarning.hidden = true;
+  }
+
+  function gullStealsClam() {
     if (
-      !gameStarted ||
-      completed ||
-      dragState
+      state.phase !== "clam-ready"
+    ) {
+      return;
+    }
+
+    state.phase = "resetting";
+    state.gullActive = false;
+
+    if (state.gullFrame) {
+      window.cancelAnimationFrame(
+        state.gullFrame
+      );
+
+      state.gullFrame = 0;
+    }
+
+    if (
+      state.dragType === "clam"
+    ) {
+      try {
+        if (
+          clam.hasPointerCapture(
+            state.pointerId
+          )
+        ) {
+          clam.releasePointerCapture(
+            state.pointerId
+          );
+        }
+      }
+      catch {
+      }
+
+      clam.classList.remove(
+        "is-dragging"
+      );
+
+      state.pointerId = null;
+      state.dragType = null;
+    }
+
+    clam.hidden = true;
+
+    predatorGull.classList.add(
+      "has-clam"
+    );
+
+    tone(
+      150,
+      0.24,
+      "sawtooth",
+      0.04
+    );
+
+    react(
+      "Bear",
+      "That gull grabbed it. We can find another one!"
+    );
+
+    setInstruction(
+      "The gull got that clam. No problem - dig for another one!",
+      true
+    );
+
+    const stageRect =
+      stage.getBoundingClientRect();
+
+    const exitX =
+      state.gullX <
+      stageRect.width / 2
+        ? -130
+        : stageRect.width + 130;
+
+    predatorGull.animate(
+      [
+        {
+          left: `${state.gullX}px`,
+          top: `${state.gullY}px`
+        },
+        {
+          left: `${exitX}px`,
+          top:
+            `${
+              Math.max(
+                25,
+                state.gullY - 160
+              )
+            }px`
+        }
+      ],
+      {
+        duration: 850,
+        easing: "ease-in",
+        fill: "forwards"
+      }
+    );
+
+    window.setTimeout(
+      () => {
+        predatorGull
+          .getAnimations()
+          .forEach(
+            (animation) => {
+              animation.cancel();
+            }
+          );
+
+        predatorGull.hidden = true;
+
+        predatorGull.classList.remove(
+          "has-clam"
+        );
+
+        startDigRound();
+      },
+      900
+    );
+  }
+
+  function collectClam() {
+    if (
+      state.phase !== "clam-ready"
+    ) {
+      return;
+    }
+
+    cancelGullAttack();
+
+    state.phase = "resetting";
+    state.collected += 1;
+    clam.hidden = true;
+
+    updateProgress();
+    updateBasketFill();
+
+    basket.classList.remove(
+      "is-success"
+    );
+
+    void basket.offsetWidth;
+
+    basket.classList.add(
+      "is-success"
+    );
+
+    successSound();
+
+    react(
+      "Bear",
+      state.collected < TOTAL_CLAMS
+        ? "Great save! Find another clam!"
+        : "Five clams! We did it!",
+      true
+    );
+
+    if (
+      state.collected >= TOTAL_CLAMS
+    ) {
+      setInstruction(
+        "You collected all 5 clams!",
+        true
+      );
+
+      window.setTimeout(
+        finishGame,
+        750
+      );
+
+      return;
+    }
+
+    setInstruction(
+      `${state.collected} down - ${
+        TOTAL_CLAMS -
+        state.collected
+      } more to find!`,
+      true
+    );
+
+    window.setTimeout(
+      startDigRound,
+      780
+    );
+  }
+
+  function finishGame() {
+    state.running = false;
+    state.phase = "complete";
+
+    clearPatchState();
+    resetStickPosition();
+
+    characters.forEach(
+      (character) => {
+        character.classList.add(
+          "celebrate"
+        );
+      }
+    );
+
+    winOverlay.hidden = false;
+
+    speak(
+      "Beach complete! You collected five clams for the clambake adventure."
+    );
+  }
+
+  function pointerDown(
+    event,
+    type
+  ) {
+    if (!state.running) {
+      return;
+    }
+
+    if (
+      type === "stick" &&
+      state.phase !== "digging"
+    ) {
+      return;
+    }
+
+    if (
+      type === "clam" &&
+      state.phase !== "clam-ready"
     ) {
       return;
     }
 
     if (
       event.button !== 0 &&
-      event.pointerType !==
-        "touch"
+      event.pointerType !== "touch"
     ) {
       return;
     }
-
-    if (
-      kind === "clam" &&
-      clam.hidden
-    ) {
-      return;
-    }
-
-    cancelDemo();
 
     event.preventDefault();
 
-    dragState = {
-      kind,
-      element,
-      pointerId:
-        event.pointerId,
-    };
+    state.pointerId =
+      event.pointerId;
 
-    element.classList.add(
+    state.dragType = type;
+
+    state.lastX =
+      event.clientX;
+
+    state.lastY =
+      event.clientY;
+
+    const target =
+      type === "stick"
+        ? stick
+        : clam;
+
+    target.classList.add(
       "is-dragging"
     );
 
     try {
-      element.setPointerCapture(
+      target.setPointerCapture(
         event.pointerId
       );
-    } catch {
-      // Optional.
+    }
+    catch {
     }
 
-    playPickupSound();
+    moveDragged(event);
 
-    setDraggedPosition(
-      element,
-      event.clientX,
-      event.clientY
+    tone(
+      type === "stick"
+        ? 250
+        : 360,
+      0.04,
+      "square",
+      0.02
     );
-
-    if (kind === "stick") {
-      positionDigMeter();
-
-      setInstruction(
-        "Keep dragging over the squirting sand.",
-        "↔️"
-      );
-
-      doDig(
-        event.clientX,
-        event.clientY
-      );
-    }
   }
 
-  function moveDrag(event) {
+  function moveDragged(event) {
     if (
-      !dragState ||
       event.pointerId !==
-        dragState.pointerId
+        state.pointerId ||
+      !state.dragType
     ) {
       return;
     }
 
     event.preventDefault();
 
-    setDraggedPosition(
-      dragState.element,
-      event.clientX,
-      event.clientY
-    );
-
-    if (
-      dragState.kind ===
-      "stick"
-    ) {
-      doDig(
+    const point =
+      stagePoint(
         event.clientX,
         event.clientY
       );
-    }
-  }
 
-  function returnClamHome() {
-    if (!clamHome) {
-      return;
-    }
+    const target =
+      state.dragType === "stick"
+        ? stick
+        : clam;
 
-    clam.classList.remove(
-      "is-dragging"
+    setCenter(
+      target,
+      point.x,
+      point.y
     );
 
-    clam.style.left =
-      `${clamHome.x}px`;
-
-    clam.style.top =
-      `${clamHome.y}px`;
-
-    clam.style.transform =
-      "translate(-50%, -50%)";
-
-    clam.classList.remove(
-      "is-wrong"
-    );
-
-    void clam.offsetWidth;
-
-    clam.classList.add(
-      "is-wrong"
-    );
-
-    window.setTimeout(() => {
-      clam.classList.remove(
-        "is-wrong"
-      );
-    }, 480);
-  }
-
-  function celebrateAnimals() {
-    animalElements.forEach(
-      (animal, index) => {
-        window.setTimeout(() => {
-          animal.classList.add(
-            "celebrate"
-          );
-
-          window.setTimeout(() => {
-            animal.classList.remove(
-              "celebrate"
-            );
-          }, 1250);
-        }, index * 100);
-      }
-    );
-  }
-
-  function completeLevel() {
-    if (completed) {
-      return;
-    }
-
-    completed = true;
-
-    clam.hidden = true;
-    basketClam.hidden = false;
-
-    basket.classList.add(
-      "is-success"
-    );
-
-    setInstruction(
-      "Great job! The clam is in the basket!",
-      "⭐"
-    );
-
-    setReaction(
-      "Gull: The clam is ready for the clambake!"
-    );
-
-    celebrateAnimals();
-
-    playSuccessSound();
-
-    speak(
-      "Great job! You found a clam and dragged it into the basket."
-    );
-
-    window.setTimeout(() => {
-      completeOverlay.hidden =
-        false;
-    }, 1150);
-  }
-
-  function endDrag(event) {
     if (
-      !dragState ||
-      event.pointerId !==
-        dragState.pointerId
+      state.dragType === "stick"
+    ) {
+      updateDigging(event);
+    }
+
+    state.lastX =
+      event.clientX;
+
+    state.lastY =
+      event.clientY;
+  }
+
+  function updateDigging(event) {
+    if (
+      state.phase !== "digging" ||
+      !state.activePatch
     ) {
       return;
     }
 
-    const {
-      kind,
-      element,
-    } = dragState;
+    const patchRect =
+      state.activePatch
+        .getBoundingClientRect();
 
-    try {
-      if (
-        element.hasPointerCapture(
-          event.pointerId
-        )
-      ) {
-        element.releasePointerCapture(
-          event.pointerId
-        );
-      }
-    } catch {
-      // Optional.
-    }
-
-    element.classList.remove(
-      "is-dragging"
-    );
-
-    if (kind === "stick") {
-      activePatch.classList.remove(
-        "is-digging"
+    const onPatch =
+      pointInRect(
+        event.clientX,
+        event.clientY,
+        patchRect,
+        8
       );
 
-      clearDraggedPosition(
-        diggingStick
+    state.activePatch
+      .classList.toggle(
+        "is-digging",
+        onPatch
       );
 
-      lastDigPoint = null;
-
-      dragState = null;
-
-      if (
-        clam.hidden &&
-        !completed
-      ) {
-        setInstruction(
-          "Drag the digging stick over the squirting sand.",
-          "☝️"
-        );
-      }
-
+    if (!onPatch) {
       return;
     }
 
-    if (kind === "clam") {
-      const basketRect =
-        basket
-          .getBoundingClientRect();
+    const travel =
+      Math.hypot(
+        event.clientX -
+          state.lastX,
+        event.clientY -
+          state.lastY
+      );
 
-      const success =
-        expandedContains(
-          basketRect,
+    state.digProgress =
+      Math.min(
+        1,
+        state.digProgress +
+          travel / 235
+      );
+
+    state.activePatch
+      .style.setProperty(
+        "--dig-progress",
+        `${
+          Math.round(
+            state.digProgress * 100
+          )
+        }%`
+      );
+
+    if (
+      travel > 4 &&
+      Math.floor(
+        state.digProgress * 10
+      ) % 3 === 0
+    ) {
+      tone(
+        185 +
+          state.digProgress *
+          80,
+        0.03,
+        "square",
+        0.012
+      );
+    }
+
+    if (
+      state.digProgress >= 1
+    ) {
+      releasePointer(
+        event,
+        false
+      );
+
+      revealClam();
+    }
+  }
+
+  function pointerUp(event) {
+    if (
+      event.pointerId !==
+        state.pointerId ||
+      !state.dragType
+    ) {
+      return;
+    }
+
+    const type =
+      state.dragType;
+
+    if (
+      type === "clam" &&
+      state.phase === "clam-ready"
+    ) {
+      const basketRect =
+        basket.getBoundingClientRect();
+
+      if (
+        pointInRect(
           event.clientX,
           event.clientY,
-          58
+          basketRect,
+          18
+        )
+      ) {
+        releasePointer(
+          event,
+          false
         );
 
-      dragState = null;
-
-      if (success) {
-        completeLevel();
+        collectClam();
         return;
       }
 
-      returnClamHome();
+      clam.classList.remove(
+        "is-wrong"
+      );
+
+      void clam.offsetWidth;
+
+      clam.classList.add(
+        "is-wrong"
+      );
+
+      setCenter(
+        clam,
+        state.clamHomeX,
+        state.clamHomeY
+      );
+
+      react(
+        "Crow",
+        "Almost! Release the clam right over the basket."
+      );
 
       setInstruction(
-        "Almost! Drag the clam into the basket.",
-        "🐚"
+        "Try again - drag the clam into the basket and release."
       );
 
-      setReaction(
-        "Bear: Try the basket!"
-      );
-
-      playTone(
-        210,
-        0.14,
-        "triangle",
+      tone(
+        170,
+        0.11,
+        "square",
         0.03
       );
+    }
 
-      speak(
-        "Almost. Try again. Drag the clam into the basket."
+    releasePointer(
+      event,
+      type === "stick"
+    );
+  }
+
+  function releasePointer(
+    event,
+    resetStick
+  ) {
+    const type =
+      state.dragType;
+
+    const target =
+      type === "stick"
+        ? stick
+        : clam;
+
+    if (target) {
+      target.classList.remove(
+        "is-dragging"
       );
+
+      try {
+        if (
+          target.hasPointerCapture(
+            event.pointerId
+          )
+        ) {
+          target.releasePointerCapture(
+            event.pointerId
+          );
+        }
+      }
+      catch {
+      }
+    }
+
+    state.pointerId = null;
+    state.dragType = null;
+
+    if (
+      resetStick &&
+      state.phase === "digging"
+    ) {
+      resetStickPosition();
+
+      if (state.activePatch) {
+        state.activePatch
+          .classList.remove(
+            "is-digging"
+          );
+      }
     }
   }
 
-  function resetRound() {
-    cancelDemo();
+  function resetGame() {
+    cancelGullAttack();
 
-    completed = false;
-    gameStarted = false;
+    state.running = true;
+    state.phase = "idle";
+    state.collected = 0;
+    state.activePatch = null;
+    state.patchBag = [];
+    state.pointerId = null;
+    state.dragType = null;
 
-    dragState = null;
-    digAmount = 0;
-    lastDigPoint = null;
-    clamHome = null;
+    updateProgress();
+    updateBasketFill();
+    clearPatchState();
+    resetClamVisual();
+    resetStickPosition();
 
-    basketClam.hidden = true;
-
-    basket.classList.remove(
-      "is-success"
+    characters.forEach(
+      (character) => {
+        character.classList.remove(
+          "celebrate"
+        );
+      }
     );
-
-    clam.hidden = true;
-
-    clam.classList.remove(
-      "is-revealed",
-      "is-dragging",
-      "is-wrong"
-    );
-
-    clearDraggedPosition(
-      diggingStick
-    );
-
-    diggingStick.classList.remove(
-      "is-dragging"
-    );
-
-    digProgress.classList.remove(
-      "is-visible"
-    );
-
-    digProgressFill.style.width =
-      "0%";
-
-    patches.forEach((patch) => {
-      patch.classList.remove(
-        "is-active",
-        "is-digging",
-        "is-found"
-      );
-    });
-
-    const layout =
-      chooseLayout();
 
     stage.dataset.basketSide =
-      layout.basketSide;
+      Math.random() < 0.5
+        ? "left"
+        : "right";
 
     stage.dataset.stickSide =
-      layout.stickSide;
+      stage.dataset.basketSide ===
+      "left"
+        ? "right"
+        : "left";
 
-    activePatch =
-      patches[
-        layout.patchIndex
-      ];
-
-    activePatch.classList.add(
-      "is-active"
-    );
-
-    positionDigMeter();
-
-    setInstruction(
-      "Click Start Adventure!",
-      "☝️"
-    );
-
-    setReaction(
-      "What are they looking for?"
-    );
-  }
-
-  function startRound() {
+    winOverlay.hidden = true;
     startOverlay.hidden = true;
-    completeOverlay.hidden = true;
 
-    gameStarted = true;
-
-    setInstruction(
-      "Drag the digging stick over the squirting sand.",
-      "☝️"
+    react(
+      "Gull",
+      "Look! Water is spurting from the wet sand."
     );
 
-    setReaction(
-      "Gull: Look! Water is spurting from the wet sand."
-    );
-
-    playTone(
-      440,
-      0.08,
-      "triangle",
-      0.04
-    );
-
-    speak(
-      "At low tide, little holes in the wet sand can show where clams are hiding. Click and hold the digging stick. Drag it over the sand where the water squirts."
-    );
-
-    demoTimer =
-      window.setTimeout(
-        runDragDemo,
-        900
-      );
+    startDigRound();
   }
 
-  diggingStick.addEventListener(
+  stick.addEventListener(
     "pointerdown",
     (event) => {
-      startDrag(
+      pointerDown(
         event,
-        "stick",
-        diggingStick
+        "stick"
       );
     }
+  );
+
+  stick.addEventListener(
+    "pointermove",
+    moveDragged
+  );
+
+  stick.addEventListener(
+    "pointerup",
+    pointerUp
+  );
+
+  stick.addEventListener(
+    "pointercancel",
+    pointerUp
   );
 
   clam.addEventListener(
     "pointerdown",
     (event) => {
-      startDrag(
+      pointerDown(
         event,
-        "clam",
-        clam
+        "clam"
       );
     }
   );
 
-  document.addEventListener(
+  clam.addEventListener(
     "pointermove",
-    moveDrag,
-    {
-      passive: false,
-    }
+    moveDragged
   );
 
-  document.addEventListener(
+  clam.addEventListener(
     "pointerup",
-    endDrag
+    pointerUp
   );
 
-  document.addEventListener(
+  clam.addEventListener(
     "pointercancel",
-    endDrag
+    pointerUp
   );
 
   startButton.addEventListener(
     "click",
-    () => {
-      getAudioContext();
-      startRound();
-    }
+    resetGame
   );
 
   playAgainButton.addEventListener(
     "click",
-    () => {
-      completeOverlay.hidden =
-        true;
-
-      resetRound();
-
-      gameStarted = true;
-
-      setInstruction(
-        "Drag the digging stick over the squirting sand.",
-        "☝️"
-      );
-
-      setReaction(
-        "Gull: I see another place to look!"
-      );
-
-      speak(
-        "Let's explore again. Find the squirting sand and drag the digging stick over it."
-      );
-
-      demoTimer =
-        window.setTimeout(
-          runDragDemo,
-          800
-        );
-    }
+    resetGame
   );
 
-  soundButton.addEventListener(
+  soundToggle.addEventListener(
     "click",
     () => {
-      soundEnabled =
-        !soundEnabled;
+      state.soundOn =
+        !state.soundOn;
 
-      soundButton.textContent =
-        soundEnabled
-          ? "🔊"
-          : "🔇";
-
-      soundButton.setAttribute(
-        "aria-label",
-        soundEnabled
-          ? "Turn spoken directions off"
-          : "Turn spoken directions on"
+      soundToggle.setAttribute(
+        "aria-pressed",
+        String(state.soundOn)
       );
 
+      soundToggle.textContent =
+        state.soundOn
+          ? "Sound On"
+          : "Sound Off";
+
       if (
-        !soundEnabled &&
+        !state.soundOn &&
         "speechSynthesis" in window
       ) {
-        window
-          .speechSynthesis
-          .cancel();
-      } else if (
-        soundEnabled &&
-        gameStarted &&
-        !completed
-      ) {
+        window.speechSynthesis.cancel();
+      }
+      else if (state.soundOn) {
         speak(
           instructionText.textContent
         );
@@ -1399,19 +1494,6 @@
     }
   );
 
-  window.addEventListener(
-    "resize",
-    () => {
-      positionDigMeter();
-
-      if (
-        !clam.hidden &&
-        !dragState
-      ) {
-        positionClamAtPatch();
-      }
-    }
-  );
-
-  resetRound();
+  updateProgress();
+  updateBasketFill();
 })();
