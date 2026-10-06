@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+
+  <title>Clambake Adventure</title>
+
+  <link
+    rel="stylesheet"
+    href="../../freeze-screen.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+</head>
+
+<body
+  class="clambake-adventure-page"
+  data-game-active-key="clambakeAdventureGameActive"
+>
+  <main class="clambake-shell">
+
+    <header class="adventure-header">
+      <a
+        class="home-button"
+        href="../../index.html"
+        aria-label="Back to games"
+      >
+        ← Games
+      </a>
+
+      <div class="title-wrap">
+        <span class="community-label">
+          WAMPANOAG ADVENTURE
+        </span>
+
+        <h1>Clambake Adventure</h1>
+      </div>
+
+      <button
+        id="soundButton"
+        class="sound-button"
+        type="button"
+        aria-label="Turn spoken directions on or off"
+      >
+        🔊
+      </button>
+    </header>
+
+    <section class="level-strip">
+      <div class="level-name">
+        <span class="level-number">1</span>
+
+        <span>
+          <strong>Explore the Beach</strong>
+          <small>Find a clam beneath the wet sand.</small>
+        </span>
+      </div>
+
+      <div
+        id="instructionCard"
+        class="instruction-card"
+        aria-live="polite"
+      >
+        <span
+          id="instructionIcon"
+          class="instruction-icon"
+          aria-hidden="true"
+        >
+          ☝️
+        </span>
+
+        <span id="instructionText">
+          Click Start Adventure!
+        </span>
+      </div>
+    </section>
+
+    <section
+      id="beachStage"
+      class="beach-stage"
+      data-basket-side="right"
+      data-stick-side="left"
+      aria-label="Animated beach game"
+    >
+
+      <div class="sky">
+        <div class="sun"></div>
+
+        <div class="cloud cloud-one"></div>
+        <div class="cloud cloud-two"></div>
+
+        <div class="flying-gull gull-one">
+          ︿
+        </div>
+
+        <div class="flying-gull gull-two">
+          ︿
+        </div>
+      </div>
+
+      <div class="far-shore">
+        <div class="tree-line"></div>
+      </div>
+
+      <div class="ocean" aria-hidden="true">
+        <div class="wave wave-one"></div>
+        <div class="wave wave-two"></div>
+        <div class="wave wave-three"></div>
+      </div>
+
+      <div class="wet-sand"></div>
+
+      <div class="dry-sand"></div>
+
+      <div
+        class="animal-lookout"
+        aria-label="Bear, Gull, and Crow"
+      >
+        <div
+          id="reactionBubble"
+          class="reaction-bubble"
+        >
+          What are they looking for?
+        </div>
+
+        <div class="animal-row">
+          <div class="story-animal bear">
+            <span class="animal-emoji">🐻</span>
+            <span class="animal-name">Bear</span>
+          </div>
+
+          <div class="story-animal gull">
+            <span class="animal-emoji">🐦</span>
+            <span class="animal-name">Gull</span>
+          </div>
+
+          <div class="story-animal crow">
+            <span class="animal-emoji">🐦‍⬛</span>
+            <span class="animal-name">Crow</span>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="clam-patch"
+        data-patch="0"
+        aria-hidden="true"
+      >
+        <span class="clam-hole"></span>
+        <span class="water-spurt"></span>
+      </div>
+
+      <div
+        class="clam-patch"
+        data-patch="1"
+        aria-hidden="true"
+      >
+        <span class="clam-hole"></span>
+        <span class="water-spurt"></span>
+      </div>
+
+      <div
+        class="clam-patch"
+        data-patch="2"
+        aria-hidden="true"
+      >
+        <span class="clam-hole"></span>
+        <span class="water-spurt"></span>
+      </div>
+
+      <div
+        id="digProgress"
+        class="dig-progress"
+        aria-hidden="true"
+      >
+        <div
+          id="digProgressFill"
+          class="dig-progress-fill"
+        ></div>
+      </div>
+
+      <button
+        id="diggingStick"
+        class="digging-stick"
+        type="button"
+        aria-label="Digging stick. Click, hold, and drag."
+      >
+        <span class="stick-grip"></span>
+        <span class="stick-shaft"></span>
+        <span class="stick-tip"></span>
+      </button>
+
+      <button
+        id="clam"
+        class="found-clam"
+        type="button"
+        aria-label="Clam. Drag the clam to the basket."
+        hidden
+      >
+        <span class="clam-shell">🐚</span>
+      </button>
+
+      <div
+        id="basket"
+        class="clam-basket"
+        aria-label="Clam basket"
+      >
+        <div class="basket-handle"></div>
+
+        <div class="basket-body">
+          <span
+            id="basketClam"
+            class="basket-clam"
+            hidden
+          >
+            🐚
+          </span>
+        </div>
+
+        <span class="basket-label">
+          BASKET
+        </span>
+      </div>
+
+      <div
+        id="sandPuffs"
+        class="sand-puffs"
+        aria-hidden="true"
+      ></div>
+
+      <div
+        id="demoHand"
+        class="demo-hand"
+        aria-hidden="true"
+      >
+        <span class="demo-finger">☝️</span>
+        <span class="demo-press"></span>
+      </div>
+
+      <div
+        id="demoLabel"
+        class="demo-label"
+        aria-hidden="true"
+      >
+        CLICK + HOLD • DRAG • RELEASE
+      </div>
+
+      <div
+        id="gameLive"
+        class="visually-hidden"
+        aria-live="assertive"
+      ></div>
+    </section>
+
+    <footer class="skill-footer">
+      <span>☝️ Click</span>
+      <span>✊ Hold</span>
+      <span>↔️ Drag</span>
+      <span>🖐️ Release</span>
+    </footer>
+
+  </main>
+
+  <section
+    id="startOverlay"
+    class="game-overlay"
+  >
+    <div class="overlay-card start-card">
+      <div class="overlay-icon">🌊</div>
+
+      <span class="overlay-kicker">
+        LEVEL 1
+      </span>
+
+      <h2>Explore the Beach</h2>
+
+      <p>
+        Help gather a clam for the
+        Wampanoag clambake.
+      </p>
+
+      <div class="start-skill">
+        <span>☝️</span>
+        Click, hold, drag, and release!
+      </div>
+
+      <button
+        id="startButton"
+        class="primary-button"
+        type="button"
+      >
+        Start Adventure
+      </button>
+    </div>
+  </section>
+
+  <section
+    id="completeOverlay"
+    class="game-overlay"
+    hidden
+  >
+    <div class="overlay-card complete-card">
+      <div class="celebration-shells">
+        ⭐ 🐚 ⭐
+      </div>
+
+      <span class="overlay-kicker">
+        BEACH EXPLORER
+      </span>
+
+      <h2>You Found the Clam!</h2>
+
+      <p>
+        Great click-and-drag work!
+      </p>
+
+      <div class="discovery-fact">
+        <span class="fact-icon">📖</span>
+
+        <span>
+          <strong>Discovery Fact</strong>
+          Wampanoag communities are still here today,
+          and clambakes are still held along the
+          Massachusetts coast.
+        </span>
+      </div>
+
+      <div class="complete-buttons">
+        <button
+          id="playAgainButton"
+          class="primary-button"
+          type="button"
+        >
+          Play Again
+        </button>
+
+        <a
+          class="secondary-button"
+          href="../../index.html"
+        >
+          Back to Games
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script src="../../game-access.js"></script>
+  <script src="../../freeze-screen.js"></script>
+  <script src="../../input-device-guard.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
