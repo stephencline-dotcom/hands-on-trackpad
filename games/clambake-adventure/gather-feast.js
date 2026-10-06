@@ -116,6 +116,7 @@
     dragging: false,
 
     carrying: null,
+    carriedFoods: [],
 
     avatarX: 0,
     avatarY: 0,
@@ -309,6 +310,39 @@
     );
   }
 
+  /* MULTI FOOD CARRY MODE */
+
+  function renderCarryBundle() {
+    carrySlot.innerHTML = "";
+
+    state.carriedFoods.forEach(
+      (food) => {
+        const token =
+          document.createElement(
+            "span"
+          );
+
+        token.className =
+          "carried-food-token";
+
+        token.dataset.food =
+          food;
+
+        token.appendChild(
+          foodArt(food)
+        );
+
+        carrySlot.appendChild(
+          token
+        );
+      }
+    );
+
+    helperAvatar.classList.toggle(
+      "is-carrying",
+      state.carriedFoods.length > 0
+    );
+  }
   function currentFood() {
     return (
       state.requestQueue[
@@ -680,8 +714,9 @@
     );
 
     state.carrying = null;
+    state.carriedFoods = [];
 
-    carrySlot.innerHTML = "";
+    renderCarryBundle();
 
     communityZone.classList.remove(
       "is-ready"
@@ -893,8 +928,8 @@
 
   function checkFoodPickup() {
     if (
-      state.carrying ||
-      !state.active
+      !state.active ||
+      !currentFood()
     ) {
       return;
     }
@@ -983,39 +1018,92 @@
   ) {
     stopCrabTimer();
 
+    const wasEmpty =
+      state.carriedFoods.length === 0;
+
+    state.carriedFoods.push(
+      food
+    );
+
     state.carrying =
       food;
 
     element.remove();
 
-    carrySlot.innerHTML =
-      "";
+    state.requestIndex += 1;
 
-    carrySlot.dataset.food =
-      food;
+    renderCarryBundle();
+    renderRequest();
 
-    carrySlot.appendChild(
-      foodArt(food)
-    );
+    successSound();
 
-    helperAvatar.classList.add(
-      "is-carrying"
-    );
+    /*
+     * As soon as the first food is collected,
+     * the crabs begin chasing the helper.
+     *
+     * They keep chasing while the child gathers
+     * the remaining foods.
+     */
+    if (wasEmpty) {
+      startCrabsImmediately();
+    }
 
+    if (
+      state.requestIndex <
+      state.requestQueue.length
+    ) {
+      const next =
+        currentFood();
+
+      foodField
+        .querySelectorAll(
+          ".food-piece"
+        )
+        .forEach(
+          (piece) => {
+            piece.classList.toggle(
+              "is-requested",
+              piece.dataset.food ===
+                next
+            );
+          }
+        );
+
+      communityZone.classList.remove(
+        "is-ready"
+      );
+
+      instructionText.textContent =
+        `Great! Keep carrying it. Now get the ${LABELS[next].toLowerCase()}!`;
+
+      speak(
+        `Great. Keep carrying the food. Now get the ${LABELS[next].toLowerCase()}. Watch out for the crabs.`
+      );
+
+      return;
+    }
+
+    /*
+     * All requested food is now in the helper's arms.
+     * Only now does the gathering area become the goal.
+     */
     communityZone.classList.add(
       "is-ready"
     );
 
-    successSound();
+    const count =
+      state.carriedFoods.length;
 
     instructionText.textContent =
-      `You have the ${LABELS[food].toLowerCase()}! Bring it back to the gathering basket.`;
+      count === 1
+        ? `You have the ${LABELS[food].toLowerCase()}! Get back to the gathering basket!`
+        : `You have all ${count} foods! Get back to the gathering basket without touching a crab!`;
 
     speak(
-      `You found the ${LABELS[food].toLowerCase()}. Bring it back to the gathering basket before the crabs catch you.`
+      count === 1
+        ? `You found the ${LABELS[food].toLowerCase()}. Get back to the gathering basket.`
+        : `You have all ${count} foods. Now get back to the gathering basket without touching a crab.`
     );
-
-    startCrabsImmediately();
   }
 
   function startHelperDrag(
@@ -1148,7 +1236,9 @@
       null;
 
     if (
-      state.carrying &&
+      state.carriedFoods.length > 0 &&
+      state.requestIndex >=
+        state.requestQueue.length &&
       helperInsideCommunity()
     ) {
       deliverFood();
@@ -1158,50 +1248,30 @@
   function deliverFood() {
     stopCrabs();
 
-    const delivered =
-      state.carrying;
+    const deliveredFoods =
+      state.carriedFoods.slice();
 
-    state.carrying =
-      null;
+    state.carriedFoods = [];
+    state.carrying = null;
 
-    carrySlot.innerHTML = "";
-
-    helperAvatar.classList.remove(
-      "is-carrying"
-    );
+    renderCarryBundle();
 
     communityZone.classList.remove(
       "is-ready"
     );
 
-    state.requestIndex += 1;
-
     successSound();
 
-    renderRequest();
-
-    if (
-      state.requestIndex <
-      state.requestQueue.length
-    ) {
-      renderFoodField();
-
-      resetAvatar();
-
-      instructionText.textContent =
-        `Great! Now find the ${LABELS[currentFood()].toLowerCase()}.`;
-
-      speak(
-        `Great. Now find the ${LABELS[currentFood()].toLowerCase()}.`
-      );
-
-      scheduleCrabs();
-
-      return;
-    }
+    const deliveredNames =
+      deliveredFoods
+        .map(
+          (food) =>
+            LABELS[food]
+        )
+        .join(", ");
 
     instructionText.textContent =
-      `${LABELS[delivered]} delivered! Round complete.`;
+      `${deliveredNames} delivered! Round complete.`;
 
     state.round += 1;
 
@@ -1380,7 +1450,9 @@
   }
 
   function crabTarget() {
-    if (state.carrying) {
+    if (
+      state.carriedFoods.length > 0
+    ) {
       return helperCenter();
     }
 
@@ -1512,7 +1584,9 @@
       return;
     }
 
-    if (state.carrying) {
+    if (
+      state.carriedFoods.length > 0
+    ) {
       crabCatchesHelper(
         crab
       );
@@ -1621,13 +1695,13 @@
   function crabCatchesHelper(
     crab
   ) {
-    const stolen =
-      state.carrying;
+    const lostFoods =
+      state.carriedFoods.slice();
 
-    state.carrying =
-      null;
+    state.carriedFoods = [];
+    state.carrying = null;
 
-    carrySlot.innerHTML = "";
+    renderCarryBundle();
 
     helperAvatar.classList.remove(
       "is-carrying"
@@ -1649,11 +1723,18 @@
 
     wrongSound();
 
+    const count =
+      lostFoods.length;
+
     instructionText.textContent =
-      `The crab caught up and took the ${LABELS[stolen].toLowerCase()}! Try again.`;
+      count === 1
+        ? "A crab caught you and took the food! Try the round again."
+        : `A crab caught you and took all ${count} foods! Try the round again.`;
 
     speak(
-      `The crab caught up. Try again and bring the ${LABELS[stolen].toLowerCase()} back to the basket.`
+      count === 1
+        ? "A crab caught you and took the food. Try the round again."
+        : `A crab caught you and took all ${count} foods. Gather them again and stay away from the crabs.`
     );
 
     animateCrabExit(
@@ -1661,11 +1742,10 @@
       () => {
         stopCrabs();
 
-        resetAvatar();
-
-        renderFoodField();
-
-        scheduleCrabs();
+        /*
+         * Restart this SAME round from the beginning.
+         */
+        beginRound();
       }
     );
   }
@@ -1769,6 +1849,7 @@
     state.pointerId = null;
     state.dragging = false;
     state.carrying = null;
+    state.carriedFoods = [];
     state.stolenCount = 0;
 
     if (missionLabel) {

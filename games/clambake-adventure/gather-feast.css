@@ -1493,3 +1493,73 @@
     scale: .82;
   }
 }
+/* =========================================================
+   MULTI FOOD CARRY BUNDLE
+   ========================================================= */
+
+.carry-slot {
+  width: 92px;
+  height: 54px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 1px;
+}
+
+.carry-slot:empty {
+  display: none;
+}
+
+.carried-food-token {
+  position: relative;
+
+  width: 31px;
+  height: 42px;
+
+  display: grid;
+  place-items: center;
+
+  flex: 0 0 31px;
+
+  animation:
+    carriedFoodBounce
+    .45s
+    ease-in-out
+    infinite
+    alternate;
+}
+
+.carried-food-token:nth-child(2) {
+  animation-delay: -.15s;
+}
+
+.carried-food-token:nth-child(3) {
+  animation-delay: -.3s;
+}
+
+.carried-food-token .food-art {
+  scale: .42;
+}
+
+@keyframes carriedFoodBounce {
+  to {
+    translate: 0 -3px;
+  }
+}
+
+/*
+ * When carrying several foods, lift the bundle
+ * slightly so it reads clearly in the helper's arms.
+ */
+.helper-avatar.is-carrying
+.carry-slot {
+  top: 72px;
+
+  filter:
+    drop-shadow(
+      0 3px 2px
+      rgba(70,48,28,.2)
+    );
+}
