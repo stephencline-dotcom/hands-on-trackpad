@@ -1,0 +1,1956 @@
+/* =========================================================
+   LEVEL 3 - PREPARE THE COOKING PIT
+   ========================================================= */
+
+.pit-prep-active .gather-layer {
+  display: none !important;
+}
+
+.pit-layer {
+  position: absolute;
+  inset: 0;
+
+  z-index: 170;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(142,219,234,.12) 0 30%,
+      rgba(208,180,121,.2) 30% 100%
+    );
+
+  pointer-events: none;
+}
+
+.pit-layer[hidden] {
+  display: none;
+}
+
+/* ---------- HUD ---------- */
+
+.pit-hud {
+  position: absolute;
+
+  z-index: 230;
+
+  left: 2%;
+  top: 2%;
+
+  width: min(440px, 38vw);
+
+  padding: 9px 13px;
+
+  border: 4px solid white;
+  border-radius: 20px;
+
+  background:
+    rgba(255,250,229,.97);
+
+  box-shadow:
+    0 8px 17px
+    rgba(35,63,73,.2);
+}
+
+.pit-kicker {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #986025;
+
+  font-size: .71rem;
+  font-weight: 1000;
+  letter-spacing: .08em;
+}
+
+.pit-request {
+  margin: 0;
+
+  color: #174e6d;
+
+  font-size:
+    clamp(
+      1rem,
+      1.55vw,
+      1.3rem
+    );
+
+  font-weight: 1000;
+}
+
+.pit-memory-row {
+  min-height: 49px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  margin-top: 5px;
+}
+
+.pit-memory-card {
+  min-width: 62px;
+  height: 44px;
+
+  display: grid;
+  place-items: center;
+
+  padding: 3px 7px;
+
+  border: 3px solid #d9b85a;
+  border-radius: 12px;
+
+  background: #fff1bd;
+
+  color: #5c4b34;
+
+  font-size: .7rem;
+  font-weight: 1000;
+
+  transition:
+    opacity .3s,
+    transform .3s;
+}
+
+.pit-memory-row.is-hidden
+.pit-memory-card {
+  color: transparent;
+
+  background: #eee8d5;
+
+  border-style: dashed;
+}
+
+.pit-memory-row.is-hidden
+.pit-memory-card::after {
+  content: "?";
+
+  color: #6d6c65;
+
+  font-size: 1.5rem;
+}
+
+.pit-round {
+  position: absolute;
+
+  z-index: 230;
+
+  right: 2%;
+  top: 2%;
+
+  padding: 7px 13px;
+
+  border: 3px solid white;
+  border-radius: 14px;
+
+  background: #167a69;
+  color: white;
+
+  font-size: .82rem;
+  font-weight: 1000;
+}
+
+.spark-warning {
+  position: absolute;
+
+  z-index: 231;
+
+  left: 50%;
+  top: 4%;
+
+  translate: -50% 0;
+
+  padding: 7px 14px;
+
+  border: 3px solid white;
+  border-radius: 14px;
+
+  background: #d5533e;
+  color: white;
+
+  font-size: .78rem;
+  font-weight: 1000;
+
+  animation:
+    sparkWarn
+    .48s
+    ease-in-out
+    infinite
+    alternate;
+}
+
+.spark-warning[hidden] {
+  display: none;
+}
+
+@keyframes sparkWarn {
+  to {
+    scale: 1.06;
+  }
+}
+
+/* ---------- PLAYABLE HELPER ---------- */
+
+.pit-helper {
+  position: absolute;
+
+  z-index: 215;
+
+  left: 14%;
+  top: 72%;
+
+  width: 96px;
+  height: 154px;
+
+  translate:
+    -50%
+    -50%;
+
+  cursor: grab;
+  touch-action: none;
+
+  pointer-events: auto;
+
+  filter:
+    drop-shadow(
+      0 7px 4px
+      rgba(49,42,31,.22)
+    );
+}
+
+.pit-helper.is-dragging {
+  cursor: grabbing;
+
+  z-index: 240;
+}
+
+.pit-helper.is-carrying {
+  filter:
+    drop-shadow(
+      0 0 14px
+      rgba(255,222,67,.95)
+    );
+}
+
+.pit-helper-head {
+  position: absolute;
+
+  z-index: 8;
+
+  left: 50%;
+  top: 0;
+
+  width: 55px;
+  height: 61px;
+
+  translate: -50% 0;
+
+  border:
+    3px solid
+    #67402e;
+
+  border-radius:
+    47% 47% 44% 44%;
+
+  background:
+    radial-gradient(
+      circle at 34% 43%,
+      #26201c 0 2.6px,
+      transparent 3.6px
+    ),
+    radial-gradient(
+      circle at 66% 43%,
+      #26201c 0 2.6px,
+      transparent 3.6px
+    ),
+    #a96e49;
+}
+
+.pit-helper-head::before {
+  content: "";
+
+  position: absolute;
+
+  z-index: -1;
+
+  inset:
+    -6px
+    -6px
+    23px;
+
+  border-radius:
+    52% 52% 37% 37%;
+
+  background: #30241f;
+}
+
+.pit-helper-head::after {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  bottom: 8px;
+
+  width: 17px;
+  height: 7px;
+
+  translate: -50% 0;
+
+  border-bottom:
+    2px solid
+    #60382a;
+
+  border-radius: 50%;
+}
+
+.pit-helper-body {
+  position: absolute;
+
+  z-index: 5;
+
+  left: 50%;
+  top: 54px;
+
+  width: 67px;
+  height: 70px;
+
+  translate: -50% 0;
+
+  border:
+    3px solid
+    #654128;
+
+  border-radius:
+    18px 18px 13px 13px;
+
+  background:
+    linear-gradient(
+      #c98849,
+      #a76937
+    );
+}
+
+.pit-helper-arm {
+  position: absolute;
+
+  z-index: 4;
+
+  top: 66px;
+
+  width: 18px;
+  height: 56px;
+
+  border:
+    3px solid
+    #65412d;
+
+  border-radius: 12px;
+
+  background: #a96e49;
+
+  transform-origin:
+    top center;
+}
+
+.pit-helper-arm.left {
+  left: 8px;
+
+  rotate: 10deg;
+}
+
+.pit-helper-arm.right {
+  right: 8px;
+
+  rotate: -10deg;
+}
+
+.pit-helper-leg {
+  position: absolute;
+
+  z-index: 3;
+
+  top: 116px;
+
+  width: 23px;
+  height: 37px;
+
+  border:
+    3px solid
+    #5f402b;
+
+  border-radius:
+    7px 7px 11px 11px;
+
+  background: #785031;
+
+  transform-origin:
+    top center;
+}
+
+.pit-helper-leg.left {
+  left: 24px;
+}
+
+.pit-helper-leg.right {
+  right: 24px;
+}
+
+.pit-helper.is-dragging
+.pit-helper-leg.left {
+  animation:
+    pitWalkLeft
+    .25s
+    ease-in-out
+    infinite
+    alternate;
+}
+
+.pit-helper.is-dragging
+.pit-helper-leg.right {
+  animation:
+    pitWalkRight
+    .25s
+    ease-in-out
+    infinite
+    alternate;
+}
+
+@keyframes pitWalkLeft {
+  to {
+    rotate: -18deg;
+  }
+}
+
+@keyframes pitWalkRight {
+  to {
+    rotate: 18deg;
+  }
+}
+
+.pit-carry {
+  position: absolute;
+
+  z-index: 12;
+
+  left: 50%;
+  top: 74px;
+
+  width: 76px;
+  height: 49px;
+
+  translate: -50% 0;
+
+  display: grid;
+  place-items: center;
+
+  pointer-events: none;
+}
+
+.pit-carry:empty {
+  display: none;
+}
+
+/* ---------- MATERIALS ---------- */
+
+.pit-material-field {
+  position: absolute;
+  inset: 0;
+
+  z-index: 195;
+
+  pointer-events: none;
+}
+
+.pit-material {
+  position: absolute;
+
+  width: 108px;
+  height: 90px;
+
+  translate:
+    -50%
+    -50%;
+
+  display: grid;
+
+  grid-template-rows:
+    66px
+    20px;
+
+  justify-items: center;
+  align-items: center;
+
+  pointer-events: none;
+
+  animation:
+    materialBob
+    1.25s
+    ease-in-out
+    infinite
+    alternate;
+}
+
+@keyframes materialBob {
+  to {
+    translate:
+      -50%
+      calc(-50% - 4px);
+  }
+}
+
+.pit-material::before {
+  content: "";
+
+  position: absolute;
+
+  z-index: -1;
+
+  left: 50%;
+  top: 41%;
+
+  width: 92px;
+  height: 68px;
+
+  translate:
+    -50%
+    -50%;
+
+  border:
+    3px solid
+    rgba(255,255,255,.8);
+
+  border-radius: 20px;
+
+  background:
+    rgba(255,247,217,.58);
+}
+
+.pit-material.is-correct::before {
+  border-color: #ffe15b;
+
+  box-shadow:
+    0 0 14px
+    rgba(255,224,81,.8);
+}
+
+.pit-material.is-wrong {
+  animation:
+    materialWrong
+    .35s
+    ease;
+}
+
+@keyframes materialWrong {
+  25% {
+    translate:
+      calc(-50% - 8px)
+      -50%;
+  }
+
+  75% {
+    translate:
+      calc(-50% + 8px)
+      -50%;
+  }
+}
+
+.material-label {
+  padding: 2px 7px;
+
+  border-radius: 8px;
+
+  background:
+    rgba(255,255,255,.94);
+
+  color: #465b64;
+
+  font-size: .67rem;
+  font-weight: 1000;
+}
+
+/* Stone */
+
+.material-art.stone {
+  width: 66px;
+  height: 44px;
+
+  border:
+    3px solid
+    #64696b;
+
+  border-radius:
+    48% 52% 43% 57%;
+
+  background:
+    linear-gradient(
+      #a7adae,
+      #7c8588
+    );
+}
+
+/* Wood */
+
+.material-art.wood {
+  position: relative;
+
+  width: 76px;
+  height: 23px;
+
+  border:
+    3px solid
+    #70411f;
+
+  border-radius: 14px;
+
+  rotate: -10deg;
+
+  background:
+    linear-gradient(
+      #a8632f,
+      #81481f
+    );
+}
+
+.material-art.wood::after {
+  content: "";
+
+  position: absolute;
+
+  right: -3px;
+  top: -3px;
+
+  width: 21px;
+  height: 21px;
+
+  border:
+    3px solid
+    #70411f;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      #c58a54 0 3px,
+      #8b5429 4px 6px,
+      #c58a54 7px 9px
+    );
+}
+
+/* Rockweed */
+
+.material-art.rockweed {
+  position: relative;
+
+  width: 70px;
+  height: 54px;
+}
+
+.material-art.rockweed::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 4px 8px;
+
+  border-radius:
+    50% 30% 55% 35%;
+
+  background:
+    #566c38;
+
+  box-shadow:
+    -19px 10px 0 -4px #70884c,
+    19px 7px 0 -3px #3f5c31,
+    -8px -10px 0 -5px #7a914f,
+    10px -12px 0 -5px #61793f;
+}
+
+/* Food bundle */
+
+.material-art.food {
+  position: relative;
+
+  width: 72px;
+  height: 56px;
+}
+
+.material-art.food::before {
+  content: "";
+
+  position: absolute;
+
+  left: 5px;
+  bottom: 5px;
+
+  width: 62px;
+  height: 38px;
+
+  border:
+    4px solid
+    #865128;
+
+  border-radius:
+    10px 10px 20px 20px;
+
+  background:
+    repeating-linear-gradient(
+      0deg,
+      #c27b38 0 8px,
+      #dfa053 9px 16px
+    );
+}
+
+.material-art.food::after {
+  content: "";
+
+  position: absolute;
+
+  left: 18px;
+  top: 0;
+
+  width: 36px;
+  height: 25px;
+
+  border-radius: 50%;
+
+  background:
+    #ffd54c;
+
+  box-shadow:
+    19px 9px 0 -5px #bd844e,
+    -15px 10px 0 -4px #d95142;
+}
+
+/* ---------- COOKING PIT ---------- */
+
+.cooking-pit {
+  position: absolute;
+
+  z-index: 190;
+
+  left: 69%;
+  top: 67%;
+
+  width: 310px;
+  height: 230px;
+
+  translate:
+    -50%
+    -50%;
+
+  pointer-events: none;
+}
+
+.pit-drop-zone {
+  position: absolute;
+
+  left: 50%;
+  top: 55%;
+
+  width: 245px;
+  height: 165px;
+
+  translate:
+    -50%
+    -50%;
+
+  border:
+    5px dashed
+    rgba(255,242,166,.65);
+
+  border-radius: 50%;
+}
+
+.cooking-pit.is-ready
+.pit-drop-zone {
+  border-color: #ffe35c;
+
+  box-shadow:
+    0 0 0 9px
+    rgba(255,226,75,.2);
+
+  animation:
+    pitTargetGlow
+    .55s
+    ease-in-out
+    infinite
+    alternate;
+}
+
+@keyframes pitTargetGlow {
+  to {
+    scale: 1.05;
+  }
+}
+
+.pit-hole {
+  position: absolute;
+
+  left: 50%;
+  top: 58%;
+
+  width: 205px;
+  height: 108px;
+
+  translate:
+    -50%
+    -50%;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      ellipse,
+      #4d3526 0 45%,
+      #75523b 47% 62%,
+      #b49365 64% 100%
+    );
+
+  box-shadow:
+    inset 0 13px 18px
+    rgba(34,22,18,.4);
+}
+
+.built-stones {
+  position: absolute;
+  inset: 0;
+
+  opacity: 0;
+
+  transition:
+    opacity .35s;
+}
+
+.cooking-pit.has-stones
+.built-stones {
+  opacity: 1;
+}
+
+.built-stones span {
+  position: absolute;
+
+  width: 54px;
+  height: 34px;
+
+  border:
+    3px solid
+    #646b6c;
+
+  border-radius: 50%;
+
+  background:
+    #949c9e;
+}
+
+.built-stones span:nth-child(1) {
+  left: 43px;
+  top: 93px;
+}
+
+.built-stones span:nth-child(2) {
+  left: 90px;
+  top: 62px;
+}
+
+.built-stones span:nth-child(3) {
+  left: 145px;
+  top: 57px;
+}
+
+.built-stones span:nth-child(4) {
+  right: 46px;
+  top: 91px;
+}
+
+.built-stones span:nth-child(5) {
+  left: 84px;
+  bottom: 34px;
+}
+
+.built-stones span:nth-child(6) {
+  right: 83px;
+  bottom: 34px;
+}
+
+.built-wood {
+  position: absolute;
+
+  left: 50%;
+  top: 53%;
+
+  width: 128px;
+  height: 60px;
+
+  translate:
+    -50%
+    -50%;
+
+  opacity: 0;
+
+  transition:
+    opacity .35s;
+}
+
+.cooking-pit.has-wood
+.built-wood {
+  opacity: 1;
+}
+
+.built-wood::before,
+.built-wood::after {
+  content: "";
+
+  position: absolute;
+
+  left: 15px;
+  top: 20px;
+
+  width: 100px;
+  height: 18px;
+
+  border:
+    3px solid
+    #6a3d1d;
+
+  border-radius: 12px;
+
+  background: #985625;
+}
+
+.built-wood::before {
+  rotate: 21deg;
+}
+
+.built-wood::after {
+  rotate: -21deg;
+}
+
+.pit-fire {
+  position: absolute;
+
+  z-index: 7;
+
+  left: 50%;
+  top: 47%;
+
+  width: 82px;
+  height: 88px;
+
+  translate:
+    -50%
+    -50%;
+
+  opacity: 0;
+
+  transition:
+    opacity .4s;
+}
+
+.cooking-pit.has-fire
+.pit-fire {
+  opacity: 1;
+}
+
+.pit-fire::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  clip-path:
+    polygon(
+      50% 0,
+      67% 31%,
+      84% 18%,
+      79% 61%,
+      100% 56%,
+      66% 100%,
+      28% 95%,
+      0 57%,
+      23% 60%,
+      17% 25%,
+      39% 37%
+    );
+
+  background:
+    linear-gradient(
+      #ffd84b,
+      #ec6c2e 68%,
+      #c83e25
+    );
+
+  animation:
+    flameDance
+    .38s
+    ease-in-out
+    infinite
+    alternate;
+}
+
+@keyframes flameDance {
+  to {
+    scale:
+      .93
+      1.08;
+
+    rotate: 2deg;
+  }
+}
+
+.pit-rockweed {
+  position: absolute;
+
+  z-index: 8;
+
+  left: 50%;
+  top: 55%;
+
+  width: 158px;
+  height: 68px;
+
+  translate:
+    -50%
+    -50%;
+
+  opacity: 0;
+
+  border-radius: 50%;
+
+  background:
+    #50683a;
+
+  box-shadow:
+    -38px 8px 0 -17px #6e864c,
+    38px 5px 0 -14px #405c31;
+
+  transition:
+    opacity .35s;
+}
+
+.cooking-pit.has-rockweed
+.pit-rockweed {
+  opacity: .92;
+}
+
+.pit-food {
+  position: absolute;
+
+  z-index: 9;
+
+  left: 50%;
+  top: 52%;
+
+  width: 116px;
+  height: 58px;
+
+  translate:
+    -50%
+    -50%;
+
+  opacity: 0;
+
+  border-radius: 50%;
+
+  background:
+    #e7c98c;
+
+  box-shadow:
+    -29px 2px 0 -13px #d94f40,
+    28px -3px 0 -14px #f0c941,
+    4px 19px 0 -16px #c18b52;
+
+  transition:
+    opacity .35s;
+}
+
+.cooking-pit.has-food
+.pit-food {
+  opacity: 1;
+}
+
+.pit-cover {
+  position: absolute;
+
+  z-index: 10;
+
+  left: 50%;
+  top: 49%;
+
+  width: 190px;
+  height: 85px;
+
+  translate:
+    -50%
+    -50%;
+
+  opacity: 0;
+
+  border-radius: 50%;
+
+  background:
+    #405a32;
+
+  box-shadow:
+    -40px 10px 0 -18px #668247,
+    42px 10px 0 -17px #536f3d;
+
+  transition:
+    opacity .4s;
+}
+
+.cooking-pit.is-covered
+.pit-cover {
+  opacity: .97;
+}
+
+.pit-steam {
+  position: absolute;
+
+  z-index: 11;
+
+  left: 50%;
+  top: 4%;
+
+  width: 120px;
+  height: 90px;
+
+  translate: -50% 0;
+
+  opacity: 0;
+}
+
+.cooking-pit.is-covered
+.pit-steam {
+  opacity: 1;
+}
+
+.pit-steam::before,
+.pit-steam::after {
+  content: "";
+
+  position: absolute;
+
+  bottom: 0;
+
+  width: 24px;
+  height: 75px;
+
+  border-radius: 50%;
+
+  border-left:
+    8px solid
+    rgba(255,255,255,.75);
+
+  animation:
+    steamRise
+    1.4s
+    ease-in-out
+    infinite;
+}
+
+.pit-steam::before {
+  left: 26px;
+}
+
+.pit-steam::after {
+  right: 25px;
+
+  animation-delay: -.7s;
+}
+
+@keyframes steamRise {
+  from {
+    translate: 0 18px;
+
+    opacity: .2;
+  }
+
+  to {
+    translate: 8px -15px;
+
+    opacity: .9;
+  }
+}
+
+/* ---------- MOVING SPARK HAZARDS ---------- */
+
+.spark-field {
+  position: absolute;
+  inset: 0;
+
+  z-index: 218;
+
+  pointer-events: none;
+}
+
+.pit-spark {
+  position: absolute;
+
+  width: 26px;
+  height: 26px;
+
+  translate:
+    -50%
+    -50%;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      white 0 10%,
+      #ffe25a 12% 36%,
+      #ed7a2d 38% 70%,
+      transparent 72%
+    );
+
+  filter:
+    drop-shadow(
+      0 0 8px
+      #ffb32b
+    );
+
+  animation:
+    sparkPulse
+    .22s
+    ease-in-out
+    infinite
+    alternate;
+}
+
+@keyframes sparkPulse {
+  to {
+    scale: 1.28;
+  }
+}
+
+/* ---------- COMPLETION ---------- */
+
+.pit-complete {
+  position: absolute;
+  inset: 0;
+
+  z-index: 300;
+
+  display: grid;
+  place-items: center;
+
+  padding: 20px;
+
+  background:
+    rgba(27,59,69,.31);
+
+  backdrop-filter:
+    blur(2px);
+
+  pointer-events: auto;
+}
+
+.pit-complete[hidden] {
+  display: none;
+}
+
+.pit-complete-card {
+  width: min(525px, 92%);
+
+  padding: 22px;
+
+  border: 5px solid white;
+  border-radius: 27px;
+
+  background:
+    rgba(255,249,226,.98);
+
+  box-shadow:
+    0 18px 38px
+    rgba(35,61,70,.27);
+
+  text-align: center;
+}
+
+.pit-complete-card h2 {
+  margin:
+    8px
+    0
+    6px;
+
+  color: #174e6d;
+
+  font-size:
+    clamp(
+      1.8rem,
+      4vw,
+      2.7rem
+    );
+}
+
+.pit-complete-card p {
+  color: #53666f;
+
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+@media (max-height: 720px) {
+  .pit-helper {
+    scale: .84;
+  }
+
+  .pit-material {
+    scale: .85;
+  }
+
+  .cooking-pit {
+    scale: .87;
+
+    transform-origin:
+      center center;
+  }
+
+  .pit-hud {
+    width: min(390px, 36vw);
+
+    padding: 6px 10px;
+  }
+}
+/* =========================================================
+   LEVEL 3 VISUAL GUIDANCE + FAIR SPARK CHALLENGE
+   ========================================================= */
+
+.pit-visual-guide {
+  position: absolute;
+
+  z-index: 112;
+
+  left: 50%;
+  top: 14px;
+
+  translate: -50% 0;
+
+  width:
+    min(
+      525px,
+      44vw
+    );
+
+  padding: 7px 10px;
+
+  border:
+    3px solid
+    rgba(255,255,255,.94);
+
+  border-radius: 18px;
+
+  background:
+    rgba(255,250,226,.94);
+
+  box-shadow:
+    0 6px 14px
+    rgba(38,63,71,.15);
+
+  pointer-events: none;
+}
+
+.pit-guide-flow {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+}
+
+.pit-guide-action {
+  min-width: 82px;
+
+  display: grid;
+
+  grid-template-rows:
+    44px auto;
+
+  align-items: center;
+  justify-items: center;
+
+  gap: 2px;
+
+  color: #174e6d;
+
+  font-size: .64rem;
+  font-weight: 1000;
+}
+
+.pit-guide-material {
+  width: 55px;
+  height: 43px;
+
+  display: grid;
+  place-items: center;
+}
+
+.pit-guide-material
+.material-art {
+  scale: .58;
+}
+
+.pit-guide-arrow {
+  color: #c98532;
+
+  font-size: 1.55rem;
+  font-weight: 1000;
+}
+
+.pit-guide-helper-icon {
+  position: relative;
+
+  width: 36px;
+  height: 43px;
+}
+
+.pit-guide-helper-icon
+.guide-head {
+  position: absolute;
+
+  left: 50%;
+  top: 0;
+
+  width: 19px;
+  height: 20px;
+
+  translate: -50% 0;
+
+  border:
+    2px solid
+    #65412d;
+
+  border-radius: 50%;
+
+  background: #a96e49;
+}
+
+.pit-guide-helper-icon
+.guide-head::before {
+  content: "";
+
+  position: absolute;
+
+  inset:
+    -3px
+    -3px
+    9px;
+
+  z-index: -1;
+
+  border-radius: 50%;
+
+  background: #30241f;
+}
+
+.pit-guide-helper-icon
+.guide-body {
+  position: absolute;
+
+  left: 50%;
+  top: 18px;
+
+  width: 26px;
+  height: 25px;
+
+  translate: -50% 0;
+
+  border:
+    2px solid
+    #654128;
+
+  border-radius:
+    8px 8px 5px 5px;
+
+  background: #bd7a43;
+}
+
+.pit-guide-pit-icon {
+  position: relative;
+
+  width: 54px;
+  height: 38px;
+
+  border:
+    4px solid
+    #9c714c;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      ellipse,
+      #523728 0 47%,
+      #75513b 49% 66%,
+      #b58a60 68%
+    );
+}
+
+.pit-guide-pit-icon
+span {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 18px;
+  height: 20px;
+
+  translate:
+    -50%
+    -50%;
+
+  border-radius:
+    50% 50% 45% 45%;
+
+  background:
+    #ffb02e;
+
+  clip-path:
+    polygon(
+      50% 0,
+      100% 70%,
+      72% 100%,
+      28% 100%,
+      0 70%
+    );
+}
+
+.pit-sequence-strip {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  margin-top: 5px;
+}
+
+.pit-sequence-cell {
+  position: relative;
+
+  width: 46px;
+  height: 34px;
+
+  display: grid;
+  place-items: center;
+
+  border:
+    2px solid
+    #d1b16e;
+
+  border-radius: 9px;
+
+  background: #f4ead0;
+
+  opacity: .55;
+}
+
+.pit-sequence-cell.is-complete {
+  border-color: #49916f;
+
+  background: #daf0d9;
+
+  opacity: 1;
+}
+
+.pit-sequence-cell.is-current {
+  border-color: #e0ae36;
+
+  background: #fff0a7;
+
+  opacity: 1;
+
+  box-shadow:
+    0 0 8px
+    rgba(234,184,53,.5);
+}
+
+.pit-sequence-cell
+.material-art {
+  scale: .36;
+}
+
+.pit-sequence-number {
+  position: absolute;
+
+  left: -5px;
+  top: -6px;
+
+  width: 16px;
+  height: 16px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background: #174e6d;
+  color: white;
+
+  font-size: .54rem;
+  font-weight: 1000;
+}
+
+.pit-sequence-hidden {
+  color: #765f41;
+
+  font-size: 1.2rem;
+  font-weight: 1000;
+}
+
+/* ---------------------------------------------------------
+   MEMORY CARD NOW USES AN ACTUAL PICTURE
+   --------------------------------------------------------- */
+
+.pit-memory-picture-card {
+  min-width: 164px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+}
+
+.pit-memory-art {
+  width: 58px;
+  height: 49px;
+
+  display: grid;
+  place-items: center;
+}
+
+.pit-memory-art
+.material-art {
+  scale: .62;
+}
+
+.pit-memory-label {
+  color: #624921;
+
+  font-size: .84rem;
+  font-weight: 1000;
+}
+
+.pit-memory-row.is-hidden
+.pit-memory-art,
+.pit-memory-row.is-hidden
+.pit-memory-label {
+  opacity: 0;
+}
+
+/*
+ * Preserve the existing question-mark memory
+ * challenge after the picture disappears.
+ */
+.pit-memory-row.is-hidden
+.pit-memory-picture-card {
+  position: relative;
+}
+
+.pit-memory-row.is-hidden
+.pit-memory-picture-card::after {
+  content: "?";
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  translate:
+    -50%
+    -50%;
+
+  color: #746d61;
+
+  font-size: 1.6rem;
+  font-weight: 1000;
+}
+
+/*
+ * Later-step materials are intentionally kept
+ * away from the fire and spark orbit.
+ */
+.pit-prep-active
+.pit-material {
+  transition:
+    filter .16s,
+    scale .16s;
+}
+
+@media (max-height: 720px) {
+  .pit-visual-guide {
+    top: 8px;
+
+    scale: .88;
+
+    transform-origin:
+      center top;
+  }
+}
+/* =========================================================
+   LEVEL 3 BALANCE CHALLENGE
+   ========================================================= */
+
+.pit-balance-meter {
+  position: absolute;
+
+  z-index: 125;
+
+  right: 2%;
+  top: 27%;
+
+  width: 220px;
+
+  padding: 8px 10px 10px;
+
+  border:
+    4px solid
+    white;
+
+  border-radius: 17px;
+
+  background:
+    rgba(255,249,225,.96);
+
+  box-shadow:
+    0 8px 18px
+    rgba(37,60,67,.2);
+
+  pointer-events: none;
+}
+
+.pit-balance-meter[hidden] {
+  display: none;
+}
+
+.pit-balance-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 7px;
+
+  margin-bottom: 5px;
+}
+
+.pit-balance-hands {
+  color: #174e6d;
+
+  font-size: .7rem;
+  font-weight: 1000;
+  letter-spacing: .04em;
+}
+
+.pit-balance-message {
+  color: #497060;
+
+  font-size: .56rem;
+  font-weight: 1000;
+
+  text-align: right;
+}
+
+.pit-balance-track {
+  position: relative;
+
+  height: 27px;
+
+  overflow: hidden;
+
+  border:
+    3px solid
+    #254d5e;
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #d8efd9 0 50%,
+      #f5dfa0 50% 78%,
+      #edaaa0 78% 100%
+    );
+}
+
+.pit-balance-fill {
+  position: absolute;
+
+  z-index: 3;
+
+  left: 0;
+  top: 0;
+  bottom: 0;
+
+  width: 0;
+
+  border-right:
+    4px solid
+    #173f50;
+
+  background:
+    rgba(32,95,120,.42);
+
+  transition:
+    width .08s linear;
+}
+
+.pit-balance-safe,
+.pit-balance-danger {
+  position: absolute;
+
+  z-index: 5;
+
+  top: 50%;
+
+  translate: 0 -50%;
+
+  font-size: .5rem;
+  font-weight: 1000;
+
+  pointer-events: none;
+}
+
+.pit-balance-safe {
+  left: 8px;
+
+  color: #285f48;
+}
+
+.pit-balance-danger {
+  right: 7px;
+
+  color: #8b3e36;
+}
+
+.pit-balance-meter.is-warning {
+  animation:
+    balanceMeterWarning
+    .55s
+    ease-in-out
+    infinite
+    alternate;
+}
+
+.pit-balance-meter.is-danger {
+  animation:
+    balanceMeterDanger
+    .28s
+    ease-in-out
+    infinite
+    alternate;
+}
+
+.pit-balance-meter.is-warning
+.pit-balance-message {
+  color: #95601c;
+}
+
+.pit-balance-meter.is-danger
+.pit-balance-message {
+  color: #a13730;
+
+  font-size: .62rem;
+}
+
+@keyframes balanceMeterWarning {
+  to {
+    scale: 1.025;
+  }
+}
+
+@keyframes balanceMeterDanger {
+  to {
+    scale: 1.055;
+  }
+}
+
+/*
+ * The helper physically begins wobbling as
+ * the balance meter gets high.
+ */
+.pit-prep-active
+.balance-wobble {
+  animation:
+    pitHelperWobble
+    .22s
+    ease-in-out
+    infinite
+    alternate;
+}
+
+.pit-prep-active
+.balance-danger {
+  animation-duration:
+    .12s;
+}
+
+@keyframes pitHelperWobble {
+  from {
+    rotate: -3deg;
+  }
+
+  to {
+    rotate: 3deg;
+  }
+}
+
+/*
+ * Carrying object wobbles even more,
+ * making the danger easy to understand
+ * without needing to read the meter.
+ */
+.pit-prep-active
+.balance-wobble
+.pit-carry-slot,
+.pit-prep-active
+.balance-wobble
+.carry-slot {
+  animation:
+    pitCargoWobble
+    .18s
+    ease-in-out
+    infinite
+    alternate;
+}
+
+@keyframes pitCargoWobble {
+  from {
+    rotate: -7deg;
+
+    translate:
+      -2px
+      0;
+  }
+
+  to {
+    rotate: 7deg;
+
+    translate:
+      2px
+      -2px;
+  }
+}
+
+@media (max-height: 720px) {
+  .pit-balance-meter {
+    top: 25%;
+
+    width: 190px;
+
+    scale: .88;
+
+    transform-origin:
+      right top;
+  }
+}
