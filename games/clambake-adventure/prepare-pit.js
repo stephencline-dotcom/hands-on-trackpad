@@ -147,6 +147,18 @@
 
   let completeOverlay = null;
 
+  const fireCrackleAudio =
+    new Audio("../../sounds/crackle.mp3");
+
+  fireCrackleAudio.loop =
+    true;
+
+  fireCrackleAudio.volume =
+    0.38;
+
+  let pickupWatchFrame =
+    0;
+
   function soundEnabled() {
     return (
       !soundToggle ||
@@ -156,9 +168,139 @@
     );
   }
 
-  function speak(message) {
+  /*
+   * CLAMBAKE VOICE DIRECTIONS
+   * Loaded from the shared Hands-On Trackpad settings API.
+   * This is intentionally separate from the game's Sound On/Off control.
+   */
+  if (!window.clambakeAdventureVoiceSettingsReady) {
+    window.clambakeAdventureVoiceSettingsLoaded = false;
+    window.clambakeAdventureVoiceDirections = true;
+
+    window.clambakeAdventureVoiceSettingsReady =
+      fetch("/api/settings", {
+        cache: "no-store"
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Unable to load Clambake voice settings.");
+          }
+
+          return response.json();
+        })
+        .then((settings) => {
+          window.clambakeAdventureVoiceDirections =
+            settings.clambakeAdventureVoiceDirections !== false;
+
+          window.clambakeAdventureVoiceSettingsLoaded = true;
+
+          if (
+            !window.clambakeAdventureVoiceDirections &&
+            "speechSynthesis" in window
+          ) {
+            window.speechSynthesis.cancel();
+          }
+        })
+        .catch(() => {
+          window.clambakeAdventureVoiceDirections = true;
+          window.clambakeAdventureVoiceSettingsLoaded = true;
+        });
+  }
+  function stopFireCrackle(
+    reset = true
+  ) {
+    fireCrackleAudio.pause();
+
+    if (reset) {
+      try {
+        fireCrackleAudio.currentTime =
+          0;
+      }
+      catch {
+      }
+    }
+  }
+
+  function startFireCrackle() {
     if (
       !soundEnabled() ||
+      !state.active ||
+      !pit ||
+      !pit.classList.contains(
+        "has-fire"
+      )
+    ) {
+      return;
+    }
+
+    if (
+      !fireCrackleAudio.paused
+    ) {
+      return;
+    }
+
+    const playPromise =
+      fireCrackleAudio.play();
+
+    if (
+      playPromise &&
+      typeof playPromise.catch ===
+        "function"
+    ) {
+      playPromise.catch(
+        () => {}
+      );
+    }
+  }
+
+  function syncFireCrackle() {
+    if (
+      soundEnabled() &&
+      state.active &&
+      pit &&
+      pit.classList.contains(
+        "has-fire"
+      )
+    ) {
+      startFireCrackle();
+      return;
+    }
+
+    stopFireCrackle(false);
+  }
+
+  if (soundToggle) {
+    const fireSoundObserver =
+      new MutationObserver(
+        () => {
+          syncFireCrackle();
+        }
+      );
+
+    fireSoundObserver.observe(
+      soundToggle,
+      {
+        attributes: true,
+        attributeFilter: [
+          "aria-pressed"
+        ]
+      }
+    );
+  }
+
+  function speak(message) {
+    if (
+      !window.clambakeAdventureVoiceSettingsLoaded &&
+      window.clambakeAdventureVoiceSettingsReady
+    ) {
+      window.clambakeAdventureVoiceSettingsReady.then(() => {
+        speak(message);
+      });
+      return;
+    }
+
+    if (
+      window.clambakeAdventureVoiceDirections === false ||
       !(
         "speechSynthesis" in window
       )
@@ -1212,34 +1354,34 @@
 
     meter.classList.toggle(
       "is-warning",
-      amount >= 55 &&
-      amount < 80
+      amount >= 45 &&
+      amount < 72
     );
 
     meter.classList.toggle(
       "is-danger",
-      amount >= 80
+      amount >= 72
     );
 
     helper.classList.toggle(
       "balance-wobble",
-      amount >= 55
+      amount >= 45
     );
 
     helper.classList.toggle(
       "balance-danger",
-      amount >= 80
+      amount >= 72
     );
 
-    if (amount < 35) {
+    if (amount < 30) {
       message.textContent =
         "NICE AND STEADY";
     }
-    else if (amount < 55) {
+    else if (amount < 45) {
       message.textContent =
         "KEEP IT SMOOTH";
     }
-    else if (amount < 80) {
+    else if (amount < 72) {
       message.textContent =
         "CAREFUL - WOBBLING!";
     }
@@ -1321,7 +1463,7 @@
      */
     state.balanceGraceUntil =
       performance.now() +
-      700;
+      300;
 
     const meter =
       document.getElementById(
@@ -1475,18 +1617,22 @@
      * The threshold is intentionally forgiving
      * for kindergarten trackpad movement.
      */
-    if (speed > 2.35) {
+    /*
+     * Smooth movement is safe, but quick or jerky
+     * movement now builds wobble much sooner.
+     */
+    if (speed > 1.6) {
       state.balance +=
         (
           speed -
-          2.35
+          1.6
         ) *
-        6.5 +
-        .4;
+        10 +
+        .8;
     }
     else {
       state.balance -=
-        1.35;
+        .7;
     }
 
     state.balance =
@@ -1539,7 +1685,7 @@
         !overlaps(
           hRect,
           itemRect,
-          16
+          24
         )
       ) {
         continue;
@@ -1632,6 +1778,47 @@
     }
   }
 
+  function stopPickupWatch() {
+    if (
+      pickupWatchFrame
+    ) {
+      window.cancelAnimationFrame(
+        pickupWatchFrame
+      );
+    }
+
+    pickupWatchFrame =
+      0;
+  }
+
+  function runPickupWatch() {
+    if (
+      !state.active ||
+      !state.dragging
+    ) {
+      pickupWatchFrame =
+        0;
+
+      return;
+    }
+
+    checkMaterialPickup();
+
+    pickupWatchFrame =
+      window.requestAnimationFrame(
+        runPickupWatch
+      );
+  }
+
+  function startPickupWatch() {
+    stopPickupWatch();
+
+    pickupWatchFrame =
+      window.requestAnimationFrame(
+        runPickupWatch
+      );
+  }
+
   function startDrag(event) {
     if (
       !state.active ||
@@ -1651,6 +1838,8 @@
 
     state.dragging =
       true;
+
+    startPickupWatch();
 
     if (
       state.balanceActive &&
@@ -1757,6 +1946,8 @@
     state.dragging =
       false;
 
+    stopPickupWatch();
+
     state.pointerId =
       null;
 
@@ -1787,6 +1978,8 @@
         "has-wood",
         "has-fire"
       );
+
+      startFireCrackle();
     }
 
     if (
@@ -2117,6 +2310,12 @@
   function finishPit() {
     stopSparks();
 
+    stopPickupWatch();
+
+    stopFireCrackle(
+      true
+    );
+
     resetBalanceChallenge();
 
     state.active =
@@ -2134,6 +2333,12 @@
   }
 
   function resetPitVisual() {
+    stopPickupWatch();
+
+    stopFireCrackle(
+      true
+    );
+
     pit.classList.remove(
       "has-stones",
       "has-wood",

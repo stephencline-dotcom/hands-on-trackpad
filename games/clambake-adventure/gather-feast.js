@@ -309,9 +309,57 @@
     return copy;
   }
 
+  /*
+   * CLAMBAKE VOICE DIRECTIONS
+   * Loaded from the shared Hands-On Trackpad settings API.
+   * This is intentionally separate from the game's Sound On/Off control.
+   */
+  if (!window.clambakeAdventureVoiceSettingsReady) {
+    window.clambakeAdventureVoiceSettingsLoaded = false;
+    window.clambakeAdventureVoiceDirections = true;
+
+    window.clambakeAdventureVoiceSettingsReady =
+      fetch("/api/settings", {
+        cache: "no-store"
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Unable to load Clambake voice settings.");
+          }
+
+          return response.json();
+        })
+        .then((settings) => {
+          window.clambakeAdventureVoiceDirections =
+            settings.clambakeAdventureVoiceDirections !== false;
+
+          window.clambakeAdventureVoiceSettingsLoaded = true;
+
+          if (
+            !window.clambakeAdventureVoiceDirections &&
+            "speechSynthesis" in window
+          ) {
+            window.speechSynthesis.cancel();
+          }
+        })
+        .catch(() => {
+          window.clambakeAdventureVoiceDirections = true;
+          window.clambakeAdventureVoiceSettingsLoaded = true;
+        });
+  }
   function speak(message) {
     if (
-      !soundEnabled() ||
+      !window.clambakeAdventureVoiceSettingsLoaded &&
+      window.clambakeAdventureVoiceSettingsReady
+    ) {
+      window.clambakeAdventureVoiceSettingsReady.then(() => {
+        speak(message);
+      });
+      return;
+    }
+
+    if (
+      window.clambakeAdventureVoiceDirections === false ||
       !(
         "speechSynthesis" in window
       )

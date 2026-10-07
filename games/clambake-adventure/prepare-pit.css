@@ -1954,3 +1954,107 @@ span {
       right top;
   }
 }
+/* =======================================================
+   LEVEL 3 WOBBLE COLOR FEEDBACK
+   Green -> Yellow -> Red
+   ======================================================= */
+
+.pit-balance-fill {
+  background:
+    linear-gradient(
+      90deg,
+      #51b96a,
+      #77d47e
+    );
+
+  transition:
+    width .08s linear,
+    background .12s ease;
+}
+
+.pit-balance-meter.is-warning
+.pit-balance-fill {
+  background:
+    linear-gradient(
+      90deg,
+      #efc83f,
+      #f4a62d
+    );
+}
+
+.pit-balance-meter.is-danger
+.pit-balance-fill {
+  background:
+    linear-gradient(
+      90deg,
+      #ed704b,
+      #d9342b
+    );
+
+  animation:
+    pitWobbleDangerPulse
+    .28s ease-in-out
+    infinite alternate;
+}
+
+.pit-balance-meter.is-warning {
+  border-color:
+    #d9a72a;
+}
+
+.pit-balance-meter.is-danger {
+  border-color:
+    #d44232;
+
+  box-shadow:
+    0 0 0 5px
+    rgba(220,58,43,.16),
+    0 8px 18px
+    rgba(37,60,67,.2);
+}
+
+.pit-helper.balance-wobble {
+  animation:
+    pitHelperWobble
+    .24s ease-in-out
+    infinite alternate;
+}
+
+.pit-helper.balance-danger {
+  animation:
+    pitHelperDangerWobble
+    .12s ease-in-out
+    infinite alternate;
+}
+
+@keyframes pitWobbleDangerPulse {
+  from {
+    filter:
+      brightness(1);
+  }
+
+  to {
+    filter:
+      brightness(1.24);
+  }
+}
+
+@keyframes pitHelperWobble {
+  from {
+    rotate: -2deg;
+  }
+
+  to {
+    rotate: 2deg;
+  }
+}
+
+@keyframes pitHelperDangerWobble {
+  from {
+    rotate: -5deg;
+  }
+
+  to {
+    rotate: 5deg;
+  }
+}

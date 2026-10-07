@@ -160,6 +160,9 @@
               <button class="admin-tab-button" type="button" role="tab" id="tabChickenLittle" aria-controls="panelChickenLittle" aria-selected="false" data-tab="chickenlittle">
                 Chicken Little
               </button>
+              <button class="admin-tab-button" type="button" role="tab" id="tabClambakeAdventure" aria-controls="panelClambakeAdventure" aria-selected="false" data-tab="clambakeadventure">
+                Clambake Adventure
+              </button>
               <button class="admin-tab-button" type="button" role="tab" id="tabHauntedStreet" aria-controls="panelHauntedStreet" aria-selected="false" data-tab="hauntedstreet">
                 Haunted Street
               </button>
@@ -2004,6 +2007,27 @@
               </article>
             </div>
           </section>
+          <section class="admin-tab-content" id="panelClambakeAdventure" role="tabpanel" aria-labelledby="tabClambakeAdventure" aria-hidden="true">
+            <p class="admin-panel-note">
+              Configure spoken directions for Clambake Adventure.
+            </p>
+
+            <article class="admin-mini-card admin-mini-card--wide">
+              <h3>Clambake Adventure Directions</h3>
+
+              <div class="admin-inline-toggles">
+                <label class="admin-toggle-row" for="clambakeAdventureVoiceDirections">
+                  <input id="clambakeAdventureVoiceDirections" type="checkbox" checked />
+                  <span>Enable voice directions</span>
+                </label>
+              </div>
+
+              <p class="admin-panel-note">
+                Turning voice directions off stops spoken instructions only. Game sounds, music, and sound effects are controlled separately.
+              </p>
+            </article>
+          </section>
+
           <section class="admin-tab-content" id="panelHauntedStreet" role="tabpanel" aria-labelledby="tabHauntedStreet" aria-hidden="true">
             <p class="admin-panel-note">
               Configure how students control Haunted Street.

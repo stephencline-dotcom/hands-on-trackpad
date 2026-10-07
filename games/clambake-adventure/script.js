@@ -112,17 +112,23 @@
     new Audio("../../sounds/ocean.mp3");
 
   const gullAudio =
-    new Audio("../../sounds/seagull.mp3");
+    new Audio("../../sounds/seagullfix.mp3");
 
   const diggingAudio =
     new Audio("../../sounds/digging.mp3");
 
+  const gullYoinkAudio =
+    new Audio("../../sounds/crabyoink.mp3");
+
   oceanAudio.loop = true;
   oceanAudio.volume = 0.22;
 
-  gullAudio.volume = 0.7;
+  gullAudio.preload = "auto";
+  gullAudio.volume = 0.95;
 
   diggingAudio.volume = 0.55;
+
+  gullYoinkAudio.volume = 0.75;
 
   function safePlay(audio) {
     if (
@@ -187,16 +193,49 @@
       return;
     }
 
+    try {
+      gullAudio.pause();
+
+      gullAudio.currentTime =
+        0;
+
+      gullAudio.muted =
+        false;
+
+      gullAudio.volume =
+        0.95;
+
+      const playPromise =
+        gullAudio.play();
+
+      if (
+        playPromise &&
+        typeof playPromise.catch ===
+          "function"
+      ) {
+        playPromise.catch(
+          () => {}
+        );
+      }
+    }
+    catch {
+    }
+  }
+
+  function playGullYoinkAudio() {
+    if (!state.soundOn) {
+      return;
+    }
+
     stopAudio(
-      gullAudio,
+      gullYoinkAudio,
       true
     );
 
     safePlay(
-      gullAudio
+      gullYoinkAudio
     );
   }
-
   function startDiggingAudio() {
     if (
       !state.soundOn ||
@@ -234,6 +273,11 @@
 
     stopAudio(
       gullAudio,
+      true
+    );
+
+    stopAudio(
+      gullYoinkAudio,
       true
     );
   }
@@ -279,9 +323,57 @@
     );
   }
 
+  /*
+   * CLAMBAKE VOICE DIRECTIONS
+   * Loaded from the shared Hands-On Trackpad settings API.
+   * This is intentionally separate from the game's Sound On/Off control.
+   */
+  if (!window.clambakeAdventureVoiceSettingsReady) {
+    window.clambakeAdventureVoiceSettingsLoaded = false;
+    window.clambakeAdventureVoiceDirections = true;
+
+    window.clambakeAdventureVoiceSettingsReady =
+      fetch("/api/settings", {
+        cache: "no-store"
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Unable to load Clambake voice settings.");
+          }
+
+          return response.json();
+        })
+        .then((settings) => {
+          window.clambakeAdventureVoiceDirections =
+            settings.clambakeAdventureVoiceDirections !== false;
+
+          window.clambakeAdventureVoiceSettingsLoaded = true;
+
+          if (
+            !window.clambakeAdventureVoiceDirections &&
+            "speechSynthesis" in window
+          ) {
+            window.speechSynthesis.cancel();
+          }
+        })
+        .catch(() => {
+          window.clambakeAdventureVoiceDirections = true;
+          window.clambakeAdventureVoiceSettingsLoaded = true;
+        });
+  }
   function speak(message) {
     if (
-      !state.soundOn ||
+      !window.clambakeAdventureVoiceSettingsLoaded &&
+      window.clambakeAdventureVoiceSettingsReady
+    ) {
+      window.clambakeAdventureVoiceSettingsReady.then(() => {
+        speak(message);
+      });
+      return;
+    }
+
+    if (
+      window.clambakeAdventureVoiceDirections === false ||
       !("speechSynthesis" in window)
     ) {
       return;
@@ -1027,7 +1119,7 @@
       true
     );
 
-    playGullAudio();
+    playGullYoinkAudio();
 
     const stageRect =
       stage.getBoundingClientRect();
@@ -1632,17 +1724,10 @@
           ? "Sound On"
           : "Sound Off";
 
-      if (
-        !state.soundOn &&
-        "speechSynthesis" in window
-      ) {
-        window.speechSynthesis.cancel();
-      }
-      else if (state.soundOn) {
-        speak(
-          instructionText.textContent
-        );
-      }
+      /*
+       * Sound On/Off controls game audio only.
+       * Voice Directions is controlled separately by teacher settings.
+       */
     }
   );
 

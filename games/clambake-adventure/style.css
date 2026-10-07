@@ -1366,3 +1366,521 @@ button {
 .crow-shape {
   transform: scaleX(-1);
 }
+/* ==================================================
+   CLAMBAKE VISUAL DIRECTIONS
+   Picture-first kindergarten action strip
+   ================================================== */
+
+.mission-copy.has-visual-directions {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 10px;
+  row-gap: 2px;
+  align-items: center;
+}
+
+.mission-copy.has-visual-directions .mission-label {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  align-self: center;
+}
+
+.visual-directions {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+}
+
+.mission-copy.has-visual-directions .instruction-text {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+  font-size: clamp(.68rem, 1vw, .83rem);
+  font-weight: 800;
+  line-height: 1.05;
+  opacity: .86;
+}
+
+.visual-direction-step {
+  position: relative;
+  flex: 0 1 92px;
+  min-width: 58px;
+  height: 38px;
+  display: grid;
+  grid-template-columns: 31px minmax(0, 1fr);
+  align-items: center;
+  gap: 4px;
+  padding: 3px 7px 3px 4px;
+  border: 2px solid rgba(255,255,255,.48);
+  border-radius: 12px;
+  background: rgba(255,255,255,.1);
+  transition:
+    transform .16s ease,
+    opacity .16s ease,
+    background .16s ease,
+    border-color .16s ease,
+    box-shadow .16s ease;
+}
+
+.visual-direction-step.is-active {
+  z-index: 2;
+  border-color: #fff;
+  background: #ffe67d;
+  color: #193b4c;
+  box-shadow:
+    0 0 0 3px rgba(255,255,255,.28),
+    0 3px 8px rgba(0,0,0,.18);
+  transform: translateY(-1px) scale(1.04);
+  animation:
+    clambakeDirectionPulse 1.15s ease-in-out infinite;
+}
+
+.visual-direction-step.is-done {
+  border-color: rgba(220,255,220,.9);
+  background: #d9f0c8;
+  color: #244633;
+  opacity: .9;
+}
+
+.visual-direction-step.is-upcoming {
+  opacity: .42;
+}
+
+.visual-direction-step.is-watch {
+  opacity: .82;
+  border-color: #ffc95f;
+  box-shadow:
+    inset 0 0 0 2px rgba(255,201,95,.24);
+}
+
+.visual-direction-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: clamp(.57rem, .8vw, .72rem);
+  font-weight: 1000;
+  letter-spacing: .035em;
+}
+
+.visual-direction-connector {
+  position: relative;
+  flex: 0 0 15px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.48);
+}
+
+.visual-direction-connector::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -1px;
+  width: 7px;
+  height: 7px;
+  border-top: 3px solid rgba(255,255,255,.72);
+  border-right: 3px solid rgba(255,255,255,.72);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.visual-direction-check {
+  display: none;
+  position: absolute;
+  right: 4px;
+  top: 2px;
+  width: 8px;
+  height: 14px;
+  border-right: 3px solid #397a35;
+  border-bottom: 3px solid #397a35;
+  transform: rotate(45deg);
+}
+
+.visual-direction-step.is-done .visual-direction-check {
+  display: block;
+}
+
+.visual-direction-icon {
+  position: relative;
+  display: block;
+  width: 30px;
+  height: 30px;
+  justify-self: center;
+  flex: 0 0 auto;
+}
+
+/* Digging stick */
+
+.visual-direction-icon--stick::before {
+  content: "";
+  position: absolute;
+  left: 13px;
+  top: 2px;
+  width: 5px;
+  height: 27px;
+  border: 2px solid #6b401f;
+  border-radius: 999px;
+  background: #ae6d37;
+  transform: rotate(24deg);
+}
+
+/* Digging motion */
+
+.visual-direction-icon--dig::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  bottom: 3px;
+  width: 24px;
+  height: 10px;
+  border-radius: 55% 55% 35% 35%;
+  background: #d9a85d;
+  box-shadow:
+    inset 0 3px 0 rgba(255,255,255,.25);
+}
+
+.visual-direction-icon--dig::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: 0;
+  width: 4px;
+  height: 23px;
+  border-radius: 999px;
+  background: #754622;
+  transform: rotate(31deg);
+}
+
+/* Clam shell */
+
+.visual-direction-icon--clam::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 8px;
+  width: 24px;
+  height: 17px;
+  border: 2px solid #915d44;
+  border-radius: 60% 60% 42% 42%;
+  background:
+    repeating-linear-gradient(
+      80deg,
+      #f3c9a7 0 4px,
+      #dfa984 4px 6px
+    );
+}
+
+/* Basket */
+
+.visual-direction-icon--basket::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 12px;
+  width: 22px;
+  height: 14px;
+  border: 2px solid #6e431e;
+  border-radius: 4px 4px 8px 8px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #bd7b38 0 4px,
+      #8e5828 4px 6px
+    );
+}
+
+.visual-direction-icon--basket::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 4px;
+  width: 14px;
+  height: 14px;
+  border: 3px solid #7a4a22;
+  border-bottom: 0;
+  border-radius: 50% 50% 0 0;
+}
+
+/* Helper */
+
+.visual-direction-icon--helper::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 1px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #9a5f3c;
+  box-shadow:
+    0 11px 0 2px #5b87a6;
+}
+
+.visual-direction-icon--helper::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 16px;
+  width: 21px;
+  height: 4px;
+  border-radius: 999px;
+  background: #5b87a6;
+  box-shadow:
+    5px 7px 0 -1px #4b6678,
+    -2px 7px 0 -1px #4b6678;
+}
+
+/* Food bundle */
+
+.visual-direction-icon--food::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 10px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #d67d38;
+  box-shadow:
+    9px 2px 0 #d8b644,
+    4px 9px 0 #6c9e4c;
+}
+
+.visual-direction-icon--food::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border-radius: 80% 10% 80% 10%;
+  background: #548447;
+  transform: rotate(37deg);
+}
+
+/* Crab */
+
+.visual-direction-icon--crab::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 10px;
+  width: 18px;
+  height: 13px;
+  border-radius: 55% 55% 45% 45%;
+  background: #d45f45;
+  box-shadow:
+    -6px -2px 0 -2px #d45f45,
+    6px -2px 0 -2px #d45f45;
+}
+
+.visual-direction-icon--crab::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 7px;
+  width: 24px;
+  height: 18px;
+  border-top: 3px solid #d45f45;
+  border-bottom: 3px solid #d45f45;
+  border-radius: 50%;
+}
+
+/* Generic pit material */
+
+.visual-direction-icon--item::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  bottom: 4px;
+  width: 20px;
+  height: 11px;
+  border: 2px solid #6d5945;
+  border-radius: 50%;
+  background: #a79072;
+  box-shadow:
+    5px -7px 0 -2px #82925c;
+}
+
+/* Slow movement */
+
+.visual-direction-icon--slow::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 7px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    9px 5px 0 -1px rgba(255,255,255,.85),
+    18px 10px 0 -2px rgba(255,255,255,.7);
+}
+
+.visual-direction-icon--slow::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  bottom: 5px;
+  width: 23px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.72);
+}
+
+/* Wobble meter */
+
+.visual-direction-icon--wobble::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 9px;
+  width: 24px;
+  height: 13px;
+  border: 2px solid currentColor;
+  border-radius: 10px;
+  background:
+    linear-gradient(
+      90deg,
+      #80b96e 0 34%,
+      #f0cf58 34% 67%,
+      #d96754 67%
+    );
+}
+
+.visual-direction-icon--wobble::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: 5px;
+  width: 3px;
+  height: 18px;
+  border-radius: 999px;
+  background: #263d4b;
+  transform-origin: 50% 100%;
+  transform: rotate(20deg);
+}
+
+/* Cooking pit */
+
+.visual-direction-icon--pit::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  bottom: 4px;
+  width: 26px;
+  height: 13px;
+  border: 3px solid #87715a;
+  border-radius: 50%;
+  background: #493b32;
+  box-shadow:
+    inset 0 3px 0 #c46c38;
+}
+
+.visual-direction-icon--pit::after {
+  content: "";
+  position: absolute;
+  left: 9px;
+  top: 2px;
+  width: 3px;
+  height: 11px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.68);
+  box-shadow:
+    7px 2px 0 rgba(255,255,255,.5);
+  transform: rotate(-8deg);
+}
+
+@keyframes clambakeDirectionPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 2px rgba(255,255,255,.22),
+      0 3px 8px rgba(0,0,0,.16);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 5px rgba(255,232,112,.32),
+      0 4px 10px rgba(0,0,0,.2);
+  }
+}
+
+@media (max-width: 900px) {
+  .visual-direction-step {
+    flex-basis: 76px;
+    min-width: 51px;
+    height: 35px;
+    padding-right: 4px;
+  }
+
+  .visual-direction-icon {
+    width: 27px;
+    height: 27px;
+    transform: scale(.9);
+  }
+
+  .visual-direction-connector {
+    flex-basis: 10px;
+  }
+
+  .visual-direction-label {
+    font-size: .56rem;
+  }
+}
+
+@media (max-height: 700px) {
+  .visual-direction-step {
+    height: 33px;
+  }
+
+  .mission-copy.has-visual-directions .instruction-text {
+    font-size: .65rem;
+  }
+
+  .visual-direction-icon {
+    transform: scale(.86);
+  }
+}
+
+@media (max-width: 700px) {
+  .mission-copy.has-visual-directions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .mission-copy.has-visual-directions .mission-label {
+    display: none;
+  }
+
+  .visual-directions,
+  .mission-copy.has-visual-directions .instruction-text {
+    grid-column: 1;
+  }
+}
+
+/* Give kindergarten direction labels enough room to display fully. */
+.visual-direction-step {
+  flex-basis: 100px;
+  min-width: 66px;
+}
+
+.visual-direction-step[data-step="3"] {
+  flex-basis: 108px;
+  min-width: 76px;
+}
+
+@media (max-width: 900px) {
+  .visual-direction-step {
+    flex-basis: 84px;
+    min-width: 58px;
+  }
+
+  .visual-direction-step[data-step="3"] {
+    flex-basis: 94px;
+    min-width: 68px;
+  }
+}

@@ -100,9 +100,57 @@
     );
   }
 
+  /*
+   * CLAMBAKE VOICE DIRECTIONS
+   * Loaded from the shared Hands-On Trackpad settings API.
+   * This is intentionally separate from the game's Sound On/Off control.
+   */
+  if (!window.clambakeAdventureVoiceSettingsReady) {
+    window.clambakeAdventureVoiceSettingsLoaded = false;
+    window.clambakeAdventureVoiceDirections = true;
+
+    window.clambakeAdventureVoiceSettingsReady =
+      fetch("/api/settings", {
+        cache: "no-store"
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Unable to load Clambake voice settings.");
+          }
+
+          return response.json();
+        })
+        .then((settings) => {
+          window.clambakeAdventureVoiceDirections =
+            settings.clambakeAdventureVoiceDirections !== false;
+
+          window.clambakeAdventureVoiceSettingsLoaded = true;
+
+          if (
+            !window.clambakeAdventureVoiceDirections &&
+            "speechSynthesis" in window
+          ) {
+            window.speechSynthesis.cancel();
+          }
+        })
+        .catch(() => {
+          window.clambakeAdventureVoiceDirections = true;
+          window.clambakeAdventureVoiceSettingsLoaded = true;
+        });
+  }
   function speak(message) {
     if (
-      !soundEnabled() ||
+      !window.clambakeAdventureVoiceSettingsLoaded &&
+      window.clambakeAdventureVoiceSettingsReady
+    ) {
+      window.clambakeAdventureVoiceSettingsReady.then(() => {
+        speak(message);
+      });
+      return;
+    }
+
+    if (
+      window.clambakeAdventureVoiceDirections === false ||
       !(
         "speechSynthesis" in window
       )
@@ -1368,8 +1416,10 @@
     lastHazardTime: 0,
     hazards: [],
     patternIndex: 0,
-    patternPhase: "burst",
-    nextPatternTime: 0
+    patternPhase: "warning",
+    nextPatternTime: 0,
+    safeWindow: false,
+    steamHitCooldownUntil: 0
   };
 
   let serveLayer = null;
@@ -1377,6 +1427,7 @@
   let serveProgress = null;
   let serveCommunity = null;
   let serveHazardField = null;
+  let serveSteamStatus = null;
 
   function shuffledServeFoods() {
     const values =
@@ -1473,6 +1524,14 @@
       <div
         class="serve-hazard-field"
       ></div>
+
+      <div
+        class="serve-steam-status"
+        data-mode="watch"
+        aria-live="polite"
+      >
+        WATCH THE STEAM
+      </div>
     `;
 
     layer.appendChild(
@@ -1543,35 +1602,180 @@
     serveState.hazards =
       [];
 
+    serveState.safeWindow =
+      false;
+
+    serveState.steamHitCooldownUntil =
+      0;
+
     if (serveHazardField) {
       serveHazardField.innerHTML =
         "";
     }
+
+    if (serveCommunity) {
+      serveCommunity.classList.remove(
+        "is-target"
+      );
+    }
+
+    layer.classList.remove(
+      "serve-steam-warning",
+      "serve-steam-burst",
+      "serve-steam-safe"
+    );
+
+    if (serveSteamStatus) {
+      serveSteamStatus.dataset.mode =
+        "watch";
+
+      serveSteamStatus.textContent =
+        "WATCH THE STEAM";
+    }
   }
+
+
+  function getServeSteamTiming() {
+    const difficulty =
+      Math.min(
+        serveState.delivery,
+        2
+      );
+
+    const timings = [
+      {
+        warning: 700,
+        burst: 780,
+        gap: 360,
+        safe: 2350
+      },
+      {
+        warning: 580,
+        burst: 710,
+        gap: 300,
+        safe: 1950
+      },
+      {
+        warning: 480,
+        burst: 650,
+        gap: 250,
+        safe: 1650
+      }
+    ];
+
+    return timings[difficulty];
+  }
+
+
+  function setServeSteamMode(
+    mode,
+    message
+  ) {
+    layer.classList.remove(
+      "serve-steam-warning",
+      "serve-steam-burst",
+      "serve-steam-safe"
+    );
+
+    if (
+      mode === "warning"
+    ) {
+      layer.classList.add(
+        "serve-steam-warning"
+      );
+    }
+
+    if (
+      mode === "burst"
+    ) {
+      layer.classList.add(
+        "serve-steam-burst"
+      );
+    }
+
+    if (
+      mode === "safe"
+    ) {
+      layer.classList.add(
+        "serve-steam-safe"
+      );
+    }
+
+    if (serveSteamStatus) {
+      serveSteamStatus.dataset.mode =
+        mode;
+
+      serveSteamStatus.textContent =
+        message;
+    }
+  }
+
+
+  function clearSteamBurst() {
+    serveState.hazards.forEach(
+      (hazard) => {
+        hazard.active =
+          false;
+
+        hazard.element.classList.remove(
+          "warning",
+          "erupting"
+        );
+      }
+    );
+  }
+
+
+  function markServeSteamWarning(
+    index
+  ) {
+    clearSteamBurst();
+
+    serveState.safeWindow =
+      false;
+
+    const hazard =
+      serveState.hazards[index];
+
+    if (!hazard) {
+      return;
+    }
+
+    hazard.element.classList.add(
+      "warning"
+    );
+
+    const sideNames = [
+      "LEFT",
+      "CENTER",
+      "RIGHT"
+    ];
+
+    setServeSteamMode(
+      "warning",
+      `WAIT - ${sideNames[index]}`
+    );
+  }
+
 
   function spawnServeHazards() {
     stopServeHazards();
 
-    /*
-     * Predictable steam pattern:
-     *
-     * LEFT -> CENTER -> RIGHT -> PAUSE
-     *
-     * The child can watch the cycle and decide
-     * when it is safe to enter the cooking pit.
-     */
     const positions = [
       {
-        x: 43,
-        y: 61
+        x: 44,
+        y: 56,
+        side: "left"
       },
       {
-        x: 51,
-        y: 56
+        x: 50,
+        y: 55,
+        side: "center"
       },
       {
-        x: 59,
-        y: 62
+        x: 56,
+        y: 56,
+        side: "right"
       }
     ];
 
@@ -1584,6 +1788,9 @@
 
         element.className =
           "serve-steam-hazard";
+
+        element.dataset.side =
+          position.side;
 
         element.style.left =
           `${position.x}%`;
@@ -1606,29 +1813,26 @@
       0;
 
     serveState.patternPhase =
-      "burst";
+      "warning";
+
+    serveState.safeWindow =
+      false;
+
+    const timing =
+      getServeSteamTiming();
+
+    markServeSteamWarning(
+      0
+    );
 
     serveState.nextPatternTime =
-      performance.now() + 450;
+      performance.now() +
+      timing.warning;
 
     serveState.hazardFrame =
       window.requestAnimationFrame(
         moveServeHazards
       );
-  }
-
-
-  function clearSteamBurst() {
-    serveState.hazards.forEach(
-      (hazard) => {
-        hazard.active =
-          false;
-
-        hazard.element.classList.remove(
-          "erupting"
-        );
-      }
-    );
   }
 
 
@@ -1641,16 +1845,19 @@
       return;
     }
 
+    const timing =
+      getServeSteamTiming();
+
     if (
       now >=
       serveState.nextPatternTime
     ) {
-      clearSteamBurst();
-
       if (
         serveState.patternPhase ===
-        "burst"
+        "warning"
       ) {
+        clearSteamBurst();
+
         const hazard =
           serveState.hazards[
             serveState.patternIndex
@@ -1665,22 +1872,27 @@
           );
         }
 
-        serveState.patternPhase =
-          "rest";
+        serveState.safeWindow =
+          false;
 
-        /*
-         * Each visible steam burst lasts long enough
-         * for the child to recognize where it is.
-         */
+        setServeSteamMode(
+          "burst",
+          "WAIT!"
+        );
+
+        serveState.patternPhase =
+          "burst";
+
         serveState.nextPatternTime =
           now +
-          Math.max(
-            650,
-            850 -
-            serveState.delivery * 45
-          );
+          timing.burst;
       }
-      else {
+      else if (
+        serveState.patternPhase ===
+        "burst"
+      ) {
+        clearSteamBurst();
+
         serveState.patternIndex +=
           1;
 
@@ -1691,32 +1903,70 @@
           serveState.patternIndex =
             0;
 
-          /*
-           * Noticeable pause after RIGHT steam.
-           * This is the safest opening to enter.
-           */
-          /*
-           * LONG SAFE WINDOW after the right-side
-           * steam finishes.
-           *
-           * This is the intended moment to run in,
-           * grab the food, and start moving back out.
-           */
+          serveState.patternPhase =
+            "safe";
+
+          serveState.safeWindow =
+            true;
+
+          setServeSteamMode(
+            "safe",
+            "GO!"
+          );
+
           serveState.nextPatternTime =
             now +
-            Math.max(
-              1450,
-              2100 -
-              serveState.delivery * 180
-            );
+            timing.safe;
         }
         else {
+          serveState.patternPhase =
+            "gap";
+
+          setServeSteamMode(
+            "watch",
+            "WAIT!"
+          );
+
           serveState.nextPatternTime =
-            now + 430;
+            now +
+            timing.gap;
         }
+      }
+      else if (
+        serveState.patternPhase ===
+        "gap"
+      ) {
+        serveState.patternPhase =
+          "warning";
+
+        markServeSteamWarning(
+          serveState.patternIndex
+        );
+
+        serveState.nextPatternTime =
+          now +
+          timing.warning;
+      }
+      else if (
+        serveState.patternPhase ===
+        "safe"
+      ) {
+        serveState.safeWindow =
+          false;
+
+        serveState.patternIndex =
+          0;
 
         serveState.patternPhase =
-          "burst";
+          "warning";
+
+        markServeSteamWarning(
+          0
+        );
+
+        serveState.nextPatternTime =
+          now +
+          timing.warning;
       }
     }
 
@@ -1727,6 +1977,7 @@
         moveServeHazards
       );
   }
+
   function helperTouches(
     element,
     padding = 0
@@ -1794,16 +2045,11 @@
 
   function checkServeSteamCollision() {
     if (
-      !serveState.active ||
-      !serveState.carrying
+      !serveState.active
     ) {
       return;
     }
 
-    /*
-     * IMPORTANT:
-     * Steam cannot hurt the child outside the pit.
-     */
     if (
       !helperInsideCookingPit()
     ) {
@@ -1824,6 +2070,52 @@
       return;
     }
 
+    const now =
+      performance.now();
+
+    if (
+      now <
+      serveState.steamHitCooldownUntil
+    ) {
+      return;
+    }
+
+    serveState.steamHitCooldownUntil =
+      now + 750;
+
+    helper.classList.remove(
+      "recoil"
+    );
+
+    void helper.offsetWidth;
+
+    helper.classList.add(
+      "recoil"
+    );
+
+    window.setTimeout(
+      () => {
+        helper.classList.remove(
+          "recoil"
+        );
+      },
+      430
+    );
+
+    if (
+      !serveState.carrying
+    ) {
+      setReadyMessage(
+        "TOO HOT!",
+        "show"
+      );
+
+      instructionText.textContent =
+        "Too hot! Watch the steam and wait for SAFE - GO!";
+
+      return;
+    }
+
     serveState.carrying =
       false;
 
@@ -1831,16 +2123,22 @@
       "serve-carrying"
     );
 
+    if (serveCommunity) {
+      serveCommunity.classList.remove(
+        "is-target"
+      );
+    }
+
     setReadyMessage(
       "STEAM!",
       "show"
     );
 
     instructionText.textContent =
-      "Oops! The steam made you drop the food. Go back into the pit and get it again!";
+      "Oops! The steam made you drop the food. Wait for SAFE - GO! and get it again.";
 
     speak(
-      "The steam made you drop the food. Wait for an opening and get it again."
+      "The steam made you drop the food. Wait for the safe opening and get it again."
     );
 
     const droppedFood =
@@ -1857,8 +2155,9 @@
         "serve-requested"
       );
     }
-
   }
+
+
   function checkServeCollisions() {
     if (
       !serveState.active
@@ -1881,6 +2180,20 @@
           -5
         )
       ) {
+        if (
+          !serveState.safeWindow
+        ) {
+          setReadyMessage(
+            "WAIT!",
+            "show"
+          );
+
+          instructionText.textContent =
+            "Wait for SAFE - GO! before taking the food from the hot pit.";
+
+          return;
+        }
+
         serveState.carrying =
           true;
 
@@ -1892,20 +2205,21 @@
           "serve-collected"
         );
 
-        setReadyMessage(
-          "GO!",
-          "show"
-        );
+        if (serveCommunity) {
+          serveCommunity.classList.add(
+            "is-target"
+          );
+        }
 
         instructionText.textContent =
           `You have the ${SERVE_LABELS[
             serveState.requested
-          ].toLowerCase()}! Carry it to the community!`;
+          ].toLowerCase()}! Get out of the pit and bring it to the community member!`;
 
         speak(
           `Great. Bring the ${SERVE_LABELS[
             serveState.requested
-          ].toLowerCase()} to the community.`
+          ].toLowerCase()} to the community member.`
         );
       }
 
@@ -1922,6 +2236,7 @@
     }
   }
 
+
   function beginServeDelivery() {
     serveState.carrying =
       false;
@@ -1929,6 +2244,12 @@
     helper.classList.remove(
       "serve-carrying"
     );
+
+    if (serveCommunity) {
+      serveCommunity.classList.remove(
+        "is-target"
+      );
+    }
 
     serveState.requested =
       serveState.requestOrder[
@@ -1948,26 +2269,25 @@
     renderServeFoods();
 
     /*
-     * Keep the helper where the previous delivery
-     * ended instead of teleporting back to the
-     * original starting position.
+     * The helper stays wherever the previous
+     * delivery ended. No teleporting.
      */
     spawnServeHazards();
 
     setReadyMessage(
-      "SERVE!",
+      "WATCH!",
       "show"
     );
 
     instructionText.textContent =
-      `Get the ${SERVE_LABELS[
+      `Watch LEFT, CENTER, RIGHT. When it says SAFE - GO!, get the ${SERVE_LABELS[
         serveState.requested
-      ].toLowerCase()} from the hot cooking pit! Watch the steam, then carry it to the community member!`;
+      ].toLowerCase()} and carry it to the community member!`;
 
     speak(
-      `Get the ${SERVE_LABELS[
+      `Watch the steam. When it is safe, get the ${SERVE_LABELS[
         serveState.requested
-      ].toLowerCase()} from the cooking pit. Watch the steam, then bring it to the community member.`
+      ].toLowerCase()} and bring it to the community member.`
     );
   }
 

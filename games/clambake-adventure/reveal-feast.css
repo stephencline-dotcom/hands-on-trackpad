@@ -1425,3 +1425,800 @@
 
 
 
+
+/* =======================================================
+   LEVEL 4 STEAM CHALLENGE REBUILD
+   Predictable vents + warnings + safe window
+   ======================================================= */
+
+.serve-steam-status {
+  position: absolute;
+  top: 205px;
+  left: 50%;
+  z-index: 16;
+  min-width: 190px;
+  padding: 8px 18px;
+  transform: translateX(-50%);
+  border: 4px solid #fff;
+  border-radius: 17px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 1000;
+  letter-spacing: .05em;
+  color: #fff;
+  background: #365f73;
+  box-shadow:
+    0 4px 0 rgba(49,39,25,.24),
+    0 7px 14px rgba(49,39,25,.15);
+  pointer-events: none;
+  transition:
+    transform .16s ease,
+    background .16s ease,
+    box-shadow .16s ease;
+}
+
+.serve-steam-status[data-mode="warning"] {
+  color: #4b2d13;
+  background: #ffd15d;
+  border-color: #fff4c2;
+  animation:
+    serveSteamStatusWarning
+    .55s ease-in-out infinite alternate;
+}
+
+.serve-steam-status[data-mode="burst"] {
+  background: #d85c43;
+  border-color: #ffd7c9;
+  transform:
+    translateX(-50%)
+    scale(1.06);
+}
+
+.serve-steam-status[data-mode="safe"] {
+  color: #173e25;
+  background: #9ee080;
+  border-color: #edffe7;
+  transform:
+    translateX(-50%)
+    scale(1.09);
+  box-shadow:
+    0 0 0 5px rgba(159,224,128,.28),
+    0 5px 0 rgba(49,85,38,.25);
+}
+
+
+/*
+ * The hazard element now represents a real vent.
+ * The vent remains visible so children can learn
+ * where LEFT / CENTER / RIGHT steam comes from.
+ */
+.serve-steam-hazard {
+  width: 74px !important;
+  height: 120px !important;
+  opacity: 1 !important;
+  background: none !important;
+  border-radius: 0 !important;
+  filter: none !important;
+  animation: none !important;
+  pointer-events: none;
+  transform:
+    translate(-50%, -26%) !important;
+}
+
+
+/* Hot vent / crack in the pit */
+.serve-steam-hazard::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 5px;
+  width: 38px;
+  height: 15px;
+  transform: translateX(-50%);
+  border: 3px solid #44372c;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      ellipse at center,
+      #432f24 0 40%,
+      #6f5745 42% 65%,
+      #9e8871 68%
+    );
+  box-shadow:
+    inset 0 2px 3px rgba(0,0,0,.42),
+    0 2px 2px rgba(255,255,255,.18);
+  transition:
+    transform .15s ease,
+    background .15s ease,
+    box-shadow .15s ease;
+}
+
+
+/* Steam column */
+.serve-steam-hazard::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 15px;
+  width: 60px;
+  height: 94px;
+  opacity: 0;
+  transform:
+    translateX(-50%)
+    translateY(18px)
+    scale(.65);
+  transform-origin: center bottom;
+  background:
+    radial-gradient(
+      circle at 50% 82%,
+      rgba(255,255,255,.94) 0 14%,
+      rgba(239,246,245,.78) 15% 24%,
+      transparent 26%
+    ),
+    radial-gradient(
+      circle at 30% 62%,
+      rgba(255,255,255,.9) 0 15%,
+      rgba(232,241,240,.67) 16% 27%,
+      transparent 29%
+    ),
+    radial-gradient(
+      circle at 68% 43%,
+      rgba(255,255,255,.9) 0 16%,
+      rgba(232,241,240,.64) 17% 28%,
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 43% 20%,
+      rgba(255,255,255,.85) 0 14%,
+      rgba(230,240,239,.55) 15% 27%,
+      transparent 29%
+    );
+  filter:
+    drop-shadow(
+      0 3px 3px
+      rgba(70,76,74,.18)
+    );
+}
+
+
+/* Clear warning before a vent erupts */
+.serve-steam-hazard.warning::before {
+  transform:
+    translateX(-50%)
+    scale(1.18);
+  background:
+    radial-gradient(
+      ellipse at center,
+      #ff8a32 0 34%,
+      #e9582e 36% 53%,
+      #8b4b32 56% 70%,
+      #a58e74 72%
+    );
+  box-shadow:
+    0 0 0 5px rgba(255,190,72,.18),
+    0 0 17px 8px rgba(255,119,38,.58);
+  animation:
+    serveVentWarning
+    .38s ease-in-out infinite alternate;
+}
+
+
+/* Only the steam plume moves during eruption */
+.serve-steam-hazard.erupting {
+  animation: none !important;
+}
+
+.serve-steam-hazard.erupting::before {
+  background:
+    radial-gradient(
+      ellipse at center,
+      #ffce55 0 27%,
+      #e75c31 30% 53%,
+      #704634 56% 70%,
+      #9c876f 72%
+    );
+  box-shadow:
+    0 0 18px 7px rgba(255,91,38,.52);
+}
+
+.serve-steam-hazard.erupting::after {
+  animation:
+    serveCleanSteamBurst
+    .72s ease-out forwards;
+}
+
+
+/* Give the whole pit a readable danger state. */
+.serve-steam-warning .feast-pit {
+  filter:
+    drop-shadow(
+      0 0 12px
+      rgba(255,167,61,.42)
+    )
+    drop-shadow(
+      0 15px 10px
+      rgba(62,42,23,.28)
+    );
+}
+
+.serve-steam-burst .feast-pit {
+  filter:
+    drop-shadow(
+      0 0 15px
+      rgba(224,85,49,.46)
+    )
+    drop-shadow(
+      0 15px 10px
+      rgba(62,42,23,.28)
+    );
+}
+
+.serve-steam-safe .feast-pit {
+  filter:
+    drop-shadow(
+      0 0 17px
+      rgba(103,196,91,.65)
+    )
+    drop-shadow(
+      0 15px 10px
+      rgba(62,42,23,.28)
+    );
+}
+
+
+/* Make the requested food extra obvious during SAFE. */
+.serve-steam-safe
+.feast-food-reveal.serve-requested {
+  filter:
+    drop-shadow(
+      0 0 11px
+      rgba(255,235,91,.98)
+    )
+    drop-shadow(
+      0 0 20px
+      rgba(128,216,91,.8)
+    );
+}
+
+
+/*
+ * Once the food is collected, make the person
+ * clearly become the destination.
+ */
+.serve-community-zone.is-target
+.serve-community-person {
+  filter:
+    drop-shadow(
+      0 0 8px
+      rgba(255,224,78,.95)
+    )
+    drop-shadow(
+      0 0 16px
+      rgba(255,187,44,.68)
+    );
+  animation:
+    serveCommunityTargetBounce
+    .55s ease-in-out infinite alternate;
+}
+
+.serve-community-zone.is-target
+.serve-arm.left {
+  animation:
+    serveTargetWaveLeft
+    .45s ease-in-out infinite alternate;
+}
+
+.serve-community-zone.is-target
+.serve-arm.right {
+  animation:
+    serveTargetWaveRight
+    .45s ease-in-out infinite alternate;
+}
+
+
+/* Steam remains behind the helper. */
+.serve-hazard-field {
+  z-index: 4 !important;
+}
+
+.feast-helper {
+  z-index: 12 !important;
+}
+
+.feast-helper.dragging {
+  z-index: 14 !important;
+}
+
+
+@keyframes serveCleanSteamBurst {
+  0% {
+    opacity: 0;
+    transform:
+      translateX(-50%)
+      translateY(18px)
+      scale(.6);
+  }
+
+  18% {
+    opacity: .95;
+  }
+
+  58% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform:
+      translateX(-50%)
+      translateY(-38px)
+      scale(1.2);
+  }
+}
+
+@keyframes serveVentWarning {
+  from {
+    transform:
+      translateX(-50%)
+      scale(1.05);
+  }
+
+  to {
+    transform:
+      translateX(-50%)
+      scale(1.25);
+  }
+}
+
+@keyframes serveSteamStatusWarning {
+  from {
+    transform:
+      translateX(-50%)
+      scale(1);
+  }
+
+  to {
+    transform:
+      translateX(-50%)
+      scale(1.055);
+  }
+}
+
+@keyframes serveCommunityTargetBounce {
+  from {
+    transform:
+      scale(1.18)
+      translateY(0);
+  }
+
+  to {
+    transform:
+      scale(1.18)
+      translateY(-5px);
+  }
+}
+
+@keyframes serveTargetWaveLeft {
+  from {
+    transform: rotate(14deg);
+  }
+
+  to {
+    transform: rotate(58deg);
+  }
+}
+
+@keyframes serveTargetWaveRight {
+  from {
+    transform: rotate(-14deg);
+  }
+
+  to {
+    transform: rotate(-58deg);
+  }
+}
+
+
+@media (max-height: 720px) {
+  .serve-steam-status {
+    top: 188px;
+    padding: 6px 14px;
+    font-size: 15px;
+  }
+}
+
+/* =======================================================
+   LEVEL 4 RED GREEN SIGNAL UI
+   Clean kindergarten WAIT / GO presentation
+   ======================================================= */
+
+
+/*
+ * Level 4 has its own directions.
+ * Hide the Level 1/2/3 picture-direction strip while
+ * the Feast Finale is active.
+ */
+body:has(.feast-serve-finale:not([hidden]))
+.mission-copy
+> *:not(.mission-label):not(.instruction-text) {
+  display: none !important;
+}
+
+body:has(.feast-serve-finale:not([hidden]))
+.instruction-text {
+  display: block !important;
+  width: 100%;
+  max-width: none;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+
+/*
+ * The old reveal-phase NOW / GO bubble is not needed
+ * during the serving finale. The red/green signal below
+ * becomes the single timing cue.
+ */
+body:has(.feast-serve-finale:not([hidden]))
+.feast-ready-message {
+  display: none !important;
+}
+
+
+/* ---------- CLEAN TOP FINALE HEADER ---------- */
+
+.feast-serve-finale
+.serve-topbar {
+  top: 88px;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.feast-serve-finale
+.serve-title {
+  font-size: 21px;
+  padding: 8px 13px;
+}
+
+.feast-serve-finale
+.serve-progress {
+  font-size: 16px;
+  padding: 8px 13px;
+}
+
+
+/*
+ * Move the food request to the open RIGHT side.
+ * It no longer covers the center of the pit.
+ */
+.feast-serve-finale
+.serve-request-card {
+  top: 31%;
+  left: auto;
+  right: 3%;
+  width: 210px;
+  min-width: 0;
+  padding: 9px 12px;
+  transform: none;
+}
+
+.feast-serve-finale
+.serve-request-card span {
+  font-size: 12px;
+}
+
+.feast-serve-finale
+.serve-request-card strong {
+  margin-top: 3px;
+  font-size: 25px;
+}
+
+
+/* ---------- BIG RED / GREEN SIGNAL ---------- */
+
+.feast-serve-finale
+.serve-steam-status {
+  top: 48%;
+  left: auto;
+  right: 3%;
+
+  width: 210px;
+  min-width: 0;
+
+  padding:
+    17px
+    12px
+    14px;
+
+  transform: none;
+
+  border:
+    5px solid
+    white;
+
+  border-radius:
+    24px;
+
+  font-size:
+    28px;
+
+  line-height:
+    1;
+
+  letter-spacing:
+    .035em;
+
+  box-shadow:
+    0 6px 0
+    rgba(40,45,40,.23),
+    0 10px 20px
+    rgba(40,45,40,.18);
+}
+
+
+/*
+ * Large signal light.
+ */
+.feast-serve-finale
+.serve-steam-status::before {
+  content: "";
+
+  display: block;
+
+  width: 42px;
+  height: 42px;
+
+  margin:
+    0 auto
+    8px;
+
+  border:
+    5px solid
+    white;
+
+  border-radius:
+    50%;
+
+  background:
+    #ba2d27;
+
+  box-shadow:
+    0 0 0 5px
+    rgba(90,25,20,.14),
+    inset 0 -5px 0
+    rgba(85,20,15,.22);
+}
+
+
+/* WAIT states are all RED. */
+.feast-serve-finale
+.serve-steam-status[data-mode="watch"],
+.feast-serve-finale
+.serve-steam-status[data-mode="warning"],
+.feast-serve-finale
+.serve-steam-status[data-mode="burst"] {
+  color:
+    white;
+
+  background:
+    #c73f35;
+
+  border-color:
+    #ffe2dc;
+}
+
+.feast-serve-finale
+.serve-steam-status[data-mode="watch"]::before,
+.feast-serve-finale
+.serve-steam-status[data-mode="warning"]::before,
+.feast-serve-finale
+.serve-steam-status[data-mode="burst"]::before {
+  background:
+    #ff3b30;
+
+  box-shadow:
+    0 0 0 6px
+    rgba(255,59,48,.19),
+    0 0 24px
+    rgba(255,59,48,.75),
+    inset 0 -5px 0
+    rgba(126,26,19,.25);
+}
+
+
+/*
+ * GO state is strongly GREEN.
+ */
+.feast-serve-finale
+.serve-steam-status[data-mode="safe"] {
+  color:
+    white;
+
+  background:
+    #268b48;
+
+  border-color:
+    #e5ffe8;
+
+  transform:
+    none;
+
+  box-shadow:
+    0 0 0 7px
+    rgba(71,194,99,.18),
+    0 0 30px
+    rgba(64,196,95,.52),
+    0 6px 0
+    rgba(34,92,48,.28);
+
+  animation:
+    serveGoSignal
+    .52s ease-in-out
+    infinite alternate;
+}
+
+.feast-serve-finale
+.serve-steam-status[data-mode="safe"]::before {
+  background:
+    #3ee563;
+
+  box-shadow:
+    0 0 0 6px
+    rgba(62,229,99,.22),
+    0 0 27px
+    rgba(62,229,99,.95),
+    inset 0 -5px 0
+    rgba(29,122,51,.25);
+}
+
+
+/* ---------- COLOR THE PIT TOO ---------- */
+
+/*
+ * During WAIT, the pit itself has a red danger glow.
+ */
+.serve-steam-warning
+.feast-pit,
+.serve-steam-burst
+.feast-pit {
+  filter:
+    drop-shadow(
+      0 0 10px
+      rgba(231,65,52,.8)
+    )
+    drop-shadow(
+      0 0 22px
+      rgba(231,65,52,.48)
+    )
+    drop-shadow(
+      0 15px 10px
+      rgba(62,42,23,.28)
+    ) !important;
+}
+
+
+/*
+ * Between bursts is still WAIT.
+ */
+.feast-layer:not(.serve-steam-safe)
+.feast-serve-finale:not([hidden])
+~ .feast-pit {
+  transition:
+    filter .18s ease;
+}
+
+
+/*
+ * SAFE opening makes the whole pit glow green.
+ */
+.serve-steam-safe
+.feast-pit {
+  filter:
+    drop-shadow(
+      0 0 12px
+      rgba(65,211,97,.9)
+    )
+    drop-shadow(
+      0 0 27px
+      rgba(65,211,97,.62)
+    )
+    drop-shadow(
+      0 15px 10px
+      rgba(62,42,23,.28)
+    ) !important;
+}
+
+
+/*
+ * Make the requested food pulse especially strongly
+ * during GO time.
+ */
+.serve-steam-safe
+.feast-food-reveal.serve-requested {
+  animation:
+    serveSafeFoodPulse
+    .46s ease-in-out
+    infinite alternate !important;
+
+  filter:
+    drop-shadow(
+      0 0 10px
+      rgba(255,242,92,1)
+    )
+    drop-shadow(
+      0 0 23px
+      rgba(75,220,101,.95)
+    ) !important;
+}
+
+
+/* Community person remains an obvious destination. */
+.serve-community-zone.is-target
+strong {
+  color:
+    #173f25;
+
+  background:
+    #dffff0;
+
+  box-shadow:
+    0 0 14px
+    rgba(63,202,93,.72);
+}
+
+
+/* ---------- ANIMATIONS ---------- */
+
+@keyframes serveGoSignal {
+  from {
+    scale: 1;
+  }
+
+  to {
+    scale: 1.06;
+  }
+}
+
+@keyframes serveSafeFoodPulse {
+  from {
+    scale: 1;
+  }
+
+  to {
+    scale: 1.13;
+  }
+}
+
+
+/* ---------- SMALLER CHROMEBOOK HEIGHTS ---------- */
+
+@media (max-height: 720px) {
+
+  .feast-serve-finale
+  .serve-topbar {
+    top: 78px;
+  }
+
+  .feast-serve-finale
+  .serve-request-card {
+    top: 29%;
+    right: 2%;
+    width: 180px;
+  }
+
+  .feast-serve-finale
+  .serve-steam-status {
+    top: 48%;
+    right: 2%;
+    width: 180px;
+    padding: 11px 9px;
+    font-size: 23px;
+  }
+
+  .feast-serve-finale
+  .serve-steam-status::before {
+    width: 34px;
+    height: 34px;
+    margin-bottom: 6px;
+  }
+}

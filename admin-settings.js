@@ -27,6 +27,8 @@ const fireflyForestGameActiveToggle = document.getElementById("fireflyForestGame
 const chickenLittleGameActiveToggle = document.getElementById("chickenLittleGameActive");
 const clambakeAdventureGameActiveToggle =
   document.getElementById("clambakeAdventureGameActive");
+const clambakeAdventureVoiceDirectionsToggle =
+  document.getElementById("clambakeAdventureVoiceDirections");
 const chickenLittleRequireClickAndDragToggle = document.getElementById("chickenLittleRequireClickAndDrag");
 const chickenLittleLevelInputs = [1, 2, 3, 4].map((level) => ({
   time: document.getElementById(`chickenLittleTime${level}`),
@@ -263,6 +265,8 @@ const FIRE_REQUIRE_CLICK_KEY = "fireRequireClick";
 const MARTIAN_REQUIRE_CLICK_KEY = "martianRequireClick";
 const BUG_MEADOW_REQUIRE_CLICK_AND_DRAG_KEY = "bugMeadowRequireClickAndDrag";
 const DEER_RUN_REQUIRE_CLICK_AND_DRAG_KEY = "deerRunRequireClickAndDrag";
+const CLAMBAKE_ADVENTURE_VOICE_DIRECTIONS_KEY =
+  "clambakeAdventureVoiceDirections";
 const HAUNTED_STREET_GAME_ACTIVE_KEY = "hauntedStreetGameActive";
 const HAUNTED_STREET_REQUIRE_CLICK_AND_DRAG_KEY = "hauntedStreetRequireClickAndDrag";
 const HAUNTED_STREET_CLICK_TO_THROW_KEY = "hauntedStreetClickToThrow";
@@ -2458,6 +2462,11 @@ async function loadTask1Settings() {
     localStorage.getItem(FIREFLY_FOREST_GAME_ACTIVE_KEY),
     true
   );
+  let clambakeAdventureVoiceDirections = parseTaskEnabled(
+    localStorage.getItem(CLAMBAKE_ADVENTURE_VOICE_DIRECTIONS_KEY),
+    true
+  );
+
   let chickenLittleRequireClickAndDrag = false;
 
   let chickenLittleLevelTimes =
@@ -2749,6 +2758,10 @@ async function loadTask1Settings() {
       clambakeAdventureGameActive = parseTaskEnabled(
         data.clambakeAdventureGameActive,
         clambakeAdventureGameActive
+      );
+      clambakeAdventureVoiceDirections = parseTaskEnabled(
+        data.clambakeAdventureVoiceDirections,
+        clambakeAdventureVoiceDirections
       );
       hauntedStreetRequireClickAndDrag = parseTaskEnabled(
         data.hauntedStreetRequireClickAndDrag,
@@ -3208,6 +3221,11 @@ async function loadTask1Settings() {
   if (clambakeAdventureGameActiveToggle) {
     clambakeAdventureGameActiveToggle.checked =
       clambakeAdventureGameActive;
+  }
+
+  if (clambakeAdventureVoiceDirectionsToggle) {
+    clambakeAdventureVoiceDirectionsToggle.checked =
+      clambakeAdventureVoiceDirections;
   }
 
   if (hauntedStreetRequireClickAndDragToggle) {
@@ -3677,6 +3695,16 @@ async function saveTask1Settings() {
     deerRunRequireClickAndDragToggle.checked
   );
 
+  const clambakeAdventureVoiceDirections = Boolean(
+    clambakeAdventureVoiceDirectionsToggle &&
+    clambakeAdventureVoiceDirectionsToggle.checked
+  );
+
+  localStorage.setItem(
+    CLAMBAKE_ADVENTURE_VOICE_DIRECTIONS_KEY,
+    String(clambakeAdventureVoiceDirections)
+  );
+
   const hauntedStreetRequireClickAndDrag = Boolean(
     hauntedStreetRequireClickAndDragToggle &&
     hauntedStreetRequireClickAndDragToggle.checked
@@ -4064,6 +4092,7 @@ async function saveTask1Settings() {
         deerRunGameActive,
         hauntedStreetGameActive,
         clambakeAdventureGameActive,
+        clambakeAdventureVoiceDirections,
         hauntedStreetRequireClickAndDrag,
         hauntedStreetClickToThrow,
         hauntedStreetSoundEnabled,
@@ -4374,6 +4403,7 @@ const allToggles = [
   deerRunGameActiveToggle,
   hauntedStreetGameActiveToggle,
   clambakeAdventureGameActiveToggle,
+  clambakeAdventureVoiceDirectionsToggle,
   hauntedStreetRequireClickAndDragToggle,
   hauntedStreetClickToThrowToggle,
   hauntedStreetSoundEnabledToggle,
