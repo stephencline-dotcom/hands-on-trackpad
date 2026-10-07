@@ -4682,3 +4682,101 @@ window.setTimeout(
 );
 
 
+
+/* =========================================================
+   FULLSCREEN TASK NUMBER REFRESH SYNC
+   Make saved numeric task values survive admin-page refresh.
+   ========================================================= */
+
+async function syncFullscreenTaskNumbersFromServer() {
+  try {
+    const response =
+      await fetch(
+        "/api/settings",
+        {
+          cache: "no-store"
+        }
+      );
+
+    if (!response.ok) {
+      return;
+    }
+
+    const settings =
+      await response.json();
+
+    const task1Seconds =
+      parseTask1Seconds(
+        settings.task1RequiredSeconds
+      );
+
+    const task2Clicks =
+      parseTask2Clicks(
+        settings.task2RequiredClicks
+      );
+
+    const task3Seconds =
+      parseTask3Seconds(
+        settings.task3RequiredDragSeconds
+      );
+
+    const task4Seconds =
+      parseTask3Seconds(
+        settings.task4RequiredScrollSeconds
+      );
+
+    if (task1DurationInput) {
+      task1DurationInput.value =
+        String(task1Seconds);
+    }
+
+    if (task2ClicksInput) {
+      task2ClicksInput.value =
+        String(task2Clicks);
+    }
+
+    if (task3DragSecondsInput) {
+      task3DragSecondsInput.value =
+        String(task3Seconds);
+    }
+
+    if (task4ScrollSecondsInput) {
+      task4ScrollSecondsInput.value =
+        String(task4Seconds);
+    }
+
+    localStorage.setItem(
+      TASK1_STORAGE_KEY,
+      String(task1Seconds)
+    );
+
+    localStorage.setItem(
+      TASK2_STORAGE_KEY,
+      String(task2Clicks)
+    );
+
+    localStorage.setItem(
+      TASK3_STORAGE_KEY,
+      String(task3Seconds)
+    );
+
+    localStorage.setItem(
+      TASK4_STORAGE_KEY,
+      String(task4Seconds)
+    );
+  }
+  catch (error) {
+    console.warn(
+      "[admin-settings] Could not refresh fullscreen task numbers:",
+      error
+    );
+  }
+}
+
+window.addEventListener(
+  "load",
+  () => {
+    syncFullscreenTaskNumbersFromServer();
+  }
+);
+

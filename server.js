@@ -1364,11 +1364,22 @@ const server = http.createServer(async (req, res) => {
         }
 
         /*
-         * Normalize through the existing
-         * trusted settings logic first.
+         * Start with the latest persistent settings before
+         * applying this request. Many admin controls send
+         * only part of the settings object. Merging first
+         * prevents unrelated settings from being replaced
+         * by stale values from Render's local file.
          */
+        const currentPersistentSettings =
+          supabase
+            ? await loadSettingsFromSupabase()
+            : loadSettings();
+
         const normalized =
-          saveSettings(parsed);
+          saveSettings({
+            ...currentPersistentSettings,
+            ...parsed,
+          });
 
         liveClassroomState
           .freezeScreenFeatureEnabled =
