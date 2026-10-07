@@ -1884,3 +1884,512 @@ button {
     min-width: 68px;
   }
 }
+
+/* =======================================================
+   CLAMBAKE TRACKPAD GUIDE
+   Reuses the shared Hands-On Trackpad guide.
+   ======================================================= */
+
+.clambake-shell {
+  position: relative;
+}
+
+.clambake-trackpad-guide {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: 30;
+
+  width: min(250px, 19vw);
+  padding: 7px 9px 9px;
+
+  border: 3px solid rgba(255,255,255,.92);
+  border-radius: 18px;
+
+  background:
+    rgba(239,249,247,.94);
+
+  box-shadow:
+    0 6px 18px
+    rgba(35,62,70,.22);
+
+  backdrop-filter:
+    blur(3px);
+}
+
+.clambake-trackpad-guide
+.imported-trackpad-guide-label {
+  margin:
+    0 0 3px;
+
+  text-align:
+    center;
+
+  color:
+    #244d5a;
+
+  font-size:
+    .72rem;
+
+  font-weight:
+    1000;
+
+  letter-spacing:
+    .06em;
+
+  text-transform:
+    uppercase;
+}
+
+.clambake-trackpad-guide
+.imported-trackpad-scene {
+  min-height: 0;
+}
+
+
+/*
+ * On smaller Chromebook displays, keep the guide
+ * compact so it never steals the main game area.
+ */
+@media (max-width: 1050px) {
+  .clambake-trackpad-guide {
+    width: 185px;
+    right: 7px;
+    bottom: 7px;
+    padding: 5px 7px 7px;
+  }
+
+  .clambake-trackpad-guide
+  .imported-trackpad-guide-label {
+    font-size: .62rem;
+  }
+}
+
+
+/*
+ * Very narrow screens: place it beneath the game
+ * rather than covering the play field.
+ */
+@media (max-width: 760px) {
+  .clambake-trackpad-guide {
+    position: relative;
+    right: auto;
+    bottom: auto;
+
+    width: min(300px, 88vw);
+    margin: 8px auto 12px;
+  }
+}
+
+/* =======================================================
+   CLAMBAKE TRACKPAD GUIDE SIZE FIX
+   Keep the shared guide contained beside the game.
+   ======================================================= */
+
+.clambake-trackpad-guide {
+  width: 260px !important;
+  height: 205px !important;
+
+  padding: 8px 10px 10px !important;
+
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+.clambake-trackpad-guide
+.imported-trackpad-guide-label {
+  height: 24px !important;
+  margin: 0 0 4px !important;
+
+  line-height: 24px !important;
+}
+
+.clambake-trackpad-guide
+.imported-trackpad-scene {
+  position: relative !important;
+
+  width: 100% !important;
+  max-width: 100% !important;
+
+  height: 158px !important;
+  min-height: 0 !important;
+
+  margin: 0 auto !important;
+
+  overflow: hidden !important;
+
+  border-radius: 12px !important;
+}
+
+.clambake-trackpad-guide
+.imported-trackpad-image {
+  position: absolute !important;
+
+  left: 50% !important;
+  top: 50% !important;
+
+  width: 94% !important;
+  height: auto !important;
+
+  max-width: 94% !important;
+  max-height: 94% !important;
+
+  object-fit: contain !important;
+
+  translate: -50% -50% !important;
+}
+
+.clambake-trackpad-guide
+.imported-trackpad-hand {
+  position: absolute !important;
+
+  width: 54% !important;
+  height: auto !important;
+
+  max-width: 54% !important;
+  max-height: none !important;
+
+  object-fit: contain !important;
+
+  pointer-events: none !important;
+}
+
+.clambake-trackpad-guide
+.imported-trackpad-left-hand {
+  pointer-events: none !important;
+}
+
+.clambake-trackpad-guide
+.imported-trackpad-right-hand {
+  pointer-events: none !important;
+}
+
+.clambake-trackpad-guide
+.imported-trackpad-press-indicator {
+  position: absolute !important;
+
+  left: 50% !important;
+  top: 70% !important;
+
+  width: 34px !important;
+  height: 22px !important;
+
+  translate: -50% -50% !important;
+
+  border-radius: 50% !important;
+
+  pointer-events: none !important;
+}
+
+
+/*
+ * Classroom/Chromebook screen:
+ * make the guide a little smaller.
+ */
+@media (max-height: 820px) and (min-width: 761px) {
+
+  .clambake-trackpad-guide {
+    width: 220px !important;
+    height: 175px !important;
+  }
+
+  .clambake-trackpad-guide
+  .imported-trackpad-scene {
+    height: 130px !important;
+  }
+}
+
+
+/*
+ * Narrow screen:
+ * put the guide beneath the game rather than
+ * letting it cover the activity.
+ */
+@media (max-width: 760px) {
+
+  .clambake-trackpad-guide {
+    position: relative !important;
+
+    right: auto !important;
+    bottom: auto !important;
+
+    width: 240px !important;
+    height: 190px !important;
+
+    margin: 10px auto 14px !important;
+  }
+
+  .clambake-trackpad-guide
+  .imported-trackpad-scene {
+    height: 145px !important;
+  }
+}
+
+/* =======================================================
+   CLAMBAKE TRACKPAD SIDE DOCK
+   Keep the guide beside the game instead of over it.
+   ======================================================= */
+
+.clambake-shell {
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    255px !important;
+
+  column-gap: 10px !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+}
+
+
+/*
+ * Every normal Clambake section stays in the game column.
+ */
+.clambake-shell >
+:not(.clambake-trackpad-guide) {
+  grid-column: 1 !important;
+}
+
+
+/*
+ * Trackpad gets its own permanent right-hand column.
+ */
+.clambake-shell >
+.clambake-trackpad-guide {
+  position: relative !important;
+
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+
+  grid-column: 2 !important;
+  grid-row: 1 / -1 !important;
+
+  align-self: end !important;
+  justify-self: center !important;
+
+  width: 238px !important;
+  height: 190px !important;
+
+  margin:
+    0 8px
+    14px 0 !important;
+
+  padding:
+    7px 8px
+    9px !important;
+
+  box-sizing:
+    border-box !important;
+
+  overflow:
+    hidden !important;
+
+  z-index:
+    20 !important;
+}
+
+
+.clambake-trackpad-guide
+.imported-trackpad-scene {
+  width: 100% !important;
+  height: 145px !important;
+
+  max-width: 100% !important;
+  min-height: 0 !important;
+
+  overflow: hidden !important;
+}
+
+
+/*
+ * If the teacher disables Trackpad Guide,
+ * give the whole width back to the game.
+ */
+body.trackpad-guide-off
+.clambake-shell {
+  grid-template-columns:
+    minmax(0, 1fr) !important;
+}
+
+body.trackpad-guide-off
+.clambake-trackpad-guide {
+  display: none !important;
+}
+
+
+/*
+ * Smaller Chromebook screens:
+ * use a slightly narrower side dock.
+ */
+@media (max-width: 1250px) {
+
+  .clambake-shell {
+    grid-template-columns:
+      minmax(0, 1fr)
+      205px !important;
+
+    column-gap:
+      6px !important;
+  }
+
+  .clambake-shell >
+  .clambake-trackpad-guide {
+    width:
+      195px !important;
+
+    height:
+      165px !important;
+
+    margin:
+      0 5px
+      10px 0 !important;
+  }
+
+  .clambake-trackpad-guide
+  .imported-trackpad-scene {
+    height:
+      122px !important;
+  }
+}
+
+
+/*
+ * Very narrow displays can stack it below.
+ */
+@media (max-width: 760px) {
+
+  .clambake-shell {
+    grid-template-columns:
+      minmax(0, 1fr) !important;
+  }
+
+  .clambake-shell >
+  .clambake-trackpad-guide {
+    grid-column:
+      1 !important;
+
+    grid-row:
+      auto !important;
+
+    width:
+      230px !important;
+
+    height:
+      180px !important;
+
+    margin:
+      8px auto
+      12px !important;
+  }
+
+  .clambake-trackpad-guide
+  .imported-trackpad-scene {
+    height:
+      137px !important;
+  }
+}
+
+/* =======================================================
+   CLAMBAKE TRACKPAD CLICK ANIMATION
+   Left hand presses when the student clicks.
+   ======================================================= */
+
+.clambake-trackpad-guide
+.imported-trackpad-left-hand {
+  transform-origin: center !important;
+
+  transition:
+    transform 120ms ease !important;
+}
+
+.clambake-trackpad-guide
+.imported-trackpad-left-hand.pressed {
+  transform:
+    translateY(3px)
+    scale(.985) !important;
+}
+
+.clambake-trackpad-guide
+.imported-trackpad-scene.is-pressed {
+  filter:
+    brightness(.98);
+}
+
+/* =======================================================
+   CLAMBAKE TRACKPAD PRESS GLOW
+   Shows the familiar glowing click circle.
+   ======================================================= */
+
+.clambake-trackpad-guide
+.imported-trackpad-press-indicator {
+  position: absolute !important;
+
+  left: 18.9% !important;
+  top: 53.2% !important;
+
+  width: 18px !important;
+  height: 18px !important;
+
+  border:
+    2px solid
+    rgba(156,222,255,.95) !important;
+
+  border-radius:
+    999px !important;
+
+  background:
+    rgba(156,222,255,.35) !important;
+
+  box-shadow:
+    0 0 0 0
+    rgba(156,222,255,.55);
+
+  opacity: 0;
+
+  transform:
+    scale(.8);
+
+  transition:
+    opacity 100ms ease,
+    transform 100ms ease;
+
+  pointer-events:
+    none !important;
+
+  z-index:
+    1 !important;
+}
+
+.clambake-trackpad-guide
+.imported-trackpad-scene.is-pressed
+.imported-trackpad-press-indicator {
+  opacity: 1;
+
+  transform:
+    scale(1);
+
+  animation:
+    clambakePressGlow
+    .95s ease-out
+    infinite;
+}
+
+@keyframes clambakePressGlow {
+  0% {
+    box-shadow:
+      0 0 0 0
+      rgba(156,222,255,.55);
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 20px
+      rgba(156,222,255,0);
+  }
+}

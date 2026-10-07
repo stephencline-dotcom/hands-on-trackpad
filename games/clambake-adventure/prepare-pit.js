@@ -2446,4 +2446,144 @@
   );
 
   ensureContinueButton();
+
+  /* CLAMBAKE CURSOR MODE - LEVEL 3 */
+
+  function clambakeLevelThreeCursorMode() {
+    return Boolean(
+      window.clambakeInputMode &&
+      window.clambakeInputMode.cursorMode()
+    );
+  }
+
+  function clambakeLevelThreeInside(
+    event,
+    element,
+    padding = 0
+  ) {
+    const rect =
+      element.getBoundingClientRect();
+
+    return (
+      event.clientX >=
+        rect.left - padding &&
+      event.clientX <=
+        rect.right + padding &&
+      event.clientY >=
+        rect.top - padding &&
+      event.clientY <=
+        rect.bottom + padding
+    );
+  }
+
+  stage.addEventListener(
+    "pointermove",
+    (event) => {
+      if (
+        !clambakeLevelThreeCursorMode() ||
+        !state.active ||
+        event.pointerType === "touch"
+      ) {
+        return;
+      }
+
+      if (!state.dragging) {
+        if (
+          !clambakeLevelThreeInside(
+            event,
+            helper,
+            24
+          )
+        ) {
+          return;
+        }
+
+        state.pointerId =
+          event.pointerId;
+
+        state.dragging =
+          true;
+
+        startPickupWatch();
+
+        if (
+          state.balanceActive &&
+          state.carrying
+        ) {
+          state.balanceLastX =
+            state.helperX;
+
+          state.balanceLastY =
+            state.helperY;
+
+          state.balanceLastTime =
+            performance.now();
+
+          state.balanceGraceUntil =
+            performance.now() +
+            180;
+        }
+
+        helper.classList.add(
+          "is-dragging"
+        );
+      }
+
+      state.pointerId =
+        event.pointerId;
+
+      event.preventDefault();
+
+      const point =
+        stagePoint(
+          event.clientX,
+          event.clientY
+        );
+
+      /*
+       * Important:
+       * keep the existing wobble calculation.
+       */
+      if (
+        !updateBalance(
+          point.x,
+          point.y
+        )
+      ) {
+        return;
+      }
+
+      setHelperPosition(
+        point.x,
+        point.y
+      );
+
+      checkMaterialPickup();
+
+      /*
+       * Cursor mode has no pointer-up event,
+       * so carrying an item into the pit
+       * completes the drop automatically.
+       */
+      if (
+        state.carrying &&
+        helperInsidePit()
+      ) {
+        state.dragging =
+          false;
+
+        state.pointerId =
+          null;
+
+        helper.classList.remove(
+          "is-dragging"
+        );
+
+        stopPickupWatch();
+
+        deliverMaterial();
+      }
+    }
+  );
+
 })();

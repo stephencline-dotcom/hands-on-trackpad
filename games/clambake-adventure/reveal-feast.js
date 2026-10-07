@@ -2536,6 +2536,91 @@
   );
 
   ensureContinueButton();
+
+  /* CLAMBAKE CURSOR MODE - LEVEL 4 */
+
+  function clambakeLevelFourCursorMode() {
+    return Boolean(
+      window.clambakeInputMode &&
+      window.clambakeInputMode.cursorMode()
+    );
+  }
+
+  function clambakeLevelFourInside(
+    event,
+    element,
+    padding = 0
+  ) {
+    const rect =
+      element.getBoundingClientRect();
+
+    return (
+      event.clientX >=
+        rect.left - padding &&
+      event.clientX <=
+        rect.right + padding &&
+      event.clientY >=
+        rect.top - padding &&
+      event.clientY <=
+        rect.bottom + padding
+    );
+  }
+
+  stage.addEventListener(
+    "pointermove",
+    (event) => {
+      if (
+        !clambakeLevelFourCursorMode() ||
+        !state.active ||
+        event.pointerType === "touch"
+      ) {
+        return;
+      }
+
+      if (!state.dragging) {
+        if (
+          !clambakeLevelFourInside(
+            event,
+            helper,
+            24
+          )
+        ) {
+          return;
+        }
+
+        state.pointerId =
+          event.pointerId;
+
+        state.dragging =
+          true;
+
+        helper.classList.add(
+          "dragging"
+        );
+      }
+
+      state.pointerId =
+        event.pointerId;
+
+      event.preventDefault();
+
+      const point =
+        stagePoint(
+          event.clientX,
+          event.clientY
+        );
+
+      setHelperPosition(
+        point.x,
+        point.y
+      );
+
+      if (serveState.active) {
+        checkServeCollisions();
+      }
+    }
+  );
+
 })();
 
 

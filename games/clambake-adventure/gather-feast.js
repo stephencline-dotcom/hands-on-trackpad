@@ -2153,5 +2153,120 @@
       ]
     }
   );
+
+  /* CLAMBAKE CURSOR MODE - LEVEL 2 */
+
+  function clambakeLevelTwoCursorMode() {
+    return Boolean(
+      window.clambakeInputMode &&
+      window.clambakeInputMode.cursorMode()
+    );
+  }
+
+  function clambakeLevelTwoInside(
+    event,
+    element,
+    padding = 0
+  ) {
+    const rect =
+      element.getBoundingClientRect();
+
+    return (
+      event.clientX >=
+        rect.left - padding &&
+      event.clientX <=
+        rect.right + padding &&
+      event.clientY >=
+        rect.top - padding &&
+      event.clientY <=
+        rect.bottom + padding
+    );
+  }
+
+  stage.addEventListener(
+    "pointermove",
+    (event) => {
+      if (
+        !clambakeLevelTwoCursorMode() ||
+        !state.active ||
+        event.pointerType === "touch"
+      ) {
+        return;
+      }
+
+      /*
+       * First hover over the helper activates
+       * cursor-follow mode for this round.
+       */
+      if (!state.dragging) {
+        if (
+          !clambakeLevelTwoInside(
+            event,
+            helperAvatar,
+            22
+          )
+        ) {
+          return;
+        }
+
+        state.pointerId =
+          event.pointerId;
+
+        state.dragging =
+          true;
+
+        helperAvatar.classList.add(
+          "is-dragging"
+        );
+
+        startRunningAudio();
+      }
+
+      if (
+        event.pointerId !==
+        state.pointerId
+      ) {
+        state.pointerId =
+          event.pointerId;
+      }
+
+      event.preventDefault();
+
+      const point =
+        stagePoint(
+          event.clientX,
+          event.clientY
+        );
+
+      setAvatarPosition(
+        point.x,
+        point.y
+      );
+
+      checkFoodPickup();
+
+      if (
+        state.carriedFoods.length > 0 &&
+        state.requestIndex >=
+          state.requestQueue.length &&
+        helperInsideCommunity()
+      ) {
+        state.dragging =
+          false;
+
+        state.pointerId =
+          null;
+
+        helperAvatar.classList.remove(
+          "is-dragging"
+        );
+
+        stopRunningAudio();
+
+        deliverFood();
+      }
+    }
+  );
+
 })();
 

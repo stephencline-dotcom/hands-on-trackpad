@@ -1,0 +1,256 @@
+(() => {
+  "use strict";
+
+  const state = {
+    requireClickAndDrag: false,
+    ready: false
+  };
+
+  function parseBoolean(
+    value,
+    fallback = false
+  ) {
+    if (
+      value === true ||
+      value === "true"
+    ) {
+      return true;
+    }
+
+    if (
+      value === false ||
+      value === "false"
+    ) {
+      return false;
+    }
+
+    return fallback;
+  }
+
+  window.clambakeInputMode = {
+    requiresClickAndDrag() {
+      return state.requireClickAndDrag;
+    },
+
+    cursorMode() {
+      return !state.requireClickAndDrag;
+    },
+
+    isReady() {
+      return state.ready;
+    }
+  };
+
+  async function load() {
+    try {
+      const response =
+        await fetch(
+          "/api/settings",
+          {
+            cache: "no-store"
+          }
+        );
+
+      if (response.ok) {
+        const settings =
+          await response.json();
+
+        state.requireClickAndDrag =
+          parseBoolean(
+            settings.clambakeAdventureRequireClickAndDrag,
+            false
+          );
+      }
+    }
+    catch {
+      state.requireClickAndDrag =
+        false;
+    }
+
+    state.ready =
+      true;
+
+    document.documentElement
+      .classList.toggle(
+        "clambake-requires-drag",
+        state.requireClickAndDrag
+      );
+
+    document.documentElement
+      .classList.toggle(
+        "clambake-cursor-mode",
+        !state.requireClickAndDrag
+      );
+
+    window.dispatchEvent(
+      new CustomEvent(
+        "clambake-input-mode-ready",
+        {
+          detail: {
+            requireClickAndDrag:
+              state.requireClickAndDrag
+          }
+        }
+      )
+    );
+  }
+
+
+  /* =======================================================
+     CLAMBAKE TRACKPAD GUIDE CONTROLLER
+     Follow the real pointer and show click/press state.
+     ======================================================= */
+
+  function setupClambakeTrackpadGuide() {
+    const scene =
+      document.getElementById(
+        "clambakeTrackpadScene"
+      );
+
+    const leftHand =
+      document.getElementById(
+        "clambakeTrackpadLeftHand"
+      );
+
+    const rightHand =
+      document.getElementById(
+        "clambakeTrackpadRightHand"
+      );
+
+    const pressIndicator =
+      scene
+        ? scene.querySelector(
+            ".imported-trackpad-press-indicator"
+          )
+        : null;
+
+    if (
+      !window.trackpadGuide ||
+      !scene ||
+      !leftHand ||
+      !rightHand
+    ) {
+      return;
+    }
+
+    const controller =
+      window.trackpadGuide.create({
+        scene,
+        leftHand,
+        rightHand,
+        pressIndicator,
+        togglePressIndicator:
+          true,
+        pointerSpace:
+          "viewport"
+      });
+
+    if (!controller) {
+      return;
+    }
+
+    if (
+      typeof controller.initialize ===
+        "function"
+    ) {
+      controller.initialize();
+    }
+
+    document.addEventListener(
+      "pointermove",
+      (event) => {
+        if (
+          typeof controller
+            .updateFromPointerEvent ===
+            "function"
+        ) {
+          controller
+            .updateFromPointerEvent(
+              event
+            );
+        }
+      }
+    );
+
+    document.addEventListener(
+      "pointerdown",
+      (event) => {
+        if (
+          typeof controller
+            .updateFromPointerEvent ===
+            "function"
+        ) {
+          controller
+            .updateFromPointerEvent(
+              event
+            );
+        }
+
+        if (
+          typeof controller.setPressed ===
+            "function"
+        ) {
+          controller.setPressed(
+            true
+          );
+        }
+      }
+    );
+
+    document.addEventListener(
+      "pointerup",
+      (event) => {
+        if (
+          typeof controller
+            .updateFromPointerEvent ===
+            "function"
+        ) {
+          controller
+            .updateFromPointerEvent(
+              event
+            );
+        }
+
+        if (
+          typeof controller.setPressed ===
+            "function"
+        ) {
+          controller.setPressed(
+            false
+          );
+        }
+      }
+    );
+
+    document.addEventListener(
+      "pointercancel",
+      () => {
+        if (
+          typeof controller.setPressed ===
+            "function"
+        ) {
+          controller.setPressed(
+            false
+          );
+        }
+      }
+    );
+
+    window.addEventListener(
+      "blur",
+      () => {
+        if (
+          typeof controller.setPressed ===
+            "function"
+        ) {
+          controller.setPressed(
+            false
+          );
+        }
+      }
+    );
+  }
+  setupClambakeTrackpadGuide();
+
+  load();
+})();

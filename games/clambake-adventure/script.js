@@ -1769,5 +1769,187 @@
 
   updateProgress();
   updateBasketFill();
+
+  /* CLAMBAKE CURSOR MODE - LEVEL 1 */
+
+  function clambakeLevelOneCursorMode() {
+    return Boolean(
+      window.clambakeInputMode &&
+      window.clambakeInputMode.cursorMode()
+    );
+  }
+
+  function clambakeCursorEvent(
+    originalEvent
+  ) {
+    return {
+      pointerId:
+        originalEvent.pointerId ?? 1,
+
+      pointerType:
+        originalEvent.pointerType ||
+        "mouse",
+
+      button: 0,
+
+      clientX:
+        originalEvent.clientX,
+
+      clientY:
+        originalEvent.clientY,
+
+      preventDefault() {
+        if (
+          originalEvent.preventDefault
+        ) {
+          originalEvent.preventDefault();
+        }
+      }
+    };
+  }
+
+  function clambakePointInside(
+    event,
+    element,
+    padding = 0
+  ) {
+    if (!element) {
+      return false;
+    }
+
+    const rect =
+      element.getBoundingClientRect();
+
+    return (
+      event.clientX >=
+        rect.left - padding &&
+      event.clientX <=
+        rect.right + padding &&
+      event.clientY >=
+        rect.top - padding &&
+      event.clientY <=
+        rect.bottom + padding
+    );
+  }
+
+  stage.addEventListener(
+    "pointermove",
+    (event) => {
+      if (
+        !clambakeLevelOneCursorMode() ||
+        !state.running ||
+        event.pointerType === "touch"
+      ) {
+        return;
+      }
+
+      const cursorEvent =
+        clambakeCursorEvent(event);
+
+      /*
+       * Nothing attached yet:
+       * touching the correct movable object
+       * begins the same interaction as a drag.
+       */
+      if (!state.dragType) {
+        if (
+          (
+            state.phase === "idle" ||
+            state.phase === "digging"
+          ) &&
+          clambakePointInside(
+            event,
+            stick,
+            18
+          )
+        ) {
+          stick.dispatchEvent(
+            new PointerEvent(
+              "pointerdown",
+              {
+                pointerId:
+                  event.pointerId,
+                pointerType:
+                  event.pointerType,
+                clientX:
+                  event.clientX,
+                clientY:
+                  event.clientY,
+                button: 0,
+                bubbles: true
+              }
+            )
+          );
+
+          return;
+        }
+
+        if (
+          state.phase ===
+            "clam-ready" &&
+          !clam.hidden &&
+          clambakePointInside(
+            event,
+            clam,
+            22
+          )
+        ) {
+          clam.dispatchEvent(
+            new PointerEvent(
+              "pointerdown",
+              {
+                pointerId:
+                  event.pointerId,
+                pointerType:
+                  event.pointerType,
+                clientX:
+                  event.clientX,
+                clientY:
+                  event.clientY,
+                button: 0,
+                bubbles: true
+              }
+            )
+          );
+
+          return;
+        }
+
+        return;
+      }
+
+      pointerMove(
+        cursorEvent
+      );
+
+      /*
+       * Cursor mode has no physical release.
+       * Deliver the clam automatically when
+       * the cursor reaches the basket.
+       */
+      if (
+        state.dragType === "clam" &&
+        state.phase ===
+          "clam-ready"
+      ) {
+        const basketRect =
+          basket.getBoundingClientRect();
+
+        if (
+          pointInRect(
+            event.clientX,
+            event.clientY,
+            basketRect,
+            18
+          )
+        ) {
+          pointerUp(
+            cursorEvent
+          );
+        }
+      }
+    }
+  );
+
 })();
 
