@@ -70,11 +70,11 @@
     );
 
   const ATTACK_DELAYS = [
-    3200,
-    2600,
-    2100,
-    1600,
-    1100
+    1200,
+    1000,
+    850,
+    700,
+    550
   ];
 
   const GULL_SPEEDS = [
@@ -108,6 +108,135 @@
     audioContext: null
   };
 
+  const oceanAudio =
+    new Audio("../../sounds/ocean.mp3");
+
+  const gullAudio =
+    new Audio("../../sounds/seagull.mp3");
+
+  const diggingAudio =
+    new Audio("../../sounds/digging.mp3");
+
+  oceanAudio.loop = true;
+  oceanAudio.volume = 0.22;
+
+  gullAudio.volume = 0.7;
+
+  diggingAudio.volume = 0.55;
+
+  function safePlay(audio) {
+    if (
+      !state.soundOn ||
+      !audio
+    ) {
+      return;
+    }
+
+    const playPromise =
+      audio.play();
+
+    if (
+      playPromise &&
+      typeof playPromise.catch === "function"
+    ) {
+      playPromise.catch(
+        () => {}
+      );
+    }
+  }
+
+  function stopAudio(
+    audio,
+    reset = true
+  ) {
+    if (!audio) {
+      return;
+    }
+
+    audio.pause();
+
+    if (reset) {
+      try {
+        audio.currentTime = 0;
+      }
+      catch (error) {
+        // Audio may not be ready yet.
+      }
+    }
+  }
+
+  function startOceanAudio() {
+    if (!state.soundOn) {
+      return;
+    }
+
+    safePlay(
+      oceanAudio
+    );
+  }
+
+  function stopOceanAudio() {
+    stopAudio(
+      oceanAudio,
+      true
+    );
+  }
+
+  function playGullAudio() {
+    if (!state.soundOn) {
+      return;
+    }
+
+    stopAudio(
+      gullAudio,
+      true
+    );
+
+    safePlay(
+      gullAudio
+    );
+  }
+
+  function startDiggingAudio() {
+    if (
+      !state.soundOn ||
+      state.phase !== "digging"
+    ) {
+      return;
+    }
+
+    if (!diggingAudio.paused) {
+      return;
+    }
+
+    try {
+      diggingAudio.currentTime = 0;
+    }
+    catch (error) {
+      // Audio may not be ready yet.
+    }
+
+    safePlay(
+      diggingAudio
+    );
+  }
+
+  function stopDiggingAudio() {
+    stopAudio(
+      diggingAudio,
+      true
+    );
+  }
+
+  function stopLevelOneAudio() {
+    stopDiggingAudio();
+    stopOceanAudio();
+
+    stopAudio(
+      gullAudio,
+      true
+    );
+  }
   function shuffle(values) {
     const copy = values.slice();
 
@@ -567,6 +696,8 @@
       return;
     }
 
+    stopDiggingAudio();
+
     state.phase = "clam-ready";
 
     resetStickPosition();
@@ -668,6 +799,8 @@
       return;
     }
 
+    playGullAudio();
+
     const stageRect =
       stage.getBoundingClientRect();
 
@@ -676,8 +809,8 @@
 
     state.gullX =
       fromLeft
-        ? -70
-        : stageRect.width + 70;
+        ? -35
+        : stageRect.width + 35;
 
     state.gullY =
       stageRect.height *
@@ -782,7 +915,7 @@
     predatorGull.style.transform =
       `scaleX(${dx < 0 ? -1 : 1})`;
 
-    if (distance < 48) {
+    if (distance < 34) {
       gullStealsClam();
       return;
     }
@@ -893,6 +1026,8 @@
       "The gull got that clam. No problem - dig for another one!",
       true
     );
+
+    playGullAudio();
 
     const stageRect =
       stage.getBoundingClientRect();
@@ -1016,6 +1151,8 @@
   }
 
   function finishGame() {
+    stopLevelOneAudio();
+
     state.running = false;
     state.phase = "complete";
 
@@ -1078,6 +1215,10 @@
 
     state.lastY =
       event.clientY;
+
+    if (type === "stick") {
+      startDiggingAudio();
+    }
 
     const target =
       type === "stick"
@@ -1233,6 +1374,10 @@
   }
 
   function pointerUp(event) {
+    if (state.dragType === "stick") {
+      stopDiggingAudio();
+    }
+
     if (
       event.pointerId !==
         state.pointerId ||
@@ -1314,6 +1459,10 @@
     const type =
       state.dragType;
 
+    if (type === "stick") {
+      startDiggingAudio();
+    }
+
     const target =
       type === "stick"
         ? stick
@@ -1359,6 +1508,9 @@
 
   function resetGame() {
     cancelGullAttack();
+
+    stopLevelOneAudio();
+    startOceanAudio();
 
     state.running = true;
     state.phase = "idle";
@@ -1494,6 +1646,43 @@
     }
   );
 
+  /*
+   * CLAMBAKE LEVEL 1 MP3 SOUND TOGGLE
+   * Keep environmental/effect audio aligned with
+   * the existing Sound On / Sound Off control.
+   */
+  if (soundToggle) {
+    soundToggle.addEventListener(
+      "click",
+      () => {
+        window.setTimeout(
+          () => {
+            if (!state.soundOn) {
+              stopLevelOneAudio();
+              return;
+            }
+
+            if (
+              state.running &&
+              state.phase !== "complete"
+            ) {
+              startOceanAudio();
+            }
+
+            if (
+              state.dragType === "stick" &&
+              state.phase === "digging"
+            ) {
+              startDiggingAudio();
+            }
+          },
+          0
+        );
+      }
+    );
+  }
+
   updateProgress();
   updateBasketFill();
 })();
+

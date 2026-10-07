@@ -145,6 +145,133 @@
   let crabAlert = null;
   let celebration = null;
 
+  const gatherOceanAudio =
+    new Audio("../../sounds/ocean.mp3");
+
+  const runningAudio =
+    new Audio("../../sounds/running.mp3");
+
+  const crabYoinkAudio =
+    new Audio("../../sounds/crabyoink.mp3");
+
+  gatherOceanAudio.loop = true;
+  gatherOceanAudio.volume = 0.22;
+
+  runningAudio.loop = true;
+  runningAudio.volume = 0.5;
+
+  crabYoinkAudio.volume = 0.75;
+
+  function safePlayGatherAudio(audio) {
+    if (
+      !soundEnabled() ||
+      !audio
+    ) {
+      return;
+    }
+
+    const playPromise =
+      audio.play();
+
+    if (
+      playPromise &&
+      typeof playPromise.catch === "function"
+    ) {
+      playPromise.catch(
+        () => {}
+      );
+    }
+  }
+
+  function stopGatherAudio(
+    audio,
+    reset = true
+  ) {
+    if (!audio) {
+      return;
+    }
+
+    audio.pause();
+
+    if (reset) {
+      try {
+        audio.currentTime = 0;
+      }
+      catch (error) {
+        // Audio may not be ready yet.
+      }
+    }
+  }
+
+  function startGatherOcean() {
+    if (!soundEnabled()) {
+      return;
+    }
+
+    safePlayGatherAudio(
+      gatherOceanAudio
+    );
+  }
+
+  function stopGatherOcean() {
+    stopGatherAudio(
+      gatherOceanAudio,
+      true
+    );
+  }
+
+  function startRunningAudio() {
+    if (!soundEnabled()) {
+      return;
+    }
+
+    if (!runningAudio.paused) {
+      return;
+    }
+
+    try {
+      runningAudio.currentTime = 0;
+    }
+    catch (error) {
+      // Audio may not be ready yet.
+    }
+
+    safePlayGatherAudio(
+      runningAudio
+    );
+  }
+
+  function stopRunningAudio() {
+    stopGatherAudio(
+      runningAudio,
+      true
+    );
+  }
+
+  function playCrabYoink() {
+    if (!soundEnabled()) {
+      return;
+    }
+
+    stopGatherAudio(
+      crabYoinkAudio,
+      true
+    );
+
+    safePlayGatherAudio(
+      crabYoinkAudio
+    );
+  }
+
+  function stopLevelTwoAudio() {
+    stopRunningAudio();
+    stopGatherOcean();
+
+    stopGatherAudio(
+      crabYoinkAudio,
+      true
+    );
+  }
   function soundEnabled() {
     return (
       !soundToggle ||
@@ -1109,6 +1236,8 @@
   function startHelperDrag(
     event
   ) {
+    startRunningAudio();
+
     if (
       !state.active
     ) {
@@ -1559,8 +1688,8 @@
         distanceToTarget <
         (
           state.carrying
-            ? 54
-            : 42
+            ? 34
+            : 30
         )
       ) {
         crabWins(
@@ -1583,6 +1712,9 @@
     if (!state.active) {
       return;
     }
+
+    playCrabYoink();
+    stopRunningAudio();
 
     if (
       state.carriedFoods.length > 0
@@ -1825,6 +1957,9 @@
 
     stopCrabs();
 
+    stopLevelTwoAudio();
+    startGatherOcean();
+
     winOverlay.hidden =
       true;
 
@@ -1868,13 +2003,95 @@
     beginRound();
   }
 
+  /*
+   * LEVEL 2 RUNNING SOUND RELEASE
+   */
+  document.addEventListener(
+    "pointerup",
+    stopRunningAudio
+  );
+
+  document.addEventListener(
+    "pointercancel",
+    stopRunningAudio
+  );
+
+  /*
+   * LEVEL 2 MP3 SOUND TOGGLE
+   */
+  if (soundToggle) {
+    soundToggle.addEventListener(
+      "click",
+      () => {
+        window.setTimeout(
+          () => {
+            if (!soundEnabled()) {
+              stopLevelTwoAudio();
+              return;
+            }
+
+            if (state.active) {
+              startGatherOcean();
+
+              if (state.dragging) {
+                startRunningAudio();
+              }
+            }
+          },
+          0
+        );
+      }
+    );
+  }
+
   addContinueButton();
 
   const observer =
     new MutationObserver(
       () => {
         if (!winOverlay.hidden) {
-          addContinueButton();
+          /*
+   * LEVEL 2 RUNNING SOUND RELEASE
+   */
+  document.addEventListener(
+    "pointerup",
+    stopRunningAudio
+  );
+
+  document.addEventListener(
+    "pointercancel",
+    stopRunningAudio
+  );
+
+  /*
+   * LEVEL 2 MP3 SOUND TOGGLE
+   */
+  if (soundToggle) {
+    soundToggle.addEventListener(
+      "click",
+      () => {
+        window.setTimeout(
+          () => {
+            if (!soundEnabled()) {
+              stopLevelTwoAudio();
+              return;
+            }
+
+            if (state.active) {
+              startGatherOcean();
+
+              if (state.dragging) {
+                startRunningAudio();
+              }
+            }
+          },
+          0
+        );
+      }
+    );
+  }
+
+  addContinueButton();
         }
       }
     );
@@ -1889,3 +2106,4 @@
     }
   );
 })();
+

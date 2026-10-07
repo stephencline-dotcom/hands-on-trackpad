@@ -25,6 +25,8 @@ const senseBuilderGameActiveToggle = document.getElementById("senseBuilderGameAc
 const senseBuilderRequireClickAndDragToggle = document.getElementById("senseBuilderRequireClickAndDrag");
 const fireflyForestGameActiveToggle = document.getElementById("fireflyForestGameActive");
 const chickenLittleGameActiveToggle = document.getElementById("chickenLittleGameActive");
+const clambakeAdventureGameActiveToggle =
+  document.getElementById("clambakeAdventureGameActive");
 const chickenLittleRequireClickAndDragToggle = document.getElementById("chickenLittleRequireClickAndDrag");
 const chickenLittleLevelInputs = [1, 2, 3, 4].map((level) => ({
   time: document.getElementById(`chickenLittleTime${level}`),
@@ -245,6 +247,7 @@ const FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY = "firefighterRescueGameActive";
 const MARTIAN_MADNESS_GAME_ACTIVE_KEY = "martianMadnessGameActive";
 const BUG_MEADOW_GAME_ACTIVE_KEY = "bugMeadowGameActive";
 const SENSE_BUILDER_GAME_ACTIVE_KEY = "senseBuilderGameActive";
+const CLAMBAKE_ADVENTURE_GAME_ACTIVE_KEY = "clambakeAdventureGameActive";
 const SENSE_BUILDER_REQUIRE_CLICK_AND_DRAG_KEY = "senseBuilderRequireClickAndDrag";
 const FIREFLY_FOREST_GAME_ACTIVE_KEY = "fireflyForestGameActive";
 const FOLLOW_BIRD_CLICKING_ENABLED_KEY = "followBirdClickingEnabled";
@@ -1689,6 +1692,7 @@ function applyProgressivePresets() {
   if (carRequireClickAndDragToggle) carRequireClickAndDragToggle.checked = false;
   if (jackRequireClickAndDragToggle) jackRequireClickAndDragToggle.checked = false;
   if (fullscreenGameActiveToggle) fullscreenGameActiveToggle.checked = true;
+  if (clambakeAdventureGameActiveToggle) clambakeAdventureGameActiveToggle.checked = true;
   if (mazeGameActiveToggle) mazeGameActiveToggle.checked = true;
   if (carGameActiveToggle) carGameActiveToggle.checked = true;
   if (jackGameActiveToggle) jackGameActiveToggle.checked = true;
@@ -1997,6 +2001,7 @@ async function resetFullscreenToDefaults() {
   const task3Enabled = true;
   const fullscreenRequireClickAndDrag = false;
   const fullscreenGameActive = true;
+  const clambakeAdventureGameActive = true;
   const soundEnabled = true;
   const trainingPaused = false;
 
@@ -2045,6 +2050,10 @@ async function resetFullscreenToDefaults() {
     String(freezeScreenFeatureEnabled)
   );
   localStorage.setItem(FULLSCREEN_GAME_ACTIVE_KEY, String(fullscreenGameActive));
+  localStorage.setItem(
+    CLAMBAKE_ADVENTURE_GAME_ACTIVE_KEY,
+    String(clambakeAdventureGameActive)
+  );
   localStorage.setItem(BUG_MEADOW_GAME_ACTIVE_KEY, String(bugMeadowGameActive));
   localStorage.setItem(FIREFLY_FOREST_GAME_ACTIVE_KEY, String(fireflyForestGameActive));
   localStorage.setItem(SENSE_BUILDER_GAME_ACTIVE_KEY, String(senseBuilderGameActive));
@@ -2479,6 +2488,11 @@ async function loadTask1Settings() {
     true
   );
 
+  let clambakeAdventureGameActive = parseTaskEnabled(
+    localStorage.getItem(CLAMBAKE_ADVENTURE_GAME_ACTIVE_KEY),
+    true
+  );
+
   let lightTapLevels = loadStoredLightTapLevels();
   let streetCarLevels = loadStoredStreetCarLevels();
   let dragonLevels = loadStoredDragonLevels();
@@ -2731,6 +2745,10 @@ async function loadTask1Settings() {
       hauntedStreetGameActive = parseTaskEnabled(
         data.hauntedStreetGameActive,
         hauntedStreetGameActive
+      );
+      clambakeAdventureGameActive = parseTaskEnabled(
+        data.clambakeAdventureGameActive,
+        clambakeAdventureGameActive
       );
       hauntedStreetRequireClickAndDrag = parseTaskEnabled(
         data.hauntedStreetRequireClickAndDrag,
@@ -3187,6 +3205,11 @@ async function loadTask1Settings() {
       hauntedStreetGameActive;
   }
 
+  if (clambakeAdventureGameActiveToggle) {
+    clambakeAdventureGameActiveToggle.checked =
+      clambakeAdventureGameActive;
+  }
+
   if (hauntedStreetRequireClickAndDragToggle) {
     hauntedStreetRequireClickAndDragToggle.checked =
       hauntedStreetRequireClickAndDrag;
@@ -3495,6 +3518,11 @@ async function saveTask1Settings() {
   const hauntedStreetGameActive = Boolean(
     hauntedStreetGameActiveToggle &&
     hauntedStreetGameActiveToggle.checked
+  );
+
+  const clambakeAdventureGameActive = Boolean(
+    clambakeAdventureGameActiveToggle &&
+    clambakeAdventureGameActiveToggle.checked
   );
 
   const deerRunLevels =
@@ -4035,6 +4063,7 @@ async function saveTask1Settings() {
         monsterLunchLevels,
         deerRunGameActive,
         hauntedStreetGameActive,
+        clambakeAdventureGameActive,
         hauntedStreetRequireClickAndDrag,
         hauntedStreetClickToThrow,
         hauntedStreetSoundEnabled,
@@ -4344,6 +4373,7 @@ const allToggles = [
   monsterLunchGameActiveToggle,
   deerRunGameActiveToggle,
   hauntedStreetGameActiveToggle,
+  clambakeAdventureGameActiveToggle,
   hauntedStreetRequireClickAndDragToggle,
   hauntedStreetClickToThrowToggle,
   hauntedStreetSoundEnabledToggle,
@@ -4587,4 +4617,5 @@ window.setTimeout(
   syncChickenLittleAvailabilityCheckbox,
   250
 );
+
 

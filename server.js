@@ -67,6 +67,7 @@ const DEFAULT_SETTINGS = {
   senseBuilderGameActive: true,
   senseBuilderRequireClickAndDrag: false,
   chickenLittleGameActive: true,
+  clambakeAdventureGameActive: true,
   chickenLittleRequireClickAndDrag: false,
   chickenLittleLevelTimes: [45, 45, 45, 45],
   chickenLittleLevelSpeeds: [100, 100, 100, 100],
@@ -572,6 +573,10 @@ function loadSettings() {
         data.chickenLittleGameActive,
         DEFAULT_SETTINGS.chickenLittleGameActive
       ),
+      clambakeAdventureGameActive: parseTaskEnabled(
+        data.clambakeAdventureGameActive,
+        DEFAULT_SETTINGS.clambakeAdventureGameActive
+      ),
       chickenLittleRequireClickAndDrag: parseTaskEnabled(
         data.chickenLittleRequireClickAndDrag,
         DEFAULT_SETTINGS.chickenLittleRequireClickAndDrag
@@ -904,6 +909,11 @@ function saveSettings(settings) {
       settings.chickenLittleGameActive ??
         existing.chickenLittleGameActive,
       DEFAULT_SETTINGS.chickenLittleGameActive
+    ),
+    clambakeAdventureGameActive: parseTaskEnabled(
+      settings.clambakeAdventureGameActive ??
+        existing.clambakeAdventureGameActive,
+      DEFAULT_SETTINGS.clambakeAdventureGameActive
     ),
     chickenLittleRequireClickAndDrag: parseTaskEnabled(
       settings.chickenLittleRequireClickAndDrag ??

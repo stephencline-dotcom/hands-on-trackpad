@@ -1,0 +1,1427 @@
+/* =========================================================
+   CLAMBAKE ADVENTURE — LEVEL 4: REVEAL THE FEAST
+   ========================================================= */
+
+.reveal-feast-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  overflow: hidden;
+  user-select: none;
+  touch-action: none;
+  background:
+    radial-gradient(circle at 50% 76%, rgba(255, 215, 135, .34), transparent 28%),
+    linear-gradient(to bottom, #86d2ec 0 39%, #cfb46e 39% 100%);
+}
+
+.reveal-feast-layer[hidden] {
+  display: none !important;
+}
+
+.reveal-feast-layer::before {
+  content: "";
+  position: absolute;
+  left: -5%;
+  right: -5%;
+  top: 33%;
+  height: 18%;
+  background:
+    radial-gradient(ellipse at 14% 60%, #ffffff 0 2%, transparent 2.5%),
+    radial-gradient(ellipse at 40% 42%, #ffffff 0 2%, transparent 2.5%),
+    radial-gradient(ellipse at 75% 55%, #ffffff 0 2%, transparent 2.5%),
+    linear-gradient(#55b7df, #207eae);
+  border-top: 4px solid rgba(255,255,255,.82);
+  box-shadow: inset 0 10px 18px rgba(255,255,255,.28);
+}
+
+.reveal-feast-layer::after {
+  content: "";
+  position: absolute;
+  left: -5%;
+  right: -5%;
+  top: 49%;
+  bottom: 0;
+  background:
+    radial-gradient(ellipse at 15% 10%, #e5cf88 0 16%, transparent 16.5%),
+    radial-gradient(ellipse at 72% 8%, #e6c87a 0 20%, transparent 20.5%),
+    linear-gradient(#ddc17b, #ba9656);
+  z-index: 0;
+}
+
+.feast-top-card {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  width: min(700px, calc(100% - 210px));
+  min-height: 76px;
+  padding: 10px 20px;
+  border: 4px solid #ffffff;
+  border-radius: 22px;
+  background: rgba(45, 77, 61, .94);
+  color: #ffffff;
+  text-align: center;
+  box-shadow:
+    0 6px 0 rgba(70, 47, 28, .28),
+    0 9px 22px rgba(0,0,0,.18);
+}
+
+.feast-level-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 1000;
+  letter-spacing: 2px;
+  color: #ffd467;
+}
+
+.feast-top-card strong {
+  display: block;
+  margin-top: 3px;
+  font-size: clamp(18px, 2vw, 28px);
+  line-height: 1.05;
+}
+
+.feast-top-card span:last-child {
+  display: block;
+  margin-top: 3px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.feast-round {
+  position: absolute;
+  top: 104px;
+  left: 18px;
+  z-index: 25;
+  min-width: 130px;
+  padding: 8px 14px;
+  border: 3px solid #ffffff;
+  border-radius: 18px;
+  background: #704c2d;
+  color: #ffffff;
+  font-weight: 1000;
+  text-align: center;
+  box-shadow: 0 4px 0 rgba(0,0,0,.2);
+}
+
+.feast-ready-message {
+  position: absolute;
+  top: 111px;
+  left: 50%;
+  z-index: 31;
+  transform: translateX(-50%) scale(.88);
+  min-width: 155px;
+  padding: 8px 20px;
+  border: 4px solid white;
+  border-radius: 999px;
+  background: #f3b72d;
+  color: #3d2b18;
+  font-size: clamp(20px, 2.3vw, 30px);
+  font-weight: 1000;
+  text-align: center;
+  opacity: 0;
+  transition:
+    opacity .15s ease,
+    transform .15s ease;
+  pointer-events: none;
+}
+
+.feast-ready-message.show {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+.feast-ready-message.hot {
+  background: #db684e;
+  color: #ffffff;
+}
+
+.feast-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+}
+
+.feast-pit {
+  position: absolute;
+  left: 50%;
+  top: 63%;
+  width: min(46vw, 520px);
+  height: min(28vw, 280px);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse at center, #443424 0 36%, #67503a 37% 47%, #89745d 48% 58%, transparent 59%);
+  filter: drop-shadow(0 15px 10px rgba(62,42,23,.28));
+}
+
+.feast-stone {
+  position: absolute;
+  width: 19%;
+  height: 19%;
+  border-radius: 48%;
+  background: linear-gradient(145deg, #a99982, #6f6559);
+  border: 3px solid #5f574d;
+}
+
+.feast-stone.s1 { left: 2%; top: 35%; }
+.feast-stone.s2 { left: 15%; top: 9%; }
+.feast-stone.s3 { left: 39%; top: 0; }
+.feast-stone.s4 { right: 16%; top: 8%; }
+.feast-stone.s5 { right: 1%; top: 34%; }
+.feast-stone.s6 { right: 13%; bottom: 4%; }
+.feast-stone.s7 { left: 39%; bottom: -3%; }
+.feast-stone.s8 { left: 12%; bottom: 5%; }
+
+.feast-center {
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  top: 19%;
+  bottom: 19%;
+  border-radius: 50%;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 62%, #d98b3d 0 6%, transparent 6.5%),
+    radial-gradient(circle at 37% 48%, #b5623c 0 8%, transparent 8.5%),
+    linear-gradient(#456b43, #24492f);
+  border: 5px solid #30472c;
+}
+
+.feast-food-reveal {
+  position: absolute;
+  z-index: 3;
+  width: 78px;
+  height: 56px;
+  opacity: 0;
+  transform: scale(.2) rotate(-8deg);
+  transition:
+    opacity .35s ease,
+    transform .45s cubic-bezier(.2,1.35,.3,1);
+}
+
+.feast-food-reveal.visible {
+  opacity: 1;
+  transform: scale(1) rotate(0);
+}
+
+.feast-food-reveal::before,
+.feast-food-reveal::after {
+  content: "";
+  position: absolute;
+}
+
+/* clam */
+.feast-food-reveal.clam {
+  left: 18%;
+  top: 32%;
+}
+
+.feast-food-reveal.clam::before {
+  left: 8px;
+  top: 15px;
+  width: 58px;
+  height: 34px;
+  border-radius: 55% 55% 48% 48%;
+  border: 4px solid #796755;
+  background:
+    repeating-radial-gradient(
+      ellipse at bottom,
+      #eadbbf 0 4px,
+      #c8b28f 5px 7px
+    );
+}
+
+/* corn */
+.feast-food-reveal.corn {
+  right: 16%;
+  top: 22%;
+}
+
+.feast-food-reveal.corn::before {
+  left: 27px;
+  top: 4px;
+  width: 26px;
+  height: 49px;
+  border-radius: 48%;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #f1c32e 0 5px,
+      #ffe675 5px 9px
+    );
+  border: 3px solid #b88b20;
+  transform: rotate(13deg);
+}
+
+.feast-food-reveal.corn::after {
+  left: 9px;
+  top: 18px;
+  width: 53px;
+  height: 36px;
+  border-radius: 0 0 50% 50%;
+  border-left: 12px solid #4f7d3c;
+  border-right: 12px solid #4f7d3c;
+}
+
+/* lobster */
+.feast-food-reveal.lobster {
+  left: 38%;
+  bottom: 12%;
+}
+
+.feast-food-reveal.lobster::before {
+  left: 22px;
+  top: 12px;
+  width: 36px;
+  height: 35px;
+  border-radius: 50% 50% 40% 40%;
+  background: #c84d35;
+  border: 3px solid #8e3327;
+}
+
+.feast-food-reveal.lobster::after {
+  left: 4px;
+  top: 8px;
+  width: 68px;
+  height: 22px;
+  border-left: 12px solid #c84d35;
+  border-right: 12px solid #c84d35;
+  border-radius: 40%;
+}
+
+/* potato */
+.feast-food-reveal.potato {
+  right: 7%;
+  bottom: 16%;
+}
+
+.feast-food-reveal.potato::before {
+  left: 8px;
+  top: 12px;
+  width: 58px;
+  height: 38px;
+  border-radius: 48% 55% 46% 52%;
+  background:
+    radial-gradient(circle at 22% 30%, #7a5730 0 2px, transparent 3px),
+    radial-gradient(circle at 67% 62%, #7a5730 0 2px, transparent 3px),
+    radial-gradient(circle at 80% 25%, #7a5730 0 2px, transparent 3px),
+    #a87842;
+  border: 3px solid #78512c;
+}
+
+.feast-cover {
+  position: absolute;
+  z-index: 12;
+  width: 32%;
+  height: 35%;
+  border: 4px solid #315133;
+  border-radius: 48% 55% 42% 53%;
+  background:
+    repeating-linear-gradient(
+      22deg,
+      #3f7044 0 8px,
+      #5d8b4e 8px 15px,
+      #2f5e3c 15px 22px
+    );
+  box-shadow:
+    inset 0 4px 10px rgba(255,255,255,.12),
+    0 5px 7px rgba(0,0,0,.18);
+  transition:
+    transform .45s ease,
+    opacity .35s ease,
+    filter .2s ease;
+}
+
+.feast-cover.c1 { left: 19%; top: 20%; transform: rotate(-12deg); }
+.feast-cover.c2 { right: 18%; top: 20%; transform: rotate(13deg); }
+.feast-cover.c3 { left: 19%; bottom: 17%; transform: rotate(9deg); }
+.feast-cover.c4 { right: 18%; bottom: 17%; transform: rotate(-9deg); }
+
+.feast-cover.active {
+  filter: brightness(1.3);
+  outline: 7px solid rgba(255, 220, 83, .86);
+  outline-offset: 3px;
+  animation: feastCoverPulse .6s ease-in-out infinite alternate;
+}
+
+.feast-cover.revealed {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.feast-cover.c1.revealed { transform: translate(-90px,-80px) rotate(-38deg); }
+.feast-cover.c2.revealed { transform: translate(90px,-85px) rotate(40deg); }
+.feast-cover.c3.revealed { transform: translate(-100px,80px) rotate(38deg); }
+.feast-cover.c4.revealed { transform: translate(100px,80px) rotate(-42deg); }
+
+.feast-steam {
+  position: absolute;
+  z-index: 18;
+  width: 62px;
+  height: 86px;
+  opacity: .45;
+  pointer-events: none;
+}
+
+.feast-steam::before,
+.feast-steam::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 26px;
+  height: 72px;
+  border-radius: 50%;
+  border-left: 11px solid rgba(255,255,255,.9);
+  transform: rotate(10deg);
+  animation: feastSteamRise 1.2s ease-in-out infinite;
+}
+
+.feast-steam::after {
+  left: 22%;
+  height: 58px;
+  animation-delay: -.55s;
+}
+
+.feast-steam.safe {
+  opacity: .95;
+}
+
+.feast-steam.burst {
+  animation: feastBurst .45s ease-out;
+}
+
+.feast-helper {
+  --helper-x: 16%;
+  --helper-y: 72%;
+
+  position: absolute;
+  left: var(--helper-x);
+  top: var(--helper-y);
+  z-index: 40;
+  width: 82px;
+  height: 148px;
+  transform: translate(-50%, -72%);
+  cursor: grab;
+  touch-action: none;
+  filter: drop-shadow(0 8px 4px rgba(55,37,21,.22));
+}
+
+.feast-helper.dragging {
+  cursor: grabbing;
+  transform: translate(-50%, -72%) scale(1.05);
+}
+
+.feast-helper-head {
+  position: absolute;
+  top: 2px;
+  left: 25px;
+  width: 34px;
+  height: 40px;
+  border-radius: 48% 48% 45% 45%;
+  background: #b77447;
+  border: 3px solid #5d3928;
+  z-index: 5;
+}
+
+.feast-helper-head::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  right: -7px;
+  top: -5px;
+  height: 20px;
+  border-radius: 60% 60% 32% 32%;
+  background: #28211d;
+}
+
+.feast-helper-head::after {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 19px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #241c17;
+  box-shadow: 14px 0 #241c17;
+}
+
+.feast-helper-body {
+  position: absolute;
+  left: 20px;
+  top: 38px;
+  width: 44px;
+  height: 65px;
+  border-radius: 12px 12px 18px 18px;
+  background:
+    linear-gradient(
+      to bottom,
+      #416f78 0 54%,
+      #d8b45c 54% 63%,
+      #704936 63% 100%
+    );
+  border: 3px solid #4c3529;
+  z-index: 3;
+}
+
+.feast-helper-arm,
+.feast-helper-leg {
+  position: absolute;
+  display: block;
+  background: #b77447;
+  border: 3px solid #5d3928;
+  transform-origin: top center;
+}
+
+.feast-helper-arm {
+  top: 48px;
+  width: 15px;
+  height: 56px;
+  border-radius: 10px;
+  z-index: 2;
+}
+
+.feast-helper-arm.left {
+  left: 10px;
+  transform: rotate(12deg);
+}
+
+.feast-helper-arm.right {
+  right: 8px;
+  transform: rotate(-17deg);
+}
+
+.feast-helper-leg {
+  top: 96px;
+  width: 17px;
+  height: 50px;
+  border-radius: 8px 8px 12px 12px;
+}
+
+.feast-helper-leg.left {
+  left: 22px;
+  transform: rotate(7deg);
+}
+
+.feast-helper-leg.right {
+  right: 19px;
+  transform: rotate(-7deg);
+}
+
+.feast-helper.recoil {
+  animation: feastHelperRecoil .48s ease-out;
+}
+
+.feast-pointer-hint {
+  position: absolute;
+  left: 18px;
+  bottom: 16px;
+  z-index: 25;
+  width: min(270px, 29vw);
+  padding: 9px 13px;
+  border: 3px solid white;
+  border-radius: 17px;
+  background: rgba(58, 75, 53, .92);
+  color: white;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.feast-progress {
+  position: absolute;
+  right: 17px;
+  top: 105px;
+  z-index: 25;
+  display: flex;
+  gap: 7px;
+  padding: 7px 10px;
+  border: 3px solid white;
+  border-radius: 999px;
+  background: rgba(71,49,31,.88);
+}
+
+.feast-progress i {
+  display: block;
+  width: 22px;
+  height: 22px;
+  border: 3px solid white;
+  border-radius: 50%;
+  background: #7d684f;
+}
+
+.feast-progress i.done {
+  background: #f0c441;
+  transform: scale(1.08);
+}
+
+.feast-complete {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(30, 51, 37, .42);
+  backdrop-filter: blur(2px);
+}
+
+.feast-complete[hidden] {
+  display: none !important;
+}
+
+.feast-complete-card {
+  width: min(700px, 92%);
+  max-height: 92%;
+  overflow: auto;
+  padding: 22px;
+  border: 5px solid white;
+  border-radius: 28px;
+  background:
+    linear-gradient(#fff7d2, #eed89b);
+  box-shadow:
+    0 9px 0 rgba(86,57,31,.28),
+    0 20px 40px rgba(0,0,0,.22);
+  text-align: center;
+  color: #40301f;
+}
+
+.feast-complete-card h2 {
+  margin: 5px 0 4px;
+  font-size: clamp(26px, 4vw, 42px);
+  color: #446040;
+}
+
+.feast-complete-card p {
+  margin: 6px auto 15px;
+  max-width: 560px;
+  font-weight: 800;
+}
+
+.feast-community {
+  position: relative;
+  height: 155px;
+  margin: 5px auto 14px;
+}
+
+.feast-person {
+  position: absolute;
+  bottom: 4px;
+  width: 66px;
+  height: 135px;
+  animation: feastCelebrate .7s ease-in-out infinite alternate;
+}
+
+.feast-person:nth-child(1) { left: 7%; animation-delay: -.2s; }
+.feast-person:nth-child(2) { left: 25%; animation-delay: -.5s; }
+.feast-person:nth-child(3) { left: 43%; animation-delay: -.1s; }
+.feast-person:nth-child(4) { left: 61%; animation-delay: -.4s; }
+.feast-person:nth-child(5) { left: 79%; animation-delay: -.6s; }
+
+.feast-person .head {
+  position: absolute;
+  left: 19px;
+  top: 3px;
+  width: 30px;
+  height: 35px;
+  border-radius: 50%;
+  background: #b77447;
+  border: 3px solid #56382a;
+}
+
+.feast-person .head::before {
+  content: "";
+  position: absolute;
+  left: -5px;
+  right: -5px;
+  top: -5px;
+  height: 17px;
+  border-radius: 60% 60% 25% 25%;
+  background: #2b211c;
+}
+
+.feast-person .body {
+  position: absolute;
+  left: 13px;
+  top: 34px;
+  width: 42px;
+  height: 59px;
+  border-radius: 10px 10px 15px 15px;
+  border: 3px solid #4f382a;
+  background:
+    linear-gradient(
+      #54776e 0 52%,
+      #d1ac5a 52% 60%,
+      #76503c 60% 100%
+    );
+}
+
+.feast-person .leg {
+  position: absolute;
+  top: 88px;
+  width: 15px;
+  height: 44px;
+  border-radius: 9px;
+  background: #a86c45;
+  border: 3px solid #55372a;
+}
+
+.feast-person .leg.left { left: 16px; }
+.feast-person .leg.right { right: 13px; }
+
+.feast-final-foods {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 4px 0 15px;
+}
+
+.feast-final-foods span {
+  padding: 6px 12px;
+  border: 3px solid #806239;
+  border-radius: 999px;
+  background: #fff3bd;
+  font-weight: 1000;
+}
+
+.feast-button-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+@keyframes feastSteamRise {
+  0% {
+    transform: translateY(15px) scale(.75) rotate(4deg);
+    opacity: 0;
+  }
+  38% {
+    opacity: .85;
+  }
+  100% {
+    transform: translateY(-34px) scale(1.18) rotate(-11deg);
+    opacity: 0;
+  }
+}
+
+@keyframes feastCoverPulse {
+  from { box-shadow: 0 5px 7px rgba(0,0,0,.18), 0 0 0 rgba(255,221,78,0); }
+  to { box-shadow: 0 5px 7px rgba(0,0,0,.18), 0 0 25px rgba(255,221,78,.95); }
+}
+
+@keyframes feastBurst {
+  0% { transform: scale(.7); opacity: .4; }
+  45% { transform: scale(1.9); opacity: 1; }
+  100% { transform: scale(2.35); opacity: 0; }
+}
+
+@keyframes feastHelperRecoil {
+  0% { transform: translate(-50%, -72%) rotate(0); }
+  25% { transform: translate(-50%, -72%) rotate(-12deg) scale(.94); }
+  55% { transform: translate(-50%, -72%) rotate(10deg) scale(.94); }
+  100% { transform: translate(-50%, -72%) rotate(0); }
+}
+
+@keyframes feastCelebrate {
+  from { transform: translateY(0); }
+  to { transform: translateY(-8px); }
+}
+
+@media (max-height: 720px) {
+  .feast-top-card {
+    min-height: 64px;
+    top: 8px;
+    padding: 7px 16px;
+  }
+
+  .feast-top-card strong {
+    font-size: 20px;
+  }
+
+  .feast-round,
+  .feast-progress,
+  .feast-ready-message {
+    top: 88px;
+  }
+
+  .feast-pit {
+    top: 63%;
+    transform: translate(-50%, -50%) scale(.87);
+  }
+
+  .feast-helper {
+    transform: translate(-50%, -72%) scale(.88);
+  }
+}
+
+/* Celebration arms */
+.feast-person .arm {
+  position: absolute;
+  top: 43px;
+  width: 13px;
+  height: 47px;
+  border-radius: 999px;
+  background: #b77447;
+  border: 3px solid #56382a;
+  transform-origin: 50% 8px;
+  z-index: -1;
+}
+
+.feast-person .arm.left {
+  left: 2px;
+  transform: rotate(8deg);
+}
+
+.feast-person .arm.right {
+  right: 2px;
+  transform: rotate(-8deg);
+}
+
+/* Make the finished feast feel alive. */
+.feast-complete:not([hidden])
+.feast-person:nth-child(odd)
+.arm.right {
+  animation:
+    feastWaveRight .65s ease-in-out
+    infinite alternate;
+}
+
+.feast-complete:not([hidden])
+.feast-person:nth-child(even)
+.arm.left {
+  animation:
+    feastWaveLeft .65s ease-in-out
+    infinite alternate;
+}
+
+.feast-complete:not([hidden])
+.feast-person {
+  animation:
+    feastCelebrateBounce 1s ease-in-out
+    infinite alternate;
+}
+
+.feast-complete:not([hidden])
+.feast-person:nth-child(2n) {
+  animation-delay: -.45s;
+}
+
+@keyframes feastWaveRight {
+  from {
+    transform: rotate(-8deg);
+  }
+
+  to {
+    transform:
+      translateY(-5px)
+      rotate(-115deg);
+  }
+}
+
+@keyframes feastWaveLeft {
+  from {
+    transform: rotate(8deg);
+  }
+
+  to {
+    transform:
+      translateY(-5px)
+      rotate(115deg);
+  }
+}
+
+@keyframes feastCelebrateBounce {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-6px);
+  }
+}
+
+
+/* =======================================================
+   LEVEL 4 FEAST FINALE
+   ======================================================= */
+
+.feast-serve-finale {
+  position: absolute;
+  inset: 0;
+  z-index: 24;
+  pointer-events: none;
+}
+
+.feast-serve-finale[hidden] {
+  display: none !important;
+}
+
+.serve-topbar {
+  position: absolute;
+  top: 86px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  z-index: 10;
+}
+
+.serve-title,
+.serve-progress {
+  padding: 9px 16px;
+  border: 4px solid #503520;
+  border-radius: 18px;
+  background: #fff2bd;
+  box-shadow: 0 5px 0 rgba(74, 45, 24, .26);
+  font-weight: 1000;
+  color: #4a321e;
+}
+
+.serve-title {
+  font-size: 25px;
+}
+
+.serve-progress {
+  font-size: 18px;
+}
+
+.serve-request-card {
+  position: absolute;
+  top: 145px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 210px;
+  padding: 8px 18px;
+  text-align: center;
+  border: 4px solid #704626;
+  border-radius: 18px;
+  background: #fff9dc;
+  z-index: 10;
+}
+
+.serve-request-card span {
+  display: block;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.serve-request-card strong {
+  display: block;
+  margin-top: 2px;
+  font-size: 27px;
+}
+
+.serve-community-zone {
+  position: absolute;
+  left: 7%;
+  top: 45%;
+  width: 145px;
+  height: 185px;
+  border: 5px dashed rgba(74, 58, 37, .68);
+  border-radius: 28px;
+  background: rgba(255, 244, 193, .78);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.serve-community-zone strong {
+  font-size: 15px;
+  color: #44301f;
+}
+
+.serve-community-person {
+  position: relative;
+  width: 70px;
+  height: 112px;
+}
+
+.serve-community-person .serve-head {
+  position: absolute;
+  top: 0;
+  left: 20px;
+  width: 30px;
+  height: 34px;
+  border-radius: 50%;
+  background: #b77447;
+  border: 3px solid #56382a;
+}
+
+.serve-community-person .serve-body {
+  position: absolute;
+  top: 31px;
+  left: 13px;
+  width: 44px;
+  height: 55px;
+  border-radius: 15px;
+  background: #477f86;
+  border: 3px solid #56382a;
+}
+
+.serve-community-person .serve-arm,
+.serve-community-person .serve-leg {
+  position: absolute;
+  width: 11px;
+  border-radius: 999px;
+  background: #b77447;
+  border: 3px solid #56382a;
+}
+
+.serve-community-person .serve-arm {
+  top: 40px;
+  height: 42px;
+}
+
+.serve-community-person .serve-arm.left {
+  left: 5px;
+  transform: rotate(15deg);
+}
+
+.serve-community-person .serve-arm.right {
+  right: 5px;
+  transform: rotate(-15deg);
+}
+
+.serve-community-person .serve-leg {
+  top: 82px;
+  height: 28px;
+}
+
+.serve-community-person .serve-leg.left {
+  left: 23px;
+}
+
+.serve-community-person .serve-leg.right {
+  right: 23px;
+}
+
+.serve-hazard-field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.serve-steam-hazard {
+  position: absolute;
+  width: 76px;
+  height: 86px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at 50% 66%,
+      rgba(255,255,255,.9) 0 23%,
+      rgba(232,239,239,.83) 24% 43%,
+      rgba(255,255,255,.52) 44% 63%,
+      transparent 65%
+    );
+  filter: drop-shadow(0 3px 4px rgba(80,90,90,.22));
+  animation: serveSteamPuff .55s ease-in-out infinite alternate;
+}
+
+.feast-helper.serve-carrying::after {
+  content: "FOOD";
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+  padding: 3px 7px;
+  border: 3px solid #5b3c25;
+  border-radius: 9px;
+  background: #f5d372;
+  color: #45301e;
+  font-size: 10px;
+  font-weight: 1000;
+}
+
+@keyframes serveFoodPulse {
+  from {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(1.09);
+  }
+}
+
+@keyframes serveSteamPuff {
+  from {
+    transform: translate(-50%, -50%) scale(.9);
+    opacity: .76;
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(1.12);
+    opacity: 1;
+  }
+}
+
+
+/* =======================================================
+   PIT SERVING FINALE OVERRIDES
+
+   Food now comes directly from the cooking pit.
+   Steam erupts randomly around it.
+   The community member is a person, not a target box.
+   ======================================================= */
+
+
+/* -------------------------------------------------------
+   COMMUNITY MEMBER — NO BOX
+   ------------------------------------------------------- */
+
+.serve-community-zone {
+  left: 10%;
+  top: 51%;
+
+  width: 100px;
+  height: 145px;
+
+  border: 0;
+
+  border-radius: 0;
+
+  background: transparent;
+
+  box-shadow: none;
+
+  gap: 2px;
+
+  overflow: visible;
+}
+
+.serve-community-zone strong {
+  position: absolute;
+
+  top: 116px;
+  left: 50%;
+
+  transform:
+    translateX(-50%);
+
+  padding: 3px 8px;
+
+  border-radius: 9px;
+
+  background:
+    rgba(255, 245, 202, .88);
+
+  font-size: 11px;
+  font-weight: 1000;
+
+  white-space: nowrap;
+}
+
+.serve-community-person {
+  transform: scale(1.18);
+
+  transform-origin:
+    center bottom;
+}
+
+
+/* -------------------------------------------------------
+   STEAM COMES UP FROM THE PIT
+   ------------------------------------------------------- */
+
+.serve-hazard-field {
+  position: absolute;
+
+  inset: 0;
+
+  overflow: visible;
+
+  pointer-events: none;
+
+  z-index: 8;
+}
+
+.serve-steam-hazard {
+  position: absolute;
+
+  width: 72px;
+  height: 118px;
+
+  transform:
+    translate(-50%, -30%);
+
+  opacity: 0;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 82%,
+      rgba(255,255,255,.96)
+        0 14%,
+      rgba(237,244,244,.9)
+        15% 27%,
+      transparent
+        29%
+    ),
+    radial-gradient(
+      ellipse at 37% 55%,
+      rgba(255,255,255,.91)
+        0 17%,
+      rgba(235,243,243,.75)
+        18% 30%,
+      transparent
+        32%
+    ),
+    radial-gradient(
+      ellipse at 63% 31%,
+      rgba(255,255,255,.88)
+        0 17%,
+      rgba(232,240,240,.66)
+        18% 30%,
+      transparent
+        32%
+    );
+
+  filter:
+    drop-shadow(
+      0 3px 5px
+      rgba(80,90,90,.18)
+    );
+
+  pointer-events: none;
+}
+
+
+/*
+ * A hazard only becomes visible/dangerous
+ * during an eruption.
+ */
+.serve-steam-hazard.erupting {
+  animation:
+    servePitSteamBurst
+    .72s ease-out
+    forwards;
+}
+
+
+/* -------------------------------------------------------
+   HELPER CARRYING FOOD
+   ------------------------------------------------------- */
+
+.feast-helper.serve-carrying::after {
+  content: "FOOD";
+
+  top: 46%;
+
+  background: #f5d372;
+
+  box-shadow:
+    0 3px 0
+    rgba(74, 47, 25, .22);
+}
+
+
+/* -------------------------------------------------------
+   ANIMATION
+   ------------------------------------------------------- */
+
+
+
+@keyframes servePitSteamBurst {
+  0% {
+    opacity: 0;
+
+    transform:
+      translate(-50%, 8%)
+      scale(.68);
+  }
+
+  18% {
+    opacity: .94;
+  }
+
+  65% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: .12;
+
+    transform:
+      translate(-50%, -72%)
+      scale(1.18);
+  }
+}
+
+
+/* =======================================================
+   ORIGINAL REVEALED FOOD SERVING
+   ======================================================= */
+
+/*
+ * The extra serving-food layer is no longer used.
+ */
+/*
+ * Use the foods revealed in Phase 1.
+ */
+.feast-food-reveal.serve-requested {
+  opacity: 1 !important;
+
+  animation:
+    originalFoodServePulse
+    .7s ease-in-out
+    infinite alternate;
+
+  filter:
+    drop-shadow(
+      0 0 10px
+      rgba(255, 224, 72, .95)
+    )
+    drop-shadow(
+      0 0 18px
+      rgba(255, 190, 40, .6)
+    );
+}
+
+.feast-food-reveal.serve-collected {
+  opacity: 0 !important;
+
+  transform:
+    scale(.25) !important;
+
+  pointer-events: none;
+}
+
+
+/* =======================================================
+   FIX HELPER BOX / OUTLINE
+   ======================================================= */
+
+.feast-helper {
+  background: transparent !important;
+
+  border: 0 !important;
+
+  outline: 0 !important;
+
+  box-shadow: none !important;
+}
+
+.feast-helper.dragging,
+.feast-helper:focus,
+.feast-helper:focus-visible {
+  background: transparent !important;
+
+  border: 0 !important;
+
+  outline: 0 !important;
+
+  box-shadow: none !important;
+}
+
+
+/* =======================================================
+   CLEANER STEAM PATTERN
+   ======================================================= */
+
+.serve-steam-hazard {
+  opacity: 0;
+
+  width: 62px;
+  height: 105px;
+
+  transform:
+    translate(-50%, -20%);
+
+  pointer-events: none;
+}
+
+.serve-steam-hazard.erupting {
+  animation:
+    patternedPitSteam
+    .68s ease-out
+    forwards;
+}
+
+@keyframes patternedPitSteam {
+  0% {
+    opacity: 0;
+
+    transform:
+      translate(-50%, 10%)
+      scale(.68);
+  }
+
+  20% {
+    opacity: .9;
+  }
+
+  60% {
+    opacity: .95;
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translate(-50%, -65%)
+      scale(1.08);
+  }
+}
+
+@keyframes originalFoodServePulse {
+  from {
+    transform:
+      scale(.96);
+  }
+
+  to {
+    transform:
+      scale(1.08);
+  }
+}
+
+
+/* =======================================================
+   STEAM DEPTH FIX
+   Steam is dangerous in the pit, but visually sits behind
+   the Wampanoag helper so it does not cover the character.
+   ======================================================= */
+
+.serve-hazard-field {
+  z-index: 4 !important;
+}
+
+.serve-steam-hazard {
+  z-index: 4 !important;
+}
+
+.feast-helper {
+  z-index: 12 !important;
+}
+
+.feast-helper.dragging {
+  z-index: 14 !important;
+}
+
+/*
+ * Keep the food visible above the pit,
+ * but below the helper while the child walks through.
+ */
+.feast-food-reveal {
+  z-index: 6;
+}
+
+.feast-food-reveal.serve-requested {
+  z-index: 7;
+}
+
+
+
