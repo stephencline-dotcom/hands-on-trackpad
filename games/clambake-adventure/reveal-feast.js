@@ -1725,7 +1725,30 @@
   }
 
 
+  /* Level 4 steam MP3 audio */
+  const steamBurstAudio =
+    new Audio("../../sounds/steam.mp3");
+
+  steamBurstAudio.preload = "auto";
+
+  function playSteamBurstAudio() {
+    steamBurstAudio.pause();
+    steamBurstAudio.currentTime = 0;
+
+    if (!soundEnabled()) {
+      return;
+    }
+
+    steamBurstAudio.play().catch(() => {});
+  }
+
+  function stopSteamBurstAudio() {
+    steamBurstAudio.pause();
+    steamBurstAudio.currentTime = 0;
+  }
+
   function clearSteamBurst() {
+    stopSteamBurstAudio();
     serveState.hazards.forEach(
       (hazard) => {
         hazard.active =
@@ -1893,6 +1916,8 @@
           "burst",
           "WAIT!"
         );
+
+        playSteamBurstAudio();
 
         serveState.patternPhase =
           "burst";
@@ -2414,6 +2439,7 @@
   function finishFeast() {
     clearTimers();
 
+    stopSteamBurstAudio();
     stopServeHazards();
 
     serveState.active =
