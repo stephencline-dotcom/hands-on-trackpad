@@ -52,7 +52,13 @@
       { symbol: "🚦", label: "Traffic Light" },
       { symbol: "🌙", label: "Moon" },
       { symbol: "🕶️", label: "Sunglasses" },
-      { symbol: "📺", label: "Television" }
+      { symbol: "📺", label: "Television" },
+      { symbol: "🔭", label: "Telescope" },
+      { symbol: "📷", label: "Camera" },
+      { symbol: "🔍", label: "Magnifying Glass" },
+      { symbol: "🏰", label: "Castle" },
+      { symbol: "🚀", label: "Rocket" },
+      { symbol: "🦚", label: "Peacock" }
     ],
 
     hearing: [
@@ -67,7 +73,13 @@
       { symbol: "🐕", label: "Barking Dog" },
       { symbol: "🎺", label: "Trumpet" },
       { symbol: "🎹", label: "Piano" },
-      { symbol: "☎️", label: "Phone" }
+      { symbol: "☎️", label: "Phone" },
+      { symbol: "🎤", label: "Microphone" },
+      { symbol: "🎧", label: "Headphones" },
+      { symbol: "🪇", label: "Maracas" },
+      { symbol: "🪈", label: "Flute" },
+      { symbol: "🎷", label: "Saxophone" },
+      { symbol: "🪕", label: "Banjo" }
     ],
 
     smell: [
@@ -82,7 +94,13 @@
       { symbol: "🌲", label: "Pine Tree" },
       { symbol: "🧅", label: "Onion" },
       { symbol: "🧄", label: "Garlic" },
-      { symbol: "🍊", label: "Orange" }
+      { symbol: "🍊", label: "Orange" },
+      { symbol: "🍞", label: "Fresh Bread" },
+      { symbol: "🥓", label: "Bacon" },
+      { symbol: "🍪", label: "Cookies" },
+      { symbol: "🧀", label: "Stinky Cheese" },
+      { symbol: "🍋", label: "Lemon" },
+      { symbol: "💐", label: "Bouquet" }
     ],
 
     taste: [
@@ -97,7 +115,13 @@
       { symbol: "🥣", label: "Soup" },
       { symbol: "🥕", label: "Carrot" },
       { symbol: "🍌", label: "Banana" },
-      { symbol: "🍬", label: "Candy" }
+      { symbol: "🍬", label: "Candy" },
+      { symbol: "🍔", label: "Hamburger" },
+      { symbol: "🍇", label: "Grapes" },
+      { symbol: "🍍", label: "Pineapple" },
+      { symbol: "🥨", label: "Pretzel" },
+      { symbol: "🥞", label: "Pancakes" },
+      { symbol: "🍒", label: "Cherries" }
     ],
 
     touch: [
@@ -112,7 +136,13 @@
       { symbol: "❄️", label: "Snowball" },
       { symbol: "🖌️", label: "Brush" },
       { symbol: "☁️", label: "Cotton Ball" },
-      { symbol: "🪵", label: "Sandpaper" }
+      { symbol: "🪵", label: "Sandpaper" },
+      { symbol: "🧤", label: "Mitten" },
+      { symbol: "🏀", label: "Basketball" },
+      { symbol: "🪥", label: "Toothbrush" },
+      { symbol: "🛋️", label: "Soft Couch" },
+      { symbol: "🧱", label: "Brick" },
+      { symbol: "🧶", label: "Yarn" }
     ]
   };
 
@@ -945,9 +975,22 @@
       return;
     }
 
+    const usedPictureSymbols = new Set();
+
     round.pieces.forEach((piece) => {
-      const picture =
-        randomSensePicture(piece.match);
+      const pool = SENSE_PICTURE_POOLS[piece.match] || [];
+
+      const available = pool.filter(
+        (picture) => !usedPictureSymbols.has(picture.symbol)
+      );
+
+      const picture = available.length
+        ? available[Math.floor(Math.random() * available.length)]
+        : randomSensePicture(piece.match);
+
+      if (picture) {
+        usedPictureSymbols.add(picture.symbol);
+      }
 
       if (!picture) {
         return;
@@ -1809,6 +1852,34 @@
     );
   }
 
+  // Cursor-only Level 3: click to put down a carried item.
+  function releaseCarriedPieceOnClick(event) {
+    if (
+      senseBuilderRequireClickAndDrag ||
+      currentRoundIndex !== 2 ||
+      !dragState.piece ||
+      event.button !== 0
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const piece = dragState.piece;
+
+    try {
+      if (piece.hasPointerCapture(dragState.pointerId)) {
+        piece.releasePointerCapture(dragState.pointerId);
+      }
+    } catch {
+      // Pointer capture is optional.
+    }
+
+    clearReadyZones();
+    returnPiece(piece);
+    resetDragState();
+  }
   function handlePiecePointerMove(
     event
   ) {
@@ -2263,6 +2334,11 @@
   });
 
   document.addEventListener(
+    "pointerdown",
+    releaseCarriedPieceOnClick,
+    true
+  );
+  document.addEventListener(
     "pointermove",
     (event) => {
       if (
@@ -2696,29 +2772,34 @@
     return rescueSenseBag.shift();
   }
 
-  function getUnusedRescueObject(senseName) {
+  function getUnusedRescueObject(senseName, excludedSymbols = new Set()) {
     const sense = RESCUE_SENSES[senseName];
 
     let available = sense.objects.filter(
       (item) =>
-        !rescueUsedObjects[senseName].includes(
-          item.label
-        )
+        !excludedSymbols.has(item.icon) &&
+        !rescueUsedObjects[senseName].includes(item.label)
     );
 
     if (available.length === 0) {
       rescueUsedObjects[senseName] = [];
-      available = [...sense.objects];
+
+      available = sense.objects.filter(
+        (item) => !excludedSymbols.has(item.icon)
+      );
     }
 
-    const object =
-      available[
-        Math.floor(Math.random() * available.length)
-      ];
+    if (available.length === 0) {
+      throw new Error("No unique rescue pictures available.");
+    }
 
-    rescueUsedObjects[senseName].push(
-      object.label
-    );
+    const object = available[
+      Math.floor(Math.random() * available.length)
+    ];
+
+    rescueUsedObjects[senseName].push(object.label);
+
+    excludedSymbols.add(object.icon);
 
     return object;
   }
@@ -3101,12 +3182,11 @@ window.setTimeout(() => {
       getRescueObjectCount();
 
     const choices = [];
+    const usedChallengeSymbols = new Set();
 
     choices.push({
       object:
-        getUnusedRescueObject(
-          rescueActiveSense
-        ),
+        getUnusedRescueObject(rescueActiveSense, usedChallengeSymbols),
       senseName: rescueActiveSense,
       correct: true
     });
@@ -3128,9 +3208,7 @@ window.setTimeout(() => {
 
       choices.push({
         object:
-          getUnusedRescueObject(
-            distractorSense
-          ),
+          getUnusedRescueObject(distractorSense, usedChallengeSymbols),
         senseName: distractorSense,
         correct: false
       });
