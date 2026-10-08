@@ -1321,12 +1321,12 @@
       "is-dragging"
     );
 
-    try {
-      target.setPointerCapture(
-        event.pointerId
-      );
-    }
-    catch {
+    if (!clambakeLevelOneCursorMode()) {
+      try {
+        target.setPointerCapture(event.pointerId);
+      } catch {
+        // Pointer capture is optional.
+      }
     }
 
     moveDragged(event);
@@ -1343,8 +1343,10 @@
 
   function moveDragged(event) {
     if (
-      event.pointerId !==
-        state.pointerId ||
+      (
+        !clambakeLevelOneCursorMode() &&
+        event.pointerId !== state.pointerId
+      ) ||
       !state.dragType
     ) {
       return;
@@ -1353,10 +1355,15 @@
     event.preventDefault();
 
     const point =
-      stagePoint(
-        event.clientX,
-        event.clientY
-      );
+      clambakeLevelOneCursorMode()
+        ? {
+            x: event.clientX - stage.getBoundingClientRect().left,
+            y: event.clientY - stage.getBoundingClientRect().top
+          }
+        : stagePoint(
+            event.clientX,
+            event.clientY
+          );
 
     const target =
       state.dragType === "stick"
@@ -1832,7 +1839,7 @@
     );
   }
 
-  stage.addEventListener(
+  document.addEventListener(
     "pointermove",
     (event) => {
       if (
@@ -1918,7 +1925,7 @@
         return;
       }
 
-      pointerMove(
+      moveDragged(
         cursorEvent
       );
 
