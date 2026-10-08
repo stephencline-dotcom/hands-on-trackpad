@@ -1704,6 +1704,11 @@
         Math.min(
           distanceToTarget,
           config.crabSpeed *
+          (
+            window.clambakeInputMode
+              ? window.clambakeInputMode.speedMultiplier()
+              : 1
+          ) *
           delta
         );
 
@@ -1740,6 +1745,15 @@
             : 30
         )
       ) {
+        // The gathering basket is a safe zone.
+        // Crabs cannot steal food from the helper here.
+        if (
+          state.carriedFoods.length > 0 &&
+          helperInsideCommunity()
+        ) {
+          continue;
+        }
+
         crabWins(
           crab
         );
@@ -1986,6 +2000,9 @@
   function finishGatherGame() {
     stopCrabs();
 
+    // Stop all Level 2 audio when gathering is complete.
+    stopLevelTwoAudio();
+
     state.active =
       false;
 
@@ -2098,48 +2115,8 @@
     new MutationObserver(
       () => {
         if (!winOverlay.hidden) {
-          /*
-   * LEVEL 2 RUNNING SOUND RELEASE
-   */
-  document.addEventListener(
-    "pointerup",
-    stopRunningAudio
-  );
+          stopLevelTwoAudio();
 
-  document.addEventListener(
-    "pointercancel",
-    stopRunningAudio
-  );
-
-  /*
-   * LEVEL 2 MP3 SOUND TOGGLE
-   */
-  if (soundToggle) {
-    soundToggle.addEventListener(
-      "click",
-      () => {
-        window.setTimeout(
-          () => {
-            if (!soundEnabled()) {
-              stopLevelTwoAudio();
-              return;
-            }
-
-            if (state.active) {
-              startGatherOcean();
-
-              if (state.dragging) {
-                startRunningAudio();
-              }
-            }
-          },
-          0
-        );
-      }
-    );
-  }
-
-  addContinueButton();
         }
       }
     );

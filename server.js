@@ -68,6 +68,7 @@ const DEFAULT_SETTINGS = {
   senseBuilderRequireClickAndDrag: false,
   chickenLittleGameActive: true,
   clambakeAdventureGameActive: true,
+  clambakeAdventureDifficulty: "normal",
   clambakeAdventureVoiceDirections: true,
   clambakeAdventureRequireClickAndDrag: false,
   chickenLittleRequireClickAndDrag: false,
@@ -579,6 +580,10 @@ function loadSettings() {
         data.clambakeAdventureGameActive,
         DEFAULT_SETTINGS.clambakeAdventureGameActive
       ),
+      clambakeAdventureDifficulty:
+        data.clambakeAdventureDifficulty === "easy"
+          ? "easy"
+          : "normal",
       clambakeAdventureVoiceDirections: parseTaskEnabled(
         data.clambakeAdventureVoiceDirections,
         DEFAULT_SETTINGS.clambakeAdventureVoiceDirections
@@ -925,6 +930,11 @@ function saveSettings(settings) {
         existing.clambakeAdventureGameActive,
       DEFAULT_SETTINGS.clambakeAdventureGameActive
     ),
+    clambakeAdventureDifficulty:
+      (settings.clambakeAdventureDifficulty ??
+        existing.clambakeAdventureDifficulty) === "easy"
+        ? "easy"
+        : "normal",
     clambakeAdventureVoiceDirections: parseTaskEnabled(
       settings.clambakeAdventureVoiceDirections ??
         existing.clambakeAdventureVoiceDirections,

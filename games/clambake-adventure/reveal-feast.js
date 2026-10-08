@@ -1663,7 +1663,21 @@
       }
     ];
 
-    return timings[difficulty];
+    const timing = timings[difficulty];
+
+    const easyMode =
+      window.clambakeInputMode &&
+      window.clambakeInputMode.difficulty() === "easy";
+
+    if (easyMode) {
+      return {
+        ...timing,
+        warning: Math.round(timing.warning * 1.5),
+        safe: Math.round(timing.safe * 1.5)
+      };
+    }
+
+    return timing;
   }
 
 

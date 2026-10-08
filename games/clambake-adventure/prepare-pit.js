@@ -2110,8 +2110,15 @@
               index * 24,
 
             speed:
-              .0016 +
-              index * .00025,
+              (
+                .0016 +
+                index * .00025
+              ) *
+              (
+                window.clambakeInputMode
+                  ? window.clambakeInputMode.speedMultiplier()
+                  : 1
+              ),
 
             cx:
               pitCenter.x,

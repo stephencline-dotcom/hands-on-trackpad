@@ -29,6 +29,8 @@ const clambakeAdventureGameActiveToggle =
   document.getElementById("clambakeAdventureGameActive");
 const clambakeAdventureVoiceDirectionsToggle =
   document.getElementById("clambakeAdventureVoiceDirections");
+const clambakeAdventureDifficultySelect =
+  document.getElementById("clambakeAdventureDifficulty");
 
 const clambakeAdventureRequireClickAndDragToggle =
   document.getElementById("clambakeAdventureRequireClickAndDrag");
@@ -2468,6 +2470,8 @@ async function loadTask1Settings() {
     localStorage.getItem(FIREFLY_FOREST_GAME_ACTIVE_KEY),
     true
   );
+  let clambakeAdventureDifficulty = "normal";
+
   let clambakeAdventureVoiceDirections = parseTaskEnabled(
     localStorage.getItem(CLAMBAKE_ADVENTURE_VOICE_DIRECTIONS_KEY),
     true
@@ -2770,6 +2774,11 @@ async function loadTask1Settings() {
         data.clambakeAdventureGameActive,
         clambakeAdventureGameActive
       );
+      clambakeAdventureDifficulty =
+        data.clambakeAdventureDifficulty === "easy"
+          ? "easy"
+          : "normal";
+
       clambakeAdventureVoiceDirections = parseTaskEnabled(
         data.clambakeAdventureVoiceDirections,
         clambakeAdventureVoiceDirections
@@ -3237,6 +3246,11 @@ async function loadTask1Settings() {
   if (clambakeAdventureGameActiveToggle) {
     clambakeAdventureGameActiveToggle.checked =
       clambakeAdventureGameActive;
+  }
+
+  if (clambakeAdventureDifficultySelect) {
+    clambakeAdventureDifficultySelect.value =
+      clambakeAdventureDifficulty;
   }
 
   if (clambakeAdventureVoiceDirectionsToggle) {
@@ -3716,6 +3730,12 @@ async function saveTask1Settings() {
     deerRunRequireClickAndDragToggle.checked
   );
 
+  const clambakeAdventureDifficulty =
+    clambakeAdventureDifficultySelect &&
+    clambakeAdventureDifficultySelect.value === "easy"
+      ? "easy"
+      : "normal";
+
   const clambakeAdventureVoiceDirections = Boolean(
     clambakeAdventureVoiceDirectionsToggle &&
     clambakeAdventureVoiceDirectionsToggle.checked
@@ -4123,6 +4143,7 @@ async function saveTask1Settings() {
         deerRunGameActive,
         hauntedStreetGameActive,
         clambakeAdventureGameActive,
+        clambakeAdventureDifficulty,
         clambakeAdventureVoiceDirections,
         clambakeAdventureRequireClickAndDrag,
         hauntedStreetRequireClickAndDrag,

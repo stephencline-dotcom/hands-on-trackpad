@@ -989,7 +989,13 @@
     const step =
       Math.min(
         distance,
-        speed * delta
+        speed *
+          (
+            window.clambakeInputMode
+              ? window.clambakeInputMode.speedMultiplier()
+              : 1
+          ) *
+          delta
       );
 
     state.gullX +=

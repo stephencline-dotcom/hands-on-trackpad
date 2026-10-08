@@ -3,6 +3,7 @@
 
   const state = {
     requireClickAndDrag: false,
+    difficulty: "normal",
     ready: false
   };
 
@@ -36,6 +37,14 @@
       return !state.requireClickAndDrag;
     },
 
+    difficulty() {
+      return state.difficulty;
+    },
+
+    speedMultiplier() {
+      return state.difficulty === "easy" ? 0.65 : 1;
+    },
+
     isReady() {
       return state.ready;
     }
@@ -55,6 +64,11 @@
         const settings =
           await response.json();
 
+        state.difficulty =
+          settings.clambakeAdventureDifficulty === "easy"
+            ? "easy"
+            : "normal";
+
         state.requireClickAndDrag =
           parseBoolean(
             settings.clambakeAdventureRequireClickAndDrag,
@@ -63,6 +77,7 @@
       }
     }
     catch {
+      state.difficulty = "normal";
       state.requireClickAndDrag =
         false;
     }
@@ -88,7 +103,8 @@
         {
           detail: {
             requireClickAndDrag:
-              state.requireClickAndDrag
+              state.requireClickAndDrag,
+            difficulty: state.difficulty
           }
         }
       )
