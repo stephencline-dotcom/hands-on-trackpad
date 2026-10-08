@@ -206,7 +206,7 @@ function setPressedState(pressed) {
 }
 
 function playHoldAudio() {
-  if (trainingPaused) {
+  if (trainingPaused || !soundEnabled) {
     return;
   }
 
@@ -242,7 +242,7 @@ function stopHoldAudio() {
 }
 
 function playSlideAudio() {
-  if (trainingPaused) {
+  if (trainingPaused || !soundEnabled) {
     return;
   }
 
@@ -273,7 +273,7 @@ function stopSlideAudio() {
 }
 
 function playJustSlideAudio() {
-  if (trainingPaused) {
+  if (trainingPaused || !soundEnabled) {
     return;
   }
 
@@ -303,7 +303,7 @@ function stopJustSlideAudio() {
 }
 
 function playBunnyEarsAudio() {
-  if (trainingPaused) {
+  if (trainingPaused || !soundEnabled) {
     return;
   }
 
