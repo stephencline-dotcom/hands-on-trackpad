@@ -41,6 +41,7 @@ const TASK1_ENABLED_KEY = "trackpadTask1Enabled";
 const TASK2_ENABLED_KEY = "trackpadTask2Enabled";
 const TASK3_ENABLED_KEY = "trackpadTask3Enabled";
 const TASK4_ENABLED_KEY = "trackpadTask4Enabled";
+const SOUND_ENABLED_KEY = "trackpadSoundEnabled";
 const TRAINING_PAUSED_KEY = "trackpadTrainingPaused";
 const TASK1_DEFAULT_SECONDS = 8;
 const TASK2_DEFAULT_CLICKS = 10;
