@@ -2222,3 +2222,64 @@ strong {
     margin-bottom: 6px;
   }
 }
+
+/* Compact Level 4 celebration layout */
+
+.feast-complete {
+  padding: 10px;
+}
+
+.feast-complete-card {
+  box-sizing: border-box;
+  width: min(900px, 96%);
+  max-height: calc(100dvh - 24px);
+  overflow: hidden;
+  padding: 12px 20px;
+}
+
+.feast-complete-card h2 {
+  font-size: clamp(25px, 3.5vw, 38px);
+  margin: 2px 0;
+}
+
+.feast-complete-card p {
+  margin: 4px auto 8px;
+  line-height: 1.2;
+}
+
+.feast-community {
+  height: 112px;
+  margin: 0 auto 5px;
+}
+
+.feast-person {
+  transform-origin: bottom center;
+  scale: .76;
+}
+
+.feast-final-foods {
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.feast-button-row {
+  margin-top: 8px;
+}
+
+@media (max-height: 700px) {
+  .feast-complete-card {
+    padding: 8px 14px;
+  }
+
+  .feast-community {
+    height: 95px;
+  }
+
+  .feast-person {
+    scale: .64;
+  }
+
+  .feast-complete-card p {
+    margin-bottom: 4px;
+  }
+}

@@ -149,7 +149,7 @@
     new Audio("../../sounds/ocean.mp3");
 
   const runningAudio =
-    new Audio("../../sounds/running.mp3");
+    new Audio("../../sounds/walksand.mp3");
 
   const crabYoinkAudio =
     new Audio("../../sounds/crabyoink.mp3");
