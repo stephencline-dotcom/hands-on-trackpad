@@ -39,6 +39,17 @@ let liveClassroomState = {
   freezeScreenArmed: false,
 };
 
+function normalizeSenseBuilderLevels(value, defaults) {
+  if (!Array.isArray(value) || value.length !== 4) {
+    return [...defaults];
+  }
+
+  const levels = value.map((enabled) => enabled === true);
+
+  return levels.some(Boolean)
+    ? levels
+    : [...defaults];
+}
 const DEFAULT_SETTINGS = {
   task1RequiredSeconds: 8,
   task1Enabled: true,
@@ -66,6 +77,7 @@ const DEFAULT_SETTINGS = {
   bugMeadowGameActive: true,
   senseBuilderGameActive: true,
   senseBuilderRequireClickAndDrag: false,
+  senseBuilderLevels: [true, true, true, true],
   chickenLittleGameActive: true,
   clambakeAdventureGameActive: true,
   clambakeAdventureDifficulty: "normal",
@@ -572,6 +584,10 @@ function loadSettings() {
         data.senseBuilderRequireClickAndDrag,
         DEFAULT_SETTINGS.senseBuilderRequireClickAndDrag
       ),
+      senseBuilderLevels: normalizeSenseBuilderLevels(
+        data.senseBuilderLevels,
+        DEFAULT_SETTINGS.senseBuilderLevels
+      ),
       chickenLittleGameActive: parseTaskEnabled(
         data.chickenLittleGameActive,
         DEFAULT_SETTINGS.chickenLittleGameActive
@@ -919,6 +935,11 @@ function saveSettings(settings) {
       settings.senseBuilderRequireClickAndDrag ??
         existing.senseBuilderRequireClickAndDrag,
       DEFAULT_SETTINGS.senseBuilderRequireClickAndDrag
+    ),
+    senseBuilderLevels: normalizeSenseBuilderLevels(
+      settings.senseBuilderLevels ??
+        existing.senseBuilderLevels,
+      DEFAULT_SETTINGS.senseBuilderLevels
     ),
     chickenLittleGameActive: parseTaskEnabled(
       settings.chickenLittleGameActive ??

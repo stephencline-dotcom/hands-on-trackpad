@@ -253,6 +253,38 @@ const DRAGON_DODGE_GAME_ACTIVE_KEY = "dragonDodgeGameActive";
 const FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY = "firefighterRescueGameActive";
 const MARTIAN_MADNESS_GAME_ACTIVE_KEY = "martianMadnessGameActive";
 const BUG_MEADOW_GAME_ACTIVE_KEY = "bugMeadowGameActive";
+const SENSE_BUILDER_LEVEL_IDS = [
+  "senseBuilderLevel1",
+  "senseBuilderLevel2",
+  "senseBuilderLevel3",
+  "senseBuilderLevel4"
+];
+
+function normalizeSenseBuilderLevels(value) {
+  if (!Array.isArray(value) || value.length !== 4) {
+    return [true, true, true, true];
+  }
+
+  return value.map((enabled) => enabled !== false);
+}
+
+function readSenseBuilderLevels() {
+  return SENSE_BUILDER_LEVEL_IDS.map((id) => {
+    const checkbox = document.getElementById(id);
+    return checkbox ? checkbox.checked : true;
+  });
+}
+
+function displaySenseBuilderLevels(levels) {
+  const normalized = normalizeSenseBuilderLevels(levels);
+
+  SENSE_BUILDER_LEVEL_IDS.forEach((id, index) => {
+    const checkbox = document.getElementById(id);
+    if (checkbox) {
+      checkbox.checked = normalized[index];
+    }
+  });
+}
 const SENSE_BUILDER_GAME_ACTIVE_KEY = "senseBuilderGameActive";
 const CLAMBAKE_ADVENTURE_GAME_ACTIVE_KEY = "clambakeAdventureGameActive";
 const SENSE_BUILDER_REQUIRE_CLICK_AND_DRAG_KEY = "senseBuilderRequireClickAndDrag";
@@ -2461,6 +2493,11 @@ async function loadTask1Settings() {
       false
     );
 
+  let senseBuilderLevels = normalizeSenseBuilderLevels(
+    JSON.parse(
+      localStorage.getItem("senseBuilderLevels") || "null"
+    )
+  );
   let senseBuilderGameActive = parseTaskEnabled(
     localStorage.getItem(SENSE_BUILDER_GAME_ACTIVE_KEY),
     true
@@ -2885,6 +2922,16 @@ async function loadTask1Settings() {
         data.bugMeadowGameActive,
         bugMeadowGameActive
       );
+      senseBuilderLevels = normalizeSenseBuilderLevels(
+        Array.isArray(data.senseBuilderLevels)
+          ? data.senseBuilderLevels
+          : senseBuilderLevels
+      );
+
+      localStorage.setItem(
+        "senseBuilderLevels",
+        JSON.stringify(senseBuilderLevels)
+      );
       senseBuilderRequireClickAndDrag =
         parseTaskEnabled(
           data.senseBuilderRequireClickAndDrag,
@@ -3176,6 +3223,7 @@ async function loadTask1Settings() {
   if (bugMeadowGameActiveToggle) {
     bugMeadowGameActiveToggle.checked = bugMeadowGameActive;
   }
+  displaySenseBuilderLevels(senseBuilderLevels);
   if (senseBuilderRequireClickAndDragToggle) {
     senseBuilderRequireClickAndDragToggle.checked =
       senseBuilderRequireClickAndDrag;
@@ -3476,6 +3524,17 @@ async function saveTask1Settings() {
     bugMeadowGameActiveToggle && bugMeadowGameActiveToggle.checked
   );
 
+  const senseBuilderLevels = readSenseBuilderLevels();
+
+  if (!senseBuilderLevels.some(Boolean)) {
+    alert("Please enable at least one Sense Builder level.");
+    return;
+  }
+
+  localStorage.setItem(
+    "senseBuilderLevels",
+    JSON.stringify(senseBuilderLevels)
+  );
   const senseBuilderRequireClickAndDrag = Boolean(
     senseBuilderRequireClickAndDragToggle &&
     senseBuilderRequireClickAndDragToggle.checked
@@ -4128,6 +4187,7 @@ async function saveTask1Settings() {
         bugMeadowGameActive,
         senseBuilderGameActive,
         senseBuilderRequireClickAndDrag,
+        senseBuilderLevels,
         bugMeadowRequireClickAndDrag,
         bugMeadowLevels,
         fireflyForestGameActive,

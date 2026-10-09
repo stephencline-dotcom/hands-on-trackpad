@@ -79,10 +79,7 @@
                   <input id="senseBuilderGameActive" type="checkbox" checked />
                   <span>Sense Builder is active</span>
                 </label>
-                <label class="admin-toggle-row" for="senseBuilderRequireClickAndDrag">
-                  <input id="senseBuilderRequireClickAndDrag" type="checkbox" />
-                  <span>Sense Builder: Require click and drag</span>
-                </label>
+
                 <label class="admin-toggle-row" for="chickenLittleGameActive">
                   <input id="chickenLittleGameActive" type="checkbox" checked />
                   <span>Chicken Little is active</span>
@@ -156,6 +153,9 @@
               </button>
               <button class="admin-tab-button" type="button" role="tab" id="tabDeerRun" aria-controls="panelDeerRun" aria-selected="false" data-tab="deerrun">
                 Deer Run
+              </button>
+              <button class="admin-tab-button" type="button" role="tab" id="tabSenseBuilder" aria-controls="panelSenseBuilder" aria-selected="false" data-tab="sensebuilder">
+                Sense Builder
               </button>
               <button class="admin-tab-button" type="button" role="tab" id="tabChickenLittle" aria-controls="panelChickenLittle" aria-selected="false" data-tab="chickenlittle">
                 Chicken Little
@@ -1933,6 +1933,41 @@
             </button>
           </section>
 
+          <section class="admin-tab-content" id="panelSenseBuilder" role="tabpanel" aria-labelledby="tabSenseBuilder" aria-hidden="true">
+            <p class="admin-panel-note">
+              Choose which Sense Builder levels students can play.
+            </p>
+            <article class="admin-mini-card admin-mini-card--wide">
+<div class="admin-level-selection">
+  <h4>Sense Builder — Active Levels</h4>
+  <p>Choose which levels students can play.</p>
+
+  <label class="admin-toggle-row">
+    <input id="senseBuilderLevel1" type="checkbox" checked />
+    <span>Level 1</span>
+  </label>
+
+  <label class="admin-toggle-row">
+    <input id="senseBuilderLevel2" type="checkbox" checked />
+    <span>Level 2</span>
+  </label>
+
+  <label class="admin-toggle-row">
+    <input id="senseBuilderLevel3" type="checkbox" checked />
+    <span>Level 3</span>
+  </label>
+
+  <label class="admin-toggle-row">
+    <input id="senseBuilderLevel4" type="checkbox" checked />
+    <span>Level 4 — Five Senses Rescue</span>
+  </label>
+</div>
+<label class="admin-toggle-row" for="senseBuilderRequireClickAndDrag">
+                  <input id="senseBuilderRequireClickAndDrag" type="checkbox" />
+                  <span>Sense Builder: Require click and drag</span>
+                </label>
+            </article>
+          </section>
           <section class="admin-tab-content" id="panelChickenLittle" role="tabpanel" aria-labelledby="tabChickenLittle" aria-hidden="true">
             <p class="admin-panel-note">
               Configure the time, falling acorn speed, and hits allowed for each Chicken Little level.

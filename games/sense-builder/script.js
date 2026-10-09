@@ -351,6 +351,36 @@
   let gameRunning = false;
   let currentRoundIndex = 0;
 
+  // Teacher-controlled active levels.
+  let senseBuilderLevels = [true, true, true, true];
+  let senseBuilderLevelsReady = false;
+
+  function normalizeActiveSenseLevels(value) {
+    if (!Array.isArray(value) || value.length !== 4) {
+      return [true, true, true, true];
+    }
+
+    const levels = value.map((enabled) => enabled !== false);
+
+    return levels.some(Boolean)
+      ? levels
+      : [true, true, true, true];
+  }
+
+  function firstActiveSenseLevel() {
+    return senseBuilderLevels.findIndex(Boolean);
+  }
+
+  function nextActiveSenseLevel(currentLevel) {
+    for (let index = currentLevel + 1; index < 4; index += 1) {
+      if (senseBuilderLevels[index]) {
+        return index;
+      }
+    }
+
+    return -1;
+  }
+
   const ROUND_ONE_CHARACTERS = [
     "boy",
     "girl",
@@ -398,6 +428,16 @@
       const settings =
         await response.json();
 
+      senseBuilderLevels = normalizeActiveSenseLevels(
+        settings.senseBuilderLevels
+      );
+
+      localStorage.setItem(
+        "senseBuilderLevels",
+        JSON.stringify(senseBuilderLevels)
+      );
+
+
       if (
         typeof settings
           .senseBuilderRequireClickAndDrag ===
@@ -419,7 +459,21 @@
     }
   }
 
-  loadSenseBuilderInputMode();
+  loadSenseBuilderInputMode().finally(() => {
+    currentRoundIndex = Math.max(
+      0,
+      firstActiveSenseLevel()
+    );
+
+    senseBuilderLevelsReady = true;
+
+    resetRound();
+    configureCurrentRound();
+
+    if (currentRoundIndex === 3) {
+      startRescueRound();
+    }
+  });
 
   const dragState = {
     piece: null,
@@ -1635,7 +1689,7 @@
      * The three standard rounds are followed by
      * Five Senses Rescue as Level 4.
      */
-    const hasNextRound = true;
+    const hasNextRound = nextActiveSenseLevel(currentRoundIndex) !== -1;
 
     showFeedback(
       "correct",
@@ -1671,25 +1725,29 @@
   }
 
   function startNextRound() {
-    /*
-     * After Round 3, continue into
-     * Five Senses Rescue as Level 4.
-     */
-    if (
-      currentRoundIndex >=
-      SENSE_ROUNDS.length - 1
-    ) {
+    const nextLevel = nextActiveSenseLevel(currentRoundIndex);
+
+    if (nextLevel === -1) {
+      if (resultController) {
+        resultController.showFinal({
+          title: "You Did It!",
+          message: "You completed your senses adventure!"
+        });
+      }
+      return;
+    }
+
+    if (nextLevel === 3) {
       startRescueRound();
       return;
     }
 
-    currentRoundIndex += 1;
+    currentRoundIndex = nextLevel;
     startRound();
   }
 
-
   function playAllRoundsAgain() {
-    currentRoundIndex = 0;
+    currentRoundIndex = Math.max(0, firstActiveSenseLevel());
     roundOneCharacterChosen = false;
 
     resetRound();
@@ -2224,7 +2282,17 @@
             data-character="monster"
             aria-label="Choose monster"
           >
-            <span aria-hidden="true">👾</span>
+            <span aria-hidden="true"><span class="sense-mini-monster">
+  <span class="sense-mini-monster-hair"></span>
+  <span class="sense-mini-monster-head">
+    <span class="sense-mini-monster-eyes"></span>
+    <span class="sense-mini-monster-nose"></span>
+    <span class="sense-mini-monster-mouth"></span>
+  </span>
+  <span class="sense-mini-monster-body"></span>
+  <span class="sense-mini-monster-arm sense-mini-monster-arm-left"></span>
+  <span class="sense-mini-monster-arm sense-mini-monster-arm-right"></span>
+</span></span>
           </button>
         </div>
       </div>
@@ -2279,11 +2347,25 @@
     chooser.hidden = false;
   }
 
+  function launchFirstActiveSenseLevel() {
+    const firstLevel = firstActiveSenseLevel();
+
+    if (firstLevel === 3) {
+      startRescueRound();
+      return;
+    }
+
+    currentRoundIndex = Math.max(0, firstLevel);
+    handleStartButton();
+  }
+
   function handleStartButton() {
-    if (
-      currentRoundIndex === 0 &&
-      !roundOneCharacterChosen
-    ) {
+    if (!senseBuilderLevelsReady) {
+      showFeedback("correct", "Getting your game ready!");
+      return;
+    }
+
+    if (currentRoundIndex === 0 && !roundOneCharacterChosen) {
       showCharacterChooser();
       return;
     }
@@ -3368,8 +3450,11 @@ window.setTimeout(() => {
       rescueMovementWidth *
         rescueCurrentX;
 
-    rescueHeroForMovement.style.left =
-      `${heroCenterX}px`;
+    if (moving) {
+      rescueHeroForMovement.style.left =
+        `${heroCenterX}px`;
+    }
+
     updateNearbyRescueObjects();
 
     rescueMovementFrame =
