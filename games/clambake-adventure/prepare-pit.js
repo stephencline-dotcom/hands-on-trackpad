@@ -736,7 +736,19 @@
 
     button.addEventListener(
       "click",
-      startPitGame
+      () => {
+        const controller = window.clambakeInputMode;
+
+        if (!controller || !controller.isReady()) {
+          return;
+        }
+
+        const next = controller.nextActiveLevel(2);
+
+        if (next !== null) {
+          controller.launchLevel(next);
+        }
+      }
     );
 
     buttonRow.prepend(
@@ -790,16 +802,25 @@
     const rect =
       stage.getBoundingClientRect();
 
+    // Require students to return to the helper
+    // before moving again.
+    state.dragging = false;
+    state.pointerId = null;
+
+    stopPickupWatch();
+
+    helper.classList.remove(
+      "is-dragging"
+    );
+
     setHelperPosition(
       rect.width * .14,
       rect.height * .72
     );
 
-    state.carrying =
-      null;
+    state.carrying = null;
 
-    carrySlot.innerHTML =
-      "";
+    carrySlot.innerHTML = "";
 
     helper.classList.remove(
       "is-carrying"
@@ -935,6 +956,7 @@
     );
   }
 
+  // Level 3 responsive memory instructions
   function renderMemory() {
     memoryRow.innerHTML =
       "";
@@ -1004,7 +1026,13 @@
             memoryRow.classList.add(
               "is-hidden"
             );
-          },
+
+              // Level 3 responsive memory instructions
+              if (state.active && !state.carrying) {
+                requestText.textContent =
+                  "What's missing? Find it!";
+              }
+            },
           2800
         );
     }
@@ -1665,77 +1693,51 @@
       return;
     }
 
-    const hRect =
-      helperRect();
+    const hRect = helperRect();
+    const needed = STEPS[state.step].type;
 
-    const items =
-      Array.from(
-        materialField.querySelectorAll(
-          ".pit-material"
-        )
-      );
+    const items = Array.from(
+      materialField.querySelectorAll(".pit-material")
+    );
 
-    for (
-      const item of items
-    ) {
-      const itemRect =
-        item.getBoundingClientRect();
+    const nearby = items.filter((item) =>
+      overlaps(
+        hRect,
+        item.getBoundingClientRect(),
+        24
+      )
+    );
 
-      if (
-        !overlaps(
-          hRect,
-          itemRect,
-          24
-        )
-      ) {
-        continue;
-      }
-
-      const type =
-        item.dataset.type;
-
-      const needed =
-        STEPS[state.step].type;
-
-      if (
-        type !== needed
-      ) {
-        state.wrongCooldown =
-          true;
-
-        item.classList.remove(
-          "is-wrong"
-        );
-
-        void item.offsetWidth;
-
-        item.classList.add(
-          "is-wrong"
-        );
-
-        wrongSound();
-
-        instructionText.textContent =
-          "That does not come next. Remember the sequence!";
-
-        window.setTimeout(
-          () => {
-            state.wrongCooldown =
-              false;
-          },
-          550
-        );
-
-        return;
-      }
-
-      pickUpMaterial(
-        type,
-        item
-      );
-
+    if (nearby.length === 0) {
       return;
     }
+
+    // Prioritize the correct material if pickup areas overlap.
+    const correct = nearby.find(
+      (item) => item.dataset.type === needed
+    );
+
+    if (correct) {
+      pickUpMaterial(needed, correct);
+      return;
+    }
+
+    const wrong = nearby[0];
+
+    state.wrongCooldown = true;
+
+    wrong.classList.remove("is-wrong");
+    void wrong.offsetWidth;
+    wrong.classList.add("is-wrong");
+
+    wrongSound();
+
+    instructionText.textContent =
+      "That does not come next. Remember the sequence!";
+
+    window.setTimeout(() => {
+      state.wrongCooldown = false;
+    }, 550);
   }
 
   function pickUpMaterial(
@@ -1763,6 +1765,15 @@
     );
 
     successSound();
+
+    if (STEPS[state.step].memory) {
+      window.clearTimeout(state.memoryTimer);
+
+      requestText.textContent =
+        "Great! Bring it to the cooking pit!";
+
+      memoryRow.classList.add("is-hidden");
+    }
 
     instructionText.textContent =
       `You have the ${LABELS[type].toLowerCase()}. Bring it to the cooking pit and release.`;
@@ -2298,7 +2309,7 @@
 
     requestText.textContent =
       step.memory
-        ? "Watch, remember, then go!"
+        ? "LOOK! Remember this material!"
         : `Bring the ${step.label}.`;
 
     roundText.textContent =
@@ -2592,5 +2603,20 @@
       }
     }
   );
+
+
+  /* Clambake Level 3 scenery preview registration */
+  if (window.clambakeInputMode) {
+    window.clambakeInputMode.registerPreview(
+      3,
+      buildLayer
+    );
+  }
+  if (window.clambakeInputMode) {
+    window.clambakeInputMode.registerLevel(
+      3,
+      startPitGame
+    );
+  }
 
 })();

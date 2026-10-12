@@ -33,13 +33,7 @@
 
     <header class="adventure-header">
 
-      <a
-        class="home-button"
-        href="../../index.html"
-        aria-label="Home"
-      >
-        Home
-      </a>
+
 
       <div class="title-block">
         <span class="title-kicker">
@@ -51,14 +45,34 @@
         </h1>
       </div>
 
-      <button
-        id="soundToggle"
-        class="sound-button"
-        type="button"
-        aria-pressed="true"
-      >
-        Sound On
-      </button>
+      <div class="clambake-header-controls">
+
+        <a
+          class="home-button"
+          href="../../index.html"
+          aria-label="Home"
+          title="Home"
+        >
+          <img
+            class="home-btn-icon"
+            src="../../images/home-icon.svg"
+            alt=""
+            aria-hidden="true"
+          />
+        </a>
+
+        <button
+          id="soundToggle"
+          class="sound-button"
+          type="button"
+          aria-pressed="true"
+          aria-label="Sound on"
+          title="Sound on"
+        >
+          🔊
+        </button>
+
+      </div>
 
     </header>
 

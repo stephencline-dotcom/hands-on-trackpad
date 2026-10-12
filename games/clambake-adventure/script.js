@@ -1964,5 +1964,12 @@
     }
   );
 
-})();
 
+  if (window.clambakeInputMode) {
+    window.clambakeInputMode.registerLevel(
+      1,
+      resetGame
+    );
+  }
+
+})();

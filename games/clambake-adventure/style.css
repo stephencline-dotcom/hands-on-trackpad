@@ -2393,3 +2393,256 @@ body.trackpad-guide-off
       rgba(156,222,255,0);
   }
 }
+
+/* Clambake trackpad rendering stability */
+.clambake-trackpad-guide {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+/* Clambake background animation stability */
+.clambake-adventure-page .cloud,
+.clambake-adventure-page .wave,
+.clambake-adventure-page .bird {
+  animation-play-state: paused !important;
+}
+/* Clambake welcome overlay rendering stability */
+#clambakeLevelWelcome {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+#clambakeLevelWelcome .overlay-card {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+/* Clambake Level 3 welcome scenery preview */
+.beach-stage.clambake-welcome-preview .pit-layer {
+  pointer-events: none !important;
+}
+
+.beach-stage.clambake-welcome-preview .pit-layer * {
+  pointer-events: none !important;
+}
+
+.beach-stage.clambake-welcome-preview .pit-layer {
+  animation-play-state: paused !important;
+}
+
+.beach-stage.clambake-welcome-preview .pit-layer * {
+  animation-play-state: paused !important;
+}
+/* Clambake welcome mission content fix */
+body:has(.beach-stage.clambake-welcome-preview)
+  .mission-bar {
+  visibility: hidden !important;
+}
+/* Clambake shared welcome preview protection */
+.beach-stage.clambake-welcome-preview .gather-layer,
+.beach-stage.clambake-welcome-preview .gather-layer *,
+.beach-stage.clambake-welcome-preview .reveal-feast-layer,
+.beach-stage.clambake-welcome-preview .reveal-feast-layer * {
+  pointer-events: none !important;
+  animation-play-state: paused !important;
+}
+/* Clambake matching Chicken Little header controls */
+
+.clambake-adventure-page .adventure-header {
+  position: relative;
+}
+
+.clambake-adventure-page .clambake-header-controls {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.clambake-adventure-page .clambake-header-controls
+.home-button,
+.clambake-adventure-page .clambake-header-controls
+.sound-button {
+  position: static !important;
+  display: inline-grid !important;
+  place-items: center !important;
+
+  width: 74px !important;
+  height: 44px !important;
+  min-width: 74px !important;
+  min-height: 44px !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  border: 1px solid rgba(85,107,47,.5) !important;
+  border-radius: 999px !important;
+
+  background: rgba(38,61,48,.92) !important;
+  color: white !important;
+
+  font-size: 1.05rem !important;
+  line-height: 1 !important;
+
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.clambake-adventure-page
+.clambake-header-controls
+.home-btn-icon {
+  display: block;
+  width: 23px;
+  height: 23px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.clambake-adventure-page
+.clambake-header-controls
+.sound-button {
+  font-family: Arial, sans-serif;
+}
+
+.clambake-adventure-page
+.clambake-header-controls
+.sound-button[aria-pressed="false"] {
+  background: rgba(83,91,88,.92) !important;
+}
+
+/* Clambake final centered header layout */
+
+.clambake-adventure-page .adventure-header {
+  position: relative !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  min-height: 76px !important;
+  padding: 8px 190px 8px 18px !important;
+
+  box-sizing: border-box !important;
+}
+
+.clambake-adventure-page .adventure-header
+.title-block {
+  position: absolute !important;
+
+  left: 50% !important;
+  top: 50% !important;
+
+  transform: translate(-50%, -50%) !important;
+
+  width: max-content !important;
+  max-width: calc(100% - 360px) !important;
+
+  margin: 0 !important;
+  text-align: center !important;
+}
+
+.clambake-adventure-page .adventure-header
+.title-block h1 {
+  margin: 0 !important;
+
+  font-size: clamp(1.45rem, 2.3vw, 2.2rem) !important;
+  line-height: 1.05 !important;
+
+  white-space: nowrap !important;
+}
+
+.clambake-adventure-page .adventure-header
+.title-kicker {
+  white-space: nowrap !important;
+}
+
+.clambake-adventure-page .adventure-header
+.clambake-header-controls {
+  position: absolute !important;
+
+  right: 16px !important;
+  top: 50% !important;
+
+  transform: translateY(-50%) !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+
+  gap: 8px !important;
+  margin: 0 !important;
+}
+
+@media (max-width: 700px) {
+  .clambake-adventure-page .adventure-header {
+    min-height: 72px !important;
+    padding: 8px 125px 8px 8px !important;
+  }
+
+  .clambake-adventure-page .adventure-header
+  .title-block {
+    max-width: calc(100% - 210px) !important;
+  }
+
+  .clambake-adventure-page .adventure-header
+  .title-block h1 {
+    font-size: clamp(1rem, 3vw, 1.5rem) !important;
+    white-space: normal !important;
+  }
+
+  .clambake-adventure-page .adventure-header
+  .title-kicker {
+    font-size: .55rem !important;
+    white-space: normal !important;
+  }
+
+  .clambake-adventure-page .adventure-header
+  .clambake-header-controls {
+    right: 8px !important;
+    gap: 5px !important;
+  }
+
+  .clambake-adventure-page .clambake-header-controls
+  .home-button,
+  .clambake-adventure-page .clambake-header-controls
+  .sound-button {
+    width: 52px !important;
+    min-width: 52px !important;
+    height: 40px !important;
+    min-height: 40px !important;
+  }
+}
+/* Clambake header and mission bar separation */
+
+.clambake-adventure-page .adventure-header {
+  height: 76px !important;
+  min-height: 76px !important;
+  max-height: 76px !important;
+
+  flex-shrink: 0 !important;
+  margin-bottom: 8px !important;
+}
+
+.clambake-adventure-page .mission-bar {
+  position: relative !important;
+  z-index: 1 !important;
+
+  margin-top: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.clambake-adventure-page .adventure-header
+.title-block {
+  z-index: 2;
+}
+
+.clambake-adventure-page .adventure-header
+.clambake-header-controls {
+  z-index: 3;
+}
+
+@media (max-width: 700px) {
+  .clambake-adventure-page .adventure-header {
+    height: 72px !important;
+    min-height: 72px !important;
+    max-height: 72px !important;
+  }
+}

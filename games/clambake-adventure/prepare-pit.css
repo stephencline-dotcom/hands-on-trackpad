@@ -2058,3 +2058,96 @@ span {
     rotate: 5deg;
   }
 }
+
+/* Level 3 completion rendering stability */
+.pit-complete,
+.pit-complete-card {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+/* Level 3 pause background animation on completion */
+.pit-layer:has(.pit-complete:not([hidden]))
+  *:not(.pit-complete):not(.pit-complete *) {
+  animation-play-state: paused !important;
+}
+/* Clambake Level 3 clean scene layout */
+
+/* Hide Level 1 objects while preparing the pit. */
+.beach-stage.pit-prep-active > .animal-lookout,
+.beach-stage.pit-prep-active > .patch-field,
+.beach-stage.pit-prep-active > .digging-stick,
+.beach-stage.pit-prep-active > .found-clam,
+.beach-stage.pit-prep-active > .clam-basket,
+.beach-stage.pit-prep-active > .predator-gull,
+.beach-stage.pit-prep-active > .gull-warning,
+.beach-stage.pit-prep-active > .skill-coach {
+  display: none !important;
+}
+
+/* Keep the cooking-pit instructions separate. */
+.beach-stage.pit-prep-active .pit-hud {
+  left: 2%;
+  top: 2%;
+  width: min(370px, 30%);
+}
+
+/* Move the visual guide away from the instruction box. */
+.beach-stage.pit-prep-active .pit-visual-guide {
+  left: 57%;
+  top: 14px;
+  max-width: 40%;
+}
+
+/* Keep the step counter in its own corner. */
+.beach-stage.pit-prep-active .pit-round {
+  right: 2%;
+  top: 2%;
+}
+
+@media (max-width: 1050px) {
+  .beach-stage.pit-prep-active .pit-hud {
+    width: 32%;
+  }
+
+  .beach-stage.pit-prep-active .pit-visual-guide {
+    left: 57%;
+    max-width: 38%;
+  }
+}
+
+
+/* Level 3 memory mystery card improvement */
+.pit-memory-row.is-hidden .pit-memory-picture-card {
+  position: relative;
+  min-width: 164px;
+  min-height: 65px;
+  background: #eee8d5;
+  border: 3px dashed #c6a65b;
+  box-shadow: inset 0 2px 5px rgba(80,60,20,.12);
+}
+
+.pit-memory-row.is-hidden .pit-memory-picture-card::after {
+  content: "?\A WHAT'S NEXT?";
+  white-space: pre;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  text-align: center;
+  color: #665b48;
+  font-size: 1.05rem;
+  font-weight: 1000;
+  line-height: 1.35;
+  opacity: 1;
+}
+
+.pit-memory-row.is-hidden .pit-memory-art,
+.pit-memory-row.is-hidden .pit-memory-label {
+  opacity: 0;
+}
+/* Level 3 helper and spark rendering stability */
+.beach-stage.pit-prep-active .pit-helper,
+.beach-stage.pit-prep-active .pit-spark {
+  filter: none !important;
+  -webkit-filter: none !important;
+}

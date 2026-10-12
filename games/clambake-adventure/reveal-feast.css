@@ -2283,3 +2283,85 @@ strong {
     margin-bottom: 4px;
   }
 }
+
+/* Level 4 rendering stability */
+.reveal-feast-active .feast-helper,
+.reveal-feast-active .feast-pit {
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+
+.reveal-feast-active .feast-complete,
+.reveal-feast-active .feast-complete-card {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+/* Level 4 scene rendering isolation */
+.beach-stage.reveal-feast-active .reveal-feast-layer {
+  isolation: isolate;
+  contain: paint;
+}
+/* Level 4 hide unused Level 1 scenery */
+.beach-stage.reveal-feast-active > .sky-layer,
+.beach-stage.reveal-feast-active > .horizon,
+.beach-stage.reveal-feast-active > .ocean,
+.beach-stage.reveal-feast-active > .wet-sand,
+.beach-stage.reveal-feast-active > .dry-sand {
+  visibility: hidden !important;
+}
+/* Level 4 helper above pit steam */
+.beach-stage.reveal-feast-active
+.feast-scene {
+  isolation: isolate;
+}
+
+.beach-stage.reveal-feast-active
+.feast-scene > .feast-pit {
+  z-index: 1 !important;
+}
+
+.beach-stage.reveal-feast-active
+.feast-scene > .feast-helper {
+  z-index: 40 !important;
+}
+
+/* Level 4 hide original steam during serving */
+.reveal-feast-layer.feast-serving-phase #feastSteam {
+  display: none !important;
+}
+/* Level 4 helper foreground during serving */
+.reveal-feast-layer.feast-serving-phase > .feast-helper {
+  z-index: 35 !important;
+}
+
+/* Level 4 red stop and green go signals */
+.reveal-feast-layer .feast-ready-message.signal-stop {
+  background: #b42318 !important;
+  border-color: #ffb4a8 !important;
+  color: #ffffff !important;
+}
+
+.reveal-feast-layer .feast-ready-message.signal-go {
+  background: #188347 !important;
+  border-color: #b9f5c9 !important;
+  color: #ffffff !important;
+}
+/* Level 4 hide reveal instructions during delivery */
+.reveal-feast-layer.feast-serving-phase
+.feast-pointer-hint {
+  display: none !important;
+}
+/* Level 4 stable leaf target glow */
+.beach-stage.reveal-feast-active
+.feast-cover.active {
+  animation: none !important;
+  filter: none !important;
+  -webkit-filter: none !important;
+
+  outline: 7px solid #ffdc53 !important;
+  outline-offset: 3px;
+
+  box-shadow:
+    0 0 0 5px rgba(255,220,83,.35),
+    0 0 12px rgba(255,220,83,.55) !important;
+}

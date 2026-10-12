@@ -669,7 +669,19 @@
 
     button.addEventListener(
       "click",
-      startFeastGame
+      () => {
+        const controller = window.clambakeInputMode;
+
+        if (!controller || !controller.isReady()) {
+          return;
+        }
+
+        const next = controller.nextActiveLevel(3);
+
+        if (next !== null) {
+          controller.launchLevel(next);
+        }
+      }
     );
 
     row.insertBefore(
@@ -769,9 +781,17 @@
     };
   }
 
+  // Level 4 NOW-only reveal movement
+  function revealMovementAllowed() {
+    return (
+      serveState.active ||
+      state.safe
+    );
+  }
   function startDrag(event) {
     if (
       !state.active ||
+      !revealMovementAllowed() ||
       state.pointerId !== null
     ) {
       return;
@@ -801,6 +821,7 @@
   function moveDrag(event) {
     if (
       !state.dragging ||
+      !revealMovementAllowed() ||
       event.pointerId !==
         state.pointerId
     ) {
@@ -933,6 +954,18 @@
   ) {
     readyMessage.textContent =
       text;
+    // Level 4 red stop and green go signals
+    const signal = text.trim().toUpperCase();
+
+    readyMessage.classList.toggle(
+      "signal-stop",
+      /^(WATCH|WAIT|REMEMBER)/.test(signal)
+    );
+
+    readyMessage.classList.toggle(
+      "signal-go",
+      signal.startsWith("NOW")
+    );
 
     readyMessage.classList.remove(
       "show",
@@ -1126,9 +1159,10 @@
 
                 state.closeTimer =
                   window.setTimeout(
-                    missOpening,
-                    round.safeTime
-                  );
+                      missOpening,
+                      // Level 4 kindergarten NOW timing extension
+                      round.safeTime + 750
+                    );
               },
               500
             );
@@ -1320,6 +1354,8 @@
 
   function resetFeast() {
     clearTimers();
+
+    layer.classList.remove("feast-serving-phase");
 
     state.active =
       true;
@@ -1636,6 +1672,7 @@
 
 
   function getServeSteamTiming() {
+    // Level 4 faster delivery steam cycles
     const difficulty =
       Math.min(
         serveState.delivery,
@@ -1647,19 +1684,19 @@
         warning: 700,
         burst: 780,
         gap: 360,
-        safe: 2350
+        safe: 1650
       },
       {
         warning: 580,
         burst: 710,
         gap: 300,
-        safe: 1950
+        safe: 1400
       },
       {
         warning: 480,
         burst: 650,
         gap: 250,
-        safe: 1650
+        safe: 1200
       }
     ];
 
@@ -2392,6 +2429,9 @@
   function startServeFinale() {
     clearTimers();
 
+    // Hide original reveal steam during serving.
+    layer.classList.add("feast-serving-phase");
+
     state.safe =
       false;
 
@@ -2399,6 +2439,11 @@
       -1;
 
     buildServeFinale();
+
+    // Level 4 helper foreground after finale setup
+    if (helper && helper.parentElement !== layer) {
+      layer.appendChild(helper);
+    }
 
     serveState.active =
       true;
@@ -2611,6 +2656,7 @@
     (event) => {
       if (
         !clambakeLevelFourCursorMode() ||
+        !revealMovementAllowed() ||
         !state.active ||
         event.pointerType === "touch"
       ) {
@@ -2661,12 +2707,19 @@
     }
   );
 
+
+  /* Clambake Level 4 scenery preview registration */
+  if (window.clambakeInputMode) {
+    window.clambakeInputMode.registerPreview(
+      4,
+      buildLayer
+    );
+  }
+  if (window.clambakeInputMode) {
+    window.clambakeInputMode.registerLevel(
+      4,
+      startFeastGame
+    );
+  }
+
 })();
-
-
-
-
-
-
-
-

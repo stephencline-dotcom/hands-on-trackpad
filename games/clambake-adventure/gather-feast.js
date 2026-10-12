@@ -823,7 +823,19 @@
 
     button.addEventListener(
       "click",
-      startGatherGame
+      () => {
+        const controller = window.clambakeInputMode;
+
+        if (!controller || !controller.isReady()) {
+          return;
+        }
+
+        const next = controller.nextActiveLevel(1);
+
+        if (next !== null) {
+          controller.launchLevel(next);
+        }
+      }
     );
 
     playAgainButton.parentNode
@@ -2245,5 +2257,19 @@
     }
   );
 
-})();
 
+  /* Clambake Level 2 scenery preview registration */
+  if (window.clambakeInputMode) {
+    window.clambakeInputMode.registerPreview(
+      2,
+      buildLayer
+    );
+  }
+  if (window.clambakeInputMode) {
+    window.clambakeInputMode.registerLevel(
+      2,
+      startGatherGame
+    );
+  }
+
+})();

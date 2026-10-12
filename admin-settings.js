@@ -253,6 +253,38 @@ const DRAGON_DODGE_GAME_ACTIVE_KEY = "dragonDodgeGameActive";
 const FIREFIGHTER_RESCUE_GAME_ACTIVE_KEY = "firefighterRescueGameActive";
 const MARTIAN_MADNESS_GAME_ACTIVE_KEY = "martianMadnessGameActive";
 const BUG_MEADOW_GAME_ACTIVE_KEY = "bugMeadowGameActive";
+const CLAMBAKE_LEVEL_IDS = [
+  "clambakeAdventureLevel1",
+  "clambakeAdventureLevel2",
+  "clambakeAdventureLevel3",
+  "clambakeAdventureLevel4"
+];
+
+function normalizeClambakeLevels(value) {
+  if (!Array.isArray(value) || value.length !== 4) {
+    return [true, true, true, true];
+  }
+
+  return value.map((enabled) => enabled !== false);
+}
+
+function readClambakeLevels() {
+  return CLAMBAKE_LEVEL_IDS.map((id) => {
+    const checkbox = document.getElementById(id);
+    return checkbox ? checkbox.checked : true;
+  });
+}
+
+function displayClambakeLevels(levels) {
+  const normalized = normalizeClambakeLevels(levels);
+
+  CLAMBAKE_LEVEL_IDS.forEach((id, index) => {
+    const checkbox = document.getElementById(id);
+    if (checkbox) {
+      checkbox.checked = normalized[index];
+    }
+  });
+}
 const SENSE_BUILDER_LEVEL_IDS = [
   "senseBuilderLevel1",
   "senseBuilderLevel2",
@@ -2507,6 +2539,11 @@ async function loadTask1Settings() {
     localStorage.getItem(FIREFLY_FOREST_GAME_ACTIVE_KEY),
     true
   );
+  let clambakeAdventureLevels = normalizeClambakeLevels(
+    JSON.parse(
+      localStorage.getItem("clambakeAdventureLevels") || "null"
+    )
+  );
   let clambakeAdventureDifficulty = "normal";
 
   let clambakeAdventureVoiceDirections = parseTaskEnabled(
@@ -2810,6 +2847,16 @@ async function loadTask1Settings() {
       clambakeAdventureGameActive = parseTaskEnabled(
         data.clambakeAdventureGameActive,
         clambakeAdventureGameActive
+      );
+      clambakeAdventureLevels = normalizeClambakeLevels(
+        Array.isArray(data.clambakeAdventureLevels)
+          ? data.clambakeAdventureLevels
+          : clambakeAdventureLevels
+      );
+
+      localStorage.setItem(
+        "clambakeAdventureLevels",
+        JSON.stringify(clambakeAdventureLevels)
       );
       clambakeAdventureDifficulty =
         data.clambakeAdventureDifficulty === "easy"
@@ -3295,6 +3342,8 @@ async function loadTask1Settings() {
     clambakeAdventureGameActiveToggle.checked =
       clambakeAdventureGameActive;
   }
+
+  displayClambakeLevels(clambakeAdventureLevels);
 
   if (clambakeAdventureDifficultySelect) {
     clambakeAdventureDifficultySelect.value =
@@ -3789,6 +3838,17 @@ async function saveTask1Settings() {
     deerRunRequireClickAndDragToggle.checked
   );
 
+  const clambakeAdventureLevels = readClambakeLevels();
+
+  if (!clambakeAdventureLevels.some(Boolean)) {
+    alert("Please enable at least one Clambake Adventure level.");
+    return;
+  }
+
+  localStorage.setItem(
+    "clambakeAdventureLevels",
+    JSON.stringify(clambakeAdventureLevels)
+  );
   const clambakeAdventureDifficulty =
     clambakeAdventureDifficultySelect &&
     clambakeAdventureDifficultySelect.value === "easy"
@@ -4204,6 +4264,7 @@ async function saveTask1Settings() {
         hauntedStreetGameActive,
         clambakeAdventureGameActive,
         clambakeAdventureDifficulty,
+        clambakeAdventureLevels,
         clambakeAdventureVoiceDirections,
         clambakeAdventureRequireClickAndDrag,
         hauntedStreetRequireClickAndDrag,

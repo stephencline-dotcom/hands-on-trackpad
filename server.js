@@ -50,6 +50,17 @@ function normalizeSenseBuilderLevels(value, defaults) {
     ? levels
     : [...defaults];
 }
+function normalizeClambakeAdventureLevels(value, defaults) {
+  if (!Array.isArray(value) || value.length !== 4) {
+    return [...defaults];
+  }
+
+  const levels = value.map((enabled) => enabled === true);
+
+  return levels.some(Boolean)
+    ? levels
+    : [...defaults];
+}
 const DEFAULT_SETTINGS = {
   task1RequiredSeconds: 8,
   task1Enabled: true,
@@ -81,6 +92,7 @@ const DEFAULT_SETTINGS = {
   chickenLittleGameActive: true,
   clambakeAdventureGameActive: true,
   clambakeAdventureDifficulty: "normal",
+  clambakeAdventureLevels: [true, true, true, true],
   clambakeAdventureVoiceDirections: true,
   clambakeAdventureRequireClickAndDrag: false,
   chickenLittleRequireClickAndDrag: false,
@@ -600,6 +612,10 @@ function loadSettings() {
         data.clambakeAdventureDifficulty === "easy"
           ? "easy"
           : "normal",
+      clambakeAdventureLevels: normalizeClambakeAdventureLevels(
+        data.clambakeAdventureLevels,
+        DEFAULT_SETTINGS.clambakeAdventureLevels
+      ),
       clambakeAdventureVoiceDirections: parseTaskEnabled(
         data.clambakeAdventureVoiceDirections,
         DEFAULT_SETTINGS.clambakeAdventureVoiceDirections
@@ -956,6 +972,11 @@ function saveSettings(settings) {
         existing.clambakeAdventureDifficulty) === "easy"
         ? "easy"
         : "normal",
+    clambakeAdventureLevels: normalizeClambakeAdventureLevels(
+      settings.clambakeAdventureLevels ??
+        existing.clambakeAdventureLevels,
+      DEFAULT_SETTINGS.clambakeAdventureLevels
+    ),
     clambakeAdventureVoiceDirections: parseTaskEnabled(
       settings.clambakeAdventureVoiceDirections ??
         existing.clambakeAdventureVoiceDirections,
