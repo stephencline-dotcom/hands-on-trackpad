@@ -138,6 +138,32 @@
     );
   }
 
+  // Teacher-controlled Active Levels.
+  // All five levels are enabled by default.
+  let activeLevels = [true, true, true, true, true];
+
+  function firstActiveLevel() {
+    const index = activeLevels.findIndex(
+      (enabled) => enabled
+    );
+
+    return index >= 0 ? index + 1 : 1;
+  }
+
+  function nextActiveLevel(afterLevel) {
+    for (
+      let level = afterLevel + 1;
+      level <= activeLevels.length;
+      level++
+    ) {
+      if (activeLevels[level - 1]) {
+        return level;
+      }
+    }
+
+    return null;
+  }
+
   function currentLevelIndex() {
     return clamp(
       currentLevel - 1,
@@ -188,6 +214,22 @@
     if (!settings || typeof settings !== "object") {
       return;
     }
+    if (
+      Array.isArray(settings.chickenLittleLevels) &&
+      settings.chickenLittleLevels.length === 5
+    ) {
+      const selectedLevels =
+        settings.chickenLittleLevels.map(
+          (enabled) => enabled === true
+        );
+
+      activeLevels = selectedLevels.some(
+        (enabled) => enabled
+      )
+        ? selectedLevels
+        : [true, true, true, true, true];
+    }
+
     requireClickAndDrag =
       settings.chickenLittleRequireClickAndDrag === true;
 
@@ -452,31 +494,41 @@
     startPanel.hidden = false;
 
     if (success) {
-      if (currentLevel === 1) {
+      const nextLevel = nextActiveLevel(currentLevel);
+
+      if (nextLevel !== null) {
+        const nextLevelMessages = {
+          1: "Farmyard Dash! Help Chicken Little dodge falling acorns!",
+          2: "Turkey Lurky joins the run! Keep the flock safe!",
+          3: "Ducky Lucky joins the flock! Dodge the falling acorns!",
+          4: "Henny Penny joins the flock! Help everyone reach safety!",
+          5: "Face Foxy Loxy! Protect your friends and defeat the fox!"
+        };
+
         statusText.textContent =
-          "Chicken Little made it! Turkey Lurky is joining the run!";
-        startButton.textContent = "Start Level 2";
-        pendingLevel = 2;
-      } else if (currentLevel === 2) {
-        statusText.textContent =
-          "Level 2 complete! Ducky Lucky heard the news and is joining the flock!";
-        startButton.textContent = "Start Level 3";
-        pendingLevel = 3;
-      } else if (currentLevel === 3) {
-        statusText.textContent =
-          "Level 3 complete! Henny Penny is joining the flock!";
-        startButton.textContent = "Start Level 4";
-        pendingLevel = 4;
-      } else if (currentLevel === 4) {
-        statusText.textContent =
-          "The flock made it through! But Foxy Loxy is waiting ahead!";
-        startButton.textContent = "Face Foxy Loxy";
-        pendingLevel = 5;
+          `Level ${currentLevel} complete! ` +
+          `Up next - Level ${nextLevel}: ` +
+          nextLevelMessages[nextLevel];
+
+        startButton.textContent =
+          nextLevel === 5
+            ? "Face Foxy Loxy"
+            : `Start Level ${nextLevel}`;
+
+        pendingLevel = nextLevel;
+
+        // Prepare the upcoming level's scenery
+        // while keeping gameplay paused.
+        currentLevel = nextLevel;
+        resetLevel();
       } else {
         statusText.textContent =
-          "You saved the flock from Foxy Loxy!";
+          currentLevel === 5
+            ? "You saved the flock from Foxy Loxy!"
+            : "Great job! You finished all your levels!";
+
         startButton.textContent = "Play Again";
-        pendingLevel = null;
+        pendingLevel = firstActiveLevel();
       }
     } else {
       if (currentLevel === 1) {
@@ -965,7 +1017,7 @@
           startButton.textContent =
             "Play Again";
 
-          pendingLevel = null;
+          pendingLevel = firstActiveLevel();
           startPanel.hidden = false;
           updateHud();
           return;
@@ -4743,6 +4795,25 @@
   );
 
   loadChickenSettings().finally(() => {
+    currentLevel = firstActiveLevel();
+    pendingLevel = null;
+
+    const welcomeMessages = {
+      1: "Level 1: Farmyard Dash! Help Chicken Little dodge the falling acorns!",
+      2: "Level 2: Turkey Lurky! Keep the flock safe from falling acorns!",
+      3: "Level 3: Ducky Lucky! Guide your growing flock through the adventure!",
+      4: "Level 4: Henny Penny! Help all four friends reach safety!",
+      5: "Level 5: Face Foxy Loxy! Protect your friends and defeat Foxy Loxy!"
+    };
+
+    statusText.textContent =
+      welcomeMessages[currentLevel];
+
+    startButton.textContent =
+      currentLevel === 5
+        ? "Face Foxy Loxy"
+        : `Start Level ${currentLevel}`;
+
     resetLevel();
     window.requestAnimationFrame(frame);
   });
@@ -4807,4 +4878,3 @@ if (chickenSoundButton) {
 
   updateChickenSoundButton();
 }
-

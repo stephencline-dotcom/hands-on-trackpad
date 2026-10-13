@@ -285,6 +285,41 @@ function displayClambakeLevels(levels) {
     }
   });
 }
+const CHICKEN_LITTLE_LEVEL_IDS = [
+  "chickenLittleLevel1",
+  "chickenLittleLevel2",
+  "chickenLittleLevel3",
+  "chickenLittleLevel4",
+  "chickenLittleLevel5"
+];
+
+function normalizeChickenLittleLevels(value) {
+  if (!Array.isArray(value) || value.length !== 5) {
+    return [true, true, true, true, true];
+  }
+
+  return value.map((enabled) => enabled !== false);
+}
+
+function readChickenLittleLevels() {
+  return CHICKEN_LITTLE_LEVEL_IDS.map((id) => {
+    const checkbox = document.getElementById(id);
+    return checkbox ? checkbox.checked : true;
+  });
+}
+
+function displayChickenLittleLevels(levels) {
+  const normalized = normalizeChickenLittleLevels(levels);
+
+  CHICKEN_LITTLE_LEVEL_IDS.forEach((id, index) => {
+    const checkbox = document.getElementById(id);
+
+    if (checkbox) {
+      checkbox.checked = normalized[index];
+    }
+  });
+}
+
 const SENSE_BUILDER_LEVEL_IDS = [
   "senseBuilderLevel1",
   "senseBuilderLevel2",
@@ -2556,6 +2591,12 @@ async function loadTask1Settings() {
     false
   );
 
+  let chickenLittleLevels = normalizeChickenLittleLevels(
+    JSON.parse(
+      localStorage.getItem("chickenLittleLevels") || "null"
+    )
+  );
+
   let chickenLittleRequireClickAndDrag = false;
 
   let chickenLittleLevelTimes =
@@ -2998,6 +3039,17 @@ async function loadTask1Settings() {
         data.fireflyForestGameActive,
         fireflyForestGameActive
       );
+      chickenLittleLevels = normalizeChickenLittleLevels(
+        Array.isArray(data.chickenLittleLevels)
+          ? data.chickenLittleLevels
+          : chickenLittleLevels
+      );
+
+      localStorage.setItem(
+        "chickenLittleLevels",
+        JSON.stringify(chickenLittleLevels)
+      );
+
       chickenLittleRequireClickAndDrag =
         parseTaskEnabled(
           data.chickenLittleRequireClickAndDrag,
@@ -3313,6 +3365,8 @@ async function loadTask1Settings() {
   }
 
 
+  displayChickenLittleLevels(chickenLittleLevels);
+
   chickenLittleLevelInputs.forEach((inputs, index) => {
     if (inputs.time) {
       inputs.time.value = String(
@@ -3613,6 +3667,18 @@ async function saveTask1Settings() {
     chickenLittleRequireClickAndDragToggle.checked
   );
 
+
+  const chickenLittleLevels = readChickenLittleLevels();
+
+  if (!chickenLittleLevels.some(Boolean)) {
+    alert("Please enable at least one Chicken Little level.");
+    return;
+  }
+
+  localStorage.setItem(
+    "chickenLittleLevels",
+    JSON.stringify(chickenLittleLevels)
+  );
 
   const chickenLittleLevelTimes =
     chickenLittleLevelInputs.map((inputs, index) => {
@@ -4253,6 +4319,7 @@ async function saveTask1Settings() {
         fireflyForestGameActive,
         chickenLittleGameActive,
         chickenLittleRequireClickAndDrag,
+        chickenLittleLevels,
         chickenLittleLevelTimes,
         chickenLittleLevelSpeeds,
         chickenLittleLevelHits,

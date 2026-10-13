@@ -50,6 +50,18 @@ function normalizeSenseBuilderLevels(value, defaults) {
     ? levels
     : [...defaults];
 }
+function normalizeChickenLittleLevels(value, defaults) {
+  if (!Array.isArray(value) || value.length !== 5) {
+    return [...defaults];
+  }
+
+  const levels = value.map((enabled) => enabled === true);
+
+  return levels.some(Boolean)
+    ? levels
+    : [...defaults];
+}
+
 function normalizeClambakeAdventureLevels(value, defaults) {
   if (!Array.isArray(value) || value.length !== 4) {
     return [...defaults];
@@ -96,6 +108,7 @@ const DEFAULT_SETTINGS = {
   clambakeAdventureVoiceDirections: true,
   clambakeAdventureRequireClickAndDrag: false,
   chickenLittleRequireClickAndDrag: false,
+  chickenLittleLevels: [true, true, true, true, true],
   chickenLittleLevelTimes: [45, 45, 45, 45],
   chickenLittleLevelSpeeds: [100, 100, 100, 100],
   chickenLittleLevelHits: [3, 3, 3, 3],
@@ -628,6 +641,10 @@ function loadSettings() {
         data.chickenLittleRequireClickAndDrag,
         DEFAULT_SETTINGS.chickenLittleRequireClickAndDrag
       ),
+      chickenLittleLevels: normalizeChickenLittleLevels(
+        data.chickenLittleLevels,
+        DEFAULT_SETTINGS.chickenLittleLevels
+      ),
       chickenLittleLevelTimes:
         parseHauntedStreetLevelNumbers(
           data.chickenLittleLevelTimes,
@@ -991,6 +1008,11 @@ function saveSettings(settings) {
       settings.chickenLittleRequireClickAndDrag ??
         existing.chickenLittleRequireClickAndDrag,
       DEFAULT_SETTINGS.chickenLittleRequireClickAndDrag
+    ),
+    chickenLittleLevels: normalizeChickenLittleLevels(
+      settings.chickenLittleLevels ??
+        existing.chickenLittleLevels,
+      DEFAULT_SETTINGS.chickenLittleLevels
     ),
     chickenLittleLevelTimes:
       parseHauntedStreetLevelNumbers(
