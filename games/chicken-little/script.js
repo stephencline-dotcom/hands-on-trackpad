@@ -463,6 +463,90 @@
     }
   }
 
+  const chickenHurtAudio =
+    document.getElementById("chickenHurtAudio");
+
+  if (chickenHurtAudio) {
+    chickenHurtAudio.volume = 0.75;
+  }
+
+  function playChickenHurtSound() {
+    if (
+      currentLevel > 4 ||
+      !chickenHurtAudio ||
+      chickenHurtAudio.muted
+    ) {
+      return;
+    }
+
+    chickenHurtAudio.pause();
+    chickenHurtAudio.currentTime = 0;
+
+    const playPromise = chickenHurtAudio.play();
+
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch(() => {});
+    }
+  }
+
+  const chickenFoxSplatAudio =
+    document.getElementById("chickenFoxSplatAudio");
+
+  if (chickenFoxSplatAudio) {
+    chickenFoxSplatAudio.volume = 0.75;
+  }
+
+  function playFoxSplatSound() {
+    if (
+      currentLevel !== 5 ||
+      !chickenFoxSplatAudio ||
+      chickenFoxSplatAudio.muted
+    ) {
+      return;
+    }
+
+    chickenFoxSplatAudio.pause();
+    chickenFoxSplatAudio.currentTime = 0;
+
+    const playPromise = chickenFoxSplatAudio.play();
+
+    if (
+      playPromise &&
+      typeof playPromise.catch === "function"
+    ) {
+      playPromise.catch(() => {});
+    }
+  }
+
+  const chickenSnatchAudio =
+    document.getElementById("chickenSnatchAudio");
+
+  if (chickenSnatchAudio) {
+    chickenSnatchAudio.volume = 0.75;
+  }
+
+  function playChickenSnatchSound() {
+    if (
+      currentLevel !== 5 ||
+      !chickenSnatchAudio ||
+      chickenSnatchAudio.muted
+    ) {
+      return;
+    }
+
+    chickenSnatchAudio.pause();
+    chickenSnatchAudio.currentTime = 0;
+
+    const playPromise = chickenSnatchAudio.play();
+
+    if (
+      playPromise &&
+      typeof playPromise.catch === "function"
+    ) {
+      playPromise.catch(() => {});
+    }
+  }
+
   function hitPlayer(
     now,
     impactX = player.x,
@@ -472,6 +556,7 @@
       return;
     }
 
+    playChickenHurtSound();
     hearts -= 1;
     invulnerableUntil = now + 1800;
     createImpact(impactX, impactY, "#ef4444");
@@ -860,6 +945,8 @@
             foxy.carrying =
               captured;
 
+            playChickenSnatchSound();
+
             hearts =
               activeFlockMembers.length;
 
@@ -1002,6 +1089,8 @@
           0,
           foxy.health - 5
         );
+
+        playFoxSplatSound();
 
         if (foxy.health <= 0) {
           running = false;
