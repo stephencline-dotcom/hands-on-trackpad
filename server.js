@@ -213,18 +213,10 @@ function ensureSettingsFile() {
   }
 
   if (!fs.existsSync(SETTINGS_FILE)) {
-
-  /* PRESERVE ALL GAME AVAILABILITY FLAGS */
-  Object.entries(settings).forEach(([key, value]) => {
-    if (
-      key.endsWith("GameActive") &&
-      typeof value === "boolean"
-    ) {
-      normalized[key] = value;
-    }
-  });
-
-    fs.writeFileSync(SETTINGS_FILE, JSON.stringify(DEFAULT_SETTINGS, null, 2));
+    fs.writeFileSync(
+      SETTINGS_FILE,
+      JSON.stringify(DEFAULT_SETTINGS, null, 2)
+    );
   }
 }
 
