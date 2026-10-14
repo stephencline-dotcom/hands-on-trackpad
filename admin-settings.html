@@ -84,6 +84,10 @@
                   <input id="chickenLittleGameActive" type="checkbox" checked />
                   <span>Chicken Little is active</span>
                 </label>
+                <label class="admin-toggle-row" for="tortoisePuzzleGameActive">
+                  <input id="tortoisePuzzleGameActive" type="checkbox" checked />
+                  <span>Slow and Steady is active</span>
+                </label>
                 <label class="admin-toggle-row" for="clambakeAdventureGameActive">
                   <input id="clambakeAdventureGameActive" type="checkbox" checked />
                   <span>Clambake Adventure is active</span>
@@ -159,6 +163,9 @@
               </button>
               <button class="admin-tab-button" type="button" role="tab" id="tabChickenLittle" aria-controls="panelChickenLittle" aria-selected="false" data-tab="chickenlittle">
                 Chicken Little
+              </button>
+              <button class="admin-tab-button" type="button" role="tab" id="tabTortoisePuzzle" aria-controls="panelTortoisePuzzle" aria-selected="false" data-tab="tortoisepuzzle">
+                Slow and Steady
               </button>
               <button class="admin-tab-button" type="button" role="tab" id="tabClambakeAdventure" aria-controls="panelClambakeAdventure" aria-selected="false" data-tab="clambakeadventure">
                 Clambake Adventure
@@ -1968,6 +1975,23 @@
                 </label>
             </article>
           </section>
+          <section class="admin-tab-content" id="panelTortoisePuzzle" role="tabpanel" aria-labelledby="tabTortoisePuzzle" aria-hidden="true">
+            <h3>Slow and Steady</h3>
+            <label class="admin-task-label" for="tortoisePuzzleAdventureLength">Adventure length</label>
+            <select id="tortoisePuzzleAdventureLength" class="admin-task-input">
+              <option value="short">Short — 6 stops</option>
+              <option value="medium" selected>Medium — 12 stops</option>
+              <option value="long">Long — 18 stops</option>
+            </select>
+            <p class="admin-task-help">Every length finishes the race with Tortoise crossing first. Short teaches bridges, gates, and rafts before combining them. Medium teaches all nine basic obstacles before three familiar puzzle trails. Long includes the full set of later challenges. Each length remembers its own progress. Changes apply when students next open the game.</p>
+            <p class="admin-task-help">These settings apply when students open Slow and Steady. Use Save Settings below after making a change.</p>
+            <label class="admin-toggle-row" for="tortoisePuzzleVoiceInstructions">
+              <input id="tortoisePuzzleVoiceInstructions" type="checkbox" checked />
+              <span>Voice instructions</span>
+            </label>
+            <p class="admin-task-help">Turn this off to stop spoken directions, Help narration, and spoken feedback before students open the game. Visual guidance and game sound effects remain available. Students cannot turn voice back on while this setting is off.</p>
+          </section>
+
           <section class="admin-tab-content" id="panelChickenLittle" role="tabpanel" aria-labelledby="tabChickenLittle" aria-hidden="true">
             <p class="admin-panel-note">
               Configure the time, falling acorn speed, and hits allowed for each Chicken Little level.

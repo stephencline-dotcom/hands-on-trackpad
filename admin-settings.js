@@ -25,6 +25,12 @@ const senseBuilderGameActiveToggle = document.getElementById("senseBuilderGameAc
 const senseBuilderRequireClickAndDragToggle = document.getElementById("senseBuilderRequireClickAndDrag");
 const fireflyForestGameActiveToggle = document.getElementById("fireflyForestGameActive");
 const chickenLittleGameActiveToggle = document.getElementById("chickenLittleGameActive");
+const tortoisePuzzleGameActiveToggle = document.getElementById("tortoisePuzzleGameActive");
+const tortoisePuzzleVoiceToggle = document.getElementById("tortoisePuzzleVoiceInstructions");
+const tortoisePuzzleAdventureLengthSelect = document.getElementById("tortoisePuzzleAdventureLength");
+function normalizeTortoiseAdventureLength(value) {
+  return ["short", "medium", "long"].includes(value) ? value : "medium";
+}
 const clambakeAdventureGameActiveToggle =
   document.getElementById("clambakeAdventureGameActive");
 const clambakeAdventureVoiceDirectionsToggle =
@@ -353,6 +359,7 @@ function displaySenseBuilderLevels(levels) {
   });
 }
 const SENSE_BUILDER_GAME_ACTIVE_KEY = "senseBuilderGameActive";
+const TORTOISE_PUZZLE_GAME_ACTIVE_KEY = "tortoisePuzzleGameActive";
 const CLAMBAKE_ADVENTURE_GAME_ACTIVE_KEY = "clambakeAdventureGameActive";
 const SENSE_BUILDER_REQUIRE_CLICK_AND_DRAG_KEY = "senseBuilderRequireClickAndDrag";
 const FIREFLY_FOREST_GAME_ACTIVE_KEY = "fireflyForestGameActive";
@@ -2569,6 +2576,12 @@ async function loadTask1Settings() {
     localStorage.getItem(SENSE_BUILDER_GAME_ACTIVE_KEY),
     true
   );
+  let tortoisePuzzleAdventureLength = normalizeTortoiseAdventureLength(localStorage.getItem("tortoisePuzzleAdventureLength"));
+  let tortoisePuzzleVoiceInstructions = parseTaskEnabled(localStorage.getItem("tortoisePuzzleVoiceInstructions"), true);
+  let tortoisePuzzleGameActive = parseTaskEnabled(
+    localStorage.getItem(TORTOISE_PUZZLE_GAME_ACTIVE_KEY),
+    true
+  );
 
   let fireflyForestGameActive = parseTaskEnabled(
     localStorage.getItem(FIREFLY_FOREST_GAME_ACTIVE_KEY),
@@ -3035,6 +3048,14 @@ async function loadTask1Settings() {
         data.senseBuilderGameActive,
         senseBuilderGameActive
       );
+      tortoisePuzzleAdventureLength = normalizeTortoiseAdventureLength(data.tortoisePuzzleAdventureLength);
+      localStorage.setItem("tortoisePuzzleAdventureLength", tortoisePuzzleAdventureLength);
+      tortoisePuzzleVoiceInstructions = parseTaskEnabled(data.tortoisePuzzleVoiceInstructions, true);
+      localStorage.setItem("tortoisePuzzleVoiceInstructions", String(tortoisePuzzleVoiceInstructions));
+      tortoisePuzzleGameActive = parseTaskEnabled(
+        data.tortoisePuzzleGameActive,
+        tortoisePuzzleGameActive
+      );
       fireflyForestGameActive = parseTaskEnabled(
         data.fireflyForestGameActive,
         fireflyForestGameActive
@@ -3246,6 +3267,7 @@ async function loadTask1Settings() {
         String(followBirdClickingEnabled)
       );
       localStorage.setItem(SENSE_BUILDER_GAME_ACTIVE_KEY, String(senseBuilderGameActive));
+      localStorage.setItem(TORTOISE_PUZZLE_GAME_ACTIVE_KEY, String(tortoisePuzzleGameActive));
       localStorage.setItem(SOUND_ENABLED_KEY, String(soundEnabled));
       localStorage.setItem(TRAINING_PAUSED_KEY, String(trainingPaused));
       localStorage.setItem(LIGHT_TAP_REQUIRE_CLICK_KEY, String(lightTapRequireClick));
@@ -3331,6 +3353,12 @@ async function loadTask1Settings() {
   if (senseBuilderGameActiveToggle) {
     senseBuilderGameActiveToggle.checked =
       senseBuilderGameActive;
+  }
+  if (tortoisePuzzleAdventureLengthSelect) tortoisePuzzleAdventureLengthSelect.value = tortoisePuzzleAdventureLength;
+  if (tortoisePuzzleVoiceToggle) tortoisePuzzleVoiceToggle.checked = tortoisePuzzleVoiceInstructions;
+  if (tortoisePuzzleGameActiveToggle) {
+    tortoisePuzzleGameActiveToggle.checked =
+      tortoisePuzzleGameActive;
   }
   if (fireflyForestGameActiveToggle) {
     fireflyForestGameActiveToggle.checked =
@@ -3662,6 +3690,15 @@ async function saveTask1Settings() {
     chickenLittleGameActiveToggle &&
     chickenLittleGameActiveToggle.checked
   );
+  const tortoisePuzzleAdventureLength = normalizeTortoiseAdventureLength(tortoisePuzzleAdventureLengthSelect?.value);
+  localStorage.setItem("tortoisePuzzleAdventureLength", tortoisePuzzleAdventureLength);
+  const tortoisePuzzleVoiceInstructions = Boolean(tortoisePuzzleVoiceToggle && tortoisePuzzleVoiceToggle.checked);
+  localStorage.setItem("tortoisePuzzleVoiceInstructions", String(tortoisePuzzleVoiceInstructions));
+  const tortoisePuzzleGameActive = Boolean(
+    tortoisePuzzleGameActiveToggle &&
+    tortoisePuzzleGameActiveToggle.checked
+  );
+  localStorage.setItem(TORTOISE_PUZZLE_GAME_ACTIVE_KEY, String(tortoisePuzzleGameActive));
   const chickenLittleRequireClickAndDrag = Boolean(
     chickenLittleRequireClickAndDragToggle &&
     chickenLittleRequireClickAndDragToggle.checked
@@ -4318,6 +4355,9 @@ async function saveTask1Settings() {
         bugMeadowLevels,
         fireflyForestGameActive,
         chickenLittleGameActive,
+        tortoisePuzzleGameActive,
+        tortoisePuzzleVoiceInstructions,
+        tortoisePuzzleAdventureLength,
         chickenLittleRequireClickAndDrag,
         chickenLittleLevels,
         chickenLittleLevelTimes,
@@ -4638,6 +4678,9 @@ const allToggles = [
   senseBuilderRequireClickAndDragToggle,
   fireflyForestGameActiveToggle,
   chickenLittleGameActiveToggle,
+  tortoisePuzzleGameActiveToggle,
+  tortoisePuzzleVoiceToggle,
+  tortoisePuzzleAdventureLengthSelect,
   chickenLittleRequireClickAndDragToggle,
   followBirdClickingEnabledToggle,
   monsterLunchGameActiveToggle,

@@ -102,6 +102,9 @@ const DEFAULT_SETTINGS = {
   senseBuilderRequireClickAndDrag: false,
   senseBuilderLevels: [true, true, true, true],
   chickenLittleGameActive: true,
+  tortoisePuzzleGameActive: true,
+  tortoisePuzzleVoiceInstructions: true,
+  tortoisePuzzleAdventureLength: "medium",
   clambakeAdventureGameActive: true,
   clambakeAdventureDifficulty: "normal",
   clambakeAdventureLevels: [true, true, true, true],
@@ -253,6 +256,10 @@ function parseTrainingPaused(value) {
   }
 
   return String(value) === "true";
+}
+
+function normalizeTortoiseAdventureLength(value) {
+  return ["short", "medium", "long"].includes(value) ? value : "medium";
 }
 
 function parseTaskEnabled(value, fallback = true) {
@@ -608,6 +615,12 @@ function loadSettings() {
       chickenLittleGameActive: parseTaskEnabled(
         data.chickenLittleGameActive,
         DEFAULT_SETTINGS.chickenLittleGameActive
+      ),
+      tortoisePuzzleAdventureLength: normalizeTortoiseAdventureLength(data.tortoisePuzzleAdventureLength),
+      tortoisePuzzleVoiceInstructions: parseTaskEnabled(data.tortoisePuzzleVoiceInstructions, true),
+      tortoisePuzzleGameActive: parseTaskEnabled(
+        data.tortoisePuzzleGameActive,
+        DEFAULT_SETTINGS.tortoisePuzzleGameActive
       ),
       clambakeAdventureGameActive: parseTaskEnabled(
         data.clambakeAdventureGameActive,
@@ -970,6 +983,13 @@ function saveSettings(settings) {
       settings.chickenLittleGameActive ??
         existing.chickenLittleGameActive,
       DEFAULT_SETTINGS.chickenLittleGameActive
+    ),
+    tortoisePuzzleAdventureLength: normalizeTortoiseAdventureLength(settings.tortoisePuzzleAdventureLength ?? existing.tortoisePuzzleAdventureLength),
+    tortoisePuzzleVoiceInstructions: parseTaskEnabled(settings.tortoisePuzzleVoiceInstructions ?? existing.tortoisePuzzleVoiceInstructions, true),
+    tortoisePuzzleGameActive: parseTaskEnabled(
+      settings.tortoisePuzzleGameActive ??
+        existing.tortoisePuzzleGameActive,
+      DEFAULT_SETTINGS.tortoisePuzzleGameActive
     ),
     clambakeAdventureGameActive: parseTaskEnabled(
       settings.clambakeAdventureGameActive ??
