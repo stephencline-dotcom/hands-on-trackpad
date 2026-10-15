@@ -1,6 +1,7 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+const { normalize: normalizeHomeCardOrder } = require("./home-card-order-model.js");
 const { createClient } = require("@supabase/supabase-js");
 
 const PORT = Number.parseInt(process.env.PORT || "8000", 10);
@@ -83,6 +84,7 @@ function parseSheepRoundupExtraSheep(value) {
   return Number.isFinite(n) ? Math.min(5, Math.max(0, Math.floor(n))) : 0;
 }
 const DEFAULT_SETTINGS = {
+  homeCardOrder: [],
   task1RequiredSeconds: 8,
   task1Enabled: true,
   task2RequiredClicks: 10,
@@ -148,6 +150,13 @@ const DEFAULT_SETTINGS = {
   sheepRoundupLevel6ExtraSheep: 0,
   sheepRoundupRequireClickAndDrag: false,
   tortoisePuzzleRequireClickAndDrag: false,
+  pumpkinStudioGameActive: true,
+  pumpkinStudioVoiceInstructions: true,
+  pumpkinStudioRequireClickAndDrag: false,
+  pumpkinStudioMenuScrolling: false,
+  threeLittlePigsGameActive: true,
+  threeLittlePigsVoiceInstructions: true,
+  threeLittlePigsRequireClickAndDrag: false,
   sheepRoundupGameActive: true,
   sheepRoundupVoiceInstructions: true,
   sheepRoundupDifficulty: "gentle",
@@ -546,6 +555,7 @@ function loadSettings() {
     const flameIntervalMin = parseJackFlameRainIntervalMin(data.jackFlameRainIntervalMinMs);
     const flameSpeedMin = parseJackFlameRainSpeedMin(data.jackFlameRainSpeedMin);
     return {
+      homeCardOrder: normalizeHomeCardOrder(data.homeCardOrder),
       task1RequiredSeconds: parseTask1Seconds(data.task1RequiredSeconds),
       task1Enabled: parseTaskEnabled(data.task1Enabled, true),
       task2RequiredClicks: parseTask2Clicks(data.task2RequiredClicks),
@@ -772,6 +782,13 @@ function loadSettings() {
       sheepRoundupLevel6ExtraSheep: parseSheepRoundupExtraSheep(data.sheepRoundupLevel6ExtraSheep),
       sheepRoundupRequireClickAndDrag: parseTaskEnabled(data.sheepRoundupRequireClickAndDrag, false),
       tortoisePuzzleRequireClickAndDrag: parseTaskEnabled(data.tortoisePuzzleRequireClickAndDrag, false),
+      pumpkinStudioGameActive: parseTaskEnabled(data.pumpkinStudioGameActive, true),
+      pumpkinStudioVoiceInstructions: parseTaskEnabled(data.pumpkinStudioVoiceInstructions, true),
+      pumpkinStudioRequireClickAndDrag: parseTaskEnabled(data.pumpkinStudioRequireClickAndDrag, false),
+      pumpkinStudioMenuScrolling: parseTaskEnabled(data.pumpkinStudioMenuScrolling, false),
+      threeLittlePigsGameActive: parseTaskEnabled(data.threeLittlePigsGameActive, true),
+      threeLittlePigsVoiceInstructions: parseTaskEnabled(data.threeLittlePigsVoiceInstructions, true),
+      threeLittlePigsRequireClickAndDrag: parseTaskEnabled(data.threeLittlePigsRequireClickAndDrag, false),
       sheepRoundupGameActive: parseTaskEnabled(data.sheepRoundupGameActive, true),
       sheepRoundupVoiceInstructions: parseTaskEnabled(data.sheepRoundupVoiceInstructions, true),
       sheepRoundupDifficulty: data.sheepRoundupDifficulty === "normal" ? "normal" : "gentle",
@@ -857,6 +874,7 @@ function saveSettings(settings) {
     settings.jackFlameRainSpeedMin ?? existing.jackFlameRainSpeedMin
   );
   const normalized = {
+    homeCardOrder: normalizeHomeCardOrder(settings.homeCardOrder ?? existing.homeCardOrder),
     task1RequiredSeconds: parseTask1Seconds(settings.task1RequiredSeconds ?? existing.task1RequiredSeconds),
     task1Enabled: parseTaskEnabled(settings.task1Enabled ?? existing.task1Enabled, true),
     task2RequiredClicks: parseTask2Clicks(settings.task2RequiredClicks ?? existing.task2RequiredClicks),
@@ -1137,6 +1155,13 @@ function saveSettings(settings) {
 
     tortoisePuzzleRequireClickAndDrag: parseTaskEnabled(settings.tortoisePuzzleRequireClickAndDrag ?? existing.tortoisePuzzleRequireClickAndDrag, false),
 
+    pumpkinStudioGameActive: parseTaskEnabled(settings.pumpkinStudioGameActive ?? existing.pumpkinStudioGameActive, true),
+    pumpkinStudioVoiceInstructions: parseTaskEnabled(settings.pumpkinStudioVoiceInstructions ?? existing.pumpkinStudioVoiceInstructions, true),
+    pumpkinStudioRequireClickAndDrag: parseTaskEnabled(settings.pumpkinStudioRequireClickAndDrag ?? existing.pumpkinStudioRequireClickAndDrag, false),
+    pumpkinStudioMenuScrolling: parseTaskEnabled(settings.pumpkinStudioMenuScrolling ?? existing.pumpkinStudioMenuScrolling, false),
+    threeLittlePigsGameActive: parseTaskEnabled(settings.threeLittlePigsGameActive ?? existing.threeLittlePigsGameActive, true),
+    threeLittlePigsVoiceInstructions: parseTaskEnabled(settings.threeLittlePigsVoiceInstructions ?? existing.threeLittlePigsVoiceInstructions, true),
+    threeLittlePigsRequireClickAndDrag: parseTaskEnabled(settings.threeLittlePigsRequireClickAndDrag ?? existing.threeLittlePigsRequireClickAndDrag, false),
     sheepRoundupGameActive: parseTaskEnabled(settings.sheepRoundupGameActive ?? existing.sheepRoundupGameActive, true),
 
     sheepRoundupVoiceInstructions: parseTaskEnabled(settings.sheepRoundupVoiceInstructions ?? existing.sheepRoundupVoiceInstructions, true),

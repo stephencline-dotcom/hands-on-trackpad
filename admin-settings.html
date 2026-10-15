@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Trackpad Admin Settings</title>
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="home-card-order.css?v=1" />
   </head>
   <body class="home-page admin-settings-page">
     <main class="home-shell">
@@ -22,6 +23,7 @@
           </header>
 
           <section class="admin-availability-section" id="adminAvailabilitySection" aria-label="Activity availability">
+<a id="homeOrderAdminLink" class="home-order-admin-link" href="index.html?arrange=1">Arrange homepage cards</a><p class="admin-panel-note">Opens the homepage editor. Drag cards into place and choose Save order there.</p>
             <article class="admin-mini-card admin-mini-card--wide admin-mini-card--availability">
               <h3>Activity Availability</h3>
               <p class="admin-panel-note">Choose which activities appear to students on the home screen.</p>
@@ -89,6 +91,8 @@
                   <span>Slow and Steady is active</span>
                 </label>
                 <label class="admin-toggle-row" for="sheepRoundupGameActive"><input id="sheepRoundupGameActive" type="checkbox" checked><span>Sheep Roundup is active</span></label>
+<label class="admin-toggle-row" for="threeLittlePigsGameActive"><input id="threeLittlePigsGameActive" type="checkbox" checked><span>Three Little Pigs is active</span></label>
+<label class="admin-toggle-row" for="pumpkinStudioGameActive"><input id="pumpkinStudioGameActive" type="checkbox" checked><span>Pumpkin Patch Studio is active</span></label>
 <label class="admin-toggle-row" for="clambakeAdventureGameActive">
                   <input id="clambakeAdventureGameActive" type="checkbox" checked />
                   <span>Clambake Adventure is active</span>
@@ -121,6 +125,8 @@
             <h3 class="admin-games-title">Games</h3>
             <div class="admin-tab-group-buttons" role="tablist" aria-label="Game settings">
 <button class="admin-tab-button" type="button" role="tab" id="tabSheepRoundup" aria-controls="panelSheepRoundup" aria-selected="false" data-tab="sheeproundup">Sheep Roundup</button>
+<button class="admin-tab-button" type="button" role="tab" id="tabThreeLittlePigs" aria-controls="panelThreeLittlePigs" aria-selected="false" data-tab="threelittlepigs">Three Little Pigs</button>
+<button class="admin-tab-button" type="button" role="tab" id="tabPumpkinStudio" aria-controls="panelPumpkinStudio" aria-selected="false" data-tab="pumpkinstudio">Pumpkin Patch Studio</button>
               <button class="admin-tab-button" type="button" role="tab" id="tabQuick" aria-controls="panelQuick" aria-selected="false" data-tab="quick">
                 Fullscreen Trackpad
               </button>
@@ -180,6 +186,12 @@
 
           <button id="backToAvailabilityBtn" class="admin-back-availability" type="button" hidden>Back to Activity Availability</button>
 
+<section class="admin-tab-content" id="panelThreeLittlePigs" role="tabpanel" aria-labelledby="tabThreeLittlePigs" aria-hidden="true"><section class="admin-task-card" id="threeLittlePigsSettings"><h2>Three Little Pigs — Straw and Sticks</h2><p>Six levels: learn to build with straw, meet Big Brother, assemble a stick house, then build independently and help both pigs escape. No countdown timer.</p>
+<p class="admin-task-help">Enable or disable this game in Activity Availability. Use Back to Activity Availability above to return.</p>
+<label class="admin-toggle-row"><input id="threeLittlePigsVoiceInstructions" type="checkbox" checked>Voice instructions</label>
+<label class="admin-toggle-row"><input id="threeLittlePigsRequireClickAndDrag" type="checkbox">Require click and drag</label>
+<p class="admin-task-help">Off: slide onto a piece to carry it. On: hold the button while carrying, then release to place. Clicks operate the escape gate in both modes. Use Save Settings below.</p></section></section>
+<section class="admin-tab-content" id="panelPumpkinStudio" role="tabpanel" aria-labelledby="tabPumpkinStudio" aria-hidden="true"><section class="admin-task-card" id="pumpkinStudioSettings"><h2>Pumpkin Patch Studio</h2><p>A creative pumpkin maker: choose colors, shapes, faces, hats, extras and scenes. Students can save a picture. No timer or score.</p><p class="admin-task-help">Enable or disable this game in Activity Availability. Use Back to Activity Availability above to return.</p><label class="admin-toggle-row"><input id="pumpkinStudioVoiceInstructions" type="checkbox" checked>Voice instructions</label><label class="admin-toggle-row"><input id="pumpkinStudioRequireClickAndDrag" type="checkbox">Require click and drag</label><label class="admin-toggle-row"><input id="pumpkinStudioMenuScrolling" type="checkbox">Enable scrolling in picture menus</label><p class="admin-task-help">Off by default: all choices appear in a grid without scrolling. On: use the scrolling picture drawer for scrolling practice. Use Save Settings below.</p><p class="admin-task-help">Off: touch a piece with the pointer to pick it up, move it, then click or leave the picture to set it down. On: hold and drag, then release. Picture choices add pieces in both modes.</p></section></section>
           <section class="admin-tab-content" id="panelSheepRoundup" role="tabpanel" aria-labelledby="tabSheepRoundup" aria-hidden="true">
 <div class="admin-level-grid"><article class="admin-level-card"><h3>Level 1</h3><label class="admin-task-label" for="sheepRoundupLevel1SheepCount">Total sheep (1–6)</label><input class="admin-task-input" id="sheepRoundupLevel1SheepCount" type="number" min="1" max="6" step="1" value="1"><p class="admin-task-help">Default: 1 sheep.</p></article><article class="admin-level-card"><h3>Level 2</h3><label class="admin-task-label" for="sheepRoundupLevel2SheepCount">Total sheep (1–6)</label><input class="admin-task-input" id="sheepRoundupLevel2SheepCount" type="number" min="1" max="6" step="1" value="3"><p class="admin-task-help">Default: 3 sheep.</p></article><article class="admin-level-card"><h3>Level 3</h3><label class="admin-task-label" for="sheepRoundupLevel3SheepCount">Total sheep (1–6)</label><input class="admin-task-input" id="sheepRoundupLevel3SheepCount" type="number" min="1" max="6" step="1" value="5"><p class="admin-task-help">Default: 5 sheep.</p></article></div>
 <div class="admin-level-grid"><article class="admin-level-card"><h3>Level 4</h3><label class="admin-toggle-row" for="sheepRoundupLevel4SecondFox"><input id="sheepRoundupLevel4SecondFox" type="checkbox"><span>Two foxes arrive together</span></label><label class="admin-task-label" for="sheepRoundupLevel4ExtraSheep">Extra sheep (0–5)</label><input class="admin-task-input" id="sheepRoundupLevel4ExtraSheep" type="number" min="0" max="5" step="1" value="0"><p class="admin-task-help">4 sheep normally; up to 9 with extras.</p></article><article class="admin-level-card"><h3>Level 5</h3><label class="admin-toggle-row" for="sheepRoundupLevel5SecondFox"><input id="sheepRoundupLevel5SecondFox" type="checkbox"><span>Two foxes arrive together</span></label><label class="admin-task-label" for="sheepRoundupLevel5ExtraSheep">Extra sheep (0–5)</label><input class="admin-task-input" id="sheepRoundupLevel5ExtraSheep" type="number" min="0" max="5" step="1" value="0"><p class="admin-task-help">6 sheep normally; up to 11 with extras.</p></article><article class="admin-level-card"><h3>Level 6</h3><label class="admin-toggle-row" for="sheepRoundupLevel6SecondFox"><input id="sheepRoundupLevel6SecondFox" type="checkbox"><span>Two foxes arrive together</span></label><label class="admin-task-label" for="sheepRoundupLevel6ExtraSheep">Extra sheep (0–5)</label><input class="admin-task-input" id="sheepRoundupLevel6ExtraSheep" type="number" min="0" max="5" step="1" value="0"><p class="admin-task-help">8 sheep normally; up to 13 with extras.</p></article></div><p class="admin-task-help">Defaults: one fox and no extra sheep. Save Settings, then students reopen the game.</p><h2>Sheep Roundup</h2><p>Six levels of herding. Click to bark from level 4. No countdown timer.</p><label class="admin-toggle-row" for="sheepRoundupRequireClickAndDrag"><input id="sheepRoundupRequireClickAndDrag" type="checkbox"><span>Require click and drag</span></label><p class="admin-task-help">Off by default: slide to guide the dog. Clicks still bark. On: hold the button while moving; release to stop.</p>
@@ -2456,6 +2468,8 @@
             <button id="resetJackDefaultsBtn" class="admin-apply admin-reset-action" type="button">Reset Jumping Jack to Defaults</button>
           </section>
 
+
+
           <div class="admin-task-actions admin-task-actions--sticky">
             <button id="applyPresetsBtn" class="admin-task-open" type="button">Apply Progressive Presets</button>
             <button id="saveTask1Btn" class="admin-task-save" type="button">Save Settings</button>
@@ -2466,6 +2480,8 @@
         </section>
       </section>
     </main>
+    <script src="games/pumpkin-studio/admin.js?v=2"></script>
+    <script src="games/three-little-pigs/admin.js?v=1"></script>
     <script src="admin-settings.js"></script>
 <script src="games/sheep-roundup/admin.js?v=1"></script>
 <script src="games/sheep-roundup/input-settings-admin.js?v=3"></script>

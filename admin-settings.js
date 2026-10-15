@@ -4384,6 +4384,8 @@ async function saveTask1Settings() {
         hauntedStreetLevelGoals,
         movingSoundSettings:
           getMovingSoundSettingsSnapshot(),
+        ...window.PumpkinStudioSettings.snapshot(),
+        ...window.ThreeLittlePigsSettings.snapshot(),
         ...window.SheepRoundupSettings.snapshot(),
         ...window.GameInputSettings.snapshot(),
         trackpadGuideEnabled,
