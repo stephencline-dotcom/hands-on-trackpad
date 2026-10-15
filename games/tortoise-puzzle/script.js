@@ -4,9 +4,10 @@
   const svg=$('tortoiseArena'), world=$('mechanisms'), controls=$('puzzleControls'), turtle=$('tortoise'), banner=$('puzzleMessage');
   let state,level=0,last=0,resultShown=false,drag=null,started=false,sound=true,resumeStop=0,voiceInstructions=true,teacherVoice=true;
   let audio;
+  let requireClickAndDrag=false;
   const adventure=new window.TortoiseAdventure.Adventure(svg,{
     speak:speakDirection,autoSpeak:()=>started&&sound&&voiceInstructions&&!frozen(),dragging:()=>Boolean(drag),
-    instruction:text=>{banner.textContent=text;},reward:()=>{tone(660);tone(830,.09);tone(990,.18);}
+    instruction:text=>{banner.textContent=requireClickAndDrag?text:text.replace(/\bdrag\b/gi,'move');},reward:()=>{tone(660);tone(830,.09);tone(990,.18);}
   });
   const frozen=()=>document.body.classList.contains('student-screen-frozen');
   const sceneSounds=new window.TortoiseSceneSounds(()=>started&&sound&&!frozen()&&!document.hidden);
@@ -50,6 +51,9 @@
     host:$('resultHost'),pauseGame:()=>{},onNextLevel:()=>load(nextEnabled()),onRetry:()=>load(level,state.puzzle),onPlayAgain:()=>load(0),onHome:()=>location.href='../../index.html',canPlaySound:()=>sound&&!frozen()
   }):null;
   function button(s,i,part,shape,label,extra=''){
+    if(s.unlock!==null&&!state.stations[s.unlock].ready)return `<g opacity=".5" pointer-events="none">${shape}</g>`;
+    if(s.finalChallenge&&part==='sail'&&(!s.finalPatched||state.x<s.x-.01))return `<g opacity=".65" pointer-events="none">${shape}</g>`;
+    if(s.leaky&&part==='sail'&&(!s.plugged||s.patchProgress<1||!s.inputs.every(n=>s.signals.includes(n))||state.x<s.x-.01))return `<g opacity=".65" pointer-events="none">${shape}</g>`;
     return `<g class="puzzle-action ${extra}" data-i="${i}" data-part="${part}" role="button" tabindex="0" aria-label="${label}"><title>${label}</title>${shape}</g>`;
   }
   const rock=(x,y)=>`<path d="M${x-22},${y+13} L${x-25},${y-7} L${x-9},${y-25} L${x+14},${y-21} L${x+27},${y-3} L${x+20},${y+15} Z" fill="#7f96a6" stroke="#334e60" stroke-width="4"/><path d="M${x-12},${y-15} l15,-2" stroke="#cbdde5" stroke-width="5" stroke-linecap="round"/>`;
@@ -57,8 +61,8 @@
   const switchArt=(x,y,on)=>`<g><ellipse cx="${x}" cy="${y+5}" rx="30" ry="14" fill="#935d32"/><ellipse cx="${x}" cy="${y}" rx="29" ry="13" fill="${on?'#88dc70':'#ffcd4d'}" stroke="#6c5831" stroke-width="4"/><path d="M${x-9},${y-4}l9,8 9,-8" stroke="${on?'#3b8745':'#bb812d'}" stroke-width="3" fill="none"/><path d="M${x-17},${y-7}q9,-5 18,-4" stroke="#fff2b1" stroke-width="3" fill="none"/></g>`;
   const gateArt=(x,a)=>`<g><path d="M${x-6},398h79v7h-79Z" fill="#c9a16b"/><path d="M${x-6},398h79" stroke="#f2d394" stroke-width="3"/><path d="M${x-6},395V287h79v108" fill="none" stroke="#986339" stroke-width="9"/><g transform="translate(0 ${-110*a})"><rect x="${x+2}" y="315" width="58" height="78" rx="5" fill="#df9160" stroke="#885335" stroke-width="4"/><path d="M${x+5},335h52M${x+5},357h52M${x+5},379h52" stroke="#f5bd83" stroke-width="7"/><path d="M${x+6},318l50,70" stroke="#9a5735" stroke-width="7"/><circle cx="${x+32}" cy="350" r="15" fill="${a>.95?'#d4f0a8':'#ffe7a4'}" stroke="#c87c40" stroke-width="3"/><path d="${a>.95?`M${x+23},350l6,7 14,-15`:`M${x+25},343l14,14M${x+39},343l-14,14`}" fill="none" stroke="${a>.95?'#428545':'#cc6548'}" stroke-width="4"/></g></g>`;
   function doorwayFront(){
-    return state.stations.filter(s=>s.kind==='gate'||s.kind==='stone'||s.kind==='repairChute').map(s=>{
-      const x=s.kind==='gate'?s.x+2:s.kind==='repairChute'?s.x-10:s.x-20;
+    return state.stations.filter(s=>s.kind==='gate'||s.kind==='stone'||s.kind==='repairChute'||s.kind==='cart').map(s=>{
+      const x=s.kind==='cart'?770:s.kind==='gate'?s.x+2:s.kind==='repairChute'?s.x-10:s.x-20;
       // The rear frame sits behind Tortoise; this near jamb occludes him as he passes through.
       return `<g data-doorway-front="true"><path d="M${x+67},287l12,-6v116l-12,8Z" fill="#80532e" stroke="#674328" stroke-width="2"/><path d="M${x+67},287h8v115h-8Z" fill="#ba854d"/><path d="M${x-6},287l8,-6h77l-12,6Z" fill="#dfb57b" stroke="#80532e" stroke-width="2"/><path d="M${x-6},287h81v9H${x-6}Z" fill="#b58148"/><path d="M${x+64},402h18v5h-18Z" fill="#674328"/></g>`;
     }).join('');
@@ -67,9 +71,9 @@
   function trailArt(){
     let art='';let start=0;
     for(const s of state.stations){
-      if(['bridge','log','ramp','lift','raft','stones'].includes(s.kind)){
+      if(['bridge','log','ramp','lift','raft','stones','balance','drawbridge','route'].includes(s.kind)){
         const boat=s.kind==='raft'?P.raftGeometry(s):null;
-        const left=boat?boat.left-50:s.kind==='lift'?s.x-35:s.x+12,right=boat?boat.right+55:s.x+s.width*.62+(s.kind==='lift'?72:15);
+        const left=s.kind==='balance'?s.x-48:s.kind==='drawbridge'?s.x+12:s.kind==='route'?s.x-50:boat?boat.left-50:s.kind==='lift'?s.x-35:s.x+12,right=s.kind==='balance'?s.x+174:s.kind==='drawbridge'?s.x+200:s.kind==='route'?s.x+270:boat?boat.right+55:s.x+s.width*.62+(s.kind==='lift'?72:15);
         art+=`<path d="M${start},397H${left}" stroke="#e4bd7c" stroke-width="17"/>`;start=right;
       }
     }
@@ -132,11 +136,13 @@
       art+=`<path d="M${x+w},386V258H${x+34}V${315-110*opening}" fill="none" stroke="#dfc69a" stroke-width="4"/><circle cx="${x+34}" cy="258" r="9" fill="#c29454" stroke="#634629" stroke-width="3"/>`+gateArt(x+2,opening);
       if(s.weightsNeeded>1)art+=`<g transform="translate(0 ${-110*opening})"><path d="M${x+8},332h50M${x+8},371h50" stroke="#66746c" stroke-width="9"/><circle cx="${x+13}" cy="332" r="2.5" fill="#e0d5aa"/><circle cx="${x+53}" cy="332" r="2.5" fill="#e0d5aa"/><circle cx="${x+13}" cy="371" r="2.5" fill="#e0d5aa"/><circle cx="${x+53}" cy="371" r="2.5" fill="#e0d5aa"/></g>`;
       art+=switchArt(x+w,386,s.prepared);
+      if(s.deliveryX&&!s.prepared)art+=`<g pointer-events="none" opacity=".25" transform="translate(${x+w},363) scale(.65)">${rock(0,0)}</g>`;
       const parts=P.weightParts(s);
+      if(s.deliveryX)art+=plank(s.deliveryX-38,s.deliveryY+27,parts.length*58+22)+`<path d="M${s.deliveryX-25},${s.deliveryY+50}v36M${s.deliveryX+parts.length*58-30},${s.deliveryY+50}v36" stroke="#997047" stroke-width="7"/>`;
       for(const [n,part]of parts.entries()){
-        const size=P.weightMass(s,part)>1?1.4:1,looseX=s.reuseRock?s.reuseFrom:x+w+55+n*58;const stoneAt=(rx,ry)=>`<g transform="translate(${rx},${ry}) scale(${size})">${rock(0,0)}</g>`;
+        const size=P.weightMass(s,part)>1?1.4:1,looseX=s.reuseRock?s.reuseFrom:s.deliveryX?s.deliveryX+n*58:x+w+55+n*58;const stoneAt=(rx,ry)=>`<g transform="translate(${rx},${ry}) scale(${size})">${rock(0,0)}</g>`;
         if(s.weightsPlaced.includes(part))art+=stoneAt(x+w+(s.weightsNeeded>1?(n%2?12:-12):0),370-Math.floor(n/2)*32);
-        else if(!s.prepared&&(!s.reuseRock||state.stations[0].ready)){art+=`<rect class="drop-target" data-drop="${i}:${part}" x="${x+w-31}" y="340" width="62" height="56" rx="12"/>`;art+=button(s,i,part,stoneAt(looseX,s.reuseRock?380:370),'Drag this rock onto the counterweight pad','draggable');}else if(!s.reuseRock||state.stations[0].ready)art+=stoneAt(looseX,s.reuseRock?380:370);
+        else if(!s.prepared&&(!s.reuseRock||state.stations[0].ready)){art+=`<rect class="drop-target" data-drop="${i}:${part}" x="${x+w-31}" y="340" width="62" height="56" rx="12"/>`;art+=button(s,i,part,stoneAt(looseX,s.reuseRock?380:s.deliveryY||370),'Drag this rock onto the counterweight pad','draggable');}else if(!s.reuseRock||state.stations[0].ready)art+=stoneAt(looseX,s.reuseRock?380:s.deliveryY||370);
       }
       if(s.weightsNeeded>1)art+=`<g>${Array.from({length:s.weightsNeeded},(_,n)=>`<circle cx="${x+12+n*18}" cy="275" r="6" fill="${P.gateMass(s)>n?'#92d572':'#fff0ba'}" stroke="#775633" stroke-width="2"/>`).join('')}</g>`;
     }
@@ -215,13 +221,14 @@
       art+=`<path d="M${x+w/2},195V${end}" stroke="${s.ready?'#89d680':'#e8cc90'}" stroke-width="5"/><circle cx="${x+w/2}" cy="195" r="15" fill="${s.ready?'#78c76b':s.prepared?'#ffc957':'#b4c4ab'}" stroke="#446345" stroke-width="3"/>`;
     }
     if(s.inputs.length>1)art+=`<g>${s.inputs.map((from,n)=>`<circle cx="${s.kind==='raft'?x-94+n*20:x+w/2-10+n*20}" cy="${s.kind==='raft'?315:195}" r="8" fill="${s.signals.includes(from)?'#8ddd79':'#fff7d7'}" stroke="#557448" stroke-width="2"/>`).join('')}</g>`;
-    if(s.unlock!==null&&!state.stations[s.unlock].ready)art+=`<rect x="${x-30}" y="168" width="58" height="28" rx="8" fill="#385c4c"/><text x="${x-1}" y="187" text-anchor="middle" fill="white" font-size="11">LATCHED</text>`;
+    if(s.unlock!==null&&!state.stations[s.unlock].ready&&!state.stations[s.unlock].finalChallenge)art+=`<rect x="${x-30}" y="168" width="58" height="28" rx="8" fill="#385c4c"/><text x="${x-1}" y="187" text-anchor="middle" fill="white" font-size="11">LATCHED</text>`;
     art+=`<text x="${x+w/2}" y="477" class="station-label" text-anchor="middle">${{bridge:'BRIDGE',ramp:'RAMP',stone:'STONE',gate:s.weightsNeeded>1?'HEAVY GATE':'GATE',lift:'LIFT',log:'LOG',raft:'RAFT',boulder:'BOULDER',stones:'BROKEN BRIDGE'}[s.kind]||''}</text>`;
+    art+=window.TortoiseRouteChallenges?.raftArt(s,i,button,plank)||'';
     return `<g data-machine="${i}">${art}</g>`;
   }
   function speakDirection(text){
     if(!voiceInstructions||!sound||frozen()||!window.speechSynthesis||!window.SpeechSynthesisUtterance)return;
-    window.speechSynthesis.cancel();const voice=new window.SpeechSynthesisUtterance(text);voice.lang='en-US';voice.rate=.88;window.speechSynthesis.speak(voice);
+    window.speechSynthesis.cancel();const voice=new window.SpeechSynthesisUtterance(requireClickAndDrag?text:text.replace(/\bdrag\b/gi,'move'));voice.lang='en-US';voice.rate=.88;window.speechSynthesis.speak(voice);
   }
   function showDirection(readAloud=false){
     if(!state||state.status!=='playing')return;
@@ -250,16 +257,16 @@
 
   function act(i,part){if(!started||frozen())return;const accepted=P.action(state,i,part);banner.textContent=state.message;banner.dataset.lastMessage=state.message;if(accepted||state.status==='failed')sceneSounds.action(state.stations[i],part,state.status==='failed');sceneSounds.update(state);adventure.noteAction(state,!accepted);render();}
   function point(e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse());}
-  svg.addEventListener('pointerdown',e=>{
-    if(frozen()||state?.status!=='playing')return;
-    const node=e.target.closest('[data-part]');if(!node)return;
-    if(node.classList.contains('draggable')){drag={node,i:Number(node.dataset.i),part:node.dataset.part,start:point(e),pointer:e.pointerId};svg.setPointerCapture(e.pointerId);e.preventDefault();}
-    else act(Number(node.dataset.i),node.dataset.part);
-  });
-  svg.addEventListener('pointermove',e=>{if(!drag)return;if(frozen()){drag=null;render();return;}const p=point(e);drag.node.setAttribute('transform',`translate(${p.x-drag.start.x},${p.y-drag.start.y})`);});
-  svg.addEventListener('pointerup',e=>{
-    if(!drag)return;const d=drag;drag=null;
-    if(!frozen()){
+  function beginPuzzleDrag(node,e){
+    drag={node,i:Number(node.dataset.i),part:node.dataset.part,start:point(e),pointer:e.pointerId};
+    drag.node.style.pointerEvents='none';
+    if(requireClickAndDrag)svg.setPointerCapture(e.pointerId);
+  }
+  function dropBoxContains(e,box,dx=20,dy=20){const p=point(e);return box&&p.x>=box.x-dx&&p.x<=box.x+box.width+dx&&p.y>=box.y-dy&&p.y<=box.y+box.height+dy;}
+  function isPuzzleDrop(e){if(!drag)return false;const selectors=state.stations[drag.i].kind==='stones'?`[data-drop^="${drag.i}:"]`:`[data-drop="${drag.i}:${drag.part}"]`;return [...svg.querySelectorAll(selectors)].some(el=>dropBoxContains(e,el.getBBox()));}
+  function finishPuzzleDrag(e){
+    if(!drag)return;const d=drag;drag=null;d.node.style.pointerEvents='';
+    if(!frozen()&&!document.hidden){
       const p=point(e),target=svg.querySelector(`[data-drop="${d.i}:${d.part}"]`),b=target?.getBBox();
       if(state.stations[d.i].kind==='lift'&&state.x<state.stations[d.i].x-.01){act(d.i,d.part);}
       else if(state.stations[d.i].kind==='stones'){
@@ -268,10 +275,30 @@
         else{state.message='Try placing the board inside a gap.';adventure.noteAction(state,true);}
       }else if(b&&p.x>=b.x-20&&p.x<=b.x+b.width+20&&p.y>=b.y-20&&p.y<=b.y+b.height+20)act(d.i,d.part);else{state.message='Almost! Try placing it inside the matching outline.';adventure.noteAction(state,true);}
     }
+    if(svg.hasPointerCapture?.(d.pointer))svg.releasePointerCapture(d.pointer);
     render();
+  }
+  function cancelPuzzleDrag(){if(!drag)return;const d=drag;drag=null;d.node.style.pointerEvents='';if(svg.hasPointerCapture?.(d.pointer))svg.releasePointerCapture(d.pointer);render();}
+  svg.addEventListener('pointerdown',e=>{
+    if(frozen()||document.hidden||state?.status!=='playing')return;
+    const node=e.target.closest('[data-part]');if(!node)return;
+    if(node.classList.contains('draggable')){if(!drag)beginPuzzleDrag(node,e);e.preventDefault();}
+    else if(!drag)act(Number(node.dataset.i),node.dataset.part);
   });
-  svg.addEventListener('pointercancel',()=>{drag=null;render();});
-  svg.addEventListener('lostpointercapture',()=>{if(drag){drag=null;render();}});
+  svg.addEventListener('pointermove',e=>{
+    if(frozen()||document.hidden||state?.status!=='playing'){cancelPuzzleDrag();return;}
+    if(!drag&&!requireClickAndDrag){const node=e.target.closest('[data-part]');if(node?.classList.contains('draggable'))beginPuzzleDrag(node,e);}
+    if(!drag)return;
+    if(requireClickAndDrag&&!(e.buttons&1)){cancelPuzzleDrag();return;}
+    const p=point(e);drag.node.setAttribute('transform',`translate(${p.x-drag.start.x},${p.y-drag.start.y})`);
+    if(!requireClickAndDrag&&isPuzzleDrop(e))finishPuzzleDrag(e);
+  });
+  svg.addEventListener('pointerup',e=>{if(requireClickAndDrag)finishPuzzleDrag(e);});
+  svg.addEventListener('pointercancel',cancelPuzzleDrag);
+  svg.addEventListener('pointerleave',()=>{if(!requireClickAndDrag)cancelPuzzleDrag();});
+  svg.addEventListener('lostpointercapture',cancelPuzzleDrag);
+  window.addEventListener('blur',cancelPuzzleDrag);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelPuzzleDrag();});
   svg.addEventListener('keydown',e=>{const n=e.target.closest('[data-part]');if(n&&(e.key==='Enter'||e.key===' ')){e.preventDefault();act(Number(n.dataset.i),n.dataset.part);}});
   $('retryPuzzle').onclick=()=>{if(!frozen()&&state)load(level,state.puzzle);};
   $('restartJourney').onclick=()=>{if(!frozen())load(0);};
@@ -307,7 +334,7 @@
   async function init(){
     try{voiceInstructions=localStorage.getItem('tortoiseVoiceInstructions-v1')!=='false';}catch{}$('tortoiseVoice').checked=voiceInstructions;
     P.setJourneyLength('medium');
-    try{const r=await fetch('/api/settings',{cache:'no-store'});if(r.ok){const s=await r.json();P.setJourneyLength(s.tortoisePuzzleAdventureLength);if(s.tortoisePuzzleGameActive===false){location.replace('../../index.html');return;}sound=s.soundEnabled!==false;teacherVoice=s.tortoisePuzzleVoiceInstructions!==false;voiceInstructions=teacherVoice&&voiceInstructions;$('tortoiseVoice').checked=voiceInstructions;$('tortoiseVoice').disabled=!teacherVoice;$('tortoiseVoice').title=teacherVoice?'Voice instructions':'Voice instructions are off in teacher settings';}}catch{}
+    try{const r=await fetch('/api/settings',{cache:'no-store'});if(r.ok){const s=await r.json();P.setJourneyLength(s.tortoisePuzzleAdventureLength);requireClickAndDrag=s.tortoisePuzzleRequireClickAndDrag===true;if(s.tortoisePuzzleGameActive===false){location.replace('../../index.html');return;}sound=s.soundEnabled!==false;teacherVoice=s.tortoisePuzzleVoiceInstructions!==false;voiceInstructions=teacherVoice&&voiceInstructions;$('tortoiseVoice').checked=voiceInstructions;$('tortoiseVoice').disabled=!teacherVoice;$('tortoiseVoice').title=teacherVoice?'Voice instructions':'Voice instructions are off in teacher settings';}}catch{}
     try{
       let raw=localStorage.getItem(P.journeyProgressKey());
       if(raw===null&&P.journeyLength==='long'){
@@ -325,6 +352,7 @@
   }
   function frame(t){
     const dt=last?Math.min((t-last)/1000,.05):0;last=t;
+    if(started&&(frozen()||document.hidden))cancelPuzzleDrag();
     if(started&&!frozen()&&!document.hidden){
       const before=JSON.stringify(state.stations);P.step(state,dt);sceneSounds.update(state);
       if(state.status==='failed'&&drag){const pointer=drag.pointer;drag=null;if(svg.hasPointerCapture?.(pointer))svg.releasePointerCapture(pointer);render();}

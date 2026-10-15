@@ -1,0 +1,1 @@
+window.SheepRoundupSoundFiles = {"safe":"../../sounds/safesheep.mp3","bark":"../../sounds/dogbark.mp3","baa":"../../sounds/baa.mp3","howl":"../../sounds/howlhungry.mp3","fall":"../../sounds/sheepfall.mp3","background":"../../sounds/meadowback.mp3"};

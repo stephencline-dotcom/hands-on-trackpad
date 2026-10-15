@@ -73,6 +73,15 @@ function normalizeClambakeAdventureLevels(value, defaults) {
     ? levels
     : [...defaults];
 }
+function parseSheepRoundupSheepCount(value, fallback) {
+  const n = Number(value);
+  if (value === undefined || value === null || value === "" || !Number.isFinite(n)) return fallback;
+  return Math.min(6, Math.max(1, Math.floor(n)));
+}
+function parseSheepRoundupExtraSheep(value) {
+  const n = Number(value);
+  return Number.isFinite(n) ? Math.min(5, Math.max(0, Math.floor(n))) : 0;
+}
 const DEFAULT_SETTINGS = {
   task1RequiredSeconds: 8,
   task1Enabled: true,
@@ -128,6 +137,20 @@ const DEFAULT_SETTINGS = {
   hauntedStreetLevelThrowIntervals: [650, 650, 650, 650, 650],
   hauntedStreetLevelPumpkinSpeeds: [520, 520, 520, 520, 520],
   hauntedStreetLevelGoals: [7, 10, 13, 17, 22],
+  sheepRoundupLevel1SheepCount: 1,
+  sheepRoundupLevel2SheepCount: 3,
+  sheepRoundupLevel3SheepCount: 5,
+  sheepRoundupLevel4SecondFox: false,
+  sheepRoundupLevel4ExtraSheep: 0,
+  sheepRoundupLevel5SecondFox: false,
+  sheepRoundupLevel5ExtraSheep: 0,
+  sheepRoundupLevel6SecondFox: false,
+  sheepRoundupLevel6ExtraSheep: 0,
+  sheepRoundupRequireClickAndDrag: false,
+  tortoisePuzzleRequireClickAndDrag: false,
+  sheepRoundupGameActive: true,
+  sheepRoundupVoiceInstructions: true,
+  sheepRoundupDifficulty: "gentle",
   trackpadGuideEnabled: true,
   soundEnabled: true,
   trainingPaused: false,
@@ -738,6 +761,20 @@ function loadSettings() {
           1,
           100
         ),
+      sheepRoundupLevel1SheepCount: parseSheepRoundupSheepCount(data.sheepRoundupLevel1SheepCount, 1),
+      sheepRoundupLevel2SheepCount: parseSheepRoundupSheepCount(data.sheepRoundupLevel2SheepCount, 3),
+      sheepRoundupLevel3SheepCount: parseSheepRoundupSheepCount(data.sheepRoundupLevel3SheepCount, 5),
+      sheepRoundupLevel4SecondFox: parseTaskEnabled(data.sheepRoundupLevel4SecondFox, false),
+      sheepRoundupLevel4ExtraSheep: parseSheepRoundupExtraSheep(data.sheepRoundupLevel4ExtraSheep),
+      sheepRoundupLevel5SecondFox: parseTaskEnabled(data.sheepRoundupLevel5SecondFox, false),
+      sheepRoundupLevel5ExtraSheep: parseSheepRoundupExtraSheep(data.sheepRoundupLevel5ExtraSheep),
+      sheepRoundupLevel6SecondFox: parseTaskEnabled(data.sheepRoundupLevel6SecondFox, false),
+      sheepRoundupLevel6ExtraSheep: parseSheepRoundupExtraSheep(data.sheepRoundupLevel6ExtraSheep),
+      sheepRoundupRequireClickAndDrag: parseTaskEnabled(data.sheepRoundupRequireClickAndDrag, false),
+      tortoisePuzzleRequireClickAndDrag: parseTaskEnabled(data.tortoisePuzzleRequireClickAndDrag, false),
+      sheepRoundupGameActive: parseTaskEnabled(data.sheepRoundupGameActive, true),
+      sheepRoundupVoiceInstructions: parseTaskEnabled(data.sheepRoundupVoiceInstructions, true),
+      sheepRoundupDifficulty: data.sheepRoundupDifficulty === "normal" ? "normal" : "gentle",
       trackpadGuideEnabled: parseTaskEnabled(
         data.trackpadGuideEnabled,
         DEFAULT_SETTINGS.trackpadGuideEnabled
@@ -1078,7 +1115,36 @@ function saveSettings(settings) {
           ? existing.monsterLunchLevels
           : [],
 
+    sheepRoundupLevel1SheepCount: parseSheepRoundupSheepCount(settings.sheepRoundupLevel1SheepCount ?? existing.sheepRoundupLevel1SheepCount, 1),
+
+    sheepRoundupLevel2SheepCount: parseSheepRoundupSheepCount(settings.sheepRoundupLevel2SheepCount ?? existing.sheepRoundupLevel2SheepCount, 3),
+
+    sheepRoundupLevel3SheepCount: parseSheepRoundupSheepCount(settings.sheepRoundupLevel3SheepCount ?? existing.sheepRoundupLevel3SheepCount, 5),
+
+    sheepRoundupLevel4SecondFox: parseTaskEnabled(settings.sheepRoundupLevel4SecondFox ?? existing.sheepRoundupLevel4SecondFox, false),
+
+    sheepRoundupLevel4ExtraSheep: parseSheepRoundupExtraSheep(settings.sheepRoundupLevel4ExtraSheep ?? existing.sheepRoundupLevel4ExtraSheep),
+
+    sheepRoundupLevel5SecondFox: parseTaskEnabled(settings.sheepRoundupLevel5SecondFox ?? existing.sheepRoundupLevel5SecondFox, false),
+
+    sheepRoundupLevel5ExtraSheep: parseSheepRoundupExtraSheep(settings.sheepRoundupLevel5ExtraSheep ?? existing.sheepRoundupLevel5ExtraSheep),
+
+    sheepRoundupLevel6SecondFox: parseTaskEnabled(settings.sheepRoundupLevel6SecondFox ?? existing.sheepRoundupLevel6SecondFox, false),
+
+    sheepRoundupLevel6ExtraSheep: parseSheepRoundupExtraSheep(settings.sheepRoundupLevel6ExtraSheep ?? existing.sheepRoundupLevel6ExtraSheep),
+
+    sheepRoundupRequireClickAndDrag: parseTaskEnabled(settings.sheepRoundupRequireClickAndDrag ?? existing.sheepRoundupRequireClickAndDrag, false),
+
+    tortoisePuzzleRequireClickAndDrag: parseTaskEnabled(settings.tortoisePuzzleRequireClickAndDrag ?? existing.tortoisePuzzleRequireClickAndDrag, false),
+
+    sheepRoundupGameActive: parseTaskEnabled(settings.sheepRoundupGameActive ?? existing.sheepRoundupGameActive, true),
+
+    sheepRoundupVoiceInstructions: parseTaskEnabled(settings.sheepRoundupVoiceInstructions ?? existing.sheepRoundupVoiceInstructions, true),
+
+    sheepRoundupDifficulty: (settings.sheepRoundupDifficulty ?? existing.sheepRoundupDifficulty) === "normal" ? "normal" : "gentle",
+
     trackpadGuideEnabled: parseTaskEnabled(
+
       settings.trackpadGuideEnabled ??
         existing.trackpadGuideEnabled,
       DEFAULT_SETTINGS.trackpadGuideEnabled
