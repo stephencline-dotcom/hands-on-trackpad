@@ -209,10 +209,14 @@
       this.primaryButton.dataset.action = 'primary';
       this.primaryButtonAction = config.primaryAction;
 
-      const showSecondary = config.mode === 'final';
+      const showSecondary = true; // Home is available on every result screen.
       this.secondaryButton.hidden = !showSecondary;
       this.secondaryButton.disabled = false;
-      this.secondaryButtonAction = showSecondary ? config.secondaryAction : null;
+      this.secondaryButtonAction = typeof config.secondaryAction === 'function'
+        ? config.secondaryAction
+        : typeof this.callbacks.onHome === 'function'
+          ? this.callbacks.onHome
+          : () => { global.location.href = '/index.html'; };
 
       this._renderBalloons(config.mode === 'final');
       this._playModeSound(config.playSound);

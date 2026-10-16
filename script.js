@@ -828,7 +828,25 @@ function prepareNextMazeLevel() {
 }
 
 function restartCurrentMazeLevel() {
-  startMaze();
+  // Retry prepares the same level; only the START control begins movement.
+  mazeActive = false;
+  mazeCompleted = false;
+  hitCount = 0;
+  collisionLock = false;
+  cursorWasOutsideBoard = false;
+  mazeStart.classList.remove("is-lit");
+  mazeFinish.classList.remove("is-lit");
+  mazeToken.classList.remove("active");
+  resetMazeTokenRunState();
+  const startRect = getBlockRectPx(mazeStart);
+  mazeToken.style.setProperty("--runner-flip", "1");
+  setMazeTokenPosition(startRect.x + startRect.w / 2, startRect.y + startRect.h / 2);
+  setGhostsVisible(false);
+  updateGhostAudioState();
+  updateHitsBadge();
+  clearBadgeFlashClasses();
+  updateStartPulseCue();
+  showMazeToast(`Click START to try ${getCurrentLevel().name} again.`, 5000);
 }
 
 function playMazeAgainFromLevel1() {
