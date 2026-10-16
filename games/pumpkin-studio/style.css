@@ -24,3 +24,16 @@ header nav .story-icon-control{display:inline-flex;align-items:center;justify-co
 header nav .story-icon-control img{display:block;width:25px;height:25px;pointer-events:none}
 header nav .story-icon-control:hover{background:#fff0a6;transform:none}
 header nav .story-icon-control:focus-visible{outline:4px solid #efae35;outline-offset:2px}
+
+/* Keep the selected-piece tools directly beneath the pumpkin canvas. */
+.pumpkin-workarea{display:grid;grid-template-rows:minmax(0,1fr) auto;gap:10px;min-width:0;min-height:0}
+.pumpkin-workarea .edit-tools{justify-content:center;gap:10px;padding:6px 8px 9px;flex-wrap:wrap}
+.pumpkin-workarea .edit-tools button{min-width:52px;min-height:46px;font-size:25px;border-width:3px}
+.pumpkin-workarea .edit-tools #undo{font-size:17px}
+.pumpkin-workarea .edit-tools.has-selection button:not(#undo):not(:disabled){color:#493500;background:#ffe17c;border-color:#c08013;box-shadow:0 3px 0 #bc8a2c,0 0 0 3px #fff7c7,0 0 18px #f7bd4f88;animation:piece-tool-glow 1.8s ease-in-out infinite}
+@keyframes piece-tool-glow{50%{background:#fff0ac;box-shadow:0 3px 0 #bc8a2c,0 0 0 4px #fff7c7,0 0 23px #f7bd4faa}}
+.student-screen-frozen .pumpkin-workarea .edit-tools button{animation-play-state:paused!important}
+footer{justify-content:flex-end}
+@media(prefers-reduced-motion:reduce){.pumpkin-workarea .edit-tools.has-selection button{animation:none!important}}
+@media(max-width:1100px){.pumpkin-workarea .edit-tools{gap:7px;padding:4px 2px 7px}.pumpkin-workarea .edit-tools button{min-width:45px;padding:5px 8px}}
+@media(max-width:700px){.pumpkin-workarea{min-height:460px}.pumpkin-workarea .edit-tools{gap:6px}.pumpkin-workarea .edit-tools button{min-width:40px;min-height:44px}.pumpkin-workarea .edit-tools #undo{font-size:14px}}
