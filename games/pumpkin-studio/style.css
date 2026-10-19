@@ -37,3 +37,15 @@ footer{justify-content:flex-end}
 @media(prefers-reduced-motion:reduce){.pumpkin-workarea .edit-tools.has-selection button{animation:none!important}}
 @media(max-width:1100px){.pumpkin-workarea .edit-tools{gap:7px;padding:4px 2px 7px}.pumpkin-workarea .edit-tools button{min-width:45px;padding:5px 8px}}
 @media(max-width:700px){.pumpkin-workarea{min-height:460px}.pumpkin-workarea .edit-tools{gap:6px}.pumpkin-workarea .edit-tools button{min-width:40px;min-height:44px}.pumpkin-workarea .edit-tools #undo{font-size:14px}}
+
+/* Large picture controls for creating a pumpkin and lighting its candle. */
+.finish-tools .finish-picture-button{width:68px;height:60px;min-width:60px;padding:4px 7px;display:inline-flex;align-items:center;justify-content:center;border-width:3px;flex-shrink:0}
+.finish-picture-button svg{display:block;width:48px;height:48px;pointer-events:none;overflow:visible}
+.finish-tools #new{background:#fff2d8;border-color:#bf8045}
+.finish-tools #glow{background:#fff9e8;border-color:#bda369}
+#glow .bulb-rays{opacity:.25}
+#glow[aria-pressed=true]{background:#ffe18a;border-color:#bd871f;box-shadow:0 3px 0 #c99e45,0 0 12px #f4bd4a80}
+#glow[aria-pressed=true] .bulb-glass{fill:#ffd044}
+#glow[aria-pressed=true] .bulb-rays{opacity:1}
+.finish-tools .finish-picture-button:hover:not(:disabled){background:#ffe6a6}
+@media(max-height:740px){.finish-tools .finish-picture-button{height:54px;width:62px}.finish-picture-button svg{width:43px;height:43px}}
