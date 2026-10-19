@@ -37,3 +37,7 @@ Level 2 adds a rabbit visit and a deer visit. Level 3 adds three visits, with at
 ## Crawling caterpillars
 
 Caterpillars emerge from a small opening in the soil, wriggle up the stem, and settle onto a leaf. The clickable target follows the caterpillar through the animation. Clicking a caterpillar immediately clears it and briefly shows it scurrying away. No selected tool, farmer trip, or waiting for another job is required. Other farmer jobs and the selected tool continue. Their movement and exit animations use active game time, so Freeze and hidden or unfocused tabs pause them.
+
+## Recorded sounds — first batch
+
+Local MP3 files used: farmfootsteps, seedsprinkle, rakesoil, wateringcan, tractorengine, carrotpop, cornsnap, wagonload, and farmvisitor (all in sounds/). The visitor cue also accepts the spelling farmvisiotor.mp3. Footsteps and the quiet engine loop follow actual farmer/tractor movement, including parking. Planting, raking, watering, harvesting, and wagon sounds happen when the farmer performs those actions. Boarding remains animated and silent. A visitor cue plays on arrival. Recorded sounds become quieter during spoken instructions. The speaker control, Freeze, hidden tabs, blur, New Field, and level overlays stop recordings. The unrecorded bell, bug pop, and celebration keep their existing synthesized sounds; no new ambience or music was added.
