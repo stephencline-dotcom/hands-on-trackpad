@@ -4,3 +4,19 @@
 @media(max-height:700px){.farm-shell{gap:5px}.wordmark small{display:none}.wordmark h1{font-size:29px}.farm-status{min-height:42px}.tool-shelf canvas{width:50px;height:33px}.tool-shelf button{width:64px;min-width:50px}.tool-shelf{padding:3px 7px 6px}.welcome{padding:14px 25px 19px}.welcome h2{font-size:36px}.welcome canvas{height:60px}.welcome p{margin:3px 0 12px}#start{padding:9px 25px}}
 @media(max-width:760px){body{overflow:auto;height:auto}.farm-shell{min-height:100dvh;height:auto}.farm-header{flex-wrap:wrap}.farm-status{flex-wrap:wrap}.farm-status #message{order:3;flex-basis:100%;min-height:36px}.crop-counter{margin-left:auto}.play-layout,.trackpad-guide-off .play-layout{display:block;flex:none}.farm-board{height:560px}.farm-guide{display:none!important}.tool-shelf{gap:3px}.tool-shelf button{width:54px;min-width:42px}.tool-shelf canvas{width:43px;height:32px}.tool-shelf span{font-size:9px}.farm-header nav button{font-size:11px}.icon-control{width:43px;height:40px}}
 @media(prefers-reduced-motion:reduce){.tool-shelf button:after{animation:none!important}}
+
+/* One picture help button. Its reminder uses active game time, with no penalty. */
+.farm-header nav .show-eyes{width:86px;height:56px;padding:3px 8px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;border:3px solid #628ba2;border-radius:17px;background:#e4f5ff;box-shadow:0 3px 0 #9cbcc7;transform-origin:center}
+.show-eyes svg{width:66px;height:44px;display:block;pointer-events:none;overflow:visible}
+.show-eyes .eye-blink{transform-box:fill-box;transform-origin:center;animation:help-eye-blink 5.6s ease-in-out infinite;animation-play-state:paused}
+.show-eyes .eye-look{animation:help-eye-look 7s ease-in-out infinite;animation-play-state:paused}
+.show-eyes.is-active .eye-blink,.show-eyes.is-active .eye-look{animation-play-state:running}
+.farm-header nav .show-eyes:hover:not(:disabled){background:#b9eeff;border-color:#167c9c}
+.farm-header nav .show-eyes.needs-help{background:#48dcf2;border-color:#087b9e;box-shadow:0 3px 0 #087b9e,0 0 0 4px #ffe66e,0 0 22px #27cdebbb;animation:help-eyes-pulse 1.5s ease-in-out infinite;animation-play-state:paused}
+.farm-header nav .show-eyes.needs-help.is-active{animation-play-state:running}
+@keyframes help-eye-blink{0%,42%,48%,100%{transform:scaleY(1)}45%{transform:scaleY(.08)}}
+@keyframes help-eye-look{0%,25%,100%{transform:translateX(0)}40%,55%{transform:translateX(-3px)}70%,85%{transform:translateX(3px)}}
+@keyframes help-eyes-pulse{50%{transform:scale(1.06);background:#9cefff;box-shadow:0 3px 0 #087b9e,0 0 0 6px #ffe66e,0 0 30px #27cdebbb}}
+.student-screen-frozen .show-eyes,.student-screen-frozen .show-eyes *{animation-play-state:paused!important}
+@media(max-width:760px){.farm-header nav .show-eyes{width:76px;height:51px}.show-eyes svg{width:59px;height:40px}}
+@media(prefers-reduced-motion:reduce){.show-eyes,.show-eyes *{animation:none!important}}
