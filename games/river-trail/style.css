@@ -1,0 +1,421 @@
+:root{color-scheme:light}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:system-ui,-apple-system,sans-serif;background:#f3f0df;color:#344f4c}body{height:100dvh;overflow:hidden}[hidden]{display:none!important}button,a{font:inherit}button{cursor:pointer;font-weight:750;border:2px solid #b9c7ad;border-radius:14px;background:#fff9e9;color:#355852;box-shadow:0 3px 0 #c3cbb2;touch-action:manipulation}button:hover:not(:disabled),a.icon-control:hover{background:#ffe7a5}button:disabled{opacity:.5;cursor:default}button:focus-visible,a:focus-visible,canvas:focus-visible{outline:4px solid #ecad37;outline-offset:3px}.river-shell{height:100%;max-width:1740px;margin:auto;display:flex;flex-direction:column;padding:12px 20px 6px;gap:8px}header{display:flex;justify-content:space-between;align-items:center;gap:15px}.wordmark small{font-size:9px;letter-spacing:2px;font-weight:850;color:#7a8b6e}.wordmark h1{font:700 clamp(25px,2.9vw,40px)/1.1 Georgia,serif;margin:3px 0;letter-spacing:-1px}nav{display:flex;align-items:center;gap:8px}.icon-control{display:inline-flex;align-items:center;justify-content:center;width:50px;height:46px;border:2px solid #b9c7ad;border-radius:13px;background:#fff9e9;box-shadow:0 3px 0 #c3cbb2;text-decoration:none;font-size:26px;color:#355852}.icon-control img{width:27px;height:27px}.river-status{display:flex;align-items:center;gap:16px;min-height:62px}.chapter{display:flex;align-items:center;gap:10px;flex-shrink:0}.chapter>span{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:#3f7777;color:#fff2c6;font:700 23px Georgia,serif}.chapter small{display:block;font-weight:850;font-size:9px;letter-spacing:1.2px;color:#7c8b72}.chapter strong{font-size:15px}#message{flex:1;margin:0;text-align:center;font-size:clamp(12px,1.25vw,16px);font-weight:650;line-height:1.35}#order{display:flex;align-items:center;gap:6px;flex-shrink:0}.order-item{display:flex;align-items:center;gap:3px;padding:3px 6px;border:2px solid #d9cc9b;border-radius:12px;background:#fff8e6}.order-item canvas{width:42px;height:42px}.order-item span{font-weight:800;font-size:15px;white-space:nowrap}.order-item.done{background:#dbebd0;border-color:#89ac80}#routeClue{display:flex;align-items:center;border:2px dashed #c7ae68;border-radius:13px;background:#fff3cc}#routeClue canvas{width:47px;height:47px}#routeClue span{font-size:25px;padding-right:6px}.play-layout{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 170px;gap:14px}.trackpad-guide-off .play-layout{grid-template-columns:minmax(0,1fr)}.river-board{position:relative;min-height:0;border:3px solid #92aaa0;border-radius:24px;overflow:hidden;box-shadow:0 5px 0 #c5ceba;background:#9bb783}#river{display:block;width:100%;height:100%;object-fit:contain;touch-action:none;cursor:default}.scene-tag{position:absolute;top:12px;left:15px;padding:6px 13px;background:#fff8e6e8;border:1px solid #b8bea4;border-radius:18px;color:#4a6556;font-size:12px;font-weight:800;pointer-events:none}.journey-meter{position:absolute;right:14px;top:18px;height:125px;width:14px;border:3px solid #fffae0;background:#406e7255;border-radius:15px;pointer-events:none}.journey-meter>span{display:block;position:absolute;bottom:0;width:100%;background:#f5cf70;border-radius:10px;height:0}.journey-meter img{position:absolute;top:-12px;left:-8px;background:#fff4d5;border-radius:6px;padding:2px}.river-guide{width:170px!important;align-self:center!important;margin:0!important;background:#fffaed;border:2px solid #d1d5bb;border-radius:18px;padding:9px!important}.river-guide .imported-trackpad-scene{height:205px!important;min-height:0!important;width:100%!important}.imported-trackpad-guide-label{text-align:center;font-size:14px;font-weight:800;margin:0 0 8px}#controlHint{font-size:12px;text-align:center;line-height:1.45;margin:8px 0}.take-time{text-align:center;font:700 16px Georgia,serif;margin:5px 0;color:#6e825f}#nextPicture{width:110px;height:82px;display:block;margin:auto}footer{display:flex;justify-content:space-between;gap:15px;color:#7f8b70;font-size:10px;min-height:21px;align-items:center}.scene-overlay{position:absolute;inset:0;display:grid;place-items:center;background:#23454d65;backdrop-filter:blur(3px);padding:12px;z-index:5}.welcome{width:min(480px,95%);max-height:100%;overflow:auto;text-align:center;background:#fff8e4;border:3px solid #e2c487;border-radius:26px;padding:18px 30px 14px;box-shadow:0 12px 60px #244b5144}.welcome>small{font-size:10px;font-weight:850;letter-spacing:1.8px;color:#8d805a}.welcome>canvas{display:block;width:270px;max-width:95%;height:100px;margin:0 auto}.welcome h2{font:700 clamp(28px,3.3vw,43px)/1.03 Georgia,serif;letter-spacing:-1px;margin:4px 0 10px;color:#35615e}.welcome p{font-size:15px;line-height:1.5;color:#6a765b;margin:6px 0 17px}#start{display:block;margin:auto;padding:12px 32px;font-size:20px;background:#427e77;border-color:#2f635e;box-shadow:0 4px 0 #2c5a56;color:#fff8de}#start:hover{background:#508f81}#replay{display:block;font-size:12px;padding:5px 13px;margin:12px auto 0;background:transparent;box-shadow:none}.overlay-home{display:inline-flex;align-items:center;gap:6px;color:#6c7e66;font-size:12px;margin-top:15px;text-decoration:none}.show-eyes{width:85px;height:55px;padding:3px 8px;display:inline-flex;align-items:center;justify-content:center;border:3px solid #628ba2;border-radius:17px;background:#e4f5ff;box-shadow:0 3px 0 #9cbcc7;transform-origin:center}.show-eyes svg{width:66px;height:44px;display:block;pointer-events:none;overflow:visible}.show-eyes .eye-blink{transform-box:fill-box;transform-origin:center;animation:eye-blink 5.6s ease-in-out infinite;animation-play-state:paused}.show-eyes .eye-look{animation:eye-look 7s ease-in-out infinite;animation-play-state:paused}.show-eyes.is-active .eye-blink,.show-eyes.is-active .eye-look{animation-play-state:running}.show-eyes.needs-help{background:#48dcf2;border-color:#087b9e;box-shadow:0 3px 0 #087b9e,0 0 0 4px #ffe66e,0 0 22px #27cdebbb;animation:eyes-pulse 1.5s ease-in-out infinite;animation-play-state:paused}.show-eyes.needs-help.is-active{animation-play-state:running}@keyframes eye-blink{0%,42%,48%,100%{transform:scaleY(1)}45%{transform:scaleY(.08)}}@keyframes eye-look{0%,25%,100%{transform:translateX(0)}40%,55%{transform:translateX(-3px)}70%,85%{transform:translateX(3px)}}@keyframes eyes-pulse{50%{transform:scale(1.06);background:#9cefff;box-shadow:0 3px 0 #087b9e,0 0 0 6px #ffe66e,0 0 30px #27cdebbb}}.student-screen-frozen .show-eyes,.student-screen-frozen .show-eyes *{animation-play-state:paused!important}
+@media(max-width:1100px){.river-shell{padding:8px 10px 4px;gap:6px}.play-layout{grid-template-columns:minmax(0,1fr) 140px;gap:10px}.river-guide{width:140px!important}.river-guide .imported-trackpad-scene{height:170px!important}.river-status{gap:9px}.chapter strong{font-size:13px}.order-item{padding:2px 4px;gap:0}.order-item canvas{width:34px;height:38px}.order-item span{font-size:12px}#routeClue canvas{width:38px;height:42px}#message{font-size:12px}.take-time{font-size:14px}}
+@media(max-height:700px){.wordmark small{display:none}.wordmark h1{font-size:28px}.river-status{min-height:49px}.welcome{padding:10px 20px}.welcome>canvas{height:65px;width:200px}.welcome h2{font-size:31px}.welcome p{font-size:13px;margin:4px 0 12px}#start{padding:9px 24px}.river-guide .imported-trackpad-scene{height:170px!important}#nextPicture{height:60px;width:80px}}
+@media(max-width:760px){body{height:auto;overflow:auto}.river-shell{height:auto;min-height:100dvh}header{flex-wrap:wrap;gap:6px}.wordmark h1{font-size:27px}nav{gap:5px}.icon-control{width:44px;height:43px}.show-eyes{width:74px;height:48px}.show-eyes svg{width:57px;height:39px}.river-status{flex-wrap:wrap}.river-status #message{order:4;flex-basis:100%;min-height:33px}.play-layout,.trackpad-guide-off .play-layout{display:block;flex:none}.river-board{height:540px}.river-guide{display:none!important}#order{margin-left:auto}footer{font-size:9px}.journey-meter{height:90px}.scene-tag{font-size:10px;left:9px;top:8px}}
+@media(prefers-reduced-motion:reduce){.show-eyes,.show-eyes *{animation:none!important}}
+
+/* Trackpad visuals scoped to this game; shared guide scripts still position the hands. */
+.imported-trackpad-scene {
+  width: min(100%, 206px);
+  border-radius: 8px;
+}
+
+.back-button,
+.sound-toggle-button {
+  border-radius: 10px;
+  padding: 0;
+  width: 38px;
+  height: 34px;
+  min-width: 38px;
+  font-size: 17px;
+  line-height: 1;
+  display: inline-grid;
+  place-items: center;
+}
+
+.back-button:focus-visible,
+.sound-toggle-button:focus-visible,
+.start-button:focus-visible {
+  outline: 2px solid rgba(124, 247, 255, 0.78);
+  outline-offset: 2px;
+}
+
+.back-button,
+.sound-toggle-button {
+  border: 1px solid rgba(195, 222, 244, 0.32);
+  background: linear-gradient(180deg, rgba(24, 35, 48, 0.98), rgba(14, 24, 34, 0.98));
+  color: #eaf5ff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.back-button:hover,
+.back-button:focus-visible,
+.sound-toggle-button:hover,
+.sound-toggle-button:focus-visible {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.hud-status-row {
+  min-width: 0;
+}
+
+.hud-stat-status {
+  min-height: 30px;
+  width: 100%;
+  border-radius: 10px;
+  padding: 0.26rem 0.5rem;
+  background: linear-gradient(180deg, rgba(124, 247, 255, 0.14), rgba(124, 247, 255, 0.06));
+}
+
+.hud-stat-status .label {
+  font-size: 0.66rem;
+}
+
+.hud-stat-status .value {
+  font-size: clamp(0.8rem, 0.95vw, 0.9rem);
+}
+
+#carTarget {
+  color: var(--car-target-color, #38bdf8);
+  text-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.75),
+    0 0 6px rgba(0, 0, 0, 0.35);
+}
+
+.start-button {
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.95rem 1.1rem;
+  font: inherit;
+  font-weight: 700;
+  color: #04111c;
+  background: linear-gradient(135deg, #7cf7ff, #d6fbff 52%, #ffffff);
+  cursor: pointer;
+  box-shadow: 0 14px 40px rgba(124, 247, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+.start-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 46px rgba(124, 247, 255, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.36);
+}
+
+.start-button:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.admin-toggle,
+.back-button,
+.sound-toggle-button,
+.admin-apply {
+  appearance: none;
+  border-radius: 16px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: linear-gradient(135deg, rgba(124, 247, 255, 0.2), rgba(255, 211, 107, 0.14));
+  color: var(--text);
+  padding: 0.62rem 0.75rem;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
+}
+
+.admin-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 20;
+  min-width: 128px;
+}
+
+.panel .admin-toggle {
+  position: static;
+  top: auto;
+  right: auto;
+  z-index: auto;
+  margin-top: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-button {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 20;
+}
+
+.sound-toggle-button {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 20;
+}
+
+.admin-toggle:hover,
+.back-button:hover,
+.sound-toggle-button:hover,
+.admin-apply:hover {
+  filter: brightness(1.08);
+}
+
+.admin-controls {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.7rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.admin-level-group {
+  display: grid;
+  gap: 0.38rem;
+  border-radius: 14px;
+  padding: 0.55rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.admin-level-group h3 {
+  margin: 0 0 0.1rem;
+  font-size: 0.9rem;
+  color: var(--accent-2);
+}
+
+.admin-controls[hidden],
+.admin-drawer[hidden],
+.admin-unlock[hidden] {
+  display: none !important;
+}
+
+.admin-drawer {
+  position: fixed;
+  top: 0.85rem;
+  right: 0.85rem;
+  z-index: 19;
+  width: min(320px, calc(100vw - 1.7rem));
+  max-height: calc(100svh - 1.7rem);
+  overflow: auto;
+  border-radius: 20px;
+  padding: 0.9rem;
+  background: rgba(8, 18, 34, 0.96);
+  border: 1px solid rgba(180, 227, 255, 0.28);
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.42);
+}
+
+.admin-drawer h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.1rem;
+  color: #ffffff;
+}
+
+.admin-unlock {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.admin-message {
+  min-height: 1.2rem;
+  margin: 0.65rem 0 0;
+  font-size: 0.82rem;
+  color: rgba(240, 249, 255, 0.82);
+}
+
+.admin-field {
+  display: grid;
+  gap: 0.3rem;
+  color: rgba(240, 249, 255, 0.86);
+  font-size: 0.86rem;
+}
+
+.admin-field input {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(4, 12, 24, 0.76);
+  color: var(--text);
+  padding: 0.45rem 0.55rem;
+  font: inherit;
+}
+
+.admin-toggle-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  color: rgba(240, 249, 255, 0.9);
+  font-size: 0.86rem;
+  padding: 0.2rem 0;
+}
+
+.admin-toggle-field input {
+  inline-size: 1.1rem;
+  block-size: 1.1rem;
+  accent-color: #7cf7ff;
+  cursor: pointer;
+}
+
+.admin-field select {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(4, 12, 24, 0.76);
+  color: var(--text);
+  padding: 0.45rem 0.55rem;
+  font: inherit;
+}
+
+.admin-field input:focus {
+  outline: 2px solid rgba(124, 224, 255, 0.45);
+  outline-offset: 1px;
+}
+
+.admin-field select:focus {
+  outline: 2px solid rgba(124, 224, 255, 0.45);
+  outline-offset: 1px;
+}
+
+.arena-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  min-height: 0;
+  width: 100%;
+}
+
+.imported-trackpad-guide {
+  display: grid;
+  justify-items: center;
+  gap: 0.2rem;
+  padding: 0.24rem;
+  border-radius: 16px;
+  border: 1px solid rgba(204, 226, 246, 0.34);
+  background: linear-gradient(180deg, rgba(17, 24, 34, 0.9), rgba(13, 19, 28, 0.94));
+  max-width: 360px;
+  width: min(100%, 360px);
+  margin: 0 auto;
+}
+
+.imported-trackpad-guide-label {
+  margin: 0;
+  text-align: center;
+  color: #c8d9ea;
+  font-size: 0.84rem;
+}
+
+.imported-trackpad-scene {
+  position: relative;
+  width: min(100%, 224px);
+  aspect-ratio: 626 / 437;
+  border-radius: 10px;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(235, 245, 255, 0.14);
+  background: linear-gradient(160deg, rgba(16, 21, 29, 0.92), rgba(23, 30, 40, 0.92));
+}
+
+.imported-trackpad-image {
+  position: absolute;
+  left: 8%;
+  top: 8%;
+  width: 84%;
+  height: 84%;
+  object-fit: cover;
+  border-radius: 8px;
+  z-index: 1;
+}
+
+.imported-trackpad-hand {
+  position: absolute;
+  width: 51.2%;
+  max-width: 320px;
+  pointer-events: none;
+  transform-origin: center;
+  transition: transform 120ms ease;
+  z-index: 2;
+}
+
+.imported-trackpad-left-hand.pressed {
+  transform: translateY(3px) scale(0.985);
+}
+
+.imported-trackpad-right-hand {
+  left: calc(300 / 626 * 100%);
+  top: calc(158 / 437 * 100%);
+}
+
+.imported-trackpad-press-indicator {
+  position: absolute;
+  left: 18.9%;
+  top: 53.2%;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 2px solid rgba(156, 222, 255, 0.9);
+  background: rgba(156, 222, 255, 0.24);
+  box-shadow: 0 0 0 0 rgba(156, 222, 255, 0.5);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.8);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.imported-trackpad-scene.is-pressed .imported-trackpad-press-indicator {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  animation: importedPressPulse 0.95s ease-out infinite;
+}
+
+
+/* Keep the whole playfield inside the current browser viewport, including at zoom. */
+html,body{min-width:0;min-height:0;padding:0;overflow:hidden}
+body{display:block;height:100dvh;max-height:100dvh;line-height:1.35}
+main.river-shell{display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;width:100%;height:100dvh;min-height:0;max-height:100dvh;overflow:hidden;margin:0 auto;padding:8px 12px 6px;gap:6px}
+.river-shell>header{min-width:0;min-height:0;flex-wrap:nowrap;gap:8px}
+.wordmark{min-width:0}.wordmark h1{font-size:clamp(21px,2.7vw,35px)}
+.river-shell nav{flex-shrink:0;gap:6px}
+.river-status{display:grid;grid-template-columns:minmax(140px,.9fr) minmax(0,1.8fr) auto auto;min-height:0;gap:10px}
+.river-status>*{min-width:0}#message{overflow-wrap:anywhere;line-height:1.3}
+.play-layout{display:grid;grid-template-columns:minmax(0,1fr) 150px;grid-template-rows:minmax(0,1fr);width:100%;height:100%;min-width:0;min-height:0;overflow:hidden;gap:10px}
+.trackpad-guide-off .play-layout{display:grid;grid-template-columns:minmax(0,1fr)}
+.river-board{width:100%;height:100%;min-width:0;min-height:0;max-height:100%;align-self:stretch}
+#river{width:100%;height:100%;min-width:0;min-height:0;max-height:100%;object-fit:contain}
+.river-guide{display:flex;flex-direction:column;justify-content:flex-start;align-items:center;align-self:stretch!important;width:100%!important;max-width:100%;height:100%;min-width:0;min-height:0;max-height:100%;padding:6px!important;gap:5px;overflow:hidden}
+.river-guide .imported-trackpad-guide-label{flex:0 0 auto;margin:0;color:#425f59;font-size:12px;line-height:1.2}
+.river-guide .imported-trackpad-scene{flex:1 1 0;width:100%!important;height:auto!important;min-height:0!important;max-height:190px;aspect-ratio:auto}
+#controlHint{flex:0 0 auto;font-size:11px;line-height:1.3;text-align:center;margin:0;overflow-wrap:anywhere}
+#nextPicture{flex:0 0 auto;width:84px;height:63px;margin:0 auto}
+.take-time{flex:0 0 auto;font-size:12px;line-height:1.2;margin:0;text-align:center}
+.river-shell>footer{min-width:0;min-height:0;font-size:9px;line-height:1.2;gap:8px}.river-shell>footer span:first-child{min-width:0}
+.scene-overlay{min-height:0;overflow:hidden}.welcome{min-height:0;max-height:100%;overscroll-behavior:contain}
+@media(max-width:1000px){
+ .river-status{grid-template-columns:minmax(0,1fr) auto auto;gap:5px 9px}
+ .river-status #message{grid-column:1/-1;grid-row:2;min-height:0;font-size:12px}
+ #order{margin-left:0}.chapter strong{font-size:12px}.chapter small{font-size:8px}
+ .play-layout{grid-template-columns:minmax(0,1fr) 135px}
+ #controlHint{font-size:10px}.wordmark small{font-size:8px;letter-spacing:1px}
+}
+@media(max-height:760px){
+ main.river-shell{padding:6px 9px 5px;gap:5px}
+ .wordmark small,.take-time,.river-shell>footer{display:none}
+ .wordmark h1{font-size:clamp(21px,2.6vw,30px)}
+ .river-shell .icon-control{height:42px;width:44px}.river-shell .show-eyes{height:48px;width:76px}.show-eyes svg{width:58px;height:38px}
+ .chapter>span{width:34px;height:34px;font-size:20px}.order-item canvas{width:32px;height:32px}.order-item span{font-size:12px}
+ #routeClue canvas{height:35px;width:35px}#nextPicture{height:45px;width:60px}
+ .river-guide .imported-trackpad-scene{max-height:150px}
+ .scene-tag{font-size:10px;top:8px;left:9px}.journey-meter{height:90px}
+}
+@media(max-width:800px),(max-height:520px){
+ .play-layout,.trackpad-guide-off .play-layout{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);height:100%;min-height:0}
+ .river-guide{display:none!important}.river-board{height:100%;min-height:0}
+}
+@media(max-width:580px){
+ main.river-shell{padding:5px 6px;gap:5px}
+ .wordmark small{display:none}.wordmark h1{font-size:19px;line-height:1.05}
+ .river-shell nav{gap:4px}.river-shell .icon-control{width:36px;height:39px;font-size:22px}.icon-control img{height:23px;width:23px}.river-shell .show-eyes{width:60px;height:43px;padding:2px}.show-eyes svg{width:49px;height:34px}
+ .river-status{grid-template-columns:minmax(0,1fr) auto;gap:4px 6px}
+ .river-status #message{grid-column:1;grid-row:2;font-size:10px;text-align:left}
+ #routeClue{grid-column:2;grid-row:2;justify-self:end}#routeClue canvas{height:25px;width:25px}#routeClue span{font-size:17px}
+ .chapter{gap:6px}.chapter strong{font-size:11px}.chapter small{font-size:7px}.chapter>span{width:28px;height:28px;font-size:17px}
+ #order{gap:3px}.order-item{padding:2px 3px;gap:1px;border-radius:9px}.order-item canvas{height:26px;width:26px}.order-item span{font-size:10px}
+ .river-shell>footer{display:none}.river-board{border-radius:16px}.scene-tag{font-size:9px;padding:4px 8px}.journey-meter{height:65px;right:10px}
+ .welcome{padding:10px 15px}.welcome>canvas{height:58px;width:160px}.welcome h2{font-size:27px}.welcome p{font-size:12px;line-height:1.3}.welcome>small{font-size:8px}
+}
+@keyframes importedPressPulse{0%{box-shadow:0 0 0 0 rgba(156,222,255,.5)}100%{box-shadow:0 0 0 20px rgba(156,222,255,0)}}
