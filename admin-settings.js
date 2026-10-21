@@ -4384,6 +4384,7 @@ async function saveTask1Settings() {
         hauntedStreetLevelGoals,
         movingSoundSettings:
           getMovingSoundSettingsSnapshot(),
+        ...window.FarmyardHelpersSettings.snapshot(),
         ...window.HarvestHeroesSettings.snapshot(),
         ...window.PumpkinStudioSettings.snapshot(),
         ...window.ThreeLittlePigsSettings.snapshot(),
