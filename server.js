@@ -2,6 +2,7 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const { normalize: normalizeHomeCardOrder } = require("./home-card-order-model.js");
+const { normalize: normalizeRiverVisitorLevels, normalizeCamp: normalizeRiverCampChance } = require("./games/river-trail/visitor-settings.js");
 const { createClient } = require("@supabase/supabase-js");
 
 const PORT = Number.parseInt(process.env.PORT || "8000", 10);
@@ -38,7 +39,64 @@ const supabase =
 let liveClassroomState = {
   freezeScreenFeatureEnabled: false,
   freezeScreenArmed: false,
+  freezeScreenImmediate: false,
+  freezeTimerEndsAt: null,
+  freezeStateRevision: 0,
 };
+const freezeStateEpoch = require("crypto").randomUUID();
+let freezeTimerHandle = null;
+
+function clearFreezeDeadline() {
+  if (freezeTimerHandle !== null) clearTimeout(freezeTimerHandle);
+  freezeTimerHandle = null;
+  liveClassroomState.freezeTimerEndsAt = null;
+}
+
+function setLiveFreeze(armed, immediate = false) {
+  clearFreezeDeadline();
+  liveClassroomState.freezeScreenArmed = Boolean(armed);
+  liveClassroomState.freezeScreenImmediate = Boolean(armed && immediate);
+  liveClassroomState.freezeStateRevision++;
+}
+
+function applyFreezeFeature(enabled) {
+  const next = Boolean(enabled);
+  const changed = next !== liveClassroomState.freezeScreenFeatureEnabled;
+  liveClassroomState.freezeScreenFeatureEnabled = next;
+  if (!next && (liveClassroomState.freezeTimerEndsAt !== null || liveClassroomState.freezeScreenArmed)) setLiveFreeze(false);
+  else if (changed) liveClassroomState.freezeStateRevision++;
+}
+
+function reconcileFreezeDeadline() {
+  if (liveClassroomState.freezeTimerEndsAt !== null && Date.now() >= liveClassroomState.freezeTimerEndsAt) {
+    setLiveFreeze(liveClassroomState.freezeScreenFeatureEnabled, liveClassroomState.freezeScreenFeatureEnabled);
+  }
+}
+
+function scheduleFreezeDeadline() {
+  const revision = liveClassroomState.freezeStateRevision;
+  const deadline = liveClassroomState.freezeTimerEndsAt;
+  if (deadline === null) return;
+  freezeTimerHandle = setTimeout(() => {
+    // A cancelled/replaced timer cannot re-arm the classroom after logout or release.
+    if (revision !== liveClassroomState.freezeStateRevision || deadline !== liveClassroomState.freezeTimerEndsAt) return;
+    freezeTimerHandle = null;
+    reconcileFreezeDeadline();
+    if (liveClassroomState.freezeTimerEndsAt !== null) scheduleFreezeDeadline();
+  }, Math.max(1, deadline - Date.now()));
+  freezeTimerHandle.unref?.();
+}
+
+function startFreezeDeadline(seconds) {
+  setLiveFreeze(false);
+  liveClassroomState.freezeTimerEndsAt = Date.now() + seconds * 1000;
+  scheduleFreezeDeadline();
+}
+
+function freezeSnapshot() {
+  reconcileFreezeDeadline();
+  return { ...liveClassroomState, freezeStateEpoch, serverNow: Date.now() };
+}
 
 function normalizeSenseBuilderLevels(value, defaults) {
   if (!Array.isArray(value) || value.length !== 4) {
@@ -154,6 +212,8 @@ const DEFAULT_SETTINGS = {
   riverTrailVoiceInstructions: false,
   riverTrailRequireClickAndDrag: false,
   riverTrailLevelCount: 5,
+  riverTrailVisitorLevels: normalizeRiverVisitorLevels(),
+  riverTrailCampChance: 40,
   farmyardHelpersGameActive: true,
   farmyardHelpersVoiceInstructions: false,
   farmyardHelpersRequireClickAndDrag: false,
@@ -798,6 +858,8 @@ function loadSettings() {
       riverTrailVoiceInstructions: parseTaskEnabled(data.riverTrailVoiceInstructions, false),
       riverTrailRequireClickAndDrag: parseTaskEnabled(data.riverTrailRequireClickAndDrag, false),
       riverTrailLevelCount: [1, 2, 3, 4, 5].includes(Number(data.riverTrailLevelCount)) ? Number(data.riverTrailLevelCount) : 5,
+      riverTrailVisitorLevels: normalizeRiverVisitorLevels(data.riverTrailVisitorLevels),
+      riverTrailCampChance: normalizeRiverCampChance(data.riverTrailCampChance),
       farmyardHelpersGameActive: parseTaskEnabled(data.farmyardHelpersGameActive, true),
       farmyardHelpersVoiceInstructions: parseTaskEnabled(data.farmyardHelpersVoiceInstructions, false),
       farmyardHelpersRequireClickAndDrag: parseTaskEnabled(data.farmyardHelpersRequireClickAndDrag, false),
@@ -1183,6 +1245,8 @@ function saveSettings(settings) {
     riverTrailVoiceInstructions: parseTaskEnabled(settings.riverTrailVoiceInstructions ?? existing.riverTrailVoiceInstructions, false),
     riverTrailRequireClickAndDrag: parseTaskEnabled(settings.riverTrailRequireClickAndDrag ?? existing.riverTrailRequireClickAndDrag, false),
     riverTrailLevelCount: [1, 2, 3, 4, 5].includes(Number(settings.riverTrailLevelCount ?? existing.riverTrailLevelCount)) ? Number(settings.riverTrailLevelCount ?? existing.riverTrailLevelCount) : 5,
+    riverTrailVisitorLevels: normalizeRiverVisitorLevels(settings.riverTrailVisitorLevels ?? existing.riverTrailVisitorLevels),
+    riverTrailCampChance: normalizeRiverCampChance(settings.riverTrailCampChance ?? existing.riverTrailCampChance),
     farmyardHelpersGameActive: parseTaskEnabled(settings.farmyardHelpersGameActive ?? existing.farmyardHelpersGameActive, true),
     farmyardHelpersVoiceInstructions: parseTaskEnabled(settings.farmyardHelpersVoiceInstructions ?? existing.farmyardHelpersVoiceInstructions, false),
     farmyardHelpersRequireClickAndDrag: parseTaskEnabled(settings.farmyardHelpersRequireClickAndDrag ?? existing.farmyardHelpersRequireClickAndDrag, false),
@@ -1422,6 +1486,30 @@ ensureSettingsFile();
 const server = http.createServer(async (req, res) => {
   const requestUrl = new URL(req.url, `http://${req.headers.host || "localhost"}`);
 
+  if (requestUrl.pathname === "/api/freeze-timer") {
+    if (req.method !== "PUT") {
+      sendJson(res, 405, { error: "Method not allowed" });
+      return;
+    }
+    try {
+      const command = JSON.parse((await readRequestBody(req)) || "{}");
+      if (command && command.action === "cancel") {
+        setLiveFreeze(false);
+        sendJson(res, 200, freezeSnapshot());
+      } else if (!command || !Number.isInteger(command.durationSeconds) || command.durationSeconds < 1 || command.durationSeconds > 86400) {
+        sendJson(res, 400, { error: "Choose a timer duration between one second and 24 hours." });
+      } else if (!liveClassroomState.freezeScreenFeatureEnabled) {
+        sendJson(res, 409, { error: "Enable Freeze Screen in Teacher Settings first." });
+      } else {
+        startFreezeDeadline(command.durationSeconds);
+        sendJson(res, 200, freezeSnapshot());
+      }
+    } catch {
+      sendJson(res, 400, { error: "Could not read the Freeze timer command." });
+    }
+    return;
+  }
+
   if (
     requestUrl.pathname ===
     "/api/classroom-state"
@@ -1441,14 +1529,7 @@ const server = http.createServer(async (req, res) => {
     sendJson(
       res,
       200,
-      {
-        freezeScreenFeatureEnabled:
-          liveClassroomState
-            .freezeScreenFeatureEnabled,
-        freezeScreenArmed:
-          liveClassroomState
-            .freezeScreenArmed,
-      }
+      freezeSnapshot()
     );
 
     return;
@@ -1479,10 +1560,7 @@ const server = http.createServer(async (req, res) => {
               }
             : localSettings;
 
-        liveClassroomState
-          .freezeScreenFeatureEnabled =
-            normalized
-              .freezeScreenFeatureEnabled;
+        applyFreezeFeature(normalized.freezeScreenFeatureEnabled);
 
         /*
          * Never restore yesterday's
@@ -1495,7 +1573,7 @@ const server = http.createServer(async (req, res) => {
         sendJson(
           res,
           200,
-          normalized
+          { ...normalized, ...freezeSnapshot() }
         );
       } catch (error) {
         console.error(
@@ -1511,10 +1589,7 @@ const server = http.createServer(async (req, res) => {
         const fallbackSettings =
           loadSettings();
 
-        liveClassroomState
-          .freezeScreenFeatureEnabled =
-            fallbackSettings
-              .freezeScreenFeatureEnabled;
+        applyFreezeFeature(fallbackSettings.freezeScreenFeatureEnabled);
 
         fallbackSettings.freezeScreenArmed =
           liveClassroomState
@@ -1523,7 +1598,7 @@ const server = http.createServer(async (req, res) => {
         sendJson(
           res,
           200,
-          fallbackSettings
+          { ...fallbackSettings, ...freezeSnapshot() }
         );
       }
 
@@ -1556,9 +1631,7 @@ const server = http.createServer(async (req, res) => {
          * waiting for permanent Supabase storage.
          */
         if (isFreezeOnlyRequest) {
-          liveClassroomState
-            .freezeScreenArmed =
-              parsed.freezeScreenArmed;
+          setLiveFreeze(parsed.freezeScreenArmed);
 
           const currentSettings =
             loadSettings();
@@ -1570,7 +1643,7 @@ const server = http.createServer(async (req, res) => {
           sendJson(
             res,
             200,
-            currentSettings
+            { ...currentSettings, ...freezeSnapshot() }
           );
 
           return;
@@ -1594,18 +1667,13 @@ const server = http.createServer(async (req, res) => {
             ...parsed,
           });
 
-        liveClassroomState
-          .freezeScreenFeatureEnabled =
-            normalized
-              .freezeScreenFeatureEnabled;
+        applyFreezeFeature(normalized.freezeScreenFeatureEnabled);
 
         if (
           typeof parsed.freezeScreenArmed ===
           "boolean"
         ) {
-          liveClassroomState
-            .freezeScreenArmed =
-              parsed.freezeScreenArmed;
+          setLiveFreeze(parsed.freezeScreenArmed);
         }
 
         /*
@@ -1632,7 +1700,7 @@ const server = http.createServer(async (req, res) => {
         sendJson(
           res,
           200,
-          normalized
+          { ...normalized, ...freezeSnapshot() }
         );
       } catch (error) {
         console.error(
