@@ -1,11 +1,24 @@
-/* Quiet synthesized river, paddle splashes and rewards. No recordings required. */
-(()=>{'use strict';let ctx=null,river=null,gain=null,lastPaddle=-10,lastSteps=-10;const voices=new Set();let enabled=true,active=false;
-function unlock(){try{ctx??=new(window.AudioContext||window.webkitAudioContext)();if(ctx.state==='suspended')ctx.resume().catch(()=>{});}catch{} }
-function tone(f,time=.15,volume=.035,type='sine',delay=0){if(!ctx||!enabled||!active)return;const n=ctx.createOscillator(),g=ctx.createGain(),t=ctx.currentTime+delay;n.type=type;n.frequency.setValueAtTime(f,t);n.frequency.exponentialRampToValueAtTime(f*.83,t+time);g.gain.setValueAtTime(.001,t);g.gain.exponentialRampToValueAtTime(volume,t+.012);g.gain.exponentialRampToValueAtTime(.001,t+time);n.connect(g);g.connect(ctx.destination);n.start(t);n.stop(t+time+.02);voices.add(n);n.onended=()=>voices.delete(n);}
-function splash(volume=.025,length=.22){if(!ctx||!active||!enabled)return;const buffer=ctx.createBuffer(1,Math.ceil(ctx.sampleRate*length),ctx.sampleRate),data=buffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*(1-i/data.length);const n=ctx.createBufferSource(),g=ctx.createGain(),filter=ctx.createBiquadFilter();filter.type='lowpass';filter.frequency.value=1300;n.buffer=buffer;g.gain.value=volume;n.connect(filter);filter.connect(g);g.connect(ctx.destination);n.start();voices.add(n);n.onended=()=>voices.delete(n);}
-function stream(){if(river||!ctx)return;const b=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*.5;river=ctx.createBufferSource();river.buffer=b;river.loop=true;const f=ctx.createBiquadFilter();f.type='lowpass';f.frequency.value=650;gain=ctx.createGain();gain.gain.value=0;river.connect(f);f.connect(gain);gain.connect(ctx.destination);river.start();}
-function stop(){active=false;for(const n of voices){try{n.stop();}catch{}}voices.clear();if(gain)gain.gain.value=0;ctx?.suspend().catch(()=>{});}
-function update(s,on,sound){enabled=sound;active=on&&sound;if(!active){stop();return;}if(!ctx)return;if(ctx.state==='suspended')ctx.resume().catch(()=>{});stream();gain.gain.value=(s.mode==='river'?.018:.007)*(window.speechSynthesis?.speaking?.35:1);if(s.mode==='river'&&s.boat.moving&&s.time-lastPaddle>.68){lastPaddle=s.time;splash(.038);}if(s.mode==='shore'&&s.person.walking&&s.time-lastSteps>.32){lastSteps=s.time;splash(.015,.07);}}
-function reset(){stop();lastPaddle=-10;lastSteps=-10;}
-function play(kind){if(kind==='bump')splash(.07,.3);else if(kind==='retry'){tone(300,.13,.022);tone(250,.16,.017,'sine',.12);}else if(kind==='win'){[523,659,784,1046].forEach((f,i)=>tone(f,.4,.04,'sine',i*.14));}else if(kind==='pick'){tone(520,.12,.025);tone(780,.16,.022,'sine',.08);}else if(kind==='load'||kind==='route'){tone(660,.14,.03);tone(880,.22,.025,'sine',.12);}else splash(.038);}
-window.RiverAudio={unlock,update,play,stop,reset};})();
+(()=>{'use strict';
+const files={music:['backgroundmusic',.07,true],river:['riverambience',.16,true],paddle:['paddlewater',.30,false],bump:['canoebump',.6,false],dock:['canoeland',.5,false],pick:['pickup',.5,false],load:['pickup',.5,false],water:['basketwater',.55,false],basket:['basketpickup',.5,false],squirrel:['squirrel',.35,false],raccoon:['raccoon',.35,false],gatherer:['footsteps',.3,false],wood:['woodpickup',.45,false],camp:['campfire',.14,true],stolen:['supplystolen',.5,false],landing:['newlanding',.45,false]};
+const tracks={};let unlocked=false,active=false,enabled=true,mode='',lastPaddle=0,lastStep=0,lastCamp=false;const lastEffect={};
+for(const [key,[name,volume,loop]] of Object.entries(files)){const el=new Audio('../../sounds/'+name+'.mp3');el.preload=loop?'auto':'none';el.loop=loop;el.volume=volume;tracks[key]=el;}
+function pauseAll(){for(const el of Object.values(tracks)){el.pause();if(!el.loop)try{el.currentTime=0;}catch{}}}
+function loop(key,should){const el=tracks[key];if(!el)return;if(!should){el.pause();return;}if(el.paused)el.play().catch(()=>{});}
+function effect(key,cooldown=0){if(!active||!enabled||!unlocked)return;const el=tracks[key];if(!el)return;const now=performance.now();if(now-(lastEffect[key]||-1e9)<cooldown)return;lastEffect[key]=now;try{el.pause();el.currentTime=0;el.play().catch(()=>{});}catch{}}
+function unlock(){unlocked=true;}
+function stop(){active=false;pauseAll();}
+function reset(){stop();lastPaddle=0;lastStep=0;lastCamp=false;}
+function halt(key){const el=tracks[key];if(el&&!el.paused){el.pause();try{el.currentTime=0;}catch{}}}
+function update(s,on,sound){enabled=!!sound;active=!!on&&enabled;if(!active){pauseAll();return;}if(!unlocked)return;loop('music',true);loop('river',true);const camp= s.mode==='shore'&&!!(s.shore?.campfire||s.shore?.camp||s.shore?.hasCampfire||s.shore?.campers?.length||s.shore?.campfirePeople?.length);loop('camp',camp);lastCamp=camp;
+const now=performance.now();
+// Movement sounds are gated by current activity, not their MP3 duration.
+const paddling=s.mode==='river'&&!!s.boat?.moving;
+const visitorsWalking=s.mode==='shore'&&Array.isArray(s.visitors)&&s.visitors.some(v=>['approach','rise','return','retreat','leave','walk'].includes(v.phase));
+const helperWalking=s.mode==='shore'&&!!s.person?.walking;
+if(!paddling)halt('paddle');
+else if(now-lastPaddle>700){lastPaddle=now;effect('paddle',500);}
+if(!visitorsWalking&&!helperWalking)halt('gatherer');
+else if(now-lastStep>400){lastStep=now;effect('gatherer',350);}}
+function play(kind){const mapped={bump:'bump',pick:'pick',load:'load',route:'landing',dock:'dock',basket:'basket',stolen:'stolen',visitor:'gatherer',newlanding:'landing',wood:'wood',water:'water'};const key=mapped[kind];if(key)effect(key,kind==='bump'?350:120);}
+window.RiverAudio={unlock,update,play,stop,reset,effect};
+})();
