@@ -3,10 +3,11 @@ const $=id=>document.getElementById(id),canvas=$('farm'),ctx=canvas.getContext('
 const W=1280,H=760,spots=[{x:355,y:500},{x:690,y:535},{x:1000,y:480}];
 let stage=[0,0,0],selected='shovel',started=false,complete=false,now=0,last=0,helpAt=0,helpUntil=0,particles=[],sound=true,paused=false,dragMode=false,voice=false,guide=null;
 let active=0,showHelp=false,fx=145,fy=510,walk=0,blink=0,cloud=0;
-const supplySites=[{x:295,y:343,name:'shovel'},{x:110,y:455,name:'seeds'},{x:1090,y:442,name:'soil'},{x:1165,y:565,name:'water'}];
+const supplySites=[{x:295,y:343,name:'shovel'},{x:110,y:455,name:'seeds'},{x:1160,y:405,name:'soil'},{x:1165,y:565,name:'water'}];
 let carrying=null,walkTarget=null,walkAction=null,working=false,workTime=0,workSpot=-1,taskTool=null;
 let cursorTarget=null,dragHeld=false,walkingNow=false,guidePulse=0;
-let soilLoads=0,soilCart={x:988,y:501},soilCartActive=false,actionKind='',cartWheelAngle=0,cartFacing=1;
+let soilLoads=0,soilCart={x:1030,y:375},soilCartActive=false,actionKind='',cartWheelAngle=0,cartFacing=1;
+let loadingStartedAt=0,showDemoUntil=0;
 let birdsEnabled=true,birdDelay=7,birds=[],birdNextAt=0,birdWarningAt=0,birdEscapes=0,birdVisits=0,shooUntil=0;
 const phase=()=>Math.min(4,...stage);
 const phaseDone=()=>stage.every(v=>v===phase());
@@ -132,11 +133,25 @@ function drawWheelbarrow(x,y,active){
  ctx.fillStyle='#d59250';ctx.beginPath();ctx.moveTo(-39,-30);ctx.lineTo(48,-30);ctx.lineTo(36,3);ctx.lineTo(-27,3);ctx.closePath();ctx.fill();
  line([[-43,-35],[54,-35]],'#f0c18a',5);
  for(let i=0;i<4;i++)line([[-20+i*19,-27],[-15+i*16,2]],'#ac6d3d',2);
- if(soilLoads>0){
-  ctx.fillStyle='#70452d';ctx.beginPath();ctx.moveTo(-34,-28);ctx.quadraticCurveTo(2,-47-soilLoads*2,44,-28);ctx.lineTo(35,-12);ctx.lineTo(-26,-12);ctx.closePath();ctx.fill();
-  for(let i=0;i<soilLoads*6;i++)circle(-27+(i*13)%64,-25-(i%3)*3,3,i%2?'#a77548':'#885632');
+ const visibleLoads=(!active&&working&&actionKind==='load')?Math.min(3,Math.max(0,(now-loadingStartedAt)/1.05)):soilLoads;
+ if(visibleLoads>0){
+  ctx.fillStyle='#70452d';ctx.beginPath();ctx.moveTo(-34,-28);ctx.quadraticCurveTo(2,-47-visibleLoads*2,44,-28);ctx.lineTo(35,-12);ctx.lineTo(-26,-12);ctx.closePath();ctx.fill();
+  for(let i=0;i<Math.floor(visibleLoads*6);i++)circle(-27+(i*13)%64,-25-(i%3)*3,3,i%2?'#a77548':'#885632');
  }
  ctx.restore();
+ if(!active&&working&&actionKind==='load'){
+  // Three visible shovel trips: soil travels from the pile into the tray.
+  const elapsed=now-loadingStartedAt;
+  for(let scoop=0;scoop<3;scoop++){
+   const u=(elapsed-scoop*1.05)/1.05;
+   if(u>=0.22&&u<0.95){
+    const f=(u-.22)/.73;
+    const sx=(supplySites[2].x-x-25)* (1-f) + 2*f;
+    const sy=(supplySites[2].y-y-2)*(1-f) + (-43)*f-20*Math.sin(Math.PI*f);
+    for(let j=0;j<6;j++)circle(sx+(j%3-1)*5,sy+Math.floor(j/3)*5,3.3,j%2?"#8c5936":"#ad7947");
+   }
+  }
+ }
  if(tipping){
   const amount=Math.sin(tipProgress*Math.PI);
   const p=spots[workSpot];
@@ -165,12 +180,21 @@ if(soilCartActive&&walkingNow){
  if(walkTarget&&actionKind!=='soil-delivery'&&Math.abs(walkTarget.x-fx)>25)cartFacing=walkTarget.x>=fx?1:-1;
  else if(!walkTarget&&cursorTarget&&Math.abs(cursorTarget.x-fx)>30)cartFacing=cursorTarget.x>=fx?1:-1;
 }
-johnny(fx,fy,t);
 if(soilCartActive){
  const dir=cartFacing;
  const cartX=fx+dir*91,cartY=fy+7;
  drawWheelbarrow(cartX,cartY,true);
-}else drawWheelbarrow(soilCart.x,soilCart.y,false);
+ }else drawWheelbarrow(soilCart.x,soilCart.y,false);
+// Draw Johnny last so his face, hands and hat are never obscured by the parked cart.
+johnny(fx,fy,t);
+// The Eyes button demonstrates the soil-to-wheelbarrow route without changing progress.
+if(showDemoUntil>now&&phase()===2){
+ const elapsed=4.8-(showDemoUntil-now);
+ const f=(elapsed%1.6)/1.6;
+ const from=supplySites[2],to={x:soilCart.x+8,y:soilCart.y-38};
+ const px=from.x+(to.x-from.x)*f,py=from.y-18+(to.y- (from.y-18))*f-15*Math.sin(Math.PI*f);
+ ctx.save();ctx.strokeStyle="#ffe478";ctx.lineWidth=5;ctx.setLineDash([9,7]);ctx.beginPath();ctx.moveTo(from.x,from.y-18);ctx.quadraticCurveTo((from.x+to.x)/2,from.y-105,to.x,to.y);ctx.stroke();ctx.setLineDash([]);circle(px,py,13,"#fff1a2");ctx.font="bold 24px sans-serif";ctx.fillStyle="#425d37";ctx.fillText("➜",px-10,py+8);ctx.restore();
+}
 // Action indicator follows Johnny's actual feet; never points at an unrelated tree.
 if(started&&!complete&&walkTarget){ctx.save();ctx.strokeStyle='#ffe27b';ctx.lineWidth=4;ctx.setLineDash([7,7]);ctx.beginPath();ctx.ellipse(fx,fy+26,37,13,0,0,Math.PI*2);ctx.stroke();ctx.restore()}
 
@@ -193,13 +217,13 @@ function interact(x,y){
  if(!carrying){
   const s=supplySites.find(p=>Math.hypot(x-p.x,y-p.y)<92);
   if(!s||s.name!==needed){guideHint();chirp(245,.09);return}
-  startWalk(s.name==='soil'?soilCart.x-92:s.x-20,s.name==='soil'?soilCart.y-5:s.y+16,()=>{
+  startWalk(s.name==='soil'?s.x-67:s.x-20,s.name==='soil'?s.y+28:s.y+16,()=>{
    carrying=s.name;
    chirp(540,.13);
    for(let j=0;j<12;j++)particles.push({x:s.x+(Math.random()-.5)*42,y:s.y+(Math.random()-.5)*28,r:3,color:'#ffe27b',life:1});
    if(s.name==='soil'){
     // Johnny loads three scoops before pushing the wheelbarrow.
-    working=true;workTime=now+2;actionKind='load';soilCartActive=false;soilLoads=3;
+    working=true;loadingStartedAt=now;workTime=now+3.15;actionKind='load';soilCartActive=false;soilLoads=0;
     $('message').textContent='Johnny is shoveling soil into the wheelbarrow!';
    }else $('message').textContent=`Johnny has the ${labels[k]}! Visit all three glowing spots.`;
    guide?.play?.('click');
@@ -224,8 +248,13 @@ function finishWork(){
  if(!working||now<workTime)return;
  working=false;
  if(actionKind==='load'){
-  soilCartActive=true;actionKind='';
-  $('message').textContent='The wheelbarrow is full! Click each glowing hole to cover the seeds.';
+  soilLoads=3;actionKind='';
+  // Loading is complete: Johnny walks to the cart handles before pushing.
+  startWalk(soilCart.x-91,soilCart.y+17,()=>{
+   soilCartActive=true;
+   $('message').textContent='The wheelbarrow is full! Push it to each glowing hole.';
+  });
+  $('message').textContent='Johnny is putting down the shovel and walking to the wheelbarrow!';
   return;
  }
  const i=workSpot;workSpot=-1;if(i<0)return;
@@ -295,9 +324,9 @@ canvas.addEventListener('click',e=>{if(dragMode)return;const p=pointer(e);intera
 canvas.addEventListener('pointerdown',e=>{if(!dragMode)return;dragHeld=true;canvas.setPointerCapture(e.pointerId);const p=pointer(e);cursorTarget={x:clamp(p.x,55,W-55),y:clamp(p.y,345,H-45)}});
 canvas.addEventListener('pointerup',e=>{if(!dragMode)return;dragHeld=false;cursorTarget=null;const p=pointer(e);interact(p.x,p.y)});
 canvas.addEventListener('pointercancel',()=>{dragHeld=false;cursorTarget=null});
-function help(){guideHint();say($('message').textContent)}
+function help(){guideHint();if(phase()===2&&!carrying){showDemoUntil=now+4.8;$('message').textContent='Watch: Johnny scoops soil from the pile into the wheelbarrow.';}say($('message').textContent)}
 $('show').disabled=false;$('show').addEventListener('click',help);$('sound').addEventListener('click',()=>{sound=!sound;$('sound').textContent=sound?'🔊':'🔇';$('sound').setAttribute('aria-pressed',String(sound));if(!sound)window.speechSynthesis?.cancel()});$('retry').addEventListener('click',()=>reset());$('start').disabled=false;$('start').textContent='Let’s plant!';$('start').addEventListener('click',()=>{reset();started=true;$('overlay').hidden=true;chirp(550)});$('replay').hidden=true;
-function reset(){birds=[];birdNextAt=0;birdEscapes=0;birdVisits=0;shooUntil=0;stage=[0,0,0];soilLoads=0;soilCartActive=false;cartWheelAngle=0;cartFacing=1;actionKind='';selected='shovel';complete=false;particles=[];started=false;fx=145;fy=510;carrying=null;walkTarget=null;walkAction=null;cursorTarget=null;dragHeld=false;working=false;workSpot=-1;$('overlayKicker').textContent='WELCOME TO JOHNNY’S ORCHARD';$('overlayTitle').innerHTML='Little seeds.<br>Big trees.';$('overlayCopy').textContent='Help Johnny plant three apple trees!';$('start').textContent='Let’s plant!';refresh();updateTools()}
+function reset(){birds=[];birdNextAt=0;birdEscapes=0;birdVisits=0;shooUntil=0;stage=[0,0,0];soilLoads=0;loadingStartedAt=0;showDemoUntil=0;soilCartActive=false;cartWheelAngle=0;cartFacing=1;actionKind='';selected='shovel';complete=false;particles=[];started=false;fx=145;fy=510;carrying=null;walkTarget=null;walkAction=null;cursorTarget=null;dragHeld=false;working=false;workSpot=-1;$('overlayKicker').textContent='WELCOME TO JOHNNY’S ORCHARD';$('overlayTitle').innerHTML='Little seeds.<br>Big trees.';$('overlayCopy').textContent='Help Johnny plant three apple trees!';$('start').textContent='Let’s plant!';refresh();updateTools()}
 try{guide=window.trackpadGuide?.create?.({scene:$('handScene'),leftHand:$('leftHand'),rightHand:$('rightHand'),pressIndicator:$('press'),pointerSpace:'viewport',togglePressIndicator:true,toggleScenePressedClass:true})}catch(e){}
 fetch('/api/settings',{cache:'no-store'}).then(r=>r.ok?r.json():{}).then(s=>{voice=s.johnnyAppleseedVoiceInstructions===true;dragMode=s.johnnyAppleseedRequireClickAndDrag===true;birdsEnabled=s.johnnyAppleseedBlackbirdsEnabled!==false;birdDelay=[5,7,12].includes(Number(s.johnnyAppleseedBirdDelay))?Number(s.johnnyAppleseedBirdDelay):7}).catch(()=>{});
 window.addEventListener('blur',()=>{paused=true;cursorTarget=null;dragHeld=false;window.speechSynthesis?.cancel()});window.addEventListener('focus',()=>{paused=false});document.addEventListener('visibilitychange',()=>{paused=document.hidden;if(paused)window.speechSynthesis?.cancel()});
