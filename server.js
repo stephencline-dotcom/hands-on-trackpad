@@ -98,6 +98,11 @@ function freezeSnapshot() {
   return { ...liveClassroomState, freezeStateEpoch, serverNow: Date.now() };
 }
 
+function normalizeTractorLevels(value, defaults) {
+  if (!Array.isArray(value) || value.length !== 5) return [...defaults];
+  const levels = value.map(v => v === true);
+  return levels.some(Boolean) ? levels : [...defaults];
+}
 function normalizeSenseBuilderLevels(value, defaults) {
   if (!Array.isArray(value) || value.length !== 4) {
     return [...defaults];
@@ -170,6 +175,7 @@ const DEFAULT_SETTINGS = {
   senseBuilderGameActive: true,
   senseBuilderRequireClickAndDrag: false,
   senseBuilderLevels: [true, true, true, true],
+  tractorJobCrewLevels: [true, false, false, false, false],
   chickenLittleGameActive: true,
   tortoisePuzzleGameActive: true,
   tortoisePuzzleVoiceInstructions: true,
@@ -217,6 +223,10 @@ const DEFAULT_SETTINGS = {
   farmyardHelpersGameActive: true,
   farmyardHelpersVoiceInstructions: false,
   farmyardHelpersRequireClickAndDrag: false,
+  johnnyAppleseedVoiceInstructions: false,
+  johnnyAppleseedRequireClickAndDrag: false,
+  johnnyAppleseedBlackbirdsEnabled: true,
+  johnnyAppleseedBirdDelay: 7,
   farmyardHelpersLevelCount: 4,
   harvestHeroesGameActive: true,
   harvestHeroesVoiceInstructions: true,
@@ -717,6 +727,7 @@ function loadSettings() {
         data.senseBuilderLevels,
         DEFAULT_SETTINGS.senseBuilderLevels
       ),
+      tractorJobCrewLevels: normalizeTractorLevels(data.tractorJobCrewLevels, DEFAULT_SETTINGS.tractorJobCrewLevels),
       chickenLittleGameActive: parseTaskEnabled(
         data.chickenLittleGameActive,
         DEFAULT_SETTINGS.chickenLittleGameActive
@@ -863,6 +874,10 @@ function loadSettings() {
       farmyardHelpersGameActive: parseTaskEnabled(data.farmyardHelpersGameActive, true),
       farmyardHelpersVoiceInstructions: parseTaskEnabled(data.farmyardHelpersVoiceInstructions, false),
       farmyardHelpersRequireClickAndDrag: parseTaskEnabled(data.farmyardHelpersRequireClickAndDrag, false),
+      johnnyAppleseedVoiceInstructions: parseTaskEnabled(data.johnnyAppleseedVoiceInstructions, false),
+      johnnyAppleseedRequireClickAndDrag: parseTaskEnabled(data.johnnyAppleseedRequireClickAndDrag, false),
+      johnnyAppleseedBlackbirdsEnabled: parseTaskEnabled(data.johnnyAppleseedBlackbirdsEnabled, true),
+      johnnyAppleseedBirdDelay: [5,7,12].includes(Number(data.johnnyAppleseedBirdDelay)) ? Number(data.johnnyAppleseedBirdDelay) : 7,
       farmyardHelpersLevelCount: [1, 2, 3, 4].includes(Number(data.farmyardHelpersLevelCount)) ? Number(data.farmyardHelpersLevelCount) : 4,
       harvestHeroesGameActive: parseTaskEnabled(data.harvestHeroesGameActive, true),
       harvestHeroesVoiceInstructions: parseTaskEnabled(data.harvestHeroesVoiceInstructions, true),
@@ -1120,6 +1135,7 @@ function saveSettings(settings) {
         existing.senseBuilderLevels,
       DEFAULT_SETTINGS.senseBuilderLevels
     ),
+    tractorJobCrewLevels: normalizeTractorLevels(settings.tractorJobCrewLevels ?? existing.tractorJobCrewLevels, DEFAULT_SETTINGS.tractorJobCrewLevels),
     chickenLittleGameActive: parseTaskEnabled(
       settings.chickenLittleGameActive ??
         existing.chickenLittleGameActive,
@@ -1250,6 +1266,10 @@ function saveSettings(settings) {
     farmyardHelpersGameActive: parseTaskEnabled(settings.farmyardHelpersGameActive ?? existing.farmyardHelpersGameActive, true),
     farmyardHelpersVoiceInstructions: parseTaskEnabled(settings.farmyardHelpersVoiceInstructions ?? existing.farmyardHelpersVoiceInstructions, false),
     farmyardHelpersRequireClickAndDrag: parseTaskEnabled(settings.farmyardHelpersRequireClickAndDrag ?? existing.farmyardHelpersRequireClickAndDrag, false),
+    johnnyAppleseedVoiceInstructions: parseTaskEnabled(settings.johnnyAppleseedVoiceInstructions ?? existing.johnnyAppleseedVoiceInstructions, false),
+    johnnyAppleseedRequireClickAndDrag: parseTaskEnabled(settings.johnnyAppleseedRequireClickAndDrag ?? existing.johnnyAppleseedRequireClickAndDrag, false),
+    johnnyAppleseedBlackbirdsEnabled: parseTaskEnabled(settings.johnnyAppleseedBlackbirdsEnabled ?? existing.johnnyAppleseedBlackbirdsEnabled, true),
+    johnnyAppleseedBirdDelay: [5,7,12].includes(Number(settings.johnnyAppleseedBirdDelay ?? existing.johnnyAppleseedBirdDelay)) ? Number(settings.johnnyAppleseedBirdDelay ?? existing.johnnyAppleseedBirdDelay) : 7,
     farmyardHelpersLevelCount: [1, 2, 3, 4].includes(Number(settings.farmyardHelpersLevelCount ?? existing.farmyardHelpersLevelCount)) ? Number(settings.farmyardHelpersLevelCount ?? existing.farmyardHelpersLevelCount) : 4,
     harvestHeroesGameActive: parseTaskEnabled(settings.harvestHeroesGameActive ?? existing.harvestHeroesGameActive, true),
     harvestHeroesVoiceInstructions: parseTaskEnabled(settings.harvestHeroesVoiceInstructions ?? existing.harvestHeroesVoiceInstructions, true),

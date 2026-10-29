@@ -358,6 +358,22 @@ function displaySenseBuilderLevels(levels) {
     }
   });
 }
+const TRACTOR_LEVEL_IDS = [1,2,3,4,5].map(n => `tractorJobCrewLevel${n}`);
+const TRACTOR_LEVEL_DEFAULT = [true,false,false,false,false];
+function normalizeTractorLevelsAdmin(value) {
+  if (!Array.isArray(value) || value.length !== 5) return [...TRACTOR_LEVEL_DEFAULT];
+  const levels = value.map(v => v === true);
+  return levels.some(Boolean) ? levels : [...TRACTOR_LEVEL_DEFAULT];
+}
+function tractorLevelSelections() {
+  return TRACTOR_LEVEL_IDS.map(id => document.getElementById(id)?.checked === true);
+}
+function displayTractorLevels(value) {
+  normalizeTractorLevelsAdmin(value).forEach((enabled,i) => {
+    const el = document.getElementById(TRACTOR_LEVEL_IDS[i]);
+    if (el) el.checked = enabled;
+  });
+}
 const SENSE_BUILDER_GAME_ACTIVE_KEY = "senseBuilderGameActive";
 const TORTOISE_PUZZLE_GAME_ACTIVE_KEY = "tortoisePuzzleGameActive";
 const CLAMBAKE_ADVENTURE_GAME_ACTIVE_KEY = "clambakeAdventureGameActive";
@@ -2567,6 +2583,19 @@ async function loadTask1Settings() {
       false
     );
 
+  const johnnyDragToggle = document.getElementById('johnnyAppleseedRequireClickAndDrag');
+  const johnnyVoiceToggle = document.getElementById('johnnyAppleseedVoiceInstructions');
+  const johnnyBirdToggle = document.getElementById('johnnyAppleseedBlackbirdsEnabled');
+  const johnnyBirdDelaySelect = document.getElementById('johnnyAppleseedBirdDelay');
+  let johnnyDrag = parseTaskEnabled(localStorage.getItem('johnnyAppleseedRequireClickAndDrag'), false);
+  let johnnyVoice = parseTaskEnabled(localStorage.getItem('johnnyAppleseedVoiceInstructions'), false);
+  let johnnyBirds = parseTaskEnabled(localStorage.getItem('johnnyAppleseedBlackbirdsEnabled'), true);
+  let johnnyBirdDelay = [5,7,12].includes(Number(localStorage.getItem('johnnyAppleseedBirdDelay'))) ? Number(localStorage.getItem('johnnyAppleseedBirdDelay')) : 7;
+  if (johnnyDragToggle) johnnyDragToggle.checked = johnnyDrag;
+  if (johnnyVoiceToggle) johnnyVoiceToggle.checked = johnnyVoice;
+  if (johnnyBirdToggle) johnnyBirdToggle.checked = johnnyBirds;
+  if (johnnyBirdDelaySelect) johnnyBirdDelaySelect.value = String(johnnyBirdDelay);
+  let tractorJobCrewLevels = normalizeTractorLevelsAdmin(JSON.parse(localStorage.getItem("tractorJobCrewLevels") || "null"));
   let senseBuilderLevels = normalizeSenseBuilderLevels(
     JSON.parse(
       localStorage.getItem("senseBuilderLevels") || "null"
@@ -3023,6 +3052,17 @@ async function loadTask1Settings() {
         data.bugMeadowGameActive,
         bugMeadowGameActive
       );
+      johnnyDrag = parseTaskEnabled(data.johnnyAppleseedRequireClickAndDrag, johnnyDrag);
+      johnnyVoice = parseTaskEnabled(data.johnnyAppleseedVoiceInstructions, johnnyVoice);
+      johnnyBirds = parseTaskEnabled(data.johnnyAppleseedBlackbirdsEnabled, johnnyBirds);
+      johnnyBirdDelay = [5,7,12].includes(Number(data.johnnyAppleseedBirdDelay)) ? Number(data.johnnyAppleseedBirdDelay) : johnnyBirdDelay;
+      if (johnnyDragToggle) johnnyDragToggle.checked = johnnyDrag;
+      if (johnnyVoiceToggle) johnnyVoiceToggle.checked = johnnyVoice;
+      if (johnnyBirdToggle) johnnyBirdToggle.checked = johnnyBirds;
+      if (johnnyBirdDelaySelect) johnnyBirdDelaySelect.value = String(johnnyBirdDelay);
+      tractorJobCrewLevels = normalizeTractorLevelsAdmin(data.tractorJobCrewLevels ?? tractorJobCrewLevels);
+      localStorage.setItem("tractorJobCrewLevels", JSON.stringify(tractorJobCrewLevels));
+      displayTractorLevels(tractorJobCrewLevels);
       senseBuilderLevels = normalizeSenseBuilderLevels(
         Array.isArray(data.senseBuilderLevels)
           ? data.senseBuilderLevels
@@ -3344,6 +3384,7 @@ async function loadTask1Settings() {
   if (bugMeadowGameActiveToggle) {
     bugMeadowGameActiveToggle.checked = bugMeadowGameActive;
   }
+  displayTractorLevels(tractorJobCrewLevels);
   displaySenseBuilderLevels(senseBuilderLevels);
   if (senseBuilderRequireClickAndDragToggle) {
     senseBuilderRequireClickAndDragToggle.checked =
@@ -3655,6 +3696,22 @@ async function saveTask1Settings() {
     bugMeadowGameActiveToggle && bugMeadowGameActiveToggle.checked
   );
 
+  const johnnyDragSaveInput = document.getElementById("johnnyAppleseedRequireClickAndDrag");
+  const johnnyVoiceSaveInput = document.getElementById("johnnyAppleseedVoiceInstructions");
+  const johnnyBirdSaveInput = document.getElementById("johnnyAppleseedBlackbirdsEnabled");
+  const johnnyDelaySaveInput = document.getElementById("johnnyAppleseedBirdDelay");
+
+  const johnnyAppleseedRequireClickAndDrag = Boolean(johnnyDragSaveInput?.checked);
+  const johnnyAppleseedVoiceInstructions = Boolean(johnnyVoiceSaveInput?.checked);
+  const johnnyAppleseedBlackbirdsEnabled = johnnyBirdSaveInput ? Boolean(johnnyBirdSaveInput.checked) : true;
+  const johnnyAppleseedBirdDelay = [5,7,12].includes(Number(johnnyDelaySaveInput?.value)) ? Number(johnnyDelaySaveInput.value) : 7;
+  localStorage.setItem('johnnyAppleseedRequireClickAndDrag', String(johnnyAppleseedRequireClickAndDrag));
+  localStorage.setItem('johnnyAppleseedVoiceInstructions', String(johnnyAppleseedVoiceInstructions));
+  localStorage.setItem('johnnyAppleseedBlackbirdsEnabled', String(johnnyAppleseedBlackbirdsEnabled));
+  localStorage.setItem('johnnyAppleseedBirdDelay', String(johnnyAppleseedBirdDelay));
+  const tractorJobCrewLevels = tractorLevelSelections();
+  if (!tractorJobCrewLevels.some(Boolean)) { alert("Enable at least one Tractor Job Crew level."); return; }
+  localStorage.setItem("tractorJobCrewLevels", JSON.stringify(tractorJobCrewLevels));
   const senseBuilderLevels = readSenseBuilderLevels();
 
   if (!senseBuilderLevels.some(Boolean)) {
@@ -4351,6 +4408,11 @@ async function saveTask1Settings() {
         senseBuilderGameActive,
         senseBuilderRequireClickAndDrag,
         senseBuilderLevels,
+        tractorJobCrewLevels,
+        johnnyAppleseedRequireClickAndDrag,
+        johnnyAppleseedVoiceInstructions,
+        johnnyAppleseedBlackbirdsEnabled,
+        johnnyAppleseedBirdDelay,
         bugMeadowRequireClickAndDrag,
         bugMeadowLevels,
         fireflyForestGameActive,
