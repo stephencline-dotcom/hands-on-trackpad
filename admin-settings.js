@@ -21,6 +21,8 @@ const dragonDodgeGameActiveToggle = document.getElementById("dragonDodgeGameActi
 const firefighterRescueGameActiveToggle = document.getElementById("firefighterRescueGameActive");
 const martianMadnessGameActiveToggle = document.getElementById("martianMadnessGameActive");
 const bugMeadowGameActiveToggle = document.getElementById("bugMeadowGameActive");
+const johnnyAppleseedGameActiveToggle = document.getElementById("johnnyAppleseedGameActive");
+const tractorJobCrewGameActiveToggle = document.getElementById("tractorJobCrewGameActive");
 const senseBuilderGameActiveToggle = document.getElementById("senseBuilderGameActive");
 const senseBuilderRequireClickAndDragToggle = document.getElementById("senseBuilderRequireClickAndDrag");
 const fireflyForestGameActiveToggle = document.getElementById("fireflyForestGameActive");
@@ -1825,6 +1827,8 @@ function applyProgressivePresets() {
   if (mazeRequireClickAndDragToggle) mazeRequireClickAndDragToggle.checked = false;
   if (carRequireClickAndDragToggle) carRequireClickAndDragToggle.checked = false;
   if (jackRequireClickAndDragToggle) jackRequireClickAndDragToggle.checked = false;
+  if (johnnyAppleseedGameActiveToggle) johnnyAppleseedGameActiveToggle.checked = true;
+  if (tractorJobCrewGameActiveToggle) tractorJobCrewGameActiveToggle.checked = true;
   if (fullscreenGameActiveToggle) fullscreenGameActiveToggle.checked = true;
   if (clambakeAdventureGameActiveToggle) clambakeAdventureGameActiveToggle.checked = true;
   if (mazeGameActiveToggle) mazeGameActiveToggle.checked = true;
@@ -2595,6 +2599,8 @@ async function loadTask1Settings() {
   if (johnnyVoiceToggle) johnnyVoiceToggle.checked = johnnyVoice;
   if (johnnyBirdToggle) johnnyBirdToggle.checked = johnnyBirds;
   if (johnnyBirdDelaySelect) johnnyBirdDelaySelect.value = String(johnnyBirdDelay);
+  let johnnyAppleseedGameActive = parseTaskEnabled(localStorage.getItem("johnnyAppleseedGameActive"), true);
+  let tractorJobCrewGameActive = parseTaskEnabled(localStorage.getItem("tractorJobCrewGameActive"), true);
   let tractorJobCrewLevels = normalizeTractorLevelsAdmin(JSON.parse(localStorage.getItem("tractorJobCrewLevels") || "null"));
   let senseBuilderLevels = normalizeSenseBuilderLevels(
     JSON.parse(
@@ -3052,6 +3058,10 @@ async function loadTask1Settings() {
         data.bugMeadowGameActive,
         bugMeadowGameActive
       );
+      johnnyAppleseedGameActive = parseTaskEnabled(data.johnnyAppleseedGameActive, johnnyAppleseedGameActive);
+      tractorJobCrewGameActive = parseTaskEnabled(data.tractorJobCrewGameActive, tractorJobCrewGameActive);
+      localStorage.setItem("johnnyAppleseedGameActive", String(johnnyAppleseedGameActive));
+      localStorage.setItem("tractorJobCrewGameActive", String(tractorJobCrewGameActive));
       johnnyDrag = parseTaskEnabled(data.johnnyAppleseedRequireClickAndDrag, johnnyDrag);
       johnnyVoice = parseTaskEnabled(data.johnnyAppleseedVoiceInstructions, johnnyVoice);
       johnnyBirds = parseTaskEnabled(data.johnnyAppleseedBlackbirdsEnabled, johnnyBirds);
@@ -3384,6 +3394,8 @@ async function loadTask1Settings() {
   if (bugMeadowGameActiveToggle) {
     bugMeadowGameActiveToggle.checked = bugMeadowGameActive;
   }
+  if (johnnyAppleseedGameActiveToggle) johnnyAppleseedGameActiveToggle.checked = johnnyAppleseedGameActive;
+  if (tractorJobCrewGameActiveToggle) tractorJobCrewGameActiveToggle.checked = tractorJobCrewGameActive;
   displayTractorLevels(tractorJobCrewLevels);
   displaySenseBuilderLevels(senseBuilderLevels);
   if (senseBuilderRequireClickAndDragToggle) {
@@ -3696,6 +3708,10 @@ async function saveTask1Settings() {
     bugMeadowGameActiveToggle && bugMeadowGameActiveToggle.checked
   );
 
+  const johnnyAppleseedGameActive = Boolean(johnnyAppleseedGameActiveToggle?.checked);
+  const tractorJobCrewGameActive = Boolean(tractorJobCrewGameActiveToggle?.checked);
+  localStorage.setItem("johnnyAppleseedGameActive", String(johnnyAppleseedGameActive));
+  localStorage.setItem("tractorJobCrewGameActive", String(tractorJobCrewGameActive));
   const johnnyDragSaveInput = document.getElementById("johnnyAppleseedRequireClickAndDrag");
   const johnnyVoiceSaveInput = document.getElementById("johnnyAppleseedVoiceInstructions");
   const johnnyBirdSaveInput = document.getElementById("johnnyAppleseedBlackbirdsEnabled");
@@ -4409,6 +4425,8 @@ async function saveTask1Settings() {
         senseBuilderRequireClickAndDrag,
         senseBuilderLevels,
         tractorJobCrewLevels,
+        tractorJobCrewGameActive,
+        johnnyAppleseedGameActive,
         johnnyAppleseedRequireClickAndDrag,
         johnnyAppleseedVoiceInstructions,
         johnnyAppleseedBlackbirdsEnabled,

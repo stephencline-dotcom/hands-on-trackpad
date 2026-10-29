@@ -176,6 +176,8 @@ const DEFAULT_SETTINGS = {
   senseBuilderRequireClickAndDrag: false,
   senseBuilderLevels: [true, true, true, true],
   tractorJobCrewLevels: [true, false, false, false, false],
+  tractorJobCrewGameActive: true,
+  johnnyAppleseedGameActive: true,
   chickenLittleGameActive: true,
   tortoisePuzzleGameActive: true,
   tortoisePuzzleVoiceInstructions: true,
@@ -728,6 +730,8 @@ function loadSettings() {
         DEFAULT_SETTINGS.senseBuilderLevels
       ),
       tractorJobCrewLevels: normalizeTractorLevels(data.tractorJobCrewLevels, DEFAULT_SETTINGS.tractorJobCrewLevels),
+      tractorJobCrewGameActive: parseTaskEnabled(data.tractorJobCrewGameActive, true),
+      johnnyAppleseedGameActive: parseTaskEnabled(data.johnnyAppleseedGameActive, true),
       chickenLittleGameActive: parseTaskEnabled(
         data.chickenLittleGameActive,
         DEFAULT_SETTINGS.chickenLittleGameActive
@@ -1136,6 +1140,8 @@ function saveSettings(settings) {
       DEFAULT_SETTINGS.senseBuilderLevels
     ),
     tractorJobCrewLevels: normalizeTractorLevels(settings.tractorJobCrewLevels ?? existing.tractorJobCrewLevels, DEFAULT_SETTINGS.tractorJobCrewLevels),
+    tractorJobCrewGameActive: parseTaskEnabled(settings.tractorJobCrewGameActive ?? existing.tractorJobCrewGameActive, true),
+    johnnyAppleseedGameActive: parseTaskEnabled(settings.johnnyAppleseedGameActive ?? existing.johnnyAppleseedGameActive, true),
     chickenLittleGameActive: parseTaskEnabled(
       settings.chickenLittleGameActive ??
         existing.chickenLittleGameActive,
