@@ -7,6 +7,27 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="home-card-order.css?v=1" />
       <link rel="stylesheet" href="freeze-screen.css?v=timer-1" />
+  <style id="admin-button-bottom-left-only">
+    /* Homepage-only Admin Login placement; login behavior unchanged. */
+    body.home-page #adminLoginBtn.admin-login-btn {
+      position: fixed !important;
+      top: auto !important;
+      right: auto !important;
+      bottom: max(12px, env(safe-area-inset-bottom)) !important;
+      left: max(12px, env(safe-area-inset-left)) !important;
+      width: auto !important;
+      min-width: 0 !important;
+      min-height: 34px !important;
+      height: 34px !important;
+      padding: 5px 12px !important;
+      margin: 0 !important;
+      font-size: 12px !important;
+      line-height: 20px !important;
+      border-radius: 9px !important;
+      transform: none !important;
+      z-index: 100 !important;
+    }
+  </style>
 </head>
   <body class="home-page">
     <button id="adminLoginBtn" class="admin-login-btn" type="button" aria-haspopup="dialog" aria-controls="adminLoginModal">
