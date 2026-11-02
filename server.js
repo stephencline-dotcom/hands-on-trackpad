@@ -44,6 +44,43 @@ let liveClassroomState = {
   freezeStateRevision: 0,
 };
 const freezeStateEpoch = require("crypto").randomUUID();
+// Temporary, server-verified teacher session for Freeze Screen safety.
+const crypto = require("crypto");
+const FREEZE_TEACHER_PASSWORD = process.env.TRACKPAD_ADMIN_PASSWORD || "";
+const TEACHER_LEASE_MS = 30000;
+const TEACHER_COOKIE = "trackpad_teacher";
+const teacherSessions = new Map();
+let freezeOwner = null;
+function cookieToken(req) {
+  const raw = (req.headers.cookie || "").split(";").map(x => x.trim()).find(x => x.startsWith(TEACHER_COOKIE + "="));
+  return raw ? raw.slice(TEACHER_COOKIE.length + 1) : "";
+}
+function validTeacher(req) {
+  const token = cookieToken(req);
+  const session = teacherSessions.get(token);
+  if (!session) return null;
+  if (Date.now() > session.expiresAt) { teacherSessions.delete(token); return null; }
+  return token;
+}
+function clearTeacherCookie(res) {
+  res.setHeader("Set-Cookie", `${TEACHER_COOKIE}=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0`);
+}
+function checkTeacherLease() {
+  if (freezeOwner) {
+    const session = teacherSessions.get(freezeOwner);
+    if (!session || Date.now() > session.expiresAt) {
+      teacherSessions.delete(freezeOwner);
+      freezeOwner = null;
+      setLiveFreeze(false);
+    }
+  }
+  for (const [token, session] of teacherSessions) {
+    if (Date.now() > session.expiresAt) teacherSessions.delete(token);
+  }
+}
+const teacherLeaseTimer = setInterval(checkTeacherLease, 1000);
+teacherLeaseTimer.unref?.();
+
 let freezeTimerHandle = null;
 
 function clearFreezeDeadline() {
@@ -63,7 +100,7 @@ function applyFreezeFeature(enabled) {
   const next = Boolean(enabled);
   const changed = next !== liveClassroomState.freezeScreenFeatureEnabled;
   liveClassroomState.freezeScreenFeatureEnabled = next;
-  if (!next && (liveClassroomState.freezeTimerEndsAt !== null || liveClassroomState.freezeScreenArmed)) setLiveFreeze(false);
+  if (!next && (liveClassroomState.freezeTimerEndsAt !== null || liveClassroomState.freezeScreenArmed)) { freezeOwner = null; setLiveFreeze(false); }
   else if (changed) liveClassroomState.freezeStateRevision++;
 }
 
@@ -94,6 +131,7 @@ function startFreezeDeadline(seconds) {
 }
 
 function freezeSnapshot() {
+  checkTeacherLease();
   reconcileFreezeDeadline();
   return { ...liveClassroomState, freezeStateEpoch, serverNow: Date.now() };
 }
@@ -229,6 +267,15 @@ const DEFAULT_SETTINGS = {
   johnnyAppleseedRequireClickAndDrag: false,
   johnnyAppleseedBlackbirdsEnabled: true,
   johnnyAppleseedBirdDelay: 7,
+  johnnyAppleseedWeedDelay: 12,
+  johnnyBeeSwallows: 3,
+  johnnyBeeSwallowInterval: 8,
+  johnnyBeeBears: 2,
+  johnnyBeeBearDefenses: 3,
+
+  clickOnceWaitEnabled: true,
+  clickOnceWaitMode: "repeated",
+  clickOnceWaitSpeech: false,
   farmyardHelpersLevelCount: 4,
   harvestHeroesGameActive: true,
   harvestHeroesVoiceInstructions: true,
@@ -882,6 +929,15 @@ function loadSettings() {
       johnnyAppleseedRequireClickAndDrag: parseTaskEnabled(data.johnnyAppleseedRequireClickAndDrag, false),
       johnnyAppleseedBlackbirdsEnabled: parseTaskEnabled(data.johnnyAppleseedBlackbirdsEnabled, true),
       johnnyAppleseedBirdDelay: [5,7,12].includes(Number(data.johnnyAppleseedBirdDelay)) ? Number(data.johnnyAppleseedBirdDelay) : 7,
+      johnnyAppleseedWeedDelay: [7,12,18].includes(Number(data.johnnyAppleseedWeedDelay)) ? Number(data.johnnyAppleseedWeedDelay) : 12,
+      johnnyBeeSwallows: [2, 3, 5].includes(Number(data.johnnyBeeSwallows)) ? Number(data.johnnyBeeSwallows) : 3,
+      johnnyBeeSwallowInterval: [5, 8, 12].includes(Number(data.johnnyBeeSwallowInterval)) ? Number(data.johnnyBeeSwallowInterval) : 8,
+      johnnyBeeBears: [1, 2, 3].includes(Number(data.johnnyBeeBears)) ? Number(data.johnnyBeeBears) : 2,
+      johnnyBeeBearDefenses: [2, 3, 5].includes(Number(data.johnnyBeeBearDefenses)) ? Number(data.johnnyBeeBearDefenses) : 3,
+
+      clickOnceWaitEnabled: parseTaskEnabled(data.clickOnceWaitEnabled, true),
+      clickOnceWaitMode: data.clickOnceWaitMode === "always" ? "always" : "repeated",
+      clickOnceWaitSpeech: parseTaskEnabled(data.clickOnceWaitSpeech, false),
       farmyardHelpersLevelCount: [1, 2, 3, 4].includes(Number(data.farmyardHelpersLevelCount)) ? Number(data.farmyardHelpersLevelCount) : 4,
       harvestHeroesGameActive: parseTaskEnabled(data.harvestHeroesGameActive, true),
       harvestHeroesVoiceInstructions: parseTaskEnabled(data.harvestHeroesVoiceInstructions, true),
@@ -1276,6 +1332,15 @@ function saveSettings(settings) {
     johnnyAppleseedRequireClickAndDrag: parseTaskEnabled(settings.johnnyAppleseedRequireClickAndDrag ?? existing.johnnyAppleseedRequireClickAndDrag, false),
     johnnyAppleseedBlackbirdsEnabled: parseTaskEnabled(settings.johnnyAppleseedBlackbirdsEnabled ?? existing.johnnyAppleseedBlackbirdsEnabled, true),
     johnnyAppleseedBirdDelay: [5,7,12].includes(Number(settings.johnnyAppleseedBirdDelay ?? existing.johnnyAppleseedBirdDelay)) ? Number(settings.johnnyAppleseedBirdDelay ?? existing.johnnyAppleseedBirdDelay) : 7,
+    johnnyAppleseedWeedDelay: [7,12,18].includes(Number(settings.johnnyAppleseedWeedDelay ?? existing.johnnyAppleseedWeedDelay)) ? Number(settings.johnnyAppleseedWeedDelay ?? existing.johnnyAppleseedWeedDelay) : 12,
+    johnnyBeeSwallows: [2, 3, 5].includes(Number(settings.johnnyBeeSwallows ?? existing.johnnyBeeSwallows)) ? Number(settings.johnnyBeeSwallows ?? existing.johnnyBeeSwallows) : 3,
+    johnnyBeeSwallowInterval: [5, 8, 12].includes(Number(settings.johnnyBeeSwallowInterval ?? existing.johnnyBeeSwallowInterval)) ? Number(settings.johnnyBeeSwallowInterval ?? existing.johnnyBeeSwallowInterval) : 8,
+    johnnyBeeBears: [1, 2, 3].includes(Number(settings.johnnyBeeBears ?? existing.johnnyBeeBears)) ? Number(settings.johnnyBeeBears ?? existing.johnnyBeeBears) : 2,
+    johnnyBeeBearDefenses: [2, 3, 5].includes(Number(settings.johnnyBeeBearDefenses ?? existing.johnnyBeeBearDefenses)) ? Number(settings.johnnyBeeBearDefenses ?? existing.johnnyBeeBearDefenses) : 3,
+
+    clickOnceWaitEnabled: parseTaskEnabled(settings.clickOnceWaitEnabled ?? existing.clickOnceWaitEnabled, true),
+    clickOnceWaitMode: (settings.clickOnceWaitMode ?? existing.clickOnceWaitMode) === "always" ? "always" : "repeated",
+    clickOnceWaitSpeech: parseTaskEnabled(settings.clickOnceWaitSpeech ?? existing.clickOnceWaitSpeech, false),
     farmyardHelpersLevelCount: [1, 2, 3, 4].includes(Number(settings.farmyardHelpersLevelCount ?? existing.farmyardHelpersLevelCount)) ? Number(settings.farmyardHelpersLevelCount ?? existing.farmyardHelpersLevelCount) : 4,
     harvestHeroesGameActive: parseTaskEnabled(settings.harvestHeroesGameActive ?? existing.harvestHeroesGameActive, true),
     harvestHeroesVoiceInstructions: parseTaskEnabled(settings.harvestHeroesVoiceInstructions ?? existing.harvestHeroesVoiceInstructions, true),
@@ -1512,7 +1577,42 @@ ensureSettingsFile();
 const server = http.createServer(async (req, res) => {
   const requestUrl = new URL(req.url, `http://${req.headers.host || "localhost"}`);
 
+  if (requestUrl.pathname === "/api/teacher-session") {
+    if (req.method === "POST") {
+      if (!FREEZE_TEACHER_PASSWORD) { sendJson(res, 503, { error: "Teacher login is not configured on this server." }); return; }
+      try {
+        const body = JSON.parse((await readRequestBody(req)) || "{}");
+        const a = Buffer.from(String(body.password || ""));
+        const b = Buffer.from(FREEZE_TEACHER_PASSWORD);
+        if (a.length !== b.length || !crypto.timingSafeEqual(a,b)) {
+          sendJson(res, 401, { error: "Incorrect password." }); return;
+        }
+        const token = crypto.randomBytes(32).toString("hex");
+        teacherSessions.set(token, { expiresAt: Date.now() + TEACHER_LEASE_MS });
+        const secure = req.headers['x-forwarded-proto'] === 'https' || req.socket.encrypted;
+        res.setHeader("Set-Cookie", `${TEACHER_COOKIE}=${token}; HttpOnly; SameSite=Strict; Path=/; ${secure ? 'Secure; ' : ''}Max-Age=86400`);
+        sendJson(res, 200, { authenticated: true });
+      } catch { sendJson(res, 400, { error: "Invalid login request." }); }
+      return;
+    }
+    const token = validTeacher(req);
+    if (req.method === "GET") { sendJson(res, token ? 200 : 401, { authenticated: Boolean(token) }); return; }
+    if (req.method === "PUT") {
+      if (!token) { sendJson(res, 401, { error: "Teacher session expired. Log in again." }); return; }
+      teacherSessions.get(token).expiresAt = Date.now() + TEACHER_LEASE_MS;
+      sendJson(res, 200, { authenticated: true }); return;
+    }
+    if (req.method === "DELETE") {
+      if (token) { teacherSessions.delete(token); if (freezeOwner === token) { freezeOwner = null; setLiveFreeze(false); } }
+      clearTeacherCookie(res); sendJson(res, 200, { authenticated: false }); return;
+    }
+    sendJson(res, 405, { error: "Method not allowed" }); return;
+  }
+
   if (requestUrl.pathname === "/api/freeze-timer") {
+    checkTeacherLease();
+    const freezeTeacher = validTeacher(req);
+    if (!freezeTeacher) { sendJson(res, 401, { error: "Teacher login required." }); return; }
     if (req.method !== "PUT") {
       sendJson(res, 405, { error: "Method not allowed" });
       return;
@@ -1520,6 +1620,7 @@ const server = http.createServer(async (req, res) => {
     try {
       const command = JSON.parse((await readRequestBody(req)) || "{}");
       if (command && command.action === "cancel") {
+        freezeOwner = null;
         setLiveFreeze(false);
         sendJson(res, 200, freezeSnapshot());
       } else if (!command || !Number.isInteger(command.durationSeconds) || command.durationSeconds < 1 || command.durationSeconds > 86400) {
@@ -1527,6 +1628,7 @@ const server = http.createServer(async (req, res) => {
       } else if (!liveClassroomState.freezeScreenFeatureEnabled) {
         sendJson(res, 409, { error: "Enable Freeze Screen in Teacher Settings first." });
       } else {
+        freezeOwner = freezeTeacher;
         startFreezeDeadline(command.durationSeconds);
         sendJson(res, 200, freezeSnapshot());
       }
@@ -1644,6 +1746,12 @@ const server = http.createServer(async (req, res) => {
         const parsedKeys =
           Object.keys(parsed);
 
+        if (Object.prototype.hasOwnProperty.call(parsed, "freezeScreenArmed") && !validTeacher(req)) {
+          sendJson(res, 401, { error: "Teacher login required for Freeze Screen." });
+          return;
+        }
+
+
         const isFreezeOnlyRequest =
           parsedKeys.length === 1 &&
           parsedKeys[0] ===
@@ -1657,6 +1765,7 @@ const server = http.createServer(async (req, res) => {
          * waiting for permanent Supabase storage.
          */
         if (isFreezeOnlyRequest) {
+          freezeOwner = parsed.freezeScreenArmed ? validTeacher(req) : null;
           setLiveFreeze(parsed.freezeScreenArmed);
 
           const currentSettings =
@@ -1699,6 +1808,7 @@ const server = http.createServer(async (req, res) => {
           typeof parsed.freezeScreenArmed ===
           "boolean"
         ) {
+          freezeOwner = parsed.freezeScreenArmed ? validTeacher(req) : null;
           setLiveFreeze(parsed.freezeScreenArmed);
         }
 

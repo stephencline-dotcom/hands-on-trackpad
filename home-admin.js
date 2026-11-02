@@ -7,7 +7,7 @@ const adminCancelBtn = document.getElementById("adminCancelBtn");
 const adminSubmitBtn = document.getElementById("adminSubmitBtn");
 const activityLinks = Array.from(document.querySelectorAll("[data-game-active-key]"));
 
-const ADMIN_PASSWORD = "typing1";
+const TEACHER_LOGIN_API = "/api/teacher-session";
 const SETTINGS_API_PATH = "/api/settings";
 
 function parseEnabled(value, fallback = true) {
@@ -73,24 +73,26 @@ function closeAdminLogin() {
   adminLoginModal.hidden = true;
 }
 
-function submitAdminLogin() {
-  if (adminPasswordInput.value === ADMIN_PASSWORD) {
-    /*
-     * Mark this browser session as the teacher.
-     * Shared teacher-only controls can use this
-     * without exposing them to student browsers.
-     */
-    sessionStorage.setItem(
-      "handsOnTrackpadTeacherSession",
-      "true"
-    );
-
+async function submitAdminLogin() {
+  adminSubmitBtn.disabled = true;
+  adminLoginError.hidden = true;
+  try {
+    const response = await fetch(TEACHER_LOGIN_API, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: adminPasswordInput.value })
+    });
+    if (!response.ok) {
+      const result = await response.json().catch(() => ({}));
+      throw Error(result.error || "Login failed.");
+    }
+    sessionStorage.setItem("handsOnTrackpadTeacherSession", "true");
+    adminPasswordInput.value = "";
     window.location.href = "admin-settings.html";
-    return;
-  }
-
-  adminLoginError.hidden = false;
-  adminPasswordInput.select();
+  } catch (error) {
+    adminLoginError.textContent = error.message || "Login failed.";
+    adminLoginError.hidden = false;
+    adminPasswordInput.select();
+  } finally { adminSubmitBtn.disabled = false; }
 }
 
 if (adminCancelBtn) {

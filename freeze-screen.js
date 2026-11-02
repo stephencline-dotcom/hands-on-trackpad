@@ -5,7 +5,7 @@ const TEACHER='handsOnTrackpadTeacherSession',FEATURE='freezeScreenFeatureEnable
 const scriptURL=document.currentScript?.src||new URL('/freeze-screen.js',location.href).href,homeURL=new URL('index.html',scriptURL).href;
 const parse=(v,f=false)=>v===undefined||v===null?f:v===true||v==='true';
 let teacher=false,locked=false,armedAt=0,shared={freezeScreenFeatureEnabled:false,freezeScreenArmed:false,freezeScreenImmediate:false,freezeTimerEndsAt:null};
-let epoch=null,revision=-1,issued=0,applied=0,remainingAt=0,timerSupported=false,inFlight=false,busy=false,stopped=false,pollHandle,drawHandle,ui=null,errorText='';
+let epoch=null,revision=-1,issued=0,applied=0,remainingAt=0,timerSupported=false,inFlight=false,busy=false,stopped=false,pollHandle,drawHandle,heartbeatHandle,ui=null,errorText='';
 function teacherSession(){return sessionStorage.getItem(TEACHER)==='true';}
 function element(tag,id,text){const e=document.createElement(tag);if(id)e.id=id;if(text!==undefined)e.textContent=text;return e;}
 function overlay(){let e=document.getElementById('studentFreezeOverlay');if(e)return e;e=element('div','studentFreezeOverlay');e.className='student-freeze-overlay';e.hidden=true;e.setAttribute('role','alert');e.innerHTML='<div class="student-freeze-message"><div class="student-freeze-eyes">👀</div><h2>EYES UP FRONT</h2><p>Hands off your trackpad.</p></div>';document.body.append(e);return e;}
@@ -80,16 +80,30 @@ function buildTeacherControls(){
   if(!teacherSession()||busy)return false;
   // Keep the teacher session if release fails; never redirect a teacher into a locked student screen.
   if(!await change(SETTINGS,{freezeScreenArmed:false}))return false;
-  stopped=true;window.clearInterval(pollHandle);window.clearInterval(drawHandle);sessionStorage.removeItem(TEACHER);sessionStorage.removeItem(ARMED);unlock();window.location.assign(homeURL);return true;
+  try { const r=await fetch("/api/teacher-session",{method:"DELETE"});if(!r.ok)throw Error("Logout failed"); } catch { errorText="Could not complete logout. Try again.";render();return false; }
+  stopped=true;window.clearInterval(pollHandle);window.clearInterval(drawHandle);window.clearInterval(heartbeatHandle);sessionStorage.removeItem(TEACHER);sessionStorage.removeItem(ARMED);unlock();window.location.assign(homeURL);return true;
  }
  window.handsOnTrackpadTeacherLogout=logoutTeacher;logout.addEventListener('click',logoutTeacher);render();
 }
 async function initialize(){
- teacher=teacherSession();shared.freezeScreenFeatureEnabled=parse(localStorage.getItem(FEATURE));
+ teacher=teacherSession();
+ if(teacher){
+  try{const r=await fetch('/api/teacher-session',{cache:'no-store'});if(!r.ok)throw Error('Expired');}
+  catch{teacher=false;sessionStorage.removeItem(TEACHER);sessionStorage.removeItem(ARMED);}
+ }
+ shared.freezeScreenFeatureEnabled=parse(localStorage.getItem(FEATURE));
  if(teacher){shared.freezeScreenArmed=parse(sessionStorage.getItem(ARMED));buildTeacherControls();}
  else{overlay();for(const type of ['pointermove','pointerdown','pointerup','click','dblclick','wheel','keydown','contextmenu','dragstart','drop'])document.addEventListener(type,blockInput,{capture:true,passive:false});}
  try{await read(SETTINGS);}catch{if(teacher){errorText='Could not load Freeze controls. Check the server and refresh.';render();}}
- pollHandle=window.setInterval(poll,500);if(teacher)drawHandle=window.setInterval(render,250);
+ pollHandle=window.setInterval(poll,500);
+ if(teacher){
+  drawHandle=window.setInterval(render,250);
+  heartbeatHandle=window.setInterval(async()=>{
+   if(stopped||document.hidden)return;
+   try{const r=await fetch('/api/teacher-session',{method:'PUT'});if(!r.ok)throw Error('Expired');}
+   catch{errorText='Teacher connection lost. Freeze will release automatically if not restored.';render();}
+  },5000);
+ }
  document.addEventListener('visibilitychange',()=>{if(!document.hidden){render();poll();}});window.addEventListener('focus',()=>{render();poll();});window.addEventListener('pageshow',()=>{render();poll();});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initialize,{once:true});else initialize();
