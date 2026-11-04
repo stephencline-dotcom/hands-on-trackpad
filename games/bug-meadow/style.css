@@ -795,3 +795,30 @@ body.bug-meadow-page
   bottom: 36px !important;
 }
 
+
+/* Kindergarten Start Level attention cue: visual-only, no gameplay changes. */
+.bug-start-button:not(:disabled):not([hidden]) {
+  min-width: 188px;
+  min-height: 56px;
+  padding: 12px 26px;
+  background: linear-gradient(180deg,#fff45d 0%,#ffd02b 55%,#ffac13 100%);
+  color: #332000;
+  border: 3px solid #fff9d5;
+  font-size: 1.12rem;
+  letter-spacing: .025em;
+  box-shadow: 0 6px 0 #a96300, 0 0 0 5px rgba(255,237,91,.38), 0 0 28px rgba(255,205,28,.65);
+  animation: bugStartAttention 1.65s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+.bug-start-button:not(:disabled):not([hidden]):focus-visible {
+  outline: 4px solid #1b5ec9;
+  outline-offset: 5px;
+}
+.bug-start-button:not(:disabled):not([hidden]):active { animation: none; }
+@keyframes bugStartAttention {
+  0%,100% { transform: translateX(-50%) scale(1); filter: brightness(1); }
+  45% { transform: translateX(-50%) scale(1.085); filter: brightness(1.12); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bug-start-button:not(:disabled):not([hidden]) { animation: none; }
+}
