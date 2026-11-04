@@ -821,7 +821,7 @@ function loadSettings() {
         parseHauntedStreetLevelNumbers(
           data.chickenLittleLevelTimes,
           DEFAULT_SETTINGS.chickenLittleLevelTimes,
-          20,
+          5,
           120
         ),
       chickenLittleLevelSpeeds:
@@ -1250,7 +1250,7 @@ function saveSettings(settings) {
         settings.chickenLittleLevelTimes ??
           existing.chickenLittleLevelTimes,
         DEFAULT_SETTINGS.chickenLittleLevelTimes,
-        20,
+        5,
         120
       ),
     chickenLittleLevelSpeeds:

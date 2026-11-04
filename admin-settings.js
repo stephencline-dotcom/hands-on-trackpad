@@ -3138,7 +3138,7 @@ async function loadTask1Settings() {
               );
 
               return Number.isFinite(value)
-                ? Math.min(120, Math.max(20, value))
+                ? Math.min(120, Math.max(5, value))
                 : fallback;
             }
           );
@@ -3800,7 +3800,7 @@ async function saveTask1Settings() {
       );
 
       return Number.isFinite(value)
-        ? Math.min(120, Math.max(20, value))
+        ? Math.min(120, Math.max(5, value))
         : DEFAULT_CHICKEN_LITTLE_TIMES[index];
     });
 

@@ -237,7 +237,7 @@
     levelTimes = normalizeSettingArray(
       settings.chickenLittleLevelTimes,
       DEFAULT_LEVEL_TIMES,
-      20,
+      5,
       120
     );
 
