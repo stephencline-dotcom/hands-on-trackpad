@@ -118,6 +118,8 @@ const bugMovementGate =
 let selectedBug = '';
 let currentPlantId = '';
 let lastBugMoveX = null;
+// Do not attach the bug to the cursor until the child reaches it.
+let bugPickedUp = false;
 
 let bugLevels = loadBugMeadowLevels();
 let currentLevelIndex = 0;
@@ -556,6 +558,14 @@ function updateBugStats() {
   }
 }
 
+function pointerTouchesPlayerBug(event) {
+  const bounds = playerBug.getBoundingClientRect();
+  if (playerBug.hidden || !bounds.width || !bounds.height) return false;
+  // The pickup area is the visible bug, not the whole meadow.
+  return event.clientX >= bounds.left && event.clientX <= bounds.right &&
+    event.clientY >= bounds.top && event.clientY <= bounds.bottom;
+}
+
 function getArenaPointerPosition(event) {
   const rect = bugArena.getBoundingClientRect();
 
@@ -663,6 +673,7 @@ function pauseBugGameplay() {
   bugStartSound.stop();
   birdFlapSound.stop();
   playerBug.classList.remove('is-dragging');
+  bugPickedUp = false;
 }
 
 function showBugFailure(message) {
@@ -920,6 +931,7 @@ function handleBugPointerDown(event) {
     return;
   }
 
+  bugPickedUp = true;
   playerBug.classList.add('is-dragging');
 
   if (
@@ -953,6 +965,13 @@ function handleBugPointerMove(event) {
     !bugMovementGate.shouldMove(event)
   ) {
     return;
+  }
+
+  // In cursor-follow mode, wait for the pointer to touch the bug.
+  // In click-and-drag mode, pointerdown on the bug already picked it up.
+  if (!bugPickedUp) {
+    if (!pointerTouchesPlayerBug(event)) return;
+    bugPickedUp = true;
   }
 
   const pos = getArenaPointerPosition(event);
@@ -1311,6 +1330,7 @@ function startBugLevel(index) {
   timerLastTimestamp = 0;
 
   bugGameRunning = true;
+  bugPickedUp = false;
 
   playerBug.hidden = false;
   bugStartButton.hidden = true;
