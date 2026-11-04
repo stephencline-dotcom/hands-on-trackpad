@@ -1295,6 +1295,31 @@
     }
   }
 
+  // Remember the correct food's previous slot to prevent predictable rounds.
+  let previousRequestedSlot = -1;
+
+  function shuffleFoodChoices(choices) {
+    // Fisher-Yates shuffle: each arrangement is equally likely.
+    for (let i = choices.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [choices[i], choices[j]] = [choices[j], choices[i]];
+    }
+
+    const requestedSlot = choices.findIndex(
+      (food) => food.id === currentRequest.id
+    );
+    if (choices.length > 1 && requestedSlot === previousRequestedSlot) {
+      const otherSlots = choices.map((_, index) => index)
+        .filter((index) => index !== requestedSlot);
+      const newSlot = otherSlots[Math.floor(Math.random() * otherSlots.length)];
+      [choices[requestedSlot], choices[newSlot]] =
+        [choices[newSlot], choices[requestedSlot]];
+      previousRequestedSlot = newSlot;
+    } else {
+      previousRequestedSlot = requestedSlot;
+    }
+  }
+
   function startFoodRound() {
     clearFoods();
 
@@ -1310,46 +1335,8 @@
     monsterStatus.textContent =
       `Find ${currentRequest.label} and click it once.`;
 
-    /*
-     * Always start the requested food in one of the
-     * lowest food positions so students can clearly
-     * see the food they are being asked to find.
-     */
-    let requestedStartIndex;
-
-    if (choices.length <= 3) {
-      requestedStartIndex = Math.min(
-        1,
-        choices.length - 1
-      );
-    } else if (choices.length <= 5) {
-      requestedStartIndex = Math.min(
-        3,
-        choices.length - 1
-      );
-    } else {
-      requestedStartIndex =
-        choices.length - 1;
-    }
-
-    const requestedIndex =
-      choices.findIndex(
-        (food) =>
-          food.id === currentRequest.id
-      );
-
-    if (
-      requestedIndex >= 0 &&
-      requestedIndex !== requestedStartIndex
-    ) {
-      [
-        choices[requestedIndex],
-        choices[requestedStartIndex],
-      ] = [
-        choices[requestedStartIndex],
-        choices[requestedIndex],
-      ];
-    }
+    // Shuffle every round, keeping the correct food out of its last slot.
+    shuffleFoodChoices(choices);
 
     choices.forEach(
       (food, index) => {
