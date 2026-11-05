@@ -2591,6 +2591,15 @@ async function loadTask1Settings() {
   const johnnyVoiceToggle = document.getElementById('johnnyAppleseedVoiceInstructions');
   const johnnyBirdToggle = document.getElementById('johnnyAppleseedBlackbirdsEnabled');
   const johnnyBirdDelaySelect = document.getElementById('johnnyAppleseedBirdDelay');
+  const johnnyWeedDelaySelect = document.getElementById('johnnyAppleseedWeedDelay');
+  const johnnyBeeSwallowsSelect = document.getElementById("johnnyBeeSwallows");
+  const johnnyBeeSwallowIntervalSelect = document.getElementById("johnnyBeeSwallowInterval");
+  const johnnyBeeBearsSelect = document.getElementById("johnnyBeeBears");
+  const johnnyBeeDoubleBearsSelect = document.getElementById("johnnyBeeDoubleBears");
+  const johnnyBeeBearDefensesSelect = document.getElementById("johnnyBeeBearDefenses");
+  const johnnyHarvestSquirrelCountSelect = document.getElementById("johnnyHarvestSquirrelCount");
+  const johnnyHarvestSquirrelIntervalSelect = document.getElementById("johnnyHarvestSquirrelInterval");
+  const johnnyRaccoonTargetDifficultySelect = document.getElementById("johnnyRaccoonTargetDifficulty");
   let johnnyDrag = parseTaskEnabled(localStorage.getItem('johnnyAppleseedRequireClickAndDrag'), false);
   let johnnyVoice = parseTaskEnabled(localStorage.getItem('johnnyAppleseedVoiceInstructions'), false);
   let johnnyBirds = parseTaskEnabled(localStorage.getItem('johnnyAppleseedBlackbirdsEnabled'), true);
@@ -2599,6 +2608,15 @@ async function loadTask1Settings() {
   if (johnnyVoiceToggle) johnnyVoiceToggle.checked = johnnyVoice;
   if (johnnyBirdToggle) johnnyBirdToggle.checked = johnnyBirds;
   if (johnnyBirdDelaySelect) johnnyBirdDelaySelect.value = String(johnnyBirdDelay);
+  if (johnnyWeedDelaySelect) johnnyWeedDelaySelect.value = String([7,12,18].includes(Number(localStorage.getItem('johnnyAppleseedWeedDelay')))?Number(localStorage.getItem('johnnyAppleseedWeedDelay')):12);
+  if (johnnyBeeSwallowsSelect) johnnyBeeSwallowsSelect.value = String([2, 3, 5].includes(Number(localStorage.getItem("johnnyBeeSwallows"))) ? Number(localStorage.getItem("johnnyBeeSwallows")) : 3);
+  if (johnnyBeeSwallowIntervalSelect) johnnyBeeSwallowIntervalSelect.value = String([5, 8, 12].includes(Number(localStorage.getItem("johnnyBeeSwallowInterval"))) ? Number(localStorage.getItem("johnnyBeeSwallowInterval")) : 8);
+  if (johnnyBeeBearsSelect) johnnyBeeBearsSelect.value = String([2, 4, 6].includes(Number(localStorage.getItem("johnnyBeeBears"))) ? Number(localStorage.getItem("johnnyBeeBears")) : 6);
+  if (johnnyBeeDoubleBearsSelect) johnnyBeeDoubleBearsSelect.value = localStorage.getItem("johnnyBeeDoubleBears") === "false" ? "false" : "true";
+  if (johnnyBeeBearDefensesSelect) johnnyBeeBearDefensesSelect.value = String([2, 3, 5].includes(Number(localStorage.getItem("johnnyBeeBearDefenses"))) ? Number(localStorage.getItem("johnnyBeeBearDefenses")) : 3);
+  if (johnnyHarvestSquirrelCountSelect) johnnyHarvestSquirrelCountSelect.value = String([0,1,2,3,5].includes(Number(localStorage.getItem("johnnyHarvestSquirrelCount"))) ? Number(localStorage.getItem("johnnyHarvestSquirrelCount")) : 3);
+  if (johnnyHarvestSquirrelIntervalSelect) johnnyHarvestSquirrelIntervalSelect.value = String([5,8,12].includes(Number(localStorage.getItem("johnnyHarvestSquirrelInterval"))) ? Number(localStorage.getItem("johnnyHarvestSquirrelInterval")) : 8);
+  if (johnnyRaccoonTargetDifficultySelect) johnnyRaccoonTargetDifficultySelect.value = ["off","gentle","normal","hard"].includes(localStorage.getItem("johnnyRaccoonTargetDifficulty")) ? localStorage.getItem("johnnyRaccoonTargetDifficulty") : "normal";
   let johnnyAppleseedGameActive = parseTaskEnabled(localStorage.getItem("johnnyAppleseedGameActive"), true);
   let tractorJobCrewGameActive = parseTaskEnabled(localStorage.getItem("tractorJobCrewGameActive"), true);
   let tractorJobCrewLevels = normalizeTractorLevelsAdmin(JSON.parse(localStorage.getItem("tractorJobCrewLevels") || "null"));
@@ -3066,10 +3084,22 @@ async function loadTask1Settings() {
       johnnyVoice = parseTaskEnabled(data.johnnyAppleseedVoiceInstructions, johnnyVoice);
       johnnyBirds = parseTaskEnabled(data.johnnyAppleseedBlackbirdsEnabled, johnnyBirds);
       johnnyBirdDelay = [5,7,12].includes(Number(data.johnnyAppleseedBirdDelay)) ? Number(data.johnnyAppleseedBirdDelay) : johnnyBirdDelay;
+      document.getElementById('clickOnceWaitEnabled').checked = data.clickOnceWaitEnabled !== false;
+      document.getElementById('clickOnceWaitMode').value = data.clickOnceWaitMode === 'always' ? 'always' : 'repeated';
+      document.getElementById('clickOnceWaitSpeech').checked = data.clickOnceWaitSpeech === true;
       if (johnnyDragToggle) johnnyDragToggle.checked = johnnyDrag;
       if (johnnyVoiceToggle) johnnyVoiceToggle.checked = johnnyVoice;
       if (johnnyBirdToggle) johnnyBirdToggle.checked = johnnyBirds;
       if (johnnyBirdDelaySelect) johnnyBirdDelaySelect.value = String(johnnyBirdDelay);
+      if (johnnyWeedDelaySelect) johnnyWeedDelaySelect.value = String([7,12,18].includes(Number(data.johnnyAppleseedWeedDelay))?Number(data.johnnyAppleseedWeedDelay):12);
+      if (johnnyBeeSwallowsSelect) johnnyBeeSwallowsSelect.value = String([2, 3, 5].includes(Number(data.johnnyBeeSwallows)) ? Number(data.johnnyBeeSwallows) : 3);
+      if (johnnyBeeSwallowIntervalSelect) johnnyBeeSwallowIntervalSelect.value = String([5, 8, 12].includes(Number(data.johnnyBeeSwallowInterval)) ? Number(data.johnnyBeeSwallowInterval) : 8);
+      if (johnnyBeeBearsSelect) johnnyBeeBearsSelect.value = String([2, 4, 6].includes(Number(data.johnnyBeeBears)) ? Number(data.johnnyBeeBears) : 6);
+      if (johnnyBeeDoubleBearsSelect) johnnyBeeDoubleBearsSelect.value = data.johnnyBeeDoubleBears === false ? "false" : "true";
+      if (johnnyBeeBearDefensesSelect) johnnyBeeBearDefensesSelect.value = String([2, 3, 5].includes(Number(data.johnnyBeeBearDefenses)) ? Number(data.johnnyBeeBearDefenses) : 3);
+      if (johnnyHarvestSquirrelCountSelect) johnnyHarvestSquirrelCountSelect.value = String([0,1,2,3,5].includes(Number(data.johnnyHarvestSquirrelCount)) ? Number(data.johnnyHarvestSquirrelCount) : 3);
+      if (johnnyHarvestSquirrelIntervalSelect) johnnyHarvestSquirrelIntervalSelect.value = String([5,8,12].includes(Number(data.johnnyHarvestSquirrelInterval)) ? Number(data.johnnyHarvestSquirrelInterval) : 8);
+      if (johnnyRaccoonTargetDifficultySelect) johnnyRaccoonTargetDifficultySelect.value = ["off","gentle","normal","hard"].includes(data.johnnyRaccoonTargetDifficulty) ? data.johnnyRaccoonTargetDifficulty : "normal";
       tractorJobCrewLevels = normalizeTractorLevelsAdmin(data.tractorJobCrewLevels ?? tractorJobCrewLevels);
       localStorage.setItem("tractorJobCrewLevels", JSON.stringify(tractorJobCrewLevels));
       displayTractorLevels(tractorJobCrewLevels);
@@ -3716,15 +3746,37 @@ async function saveTask1Settings() {
   const johnnyVoiceSaveInput = document.getElementById("johnnyAppleseedVoiceInstructions");
   const johnnyBirdSaveInput = document.getElementById("johnnyAppleseedBlackbirdsEnabled");
   const johnnyDelaySaveInput = document.getElementById("johnnyAppleseedBirdDelay");
+  const johnnyWeedDelaySaveInput = document.getElementById("johnnyAppleseedWeedDelay");
 
   const johnnyAppleseedRequireClickAndDrag = Boolean(johnnyDragSaveInput?.checked);
   const johnnyAppleseedVoiceInstructions = Boolean(johnnyVoiceSaveInput?.checked);
   const johnnyAppleseedBlackbirdsEnabled = johnnyBirdSaveInput ? Boolean(johnnyBirdSaveInput.checked) : true;
   const johnnyAppleseedBirdDelay = [5,7,12].includes(Number(johnnyDelaySaveInput?.value)) ? Number(johnnyDelaySaveInput.value) : 7;
+  const clickOnceWaitEnabled = Boolean(document.getElementById('clickOnceWaitEnabled')?.checked);
+  const clickOnceWaitMode = document.getElementById('clickOnceWaitMode')?.value === 'always' ? 'always' : 'repeated';
+  const clickOnceWaitSpeech = Boolean(document.getElementById('clickOnceWaitSpeech')?.checked);
   localStorage.setItem('johnnyAppleseedRequireClickAndDrag', String(johnnyAppleseedRequireClickAndDrag));
   localStorage.setItem('johnnyAppleseedVoiceInstructions', String(johnnyAppleseedVoiceInstructions));
   localStorage.setItem('johnnyAppleseedBlackbirdsEnabled', String(johnnyAppleseedBlackbirdsEnabled));
   localStorage.setItem('johnnyAppleseedBirdDelay', String(johnnyAppleseedBirdDelay));
+  const johnnyAppleseedWeedDelay = [7,12,18].includes(Number(johnnyWeedDelaySaveInput?.value))?Number(johnnyWeedDelaySaveInput.value):12;
+  localStorage.setItem('johnnyAppleseedWeedDelay',String(johnnyAppleseedWeedDelay));
+  const johnnyBeeSwallows = [2, 3, 5].includes(Number(document.getElementById("johnnyBeeSwallows")?.value)) ? Number(document.getElementById("johnnyBeeSwallows").value) : 3;
+  localStorage.setItem("johnnyBeeSwallows",String(johnnyBeeSwallows));
+  const johnnyBeeSwallowInterval = [5, 8, 12].includes(Number(document.getElementById("johnnyBeeSwallowInterval")?.value)) ? Number(document.getElementById("johnnyBeeSwallowInterval").value) : 8;
+  localStorage.setItem("johnnyBeeSwallowInterval",String(johnnyBeeSwallowInterval));
+  const johnnyBeeBears = [2, 4, 6].includes(Number(document.getElementById("johnnyBeeBears")?.value)) ? Number(document.getElementById("johnnyBeeBears").value) : 6;
+  localStorage.setItem("johnnyBeeBears",String(johnnyBeeBears));
+  const johnnyBeeDoubleBears = document.getElementById("johnnyBeeDoubleBears")?.value !== "false";
+  localStorage.setItem("johnnyBeeDoubleBears",String(johnnyBeeDoubleBears));
+  const johnnyBeeBearDefenses = [2, 3, 5].includes(Number(document.getElementById("johnnyBeeBearDefenses")?.value)) ? Number(document.getElementById("johnnyBeeBearDefenses").value) : 3;
+  localStorage.setItem("johnnyBeeBearDefenses",String(johnnyBeeBearDefenses));
+  const johnnyHarvestSquirrelCount = [0,1,2,3,5].includes(Number(document.getElementById("johnnyHarvestSquirrelCount")?.value)) ? Number(document.getElementById("johnnyHarvestSquirrelCount").value) : 3;
+  const johnnyHarvestSquirrelInterval = [5,8,12].includes(Number(document.getElementById("johnnyHarvestSquirrelInterval")?.value)) ? Number(document.getElementById("johnnyHarvestSquirrelInterval").value) : 8;
+  localStorage.setItem("johnnyHarvestSquirrelCount", String(johnnyHarvestSquirrelCount));
+  localStorage.setItem("johnnyHarvestSquirrelInterval", String(johnnyHarvestSquirrelInterval));
+  const johnnyRaccoonTargetDifficulty = ["off","gentle","normal","hard"].includes(document.getElementById("johnnyRaccoonTargetDifficulty")?.value) ? document.getElementById("johnnyRaccoonTargetDifficulty").value : "normal";
+  localStorage.setItem("johnnyRaccoonTargetDifficulty",johnnyRaccoonTargetDifficulty);
   const tractorJobCrewLevels = tractorLevelSelections();
   if (!tractorJobCrewLevels.some(Boolean)) { alert("Enable at least one Tractor Job Crew level."); return; }
   localStorage.setItem("tractorJobCrewLevels", JSON.stringify(tractorJobCrewLevels));
@@ -4431,6 +4483,19 @@ async function saveTask1Settings() {
         johnnyAppleseedVoiceInstructions,
         johnnyAppleseedBlackbirdsEnabled,
         johnnyAppleseedBirdDelay,
+        clickOnceWaitEnabled,
+        clickOnceWaitMode,
+        clickOnceWaitSpeech,
+        johnnyAppleseedWeedDelay,
+        johnnyBeeSwallows,
+        johnnyBeeSwallowInterval,
+        johnnyBeeBears,
+        johnnyBeeDoubleBears,
+        johnnyBeeBearDefenses,
+        johnnyHarvestSquirrelCount,
+        johnnyHarvestSquirrelInterval,
+        johnnyRaccoonTargetDifficulty,
+
         bugMeadowRequireClickAndDrag,
         bugMeadowLevels,
         fireflyForestGameActive,

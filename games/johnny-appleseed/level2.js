@@ -25,6 +25,18 @@ function drawPruners(x,y,scale=1,open=0){
 }
 function inspectionPickupPoint(type){return type==='water'?{x:1085,y:510}:type==='sun'?{x:1120,y:390}:{x:125,y:480}}
 function guideTarget(){let i=done.findIndex(v=>!v);if(level===3)i=inspected.findIndex(v=>!v);return selected===null&&level!==3?tools[level]:trees[Math.max(0,i)]}
+window.johnnyEyesNext=()=>{if(!started||paused||complete)return null;
+ const i=Math.max(0,level===3?inspected.findIndex(v=>!v):done.findIndex(v=>!v));
+ let a={x:johnny.x,y:johnny.y},b=null,label='',signature='';
+ if(task||moveTo)return {signature:'working-'+level,label:'Watch Johnny finish his job!',points:[a]};
+ if(level===0){if(!glovesOn){b={x:125,y:480};label='Touch the gardening gloves!';signature='gloves'}
+ else if(weedPhase==='pull'){b=weeds[0]||trees[i];label='Click a weed to pull it!';signature='weed-'+(b.id??i)}
+ else if(carryingWeeds>=0){b={x:1155,y:606};label='Take the weeds to the compost bin!';signature='compost'}
+ else{b=pilePosition(Math.max(0,weedPiles.findIndex(n=>n>0)));label='Pick up a weed pile!';signature='pile'}}
+ else if(level===1){b=hoseHeld?trees[i]:{x:1085,y:510};label=hoseHeld?'Water the thirsty tree!':'Pick up the hose!';signature='water-'+i+'-'+hoseHeld}
+ else if(level===2){b=selected===null?tools[level]:trees[i];label=selected===null?'Pick up the clippers!':'Trim the shading bush!';signature='sun-'+i+'-'+selected}
+ else{b=inspectionTool?trees[i]:inspectionPickupPoint(inspectionNeeds[i]);label=inspectionTool?'Help the tree that needs this tool!':'Choose the matching picture tool!';signature='inspect-'+i+'-'+inspectionTool}
+ return {signature,label,points:[a,b]};};
 function hint(){
  if(!started||complete)return;
  let i=level===3?inspected.findIndex(v=>!v):done.findIndex(v=>!v);i=Math.max(0,i);
