@@ -4533,6 +4533,7 @@ async function saveTask1Settings() {
         ...window.FarmyardHelpersSettings.snapshot(),
         ...window.HarvestHeroesSettings.snapshot(),
         ...window.PumpkinStudioSettings.snapshot(),
+        ...window.TurkeyStudioSettings.snapshot(),
         ...window.ThreeLittlePigsSettings.snapshot(),
         ...window.SheepRoundupSettings.snapshot(),
         ...window.GameInputSettings.snapshot(),
