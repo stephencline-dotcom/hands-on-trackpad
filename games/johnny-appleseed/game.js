@@ -27,6 +27,7 @@ window.johnnyEyesNext=()=>{if(!started||paused||complete)return null;const k=pha
  if(carrying==='soil'&&!soilLoads)return {signature:'soil-load',label:'Fill the wheelbarrow with soil!',points:[{x:fx,y:fy},{x:soilCart.x,y:soilCart.y}]};
  return carrying?{signature:'plant-'+k+'-'+i,label:'Click the next glowing planting spot!',points:[{x:fx,y:fy},plot]}:{signature:'tool-'+k,label:'Click the glowing tool!',points:[{x:fx,y:fy},supply]};};
 function say(t){if(!voice||!sound||!started||!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.92;u.volume=.7;window.speechSynthesis.speak(u)}
+window.JohnnySounds?.setEnabled(()=>sound&&started&&!paused);
 function chirp(f=600,d=.1){if(!sound)return;try{const A=window.AudioContext||window.webkitAudioContext;const a=window._johnnyAudio||(window._johnnyAudio=new A());if(a.state==='suspended')a.resume();const o=a.createOscillator(),g=a.createGain();o.type='sine';o.frequency.setValueAtTime(f,a.currentTime);o.frequency.exponentialRampToValueAtTime(f*1.35,a.currentTime+d);g.gain.setValueAtTime(.035,a.currentTime);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+d);o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+d)}catch(e){}}
 function circle(x,y,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
 function oval(x,y,rx,ry,color){ctx.fillStyle=color;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill()}
@@ -225,6 +226,7 @@ function interact(x,y){
   if(!s||s.name!==needed){guideHint();chirp(245,.09);return}
   startWalk(s.name==='soil'?s.x-67:s.x-20,s.name==='soil'?s.y+28:s.y+16,()=>{
    carrying=s.name;
+   window.JohnnySounds?.play('pickup');
    chirp(540,.13);
    for(let j=0;j<12;j++)particles.push({x:s.x+(Math.random()-.5)*42,y:s.y+(Math.random()-.5)*28,r:3,color:'#ffe27b',life:1});
    if(s.name==='soil'){
@@ -245,6 +247,7 @@ function interact(x,y){
  const soilStandX=spots[i].x-cartFacing*153;
  startWalk(used==='soil'?soilStandX:spots[i].x-32,used==='soil'?spots[i].y+24:spots[i].y-20,()=>{
   working=true;workTime=now+(used==='soil'?1.5:1.1);workSpot=i;taskTool=used;actionKind='plant';
+  window.JohnnySounds?.play(used==='shovel'?'digging':used==='seeds'?'seedsprinkle':used==='soil'?'rakesoil':'wateringcan',{volume:.32});
   if(used==='soil')soilCartActive=true;
   $('message').textContent=used==='shovel'?'Johnny is digging the hole!':used==='soil'?'Johnny is tipping the wheelbarrow to cover the seed!':`Johnny is using the ${used}!`;
  });
@@ -253,6 +256,7 @@ function interact(x,y){
 function finishWork(){
  if(!working||now<workTime)return;
  working=false;
+ window.JohnnySounds?.stopName('digging');window.JohnnySounds?.stopName('seedsprinkle');window.JohnnySounds?.stopName('wateringcan');window.JohnnySounds?.stopName('rakesoil');
  if(actionKind==='load'){
   soilLoads=3;actionKind='';
   // Loading is complete: Johnny walks to the cart handles before pushing.
@@ -269,7 +273,7 @@ function finishWork(){
  if(taskTool==='seeds'&&birdsEnabled&&birdNextAt<=now)birdNextAt=now+1.5;
  chirp(540+stage[i]*90,.16);
  for(let j=0;j<20;j++){let a=j*2.4;particles.push({x:spots[i].x+Math.cos(a)*Math.random()*42,y:spots[i].y+Math.sin(a)*Math.random()*28,r:2+Math.random()*4,color:j%2?'#ffe78a':'#f9f7e2',life:1})}
- if(phase()!==oldPhase){
+ if(phase()!==oldPhase){if(phase()===4)window.JohnnySounds?.play('success',{volume:.4});
   carrying=null;soilCartActive=false;soilLoads=0;
   $('message').textContent=phase()===4?'Wonderful! The orchard is growing!':`Great job! Now ${messages[phase()]}`;
   for(let j=0;j<30;j++)particles.push({x:spots[1].x+(Math.random()-.5)*250,y:spots[1].y+(Math.random()-.5)*90,r:3,color:'#ffe47c',life:1});
@@ -287,7 +291,7 @@ function updateBlackbird(dt){
  if(birdVisits<3&&birds.length<2&&eligible.length&&now>=birdNextAt){
   const i=eligible[Math.floor(Math.random()*eligible.length)];
   birds.push({spot:i,x:spots[i].x+130,y:spots[i].y-135,mode:'approach',arrivedAt:0,stole:false});
-  birdVisits++;
+  birdVisits++;window.JohnnySounds?.play('birdflap',{volume:.23});
   birdNextAt=now+Math.max(5,birdDelay*.7);
  }
  for(const b of birds){
@@ -299,11 +303,11 @@ function updateBlackbird(dt){
    else{b.x+=dx/d*Math.min(d,dt*155);b.y+=dy/d*Math.min(d,dt*155)}
   }else if(b.mode==='peck'){
    if(Math.hypot(fx-b.x,fy-b.y)<110){
-    b.mode='flee';b.stole=false;shooUntil=now+1.2;chirp(850,.15);
+    b.mode='flee';b.stole=false;shooUntil=now+1.2;window.JohnnySounds?.play('birdflap',{volume:.25});chirp(850,.15);
     $('message').textContent='Shoo! Johnny saved the seed!';
    }else if(stage[b.spot]!==2){b.mode='flee';b.stole=false}
    else if(now-b.arrivedAt>=birdDelay){
-    stage[b.spot]=1;b.mode='flee';b.stole=true;birdEscapes++;
+    stage[b.spot]=1;b.mode='flee';b.stole=true;birdEscapes++;window.JohnnySounds?.play('snatch',{volume:.32});
     carrying=null;cursorTarget=null;
     soilCartActive=false;soilLoads=0;workSpot=-1;actionKind='';
     $('message').textContent='The blackbird flew away with a seed! Visit the seed sack and replant that hole.';helpAt=now;
@@ -331,8 +335,8 @@ canvas.addEventListener('pointerdown',e=>{if(!dragMode)return;dragHeld=true;canv
 canvas.addEventListener('pointerup',e=>{if(!dragMode)return;dragHeld=false;cursorTarget=null;const p=pointer(e);interact(p.x,p.y)});
 canvas.addEventListener('pointercancel',()=>{dragHeld=false;cursorTarget=null});
 function help(){guideHint();if(phase()===2&&!carrying){showDemoUntil=now+4.8;$('message').textContent='Watch: Johnny scoops soil from the pile into the wheelbarrow.';}say($('message').textContent)}
-$('show').disabled=false;$('show').addEventListener('click',help);$('sound').addEventListener('click',()=>{sound=!sound;$('sound').textContent=sound?'🔊':'🔇';$('sound').setAttribute('aria-pressed',String(sound));if(!sound)window.speechSynthesis?.cancel()});$('retry').addEventListener('click',()=>reset());$('start').disabled=false;$('start').textContent='Let’s plant!';$('start').addEventListener('click',()=>{if(complete){window.location.href='level2.html';return;}reset();started=true;$('overlay').hidden=true;chirp(550)});$('replay').hidden=true;
-function reset(){birds=[];birdNextAt=0;birdEscapes=0;birdVisits=0;shooUntil=0;stage=[0,0,0];soilLoads=0;loadingStartedAt=0;showDemoUntil=0;soilCartActive=false;cartWheelAngle=0;cartFacing=1;actionKind='';selected='shovel';complete=false;particles=[];started=false;fx=145;fy=510;carrying=null;walkTarget=null;walkAction=null;cursorTarget=null;dragHeld=false;working=false;workSpot=-1;$('overlayKicker').textContent='WELCOME TO JOHNNY’S ORCHARD';$('overlayTitle').innerHTML='Little seeds.<br>Big trees.';$('overlayCopy').textContent='Help Johnny plant three apple trees!';$('start').textContent='Let’s plant!';refresh();updateTools()}
+$('show').disabled=false;$('show').addEventListener('click',help);$('sound').addEventListener('click',()=>{sound=!sound;$('sound').textContent=sound?'🔊':'🔇';$('sound').setAttribute('aria-pressed',String(sound));if(!sound){window.speechSynthesis?.cancel();window.JohnnySounds?.stop()}});$('retry').addEventListener('click',()=>reset());$('start').disabled=false;$('start').textContent='Let’s plant!';$('start').addEventListener('click',()=>{if(complete){window.location.href='level2.html';return;}reset();started=true;$('overlay').hidden=true;chirp(550)});$('replay').hidden=true;
+function reset(){window.JohnnySounds?.stop();birds=[];birdNextAt=0;birdEscapes=0;birdVisits=0;shooUntil=0;stage=[0,0,0];soilLoads=0;loadingStartedAt=0;showDemoUntil=0;soilCartActive=false;cartWheelAngle=0;cartFacing=1;actionKind='';selected='shovel';complete=false;particles=[];started=false;fx=145;fy=510;carrying=null;walkTarget=null;walkAction=null;cursorTarget=null;dragHeld=false;working=false;workSpot=-1;$('overlayKicker').textContent='WELCOME TO JOHNNY’S ORCHARD';$('overlayTitle').innerHTML='Little seeds.<br>Big trees.';$('overlayCopy').textContent='Help Johnny plant three apple trees!';$('start').textContent='Let’s plant!';refresh();updateTools()}
 try{guide=window.trackpadGuide?.create?.({scene:$('handScene'),leftHand:$('leftHand'),rightHand:$('rightHand'),pressIndicator:$('press'),pointerSpace:'viewport',togglePressIndicator:true,toggleScenePressedClass:true})}catch(e){}
 fetch('/api/settings',{cache:'no-store'}).then(r=>r.ok?r.json():{}).then(s=>{voice=s.johnnyAppleseedVoiceInstructions===true;dragMode=s.johnnyAppleseedRequireClickAndDrag===true;birdsEnabled=s.johnnyAppleseedBlackbirdsEnabled!==false;birdDelay=[5,7,12].includes(Number(s.johnnyAppleseedBirdDelay))?Number(s.johnnyAppleseedBirdDelay):7}).catch(()=>{});
 window.addEventListener('blur',()=>{paused=true;cursorTarget=null;dragHeld=false;window.speechSynthesis?.cancel()});window.addEventListener('focus',()=>{paused=false});document.addEventListener('visibilitychange',()=>{paused=document.hidden;if(paused)window.speechSynthesis?.cancel()});

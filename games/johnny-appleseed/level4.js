@@ -10,6 +10,7 @@ function chaseTargetSize(completed){const end=CHASE_TARGET_END[chaseTargetDiffic
 function setChaseTargetDifficulty(value){chaseTargetDifficulty=Object.prototype.hasOwnProperty.call(CHASE_TARGET_END,value)?value:'normal'}
 let chase=null;const chaseDirect=new URLSearchParams(location.search).get('test')==='raccoon';
 
+window.JohnnySounds?.setEnabled(()=>soundOn&&running);
 function note(freq=550,dur=.12){if(!soundOn)return;try{audio??=new(window.AudioContext||window.webkitAudioContext)();const o=audio.createOscillator(),v=audio.createGain();o.type='triangle';o.frequency.setValueAtTime(freq,audio.currentTime);o.frequency.exponentialRampToValueAtTime(freq*.72,audio.currentTime+dur);v.gain.setValueAtTime(.055,audio.currentTime);v.gain.exponentialRampToValueAtTime(.001,audio.currentTime+dur);o.connect(v).connect(audio.destination);o.start();o.stop(audio.currentTime+dur)}catch{}}
 function puff(x,y,col,n=12){for(let i=0;i<n;i++)effects.push({x,y,vx:rnd(-110,110),vy:rnd(-140,-15),life:rnd(.4,.9),c:col,r:rnd(2,6)})}
 function oval(x,y,rx,ry,c){g.fillStyle=c;g.beginPath();g.ellipse(x,y,rx,ry,0,0,Math.PI*2);g.fill()}
@@ -38,7 +39,7 @@ function newHighApple(previous=-1){
   const treeIndex=options[Math.floor(Math.random()*options.length)],tr=trees[treeIndex];
   return {x:tr.x+rnd(-45,45),y:tr.y-rnd(185,220),done:false,tree:treeIndex};
 }
-function nextHighApple(stolen=false){
+function nextHighApple(stolen=false){window.JohnnySounds?.stopName('ladderclimb');window.JohnnySounds?.stopName('leaveshake');
   const previous=highApples[score]?.tree ?? lastTargetTree;
   lastTargetTree=previous;
   if(stolen){highApples[score]=newHighApple(previous)}
@@ -60,7 +61,7 @@ window.johnnyEyesNext=()=>{if(!running)return null;
  if(mode==='chase'&&chase&&!chase.failed){if(chase.stage===4){const centers=[235,475,725,965];return {signature:'hide-'+chase.hideMoves,label:'Look for the striped tail!',points:[{x:600,y:500},{x:centers[chase.hideSpot]+65,y:430}]}}
  if(chase.stage<4&&chase.obstacle){const o=chase.obstacle,z=chaseTarget(o);return {signature:'obstacle-'+chase.completed,label:'Click the glowing circle before Johnny arrives!',points:[{x:345,y:480},{x:z.x,y:z.y}]}}}
  return null;};
-function reset(){chase=null;mode='intro';running=false;score=0;misses=0;clock=0;round++;falling=[];effects=[];spawnIn=.7;jonnyX=210;targetX=210;ladderX=130;ladderTarget=130;ladderPlaced=false;ladderHeld=false;climbing=0;picking=false;highApples=[];squirrel.until=0;harvestAction=null;squirrelAttack=null;lostApple=null;lastTargetTree=-1;squirrelCooldown=0;squirrelVisits=0;squirrelWait=0;readSquirrelSettings();weatherSeed=Math.random()*100;status();overlay('🍎 The Great Apple Harvest!','Catch the falling apples, then help Johnny reach the apples high in the trees!','Start Harvest!')}
+function reset(){window.JohnnySounds?.stop();chase=null;mode='intro';running=false;score=0;misses=0;clock=0;round++;falling=[];effects=[];spawnIn=.7;jonnyX=210;targetX=210;ladderX=130;ladderTarget=130;ladderPlaced=false;ladderHeld=false;climbing=0;picking=false;highApples=[];squirrel.until=0;harvestAction=null;squirrelAttack=null;lostApple=null;lastTargetTree=-1;squirrelCooldown=0;squirrelVisits=0;squirrelWait=0;readSquirrelSettings();weatherSeed=Math.random()*100;status();overlay('🍎 The Great Apple Harvest!','Catch the falling apples, then help Johnny reach the apples high in the trees!','Start Harvest!')}
 function startCatch(){mode='catch';score=0;falling=[];spawnIn=.55;status();go()}
 function readSquirrelSettings(){
   const count=Number(localStorage.getItem('johnnyHarvestSquirrelCount'));
@@ -77,13 +78,13 @@ fetch('/api/settings',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(data=
   if(["off","gentle","normal","hard"].includes(data.johnnyRaccoonTargetDifficulty))localStorage.setItem("johnnyRaccoonTargetDifficulty",data.johnnyRaccoonTargetDifficulty);
   readSquirrelSettings();
 }).catch(()=>{});
-function startLadder(){mode='ladder';score=0;ladderPlaced=false;ladderHeld=false;ladderX=130;ladderTarget=130;climbing=0;highApples=[newHighApple()];lastTargetTree=-1;harvestAction=null;squirrelAttack=null;lostApple=null;squirrelVisits=0;readSquirrelSettings();squirrelWait=0;squirrelCooldown=clock+squirrelInterval;status();overlay('🪜 Reach the High Apples!','Touch the ladder, move it under the glowing tree, and click to place it. Then click the glowing apple!','Let’s Pick!')}
+function startLadder(){window.JohnnySounds?.stop();mode='ladder';score=0;ladderPlaced=false;ladderHeld=false;ladderX=130;ladderTarget=130;climbing=0;highApples=[newHighApple()];lastTargetTree=-1;harvestAction=null;squirrelAttack=null;lostApple=null;squirrelVisits=0;readSquirrelSettings();squirrelWait=0;squirrelCooldown=clock+squirrelInterval;status();overlay('🪜 Reach the High Apples!','Touch the ladder, move it under the glowing tree, and click to place it. Then click the glowing apple!','Let’s Pick!')}
 function spawn(){const treeIndex=Math.floor(rnd(0,3)),tr=trees[treeIndex],kind=Math.random()<.19?'leaf':Math.random()<.09?'acorn':'apple';falling.push({x:clamp(tr.x+rnd(-100,100),45,1155),y:tr.y-rnd(190,260),vy:rnd(140,205)+Math.min(score*6,55),vx:rnd(-15,15),kind,spin:rnd(-2,2),angle:0});spawnIn=rnd(.7,1.35);if(score>=4&&Math.random()<.24)spawnIn=.28}
-function update(dt){clock+=dt;for(const e of effects){e.x+=e.vx*dt;e.y+=e.vy*dt;e.life-=dt}effects=effects.filter(e=>e.life>0);if(!running)return;if(mode==='chase'){updateChase(dt);return}jonnyX+=clamp(targetX-jonnyX,-350*dt,350*dt);if(mode==='catch'){spawnIn-=dt;if(spawnIn<=0)spawn();for(const a of falling){a.y+=a.vy*dt;a.x+=a.vx*dt;a.angle+=a.spin*dt;if(a.kind==='apple'&&a.y>495&&a.y<558&&Math.abs(a.x-(jonnyX+37))<55){a.caught=true;score++;puff(a.x,a.y,'#ffdb66',16);note(500+score*35,.13);status()}else if(a.y>615){a.caught=true;if(a.kind==='apple'){misses++;puff(a.x,608,'#d4ae65',6)}}}falling=falling.filter(a=>!a.caught);if(score>=catchGoal){running=false;falling=[];startLadder()}}else if(mode==='ladder'){if(ladderHeld&&!ladderPlaced){ladderX+=clamp(ladderTarget-ladderX,-450*dt,450*dt)}if(ladderPlaced){climbing=Math.min(1,climbing+dt*.75)}if(harvestAction){harvestAction.time+=dt;if(harvestAction.time>=1.35){const a=highApples[score];if(a){puff(a.x,a.y,'#ffe76c',20);note(760,.19)}nextHighApple(false)}}
-  else if(squirrelAttack){squirrelAttack.time+=dt;const a=highApples[score];if(a&&squirrelAttack.time>=1.65){lostApple={x:a.x,y:a.y,vy:0,age:0};puff(a.x,a.y,'#c7e978',12);note(250,.25);squirrelAttack=null;nextHighApple(true)}}
+function update(dt){clock+=dt;for(const e of effects){e.x+=e.vx*dt;e.y+=e.vy*dt;e.life-=dt}effects=effects.filter(e=>e.life>0);if(!running)return;if(mode==='chase'){updateChase(dt);return}jonnyX+=clamp(targetX-jonnyX,-350*dt,350*dt);if(mode==='catch'){spawnIn-=dt;if(spawnIn<=0)spawn();for(const a of falling){a.y+=a.vy*dt;a.x+=a.vx*dt;a.angle+=a.spin*dt;if(a.kind==='apple'&&a.y>495&&a.y<558&&Math.abs(a.x-(jonnyX+37))<55){a.caught=true;score++;window.JohnnySounds?.play('basketpickup',{volume:.29,cooldown:170});puff(a.x,a.y,'#ffdb66',16);note(500+score*35,.13);status()}else if(a.y>615){a.caught=true;if(a.kind==='apple'){misses++;puff(a.x,608,'#d4ae65',6)}}}falling=falling.filter(a=>!a.caught);if(score>=catchGoal){running=false;falling=[];startLadder()}}else if(mode==='ladder'){if(ladderHeld&&!ladderPlaced){ladderX+=clamp(ladderTarget-ladderX,-450*dt,450*dt)}if(ladderPlaced){climbing=Math.min(1,climbing+dt*.75)}if(harvestAction){harvestAction.time+=dt;if(harvestAction.time>=1.35){const a=highApples[score];if(a){window.JohnnySounds?.play('cornsnap',{volume:.34});puff(a.x,a.y,'#ffe76c',20);note(760,.19)}nextHighApple(false)}}
+  else if(squirrelAttack){squirrelAttack.time+=dt;const a=highApples[score];if(a&&squirrelAttack.time>=1.65){lostApple={x:a.x,y:a.y,vy:0,age:0};window.JohnnySounds?.play('leaveshake',{volume:.3});puff(a.x,a.y,'#c7e978',12);note(250,.25);squirrelAttack=null;nextHighApple(true)}}
   else if(clock>=squirrelCooldown&&squirrelVisits<squirrelLimit&&highApples[score]){
     // An opportunity is counted when the squirrel visibly enters, not when it wins.
-    squirrelAttack={tree:highApples[score].tree,time:0};
+    squirrelAttack={tree:highApples[score].tree,time:0};window.JohnnySounds?.play('squirrel',{volume:.27});window.JohnnySounds?.play('leaveshake',{volume:.25});
     squirrelVisits++;
     squirrelCooldown=clock+squirrelInterval;
     note(350,.12);
@@ -202,7 +203,7 @@ function nextChaseObstacle(){
  c.obstacle={kind,x:1190,clicked:false,resolved:false,passed:false,feedback:0,side:Math.random()<.5?-1:1};
  status();
 }
-function startRaccoon(){
+function startRaccoon(){window.JohnnySounds?.stop();window.JohnnySounds?.play('raccoon',{volume:.3});
  readSquirrelSettings();
  mode='chase';running=false;
  chase={stage:1,completed:0,total:12,mistakes:0,maxMistakes:3,elapsed:0,
@@ -218,7 +219,7 @@ function finishRaccoon(){
  chase.stage=5;chase.finaleTime=0;chase.obstacle=null;
  note(760,.22);status();
 }
-function finishRaccoonCelebration(){
+function finishRaccoonCelebration(){window.JohnnySounds?.stop();
  mode='win';running=false;status();
  overlay('🎉 Harvest Complete!','Johnny got his apple back! The raccoon gets a fallen apple, and the harvest is safe.','Play Again');
  note(820,.25);puff(600,280,'#ffe16a',55);
@@ -247,8 +248,8 @@ function updateChase(dt){
  // its pose is driven by the obstacle position, never by click timing.
  if(!o.resolved&&o.x<=515){
   o.resolved=true;
-  if(o.clicked){c.action=o.kind;note(690,.12);puff(355,495,'#ffe578',13);c.lead=Math.max(195,c.lead-19)}
-  else{c.mistakes++;c.stumble=1.05;c.lead+=105;note(220,.2);puff(355,510,'#dba26c',18);
+  if(o.clicked){window.JohnnySounds?.play(o.kind==='jump'?'newlanding':o.kind==='duck'?'walksand':'running-feet',{volume:.28,cooldown:240});c.action=o.kind;note(690,.12);puff(355,495,'#ffe578',13);c.lead=Math.max(195,c.lead-19)}
+  else{window.JohnnySounds?.play('cartoonstumble',{volume:.35});c.mistakes++;c.stumble=1.05;c.lead+=105;note(220,.2);puff(355,510,'#dba26c',18);
    if(c.mistakes>=c.maxMistakes){failRaccoon();return}}
   status();
  }
