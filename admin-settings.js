@@ -8,6 +8,8 @@ const task4ScrollSecondsInput = document.getElementById("task4ScrollSeconds");
 const task4EnabledToggle = document.getElementById("task4EnabledToggle");
 const fullscreenRequireClickAndDragToggle = document.getElementById("fullscreenRequireClickAndDragToggle");
 const mazeRequireClickAndDragToggle = document.getElementById("mazeRequireClickAndDragToggle");
+const turkeyTrotMazeDifficultySelect = document.getElementById("turkeyTrotMazeDifficulty");
+const turkeyTrotMazeDragToggle = document.getElementById("turkeyTrotMazeRequireClickAndDrag");
 const carRequireClickAndDragToggle = document.getElementById("carRequireClickAndDragToggle");
 const jackRequireClickAndDragToggle = document.getElementById("jackRequireClickAndDragToggle");
 const freezeScreenFeatureToggle = document.getElementById("freezeScreenFeatureToggle");
@@ -23,6 +25,7 @@ const martianMadnessGameActiveToggle = document.getElementById("martianMadnessGa
 const bugMeadowGameActiveToggle = document.getElementById("bugMeadowGameActive");
 const johnnyAppleseedGameActiveToggle = document.getElementById("johnnyAppleseedGameActive");
 const tractorJobCrewGameActiveToggle = document.getElementById("tractorJobCrewGameActive");
+const turkeyTrotGameActiveToggle = document.getElementById("turkeyTrotGameActive");
 const senseBuilderGameActiveToggle = document.getElementById("senseBuilderGameActive");
 const senseBuilderRequireClickAndDragToggle = document.getElementById("senseBuilderRequireClickAndDrag");
 const fireflyForestGameActiveToggle = document.getElementById("fireflyForestGameActive");
@@ -1829,6 +1832,7 @@ function applyProgressivePresets() {
   if (jackRequireClickAndDragToggle) jackRequireClickAndDragToggle.checked = false;
   if (johnnyAppleseedGameActiveToggle) johnnyAppleseedGameActiveToggle.checked = true;
   if (tractorJobCrewGameActiveToggle) tractorJobCrewGameActiveToggle.checked = true;
+  if (turkeyTrotGameActiveToggle) turkeyTrotGameActiveToggle.checked = true;
   if (fullscreenGameActiveToggle) fullscreenGameActiveToggle.checked = true;
   if (clambakeAdventureGameActiveToggle) clambakeAdventureGameActiveToggle.checked = true;
   if (mazeGameActiveToggle) mazeGameActiveToggle.checked = true;
@@ -2619,6 +2623,7 @@ async function loadTask1Settings() {
   if (johnnyRaccoonTargetDifficultySelect) johnnyRaccoonTargetDifficultySelect.value = ["off","gentle","normal","hard"].includes(localStorage.getItem("johnnyRaccoonTargetDifficulty")) ? localStorage.getItem("johnnyRaccoonTargetDifficulty") : "normal";
   let johnnyAppleseedGameActive = parseTaskEnabled(localStorage.getItem("johnnyAppleseedGameActive"), true);
   let tractorJobCrewGameActive = parseTaskEnabled(localStorage.getItem("tractorJobCrewGameActive"), true);
+  let turkeyTrotGameActive = parseTaskEnabled(localStorage.getItem("turkeyTrotGameActive"), true);
   let tractorJobCrewLevels = normalizeTractorLevelsAdmin(JSON.parse(localStorage.getItem("tractorJobCrewLevels") || "null"));
   let senseBuilderLevels = normalizeSenseBuilderLevels(
     JSON.parse(
@@ -2945,6 +2950,18 @@ async function loadTask1Settings() {
         fullscreenRequireClickAndDrag
       );
       mazeRequireClickAndDrag = parseTaskEnabled(data.mazeRequireClickAndDrag, mazeRequireClickAndDrag);
+      if(turkeyTrotMazeDragToggle) turkeyTrotMazeDragToggle.checked = data.turkeyTrotMazeRequireClickAndDrag === true;
+      {const el=document.getElementById("turkeyTrotLevel1Enabled");if(el)el.checked=data.turkeyTrotLevel1Enabled!==false;}
+      {const el=document.getElementById("turkeyTrotLevel2Enabled");if(el)el.checked=data.turkeyTrotLevel2Enabled!==false;}
+      {const el=document.getElementById("turkeyTrotLevel3Enabled");if(el)el.checked=data.turkeyTrotLevel3Enabled!==false;}
+      {const el=document.getElementById("turkeyTrotLevel4Enabled");if(el)el.checked=data.turkeyTrotLevel4Enabled!==false;}
+
+      { const el=document.getElementById("turkeyTrotLevel1Count"); if(el) el.value=String(Math.min(20,Math.max(3,Number(data.turkeyTrotLevel1Count)||16))); }
+      { const el=document.getElementById("turkeyTrotLevel2Count"); if(el) el.value=String(Math.min(20,Math.max(3,Number(data.turkeyTrotLevel2Count)||20))); }
+      { const el=document.getElementById("turkeyTrotLevel3Count"); if(el) el.value=String(Math.min(20,Math.max(3,Number(data.turkeyTrotLevel3Count)||20))); }
+      { const el=document.getElementById("turkeyTrotLevel4Count"); if(el) el.value=String(Math.min(20,Math.max(3,Number(data.turkeyTrotLevel4Count)||20))); }
+
+      if(turkeyTrotMazeDifficultySelect) turkeyTrotMazeDifficultySelect.value = ["easy","normal","hard","expert"].includes(data.turkeyTrotMazeDifficulty) ? data.turkeyTrotMazeDifficulty : "easy";
       carRequireClickAndDrag = parseTaskEnabled(data.carRequireClickAndDrag, carRequireClickAndDrag);
       jackRequireClickAndDrag = parseTaskEnabled(data.jackRequireClickAndDrag, jackRequireClickAndDrag);
       hauntedStreetGameActive = parseTaskEnabled(
@@ -3078,6 +3095,8 @@ async function loadTask1Settings() {
       );
       johnnyAppleseedGameActive = parseTaskEnabled(data.johnnyAppleseedGameActive, johnnyAppleseedGameActive);
       tractorJobCrewGameActive = parseTaskEnabled(data.tractorJobCrewGameActive, tractorJobCrewGameActive);
+      turkeyTrotGameActive = parseTaskEnabled(data.turkeyTrotGameActive, turkeyTrotGameActive);
+      localStorage.setItem("turkeyTrotGameActive", String(turkeyTrotGameActive));
       localStorage.setItem("johnnyAppleseedGameActive", String(johnnyAppleseedGameActive));
       localStorage.setItem("tractorJobCrewGameActive", String(tractorJobCrewGameActive));
       johnnyDrag = parseTaskEnabled(data.johnnyAppleseedRequireClickAndDrag, johnnyDrag);
@@ -3426,6 +3445,7 @@ async function loadTask1Settings() {
   }
   if (johnnyAppleseedGameActiveToggle) johnnyAppleseedGameActiveToggle.checked = johnnyAppleseedGameActive;
   if (tractorJobCrewGameActiveToggle) tractorJobCrewGameActiveToggle.checked = tractorJobCrewGameActive;
+  if (turkeyTrotGameActiveToggle) turkeyTrotGameActiveToggle.checked = turkeyTrotGameActive;
   displayTractorLevels(tractorJobCrewLevels);
   displaySenseBuilderLevels(senseBuilderLevels);
   if (senseBuilderRequireClickAndDragToggle) {
@@ -3740,6 +3760,8 @@ async function saveTask1Settings() {
 
   const johnnyAppleseedGameActive = Boolean(johnnyAppleseedGameActiveToggle?.checked);
   const tractorJobCrewGameActive = Boolean(tractorJobCrewGameActiveToggle?.checked);
+  const turkeyTrotGameActive = Boolean(turkeyTrotGameActiveToggle?.checked);
+  localStorage.setItem("turkeyTrotGameActive", String(turkeyTrotGameActive));
   localStorage.setItem("johnnyAppleseedGameActive", String(johnnyAppleseedGameActive));
   localStorage.setItem("tractorJobCrewGameActive", String(tractorJobCrewGameActive));
   const johnnyDragSaveInput = document.getElementById("johnnyAppleseedRequireClickAndDrag");
@@ -4460,6 +4482,18 @@ async function saveTask1Settings() {
         task4Enabled,
         fullscreenRequireClickAndDrag,
         mazeRequireClickAndDrag,
+        turkeyTrotMazeRequireClickAndDrag: turkeyTrotMazeDragToggle?.checked === true,
+        turkeyTrotLevel1Enabled: document.getElementById("turkeyTrotLevel1Enabled")?.checked !== false,
+        turkeyTrotLevel2Enabled: document.getElementById("turkeyTrotLevel2Enabled")?.checked !== false,
+        turkeyTrotLevel3Enabled: document.getElementById("turkeyTrotLevel3Enabled")?.checked !== false,
+        turkeyTrotLevel4Enabled: document.getElementById("turkeyTrotLevel4Enabled")?.checked !== false,
+
+        turkeyTrotMazeDifficulty: turkeyTrotMazeDifficultySelect?.value || "easy",
+        turkeyTrotLevel1Count: Math.min(20,Math.max(3,Math.round(Number(document.getElementById("turkeyTrotLevel1Count")?.value)||16))),
+        turkeyTrotLevel2Count: Math.min(20,Math.max(3,Math.round(Number(document.getElementById("turkeyTrotLevel2Count")?.value)||20))),
+        turkeyTrotLevel3Count: Math.min(20,Math.max(3,Math.round(Number(document.getElementById("turkeyTrotLevel3Count")?.value)||20))),
+        turkeyTrotLevel4Count: Math.min(20,Math.max(3,Math.round(Number(document.getElementById("turkeyTrotLevel4Count")?.value)||20))),
+
         carRequireClickAndDrag,
         jackRequireClickAndDrag,
         freezeScreenFeatureEnabled,
@@ -4478,6 +4512,7 @@ async function saveTask1Settings() {
         senseBuilderLevels,
         tractorJobCrewLevels,
         tractorJobCrewGameActive,
+        turkeyTrotGameActive,
         johnnyAppleseedGameActive,
         johnnyAppleseedRequireClickAndDrag,
         johnnyAppleseedVoiceInstructions,
@@ -5185,3 +5220,12 @@ window.addEventListener(
   }
 );
 
+
+// Keep one playable Turkey Trot level available when the game is enabled.
+for(const n of [1,2,3,4]){
+ const input=document.getElementById('turkeyTrotLevel'+n+'Enabled');
+ input?.addEventListener('change',()=>{
+  const boxes=[1,2,3,4].map(i=>document.getElementById('turkeyTrotLevel'+i+'Enabled')).filter(Boolean);
+  if(!boxes.some(box=>box.checked)){input.checked=true;}
+ });
+}

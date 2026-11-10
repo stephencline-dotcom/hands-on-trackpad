@@ -20,6 +20,14 @@ if(n===4){ // Festive Thanksgiving room, no food-related character imagery.
 c.fillStyle='#efd1a6';c.fillRect(0,0,1000,600);c.fillStyle='#d7ac7c';c.fillRect(0,445,1000,155);poly([[150,415],[850,415],[900,480],[110,480]],'#b27b55','#815337',5);for(let x of [200,800])line([[x,472],[x,565]],'#825438',17);for(let x=230;x<=770;x+=90){ellipse(x,414,26,13,'#f8e7c4','#b88c5d');ellipse(x,408,11,12,x%3?'#d67e45':'#a6a35c');}for(let x of [90,910]){poly([[x-55,440],[x,320],[x+55,440]],'#d29c58');ellipse(x,345,30,30,'#dd8f4d');}line([[0,115],[1000,115]],'#ba7b54',8);for(let i=0;i<9;i++){let x=100+i*100;poly([[x,118],[x+20,150],[x+39,118]],['#c65d44','#dba64a','#a6a26b'][i%3]);}}
 if(n===5){ // Broadly inspired by northeastern woodland agriculture; no stereotyped costumes or tipis.
 for(let x of [90,920])tree(x,445,['#bd8249','#d1a358','#ad7648']);poly([[650,455],[660,325],[735,260],[827,325],[837,455]],'#ad8a66','#775b45',5);for(let x=668;x<835;x+=18)line([[x,326+Math.abs(744-x)*.4],[x,455]],'#8c7356',3);for(let x=145;x<610;x+=65){line([[x,490],[x,383]],'#62924b',8);for(let y=405;y<470;y+=25){ellipse(x-12,y,14,7,'#79a55b');ellipse(x+12,y-8,13,7,'#84ae61');}ellipse(x,386,12,20,'#e4bf6d');}for(let x=150;x<610;x+=110)ellipse(x,510,25,14,'#b88754');}
+// Subtle living scenery. All motion is decorative and never changes hitboxes.
+if(t>0){c.save();
+if(n===0||n===3||n===5){for(let i=0;i<17;i++){let x=(i*173+Math.sin(t*.8+i)*38+1000)%1000,y=(i*91+t*(14+i%4*5))%570; c.save();c.translate(x,y);c.rotate(t+i);ellipse(0,0,9,4,['#d88648','#e8bd57','#b86b43'][i%3]);c.restore();}}
+if(n===1||n===2){for(let i=0;i<4;i++){let x=(i*280+t*(8+i*2))%1150-70;ellipse(x,105+i*38,50,13,'#ffffff65');ellipse(x+25,97+i*38,37,16,'#ffffff65');}}
+if(n===4){for(let i=0;i<6;i++){let x=190+i*126;ellipse(x,190+Math.sin(t*3+i)*7,3,7,'#ffdf78');}}
+if(n===5){for(let i=0;i<12;i++){let x=(i*131+Math.sin(t+i)*12)%1000,y=350+i%4*49;ellipse(x,y,3,5,'#e3c66b');}}
+c.restore();}
+
 }
 function turkey(d,x=500,y=360,scale=1,t=0,motion=0,gobbling=false){
 c.save();c.translate(x,y);c.scale(scale,scale);
@@ -43,7 +51,7 @@ c.restore();c.restore();}
 // A matched pair of wearable shoes, anchored over the two actual turkey feet.
 // The pair remains a single selectable object for the existing pointer controls.
 function footwear(style,t=0,motion=0){
-  const stride=motion>0?Math.sin(t*12)*motion*14:0;
+  const stride=motion>0?Math.sin(t*12)*19:0;
   for(const side of [-1,1]){
     c.save();c.translate(side*49+stride*side,0);
     c.scale(side,1); // Each toe points outward, away from the turkey's center.
@@ -77,7 +85,13 @@ function footwear(style,t=0,motion=0){
   }
 }
 
-function part(p,t=0,gobbling=false,motion=0){c.save();c.translate(p.x,p.y);c.rotate(p.angle||0);c.scale(p.scale||1,p.scale||1);const k=p.kind,s=p.style;
+function part(p,t=0,gobbling=false,motion=0){c.save();
+// Keep each saved position unchanged; add only a temporary walking offset.
+// Body accessories follow the torso bob, while footwear follows the feet.
+const walking=motion>0;
+const footwearPart=(p.kind==='costume'&&p.style===5)||(p.kind==='fun'&&p.style===4)||(p.kind==='sticker'&&p.style===5);
+const torsoBob=walking&&!footwearPart?Math.abs(Math.sin(t*12))*5:0;
+c.translate(p.x,p.y-torsoBob);c.rotate(p.angle||0);c.scale(p.scale||1,p.scale||1);const k=p.kind,s=p.style;
 if(k==='eyes'){const blink=Math.sin(t*1.7)>.985;c.save();if(blink)c.scale(1,.13);for(let x of [-57,57]){if(s===2||s===4){c.beginPath();c.arc(x,7,24,PI,T);c.strokeStyle='#4a3029';c.lineWidth=8;c.stroke();if(s===4)line([[x-26,-11],[x+24,-11]],'#765441',6);}else if(s===3){star(x,0,29,'#f5d761');}else if(s===6){heart(x,0,1.3,'#e88a9a');}else{ellipse(x,0,s===0?30:24,30,'#fff9e8','#815e4a');let dx=s===5?(x<0?16:-16):s===7?12:s===1?-7:0;ellipse(x+dx,5,13,19,'#352e2d');ellipse(x+dx+5,-3,4,6,'#fff');}}}
 else if(k==='beak'){
   c.save();const open=gobbling?Math.abs(Math.sin(t*17))*12:0;
@@ -118,6 +132,38 @@ else if(k==='fun'){
 }
 else if(k==='sticker'){if(s===0)poly([[-8,0],[-49,-29],[-49,29],[-8,7],[8,7],[49,29],[49,-29],[8,0]],'#d2738e','#85465c');else if(s===1){line([[-48,-17],[0,14],[48,-17]],'#b57b9a',18);for(let x of [-43,0,43])line([[x,2],[x+12,24]],'#d8a6ba',7);}else if(s===2){line([[0,-42],[0,22]],'#b7a45b',8);ellipse(0,12,31,35,'#efc960','#997b40');star(0,12,15,'#fff2aa');}else if(s===3){for(let i=0;i<7;i++){let a=i*T/7;ellipse(Math.cos(a)*50,Math.sin(a)*19,18,18,'#e8a5b6');}line([[-72,5],[72,5]],'#7f9a62',7);}else if(s===4){poly([[-48,-22],[0,-50],[48,-22],[80,112],[0,65],[-80,112]],'#c85657','#924446');}else if(s===5){footwear('cowboy',t,motion);}else if(s===6){line([[-40,-25],[0,20],[40,-25]],'#a98c54',8);heart(0,22,1,'#e17b8c');}else if(s===7){poly([[0,-38],[15,-10],[35,0],[12,13],[0,36],[-15,12],[-35,0],[-15,-10]],'#ce854c');}else{for(let x of [-29,29])ellipse(x,0,21,12,'#e9a09c');}}
 if(k==='eyes'||k==='beak'||k==='legacy-mouth-disabled')c.restore();c.restore();}
-function draw(d,t=0,selected=null,carry=false,fashion=false,motion=0,gobbling=false){scene(d,t);c.save();if(fashion){const s=1+.035*Math.sin(t*6);c.translate(500,355);c.rotate(Math.sin(t*3)*.045);c.scale(s,s);c.translate(-500,-355);}turkey(d,500,360,1,t,motion,gobbling);for(const p of d.parts||[])part(p,t,gobbling,motion);c.restore();if(selected){const p=d.parts.find(x=>x.id===selected);if(p){const [w,h]=M.dims(p);c.save();c.translate(p.x,p.y);c.rotate(p.angle);c.setLineDash([8,6]);c.strokeStyle=carry?'#fff5ba':'#476e8a';c.lineWidth=3;c.strokeRect(-w*p.scale/2-8,-h*p.scale/2-8,w*p.scale+16,h*p.scale+16);c.restore();}}if(fashion){c.font='bold 36px system-ui';c.fillStyle='#805139';c.textAlign='center';c.fillText('TURKEY FASHION SHOW!',500,70);}}
+function draw(d,t=0,selected=null,carry=false,fashion=false,motion=0,gobbling=false,reaction=null){
+if(fashion){const g=c.createLinearGradient(0,0,0,600);g.addColorStop(0,'#42345d');g.addColorStop(1,'#b9748c');c.fillStyle=g;c.fillRect(0,0,1000,600);poly([[240,600],[380,290],[620,290],[760,600]],'#eec5a5','#f9e2ba',6);for(let i=0;i<5;i++){let x=100+i*200;c.fillStyle='#fff6b8';c.globalAlpha=.17+.09*Math.sin(t*2+i);c.beginPath();c.moveTo(x,0);c.lineTo(x-100+Math.sin(t+i)*60,540);c.lineTo(x+100+Math.sin(t+i)*60,540);c.fill();c.globalAlpha=1;}for(let i=0;i<30;i++){c.fillStyle=['#f8d17d','#fff2bb','#f09caf'][i%3];c.fillRect((i*173+t*25)%1000,(i*97+t*(30+i%5*9))%600,7,10);}poly([[0,0],[155,0],[125,480],[0,510]],'#9b385d');poly([[845,0],[1000,0],[1000,510],[875,480]],'#9b385d');}
+else scene(d,t);c.save();
+if(reaction&&!fashion){
+  const u=Math.max(0,Math.min(1,reaction.progress)),envelope=Math.sin(Math.PI*u),type=reaction.type;
+  let dx=0,dy=0,angle=0,sx=1,sy=1;
+  if(type==='blink'){dy=-3*envelope;angle=.035*Math.sin(u*10)*envelope;}
+  else if(type==='cool'){angle=.095*envelope;dx=9*envelope;}
+  else if(type==='hat'){dy=-12*Math.abs(Math.sin(u*Math.PI*2))*envelope;angle=.055*Math.sin(u*11)*envelope;}
+  else if(type==='gobble'){dy=-5*Math.sin(u*17)*envelope;sx=1+.025*Math.sin(u*22)*envelope;}
+  else if(type==='showoff'){angle=.09*Math.sin(u*11)*envelope;sx=1+.035*envelope;}
+  else if(type==='dance'){dx=16*Math.sin(u*15)*envelope;dy=-8*Math.abs(Math.sin(u*17))*envelope;angle=.09*Math.sin(u*13)*envelope;}
+  else if(type==='feathers'){sx=1+.055*envelope;sy=1-.02*envelope;angle=.04*Math.sin(u*14)*envelope;}
+  else {dy=-9*Math.sin(Math.PI*u)*envelope;sy=1-.035*envelope;}
+  c.translate(500+dx,355+dy);c.rotate(angle);c.scale(sx,sy);c.translate(-500,-355);
+}
+// Runway: all decorations and the turkey share exactly one character transform.
+// Suppress separate limb/decoration translations here: those made shoes, hats,
+// and handheld objects visibly drift away from the student's original design.
+const runwayMotion=fashion?0:motion;
+if(fashion){
+  const step=Math.sin(t*8.5),sway=Math.sin(t*2.4);
+  const bounce=-Math.abs(step)*8;
+  const scale=1+.025*Math.sin(t*5);
+  c.translate(500+Math.sin(t*.85)*80,355+bounce);
+  c.rotate(sway*.055);
+  c.scale(scale,scale);
+  c.translate(-500,-355);
+}
+const behind=p=>p.kind==='fun'&&p.style===1||p.kind==='sticker'&&p.style===4;
+for(const p of d.parts||[])if(behind(p))part(p,t,gobbling,runwayMotion);
+turkey(d,500,360,1,t,runwayMotion,gobbling);
+for(const p of d.parts||[])if(!behind(p))part(p,t,gobbling,runwayMotion);c.restore();if(selected){const p=d.parts.find(x=>x.id===selected);if(p){const [w,h]=M.dims(p);c.save();c.translate(p.x,p.y);c.rotate(p.angle);c.setLineDash([8,6]);c.strokeStyle=carry?'#fff5ba':'#476e8a';c.lineWidth=3;c.strokeRect(-w*p.scale/2-8,-h*p.scale/2-8,w*p.scale+16,h*p.scale+16);c.restore();}}if(fashion){c.font='bold 36px system-ui';c.fillStyle='#805139';c.textAlign='center';c.fillText('TURKEY FASHION SHOW!',500,70);}}
 return {draw,turkey,part};}
 window.TurkeyArt={create};})();

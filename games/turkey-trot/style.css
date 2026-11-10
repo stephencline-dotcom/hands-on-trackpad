@@ -1,0 +1,44 @@
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(#8fd3e5,#e5f5db);font-family:system-ui,Arial,sans-serif;color:#24422e}main{max-width:1100px;margin:auto;padding:10px}header{display:flex;align-items:center;justify-content:space-between;gap:12px}h1{margin:4px 0 10px;font-size:clamp(22px,3vw,36px)}h1 small{font-size:.5em;color:#577346}header div{display:flex;gap:12px;align-items:center}header button,header a,#start{font:700 18px system-ui;border:2px solid #785128;border-radius:14px;padding:9px 17px;background:#ffe18a;color:#422d19;text-decoration:none;cursor:pointer}#stage{position:relative;border:7px solid #805a33;border-radius:23px;overflow:hidden;box-shadow:0 12px 28px #4a6d4b55;touch-action:manipulation}canvas{width:100%;height:auto;display:block;cursor:crosshair}#hud{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;pointer-events:none;font-size:clamp(16px,2.6vw,25px);font-weight:900;text-shadow:0 2px 3px white}#hud span{background:#fff8d8dd;border-radius:14px;padding:5px 12px}#overlay{position:absolute;inset:0;background:#122d27a8;display:flex;flex-direction:column;justify-content:center;align-items:center;color:white;text-align:center;padding:30px}#overlay[hidden]{display:none}#overlay h2{font-size:clamp(28px,5vw,55px);margin:0 0 10px}#overlay p{max-width:610px;font-size:clamp(17px,2.5vw,25px);line-height:1.4}#start{font-size:24px;background:#ffdc51}#jump{position:absolute;left:50%;top:64%;transform:translate(-50%,-50%);border:5px solid white;border-radius:50%;background:#ffce30;box-shadow:0 0 0 10px #ffdc4b88,0 0 28px #fff58a;color:#57340e;font-size:23px;font-weight:900;width:120px;height:120px;cursor:pointer;animation:pulse .65s infinite alternate}#jump[hidden]{display:none}#guide{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:#fff6cddd;border-radius:20px;padding:5px 18px;font-weight:900;pointer-events:none;white-space:nowrap;font-size:clamp(12px,2vw,19px)}@keyframes pulse{to{box-shadow:0 0 0 17px #ffdc4b55,0 0 35px #fff58a;transform:translate(-50%,-50%) scale(1.05)}}
+
+#skipScene{position:absolute;right:15px;bottom:16px;z-index:8;background:#fff4c5;border:3px solid #8c5d30;border-radius:16px;padding:12px 18px;font:bold 18px system-ui;color:#59351d;cursor:pointer}#skipScene[hidden]{display:none}
+
+/* Shared two-level classroom layout: viewport-fit stage + original Hands-On Trackpad guide. */
+html,body{height:100%;height:100dvh;overflow:hidden}
+body{display:block}
+main{height:100%;height:100dvh;max-width:1600px;padding:8px 12px;display:flex;flex-direction:column;min-height:0;gap:7px}
+header{flex:0 0 auto;min-height:45px}h1{font-size:clamp(22px,2.2vw,31px);margin:0}header button,header a{padding:7px 12px;font-size:15px}
+.trot-play-layout{flex:1;min-height:0;min-width:0;display:grid;grid-template-columns:minmax(0,1fr) 188px;gap:12px;align-items:stretch}
+#stage{min-width:0;min-height:0;height:100%;display:flex;align-items:center;justify-content:center;background:#c6dbbf}
+#stage canvas{width:100%;height:100%;object-fit:contain}
+.trot-trackpad-guide{width:188px!important;max-width:100%;align-self:center!important;margin:0!important;padding:10px!important;border:2px solid #d4d8b7;border-radius:18px;background:#fffaf0}
+.trot-trackpad-guide .imported-trackpad-guide-label{text-align:center;font-size:14px;font-weight:800;margin:0 0 8px}
+.trot-trackpad-guide .imported-trackpad-scene{width:100%!important;height:auto!important;min-height:0!important;aspect-ratio:626/437;position:relative}
+.trot-trackpad-guide .imported-trackpad-image{object-fit:contain}
+.trot-trackpad-hint{text-align:center;font-size:12px;line-height:1.4;margin:8px 0 0}
+.guide-hidden .trot-play-layout,.trackpad-guide-off .trot-play-layout{grid-template-columns:minmax(0,1fr)}
+.guide-hidden .trot-trackpad-guide,.trackpad-guide-off .trot-trackpad-guide{display:none!important}
+#overlay{padding:clamp(8px,2vh,24px)}#overlay h2{font-size:clamp(25px,4vh,48px)}#overlay p{font-size:clamp(14px,2vh,22px);margin:8px 0 12px}#start{font-size:clamp(17px,2.6vh,23px);padding:8px 18px}
+#skipScene{font-size:clamp(12px,1.8vh,18px);padding:8px 12px}
+@media(max-width:950px){.trot-play-layout{grid-template-columns:minmax(0,1fr) 142px;gap:8px}.trot-trackpad-guide{width:142px!important;padding:6px!important}.trot-trackpad-hint{font-size:10px}main{padding:5px 7px}}
+@media(max-width:650px){.trot-play-layout{grid-template-columns:minmax(0,1fr) 108px;gap:5px}.trot-trackpad-guide{width:108px!important;padding:4px!important}.trot-trackpad-guide .imported-trackpad-guide-label{font-size:11px}.trot-trackpad-hint{font-size:9px}h1{font-size:19px}header button,header a{font-size:12px;padding:5px 7px}}
+
+/* Level 4 controls live below the canvas, never over the turkey. */
+#stage{display:flex;flex-direction:column;overflow:hidden}
+#stage canvas{flex:1 1 auto;min-height:0;height:calc(100% - 60px);width:100%;object-fit:contain}
+#trotControlBar{flex:0 0 60px;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff5d7;border-top:3px solid #b48a55;z-index:6;box-sizing:border-box;padding:5px 10px}
+#trotControlBar #guide{position:static!important;transform:none!important;left:auto!important;bottom:auto!important;width:auto!important;max-width:100%;font-size:clamp(13px,1.7vw,19px)!important;pointer-events:none}
+#runningControls{display:flex;align-items:center;justify-content:center;gap:10px}
+#runningControls button{position:static!important;transform:none!important;left:auto!important;bottom:auto!important;border:2px solid #8c642f;border-radius:12px;padding:7px 16px;font:bold clamp(13px,1.7vw,20px) system-ui;background:#ffe6a3;color:#294634;box-shadow:none;cursor:pointer;white-space:nowrap}
+#runningControls #finaleJump{background:#ffd94d}
+#runningControls #finaleJump[hidden]{display:none!important}
+#stage.maze-mode #runningControls{display:none}
+#stage:not(.maze-mode) #trotControlBar #guide{display:none}
+#stage.maze-mode #trotControlBar{background:#e9f0d4}
+@media(max-width:700px){#runningControls{gap:4px}#runningControls button{padding:7px 8px}#trotControlBar{padding:4px}}
+
+/* Level 4 runner uses the same centered golden Jump control as Levels 1 and 2. */
+#stage #finaleJump{position:absolute!important;left:50%!important;top:64%!important;bottom:auto!important;transform:translate(-50%,-50%)!important;width:120px;height:120px;border:5px solid #fff;border-radius:50%;background:#ffce30;color:#57340e;font:900 23px system-ui;box-shadow:0 0 0 10px #ffdc4b88,0 0 28px #fff58a;cursor:pointer;z-index:8;animation:pulse .65s infinite alternate}
+#stage #finaleJump[hidden],#stage.maze-mode #finaleJump{display:none!important}
+@media(max-height:700px){#stage #finaleJump{width:95px;height:95px;font-size:19px}}
+
+.trot-next-level:not([hidden]){display:inline-block;margin:12px 8px;padding:12px 18px;background:#a9ed86;border:3px solid #365d32;border-radius:16px;color:#21431e;font:bold 21px system-ui;text-decoration:none}.trot-next-level[hidden]{display:none!important}.trot-level-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:950px;margin:32px auto}.trot-level-picker a{background:#fff3cf;border:4px solid #a5763e;border-radius:24px;min-height:150px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;font-size:35px;text-decoration:none;color:#51391e}.trot-level-picker strong{font-size:23px}.trot-level-picker span{font-size:17px}@media(max-width:600px){.trot-level-picker{grid-template-columns:1fr}}

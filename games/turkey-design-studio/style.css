@@ -52,3 +52,74 @@ footer{justify-content:flex-end}
 
 /* Turkey studio theme */
 body{background:#fff5dd}#categories button[data-kind=turkey]{background:#ae7146}#categories button[data-kind=beak]{background:#df9d3c}.studio #glow{background:#ffe6a2;border-color:#a36b36}.studio #glow svg{display:none}.studio #glow::after{content:"★";font-size:36px;color:#9b6338}body.menus-scroll #palette{scrollbar-color:#a8794e #fff0d2}
+/* Creative Playground: compact controls, no changes to the trackpad or canvas sizing. */
+.playground-tools{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;padding:5px 4px 8px}
+.playground-tools button,.playground-actions button,.booth-choices button{border:2px solid #a16d42;background:#fff1cc;color:#62432e;border-radius:13px;padding:9px 12px;font-weight:800;cursor:pointer;min-height:42px}
+.playground-tools button:hover,.playground-actions button:hover,.booth-choices button:hover{background:#ffe0a0}
+.playground-panel{position:relative;z-index:2;background:#fff9e9;border:3px solid #b88955;border-radius:15px;margin:4px 8px 10px;padding:12px;box-shadow:0 5px 12px #71452122}
+.playground-panel[hidden]{display:none!important}
+.playground-panel-head{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:19px}
+.playground-panel-head button{border:0;background:#e9c69b;border-radius:8px;min-width:40px;min-height:40px;cursor:pointer}
+.playground-panel p{margin:7px 0 10px}
+.playground-actions,.booth-choices{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0}
+.booth-choices button[aria-pressed=true]{background:#ffdc7d;border-color:#76532f}
+#boothPreview{display:block;width:100%;max-width:440px;aspect-ratio:5/3;height:auto;margin:6px auto;border-radius:8px;border:2px solid #ae835c}
+@media(max-height:740px){.playground-tools button{padding:5px 8px;min-height:35px;font-size:12px}.playground-tools{gap:4px;padding:2px}}
+
+/* Photo Booth is a viewport-bound dialog, never a new row below the canvas. */
+.playground-shade{display:none;position:fixed;inset:0;background:#342519aa;z-index:1000}
+body.booth-open .playground-shade{display:block}
+.playground-panel:not([hidden]){position:fixed;z-index:1001;inset:50% auto auto 50%;transform:translate(-50%,-50%);width:min(680px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;overscroll-behavior:contain;margin:0;padding:clamp(8px,1.6vh,16px);display:flex;flex-direction:column;gap:clamp(5px,1vh,10px);box-shadow:0 12px 50px #24180d66}
+.playground-panel-head{flex:0 0 auto}.playground-panel .booth-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:0;flex:0 0 auto}
+.playground-panel .booth-choices button{font-size:clamp(11px,1.8vh,15px);padding:5px;min-height:35px}
+.playground-panel #boothPreview{display:block;flex:0 1 auto;width:auto;max-width:100%;max-height:min(46dvh,370px);height:auto;aspect-ratio:5/3;object-fit:contain;margin:0 auto}
+.playground-panel .playground-actions{justify-content:center;flex:0 0 auto;margin:0;gap:8px}
+.playground-panel .playground-actions button{min-height:40px}
+@media(max-height:600px){.playground-panel #boothPreview{max-height:34dvh}.playground-panel .booth-choices button{min-height:28px;padding:2px}.playground-panel .playground-actions button{min-height:32px;padding:4px}}
+
+/* Visual playground: make the art primary and the two special actions readable without words. */
+body:not(.menus-scroll) .workspace{grid-template-columns:76px 168px minmax(0,1fr) 188px}
+body.menus-scroll .workspace{grid-template-columns:76px 142px minmax(0,1fr) 188px}
+body:not(.menus-scroll).guide-hidden .workspace,body:not(.menus-scroll).trackpad-guide-off .workspace{grid-template-columns:76px 168px minmax(0,1fr)}
+body.menus-scroll.guide-hidden .workspace,body.menus-scroll.trackpad-guide-off .workspace{grid-template-columns:76px 142px minmax(0,1fr)}
+.studio .imported-trackpad-guide{width:188px!important}
+.playground-tools{gap:12px;padding:2px 2px 4px;flex-wrap:nowrap}
+.playground-tools .picture-action{width:114px;min-height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:2px 5px 4px;border:3px solid #a56f40;border-radius:16px;background:#fff0bd;box-shadow:0 4px 0 #d5b27a}
+.playground-tools .picture-action svg{width:72px;height:52px;display:block;pointer-events:none}
+.playground-tools .picture-action span{font-size:12px;line-height:1.1;font-weight:850}
+.playground-tools .magic-action:hover:not(:disabled) svg{animation:wand-wiggle .65s ease-in-out}
+.playground-tools .photo-action:hover:not(:disabled) svg{filter:drop-shadow(0 0 5px #fff0a0)}
+@keyframes wand-wiggle{25%{transform:rotate(-9deg)}75%{transform:rotate(9deg)}}
+@media(max-width:1100px){body:not(.menus-scroll) .workspace{grid-template-columns:65px 140px minmax(0,1fr) 150px}body.menus-scroll .workspace{grid-template-columns:65px 115px minmax(0,1fr) 150px}body:not(.menus-scroll).guide-hidden .workspace,body:not(.menus-scroll).trackpad-guide-off .workspace{grid-template-columns:65px 140px minmax(0,1fr)}body.menus-scroll.guide-hidden .workspace,body.menus-scroll.trackpad-guide-off .workspace{grid-template-columns:65px 115px minmax(0,1fr)}.studio .imported-trackpad-guide{width:150px!important}}
+@media(max-height:760px){.playground-tools .picture-action{min-height:58px;width:96px}.playground-tools .picture-action svg{height:37px;width:56px}.playground-tools .picture-action span{font-size:11px}.pumpkin-workarea{gap:5px}.pumpkin-workarea .edit-tools{padding:2px 4px 3px;gap:6px}.pumpkin-workarea .edit-tools button{min-height:38px;padding:3px 8px}.studio{gap:4px}}
+@media(max-width:700px){body:not(.menus-scroll) .workspace,body:not(.menus-scroll).guide-hidden .workspace,body:not(.menus-scroll).trackpad-guide-off .workspace{grid-template-columns:55px 110px minmax(0,1fr)}body.menus-scroll .workspace,body.menus-scroll.guide-hidden .workspace,body.menus-scroll.trackpad-guide-off .workspace{grid-template-columns:55px 95px minmax(0,1fr)}.playground-tools .picture-action{width:86px}}
+@media(prefers-reduced-motion:reduce){.playground-tools .magic-action:hover svg{animation:none}}
+
+/* Workspace expansion: one bottom row for all editing and creative controls. */
+.studio{padding:5px 10px;gap:3px}
+#message{min-height:20px;line-height:1.2}
+.workspace{gap:6px}
+.pumpkin-workarea{display:grid;grid-template-rows:minmax(0,1fr) auto;gap:4px;min-height:0;min-width:0}
+.bottom-tools{display:flex;align-items:center;justify-content:center;gap:clamp(6px,1vw,16px);flex-wrap:nowrap;min-height:60px;padding:2px 3px}
+.pumpkin-workarea .edit-tools{display:flex;justify-content:center;flex-wrap:nowrap;gap:5px;padding:0}
+.pumpkin-workarea .edit-tools button{min-width:39px;min-height:44px;font-size:22px;padding:3px 7px}
+.pumpkin-workarea .edit-tools #undo{font-size:14px;min-width:67px}
+.playground-tools{display:flex;flex-wrap:nowrap;gap:6px;padding:0}
+.playground-tools .picture-action{width:76px;min-height:51px;padding:1px 3px 2px;border-width:2px;border-radius:11px}
+.playground-tools .picture-action svg{width:47px;height:32px}
+.playground-tools .picture-action span{font-size:10px}
+#stage{min-height:0}
+@media(max-height:760px){.bottom-tools{min-height:48px;gap:5px}.pumpkin-workarea .edit-tools button{min-height:39px;min-width:35px}.playground-tools .picture-action{min-height:43px;width:68px}.playground-tools .picture-action svg{height:25px;width:40px}}
+@media(max-width:1100px){.bottom-tools{gap:4px}.pumpkin-workarea .edit-tools button{min-width:32px;padding:3px 5px}.pumpkin-workarea .edit-tools #undo{min-width:55px}.playground-tools .picture-action{width:62px}}
+@media(max-width:700px){.bottom-tools{flex-wrap:wrap}.pumpkin-workarea{min-height:430px}}
+
+/* Group creative activities with New Turkey and Fashion Show, not editing controls. */
+.studio footer{justify-content:flex-end;min-height:0}
+.studio .finish-tools{display:flex;align-items:center;justify-content:flex-end;gap:clamp(4px,.55vw,9px);flex-wrap:nowrap;max-width:100%}
+.studio .finish-tools .playground-tools{display:flex;align-items:center;gap:6px;margin:0;padding:0}
+.studio .finish-tools .playground-tools .picture-action{width:66px;min-height:60px;padding:2px;border-radius:12px}
+.studio .finish-tools .playground-tools .picture-action svg{width:46px;height:36px}
+.studio .finish-tools .playground-tools .picture-action span{font-size:10px;line-height:1}
+.studio .bottom-tools{min-height:44px}
+@media(max-height:760px){.studio .finish-tools .playground-tools .picture-action{width:58px;min-height:50px}.studio .finish-tools .playground-tools .picture-action svg{width:39px;height:29px}}
+@media(max-width:700px){.studio .finish-tools{flex-wrap:wrap;justify-content:center}}
