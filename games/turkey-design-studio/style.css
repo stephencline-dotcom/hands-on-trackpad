@@ -123,3 +123,38 @@ body.menus-scroll.guide-hidden .workspace,body.menus-scroll.trackpad-guide-off .
 .studio .bottom-tools{min-height:44px}
 @media(max-height:760px){.studio .finish-tools .playground-tools .picture-action{width:58px;min-height:50px}.studio .finish-tools .playground-tools .picture-action svg{width:39px;height:29px}}
 @media(max-width:700px){.studio .finish-tools{flex-wrap:wrap;justify-content:center}}
+
+/* Full-viewport old-fashioned boardwalk photo booth. */
+body.booth-open{overflow:hidden}
+.playground-panel.boardwalk-active:not([hidden]){position:fixed;inset:0;transform:none;width:100vw;height:100dvh;max-height:none;max-width:none;overflow:hidden;margin:0;padding:0;border:0;border-radius:0;background:#3d2341;box-shadow:none;z-index:1100;display:block}
+.boardwalk-shell{height:100%;display:flex;flex-direction:column;align-items:stretch;overflow:hidden;color:#fff4d1;background:repeating-linear-gradient(90deg,#542e48 0 26px,#5f3552 26px 52px)}
+.boardwalk-header{position:relative;text-align:center;background:linear-gradient(#d69d48,#a75b36);border-bottom:7px solid #f5d47d;box-shadow:0 5px 0 #703b3d;flex:none;padding:8px 64px 9px}
+.boardwalk-header h2{font-size:clamp(18px,3.5vw,38px);letter-spacing:.07em;color:#fff6ce;text-shadow:3px 3px #693a31;margin:0}
+.boardwalk-lights{color:#fff2a3;font-size:clamp(13px,2.1vw,22px);letter-spacing:clamp(6px,2vw,24px);white-space:nowrap;overflow:hidden}
+.boardwalk-close{position:absolute;right:12px;top:12px;z-index:5;width:clamp(48px,6vw,68px);height:clamp(48px,6vw,68px);border:4px solid #fff1c5;border-radius:16px;background:#9c3f49;color:white;font-size:34px;cursor:pointer}
+.boardwalk-content{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(190px,.8fr);gap:clamp(8px,2vw,25px);padding:clamp(8px,1.5vh,18px) clamp(10px,3vw,45px);align-items:center}
+.boardwalk-machine{position:relative;min-height:0;height:100%;max-height:100%;display:flex;justify-content:center;align-items:center;overflow:hidden;border:10px solid #b87542;border-radius:30px;background:#d99d70;box-shadow:inset 0 0 0 7px #f8d994,0 9px 0 #382431}
+#boardwalkLive{height:100%;max-width:100%;width:auto;aspect-ratio:500/530;object-fit:contain}
+.boardwalk-curtain{position:absolute;top:0;bottom:0;width:13%;z-index:2;background:repeating-linear-gradient(90deg,#8d294e 0 16px,#b13b62 16px 30px);pointer-events:none;animation:boardwalk-open .9s ease-out both}
+.boardwalk-curtain.left{left:0;transform-origin:left}.boardwalk-curtain.right{right:0;transform-origin:right}
+@keyframes boardwalk-open{from{width:50%}to{width:13%}}
+.boardwalk-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:3}
+.boardwalk-flash.flash-now{animation:boardwalk-flash .35s ease-out}
+@keyframes boardwalk-flash{0%{opacity:1}100%{opacity:0}}
+.boardwalk-count{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;z-index:4;color:#fff8bc;font-size:clamp(70px,18vh,160px);font-weight:1000;text-shadow:5px 7px #6e3550}
+.boardwalk-results{height:100%;min-height:0;display:flex;flex-direction:column;align-items:center;gap:6px;overflow:hidden}
+.boardwalk-label{font-weight:1000;letter-spacing:.06em;text-align:center;font-size:clamp(13px,2vw,24px);color:#ffe29b}
+.boardwalk-strip{min-height:0;flex:1;max-width:100%;width:min(100%,320px);background:#fff4da;border:10px solid #fff4da;box-shadow:0 9px 18px #21122380;display:grid;grid-template-rows:repeat(4,minmax(0,1fr));gap:5px;overflow:hidden;transform:translateY(-110%);transition:transform 1s ease-out}
+.boardwalk-finished .boardwalk-strip,.boardwalk-shooting .boardwalk-strip{transform:translateY(0)}
+.boardwalk-photo{min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#e3c1b4;animation:photo-appear .45s ease-out both}
+.boardwalk-photo canvas{height:100%;width:100%;object-fit:contain}
+@keyframes photo-appear{from{opacity:0;transform:translateY(-25px)}to{opacity:1;transform:translateY(0)}}
+.boardwalk-placeholder{grid-row:1/-1;color:#81513c;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;font-size:clamp(16px,2vw,26px);font-weight:900;padding:12px}
+.boardwalk-controls{flex:none;min-height:65px;display:flex;justify-content:center;align-items:center;padding:8px;background:#48283d;border-top:5px solid #e9b85f}
+.boardwalk-controls button{border:4px solid #fff1bc;border-radius:18px;background:#f4c34f;color:#583729;padding:8px 30px;font-size:clamp(18px,2.3vw,28px);font-weight:1000;cursor:pointer;box-shadow:0 4px #985a34}
+.boardwalk-controls button[hidden]{display:none}
+@media(max-width:680px){.boardwalk-content{grid-template-columns:minmax(0,1fr) minmax(125px,.55fr);padding:6px;gap:5px}.boardwalk-machine{border-width:5px;border-radius:15px}.boardwalk-strip{border-width:5px}.boardwalk-header{padding:5px 53px 6px}.boardwalk-close{right:4px;top:4px}}
+@media(prefers-reduced-motion:reduce){.boardwalk-curtain,.boardwalk-flash,.boardwalk-photo{animation:none}.boardwalk-strip{transition:none}}
+
+/* Silly-photo portraits use the available strip width rather than tiny centered thumbnails. */
+.boardwalk-photo canvas{object-fit:cover;object-position:center;max-width:100%}

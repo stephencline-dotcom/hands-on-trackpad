@@ -1,5 +1,5 @@
 (()=>{'use strict';
-function create(c){const M=window.TurkeyModel,PI=Math.PI,T=2*PI;
+function create(initialContext){let c=initialContext;const M=window.TurkeyModel,PI=Math.PI,T=2*PI;
 function ellipse(x,y,rx,ry,fill,stroke=null,lw=3){c.beginPath();c.ellipse(x,y,rx,ry,0,0,T);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=lw;c.stroke();}}
 function poly(pts,fill,stroke=null,lw=3){c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=lw;c.stroke();}}
 function line(pts,col='#754c36',w=5){c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.strokeStyle=col;c.lineWidth=w;c.lineCap='round';c.lineJoin='round';c.stroke();}
@@ -152,7 +152,26 @@ if(reaction&&!fashion){
 // Suppress separate limb/decoration translations here: those made shoes, hats,
 // and handheld objects visibly drift away from the student's original design.
 const runwayMotion=fashion?0:motion;
+const behind=p=>p.kind==='fun'&&p.style===1||p.kind==='sticker'&&p.style===4;
 if(fashion){
+  // Render every wearable and body part onto ONE transparent character layer.
+  // The complete layer is then animated as a single object: no accessory can
+  // remain behind on the runway when the character moves or rotates.
+  if(!draw.characterCanvas){
+    draw.characterCanvas=document.createElement('canvas');
+    draw.characterCanvas.width=1000;
+    draw.characterCanvas.height=600;
+  }
+  const layer=draw.characterCanvas,layerContext=layer.getContext('2d');
+  layerContext.setTransform(1,0,0,1,0,0);
+  layerContext.clearRect(0,0,layer.width,layer.height);
+  const stageContext=c;
+  try{
+    c=layerContext;
+    for(const p of d.parts||[])if(behind(p))part(p,t,gobbling,0);
+    turkey(d,500,360,1,t,0,gobbling);
+    for(const p of d.parts||[])if(!behind(p))part(p,t,gobbling,0);
+  }finally{c=stageContext;}
   const step=Math.sin(t*8.5),sway=Math.sin(t*2.4);
   const bounce=-Math.abs(step)*8;
   const scale=1+.025*Math.sin(t*5);
@@ -160,10 +179,12 @@ if(fashion){
   c.rotate(sway*.055);
   c.scale(scale,scale);
   c.translate(-500,-355);
+  c.drawImage(layer,0,0);
+}else{
+  for(const p of d.parts||[])if(behind(p))part(p,t,gobbling,runwayMotion);
+  turkey(d,500,360,1,t,runwayMotion,gobbling);
+  for(const p of d.parts||[])if(!behind(p))part(p,t,gobbling,runwayMotion);
 }
-const behind=p=>p.kind==='fun'&&p.style===1||p.kind==='sticker'&&p.style===4;
-for(const p of d.parts||[])if(behind(p))part(p,t,gobbling,runwayMotion);
-turkey(d,500,360,1,t,runwayMotion,gobbling);
-for(const p of d.parts||[])if(!behind(p))part(p,t,gobbling,runwayMotion);c.restore();if(selected){const p=d.parts.find(x=>x.id===selected);if(p){const [w,h]=M.dims(p);c.save();c.translate(p.x,p.y);c.rotate(p.angle);c.setLineDash([8,6]);c.strokeStyle=carry?'#fff5ba':'#476e8a';c.lineWidth=3;c.strokeRect(-w*p.scale/2-8,-h*p.scale/2-8,w*p.scale+16,h*p.scale+16);c.restore();}}if(fashion){c.font='bold 36px system-ui';c.fillStyle='#805139';c.textAlign='center';c.fillText('TURKEY FASHION SHOW!',500,70);}}
+c.restore();if(selected){const p=d.parts.find(x=>x.id===selected);if(p){const [w,h]=M.dims(p);c.save();c.translate(p.x,p.y);c.rotate(p.angle);c.setLineDash([8,6]);c.strokeStyle=carry?'#fff5ba':'#476e8a';c.lineWidth=3;c.strokeRect(-w*p.scale/2-8,-h*p.scale/2-8,w*p.scale+16,h*p.scale+16);c.restore();}}if(fashion){c.font='bold 36px system-ui';c.fillStyle='#805139';c.textAlign='center';c.fillText('TURKEY FASHION SHOW!',500,70);}}
 return {draw,turkey,part};}
 window.TurkeyArt={create};})();
