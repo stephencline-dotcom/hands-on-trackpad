@@ -231,6 +231,7 @@ const DEFAULT_SETTINGS = {
   chickenLittleLevelSpeeds: [100, 100, 100, 100],
   chickenLittleLevelHits: [3, 3, 3, 3],
   fireflyForestGameActive: true,
+  followBirdGameActive: true,
   followBirdClickingEnabled: false,
   monsterLunchGameActive: true,
   deerRunGameActive: true,
@@ -862,6 +863,7 @@ function loadSettings() {
         data.fireflyForestGameActive,
         DEFAULT_SETTINGS.fireflyForestGameActive
       ),
+      followBirdGameActive: parseTaskEnabled(data.followBirdGameActive, DEFAULT_SETTINGS.followBirdGameActive),
       followBirdClickingEnabled: parseTaskEnabled(
         data.followBirdClickingEnabled,
         DEFAULT_SETTINGS.followBirdClickingEnabled
@@ -1313,6 +1315,7 @@ function saveSettings(settings) {
         existing.fireflyForestGameActive,
       DEFAULT_SETTINGS.fireflyForestGameActive
     ),
+    followBirdGameActive: parseTaskEnabled(settings.followBirdGameActive ?? existing.followBirdGameActive, DEFAULT_SETTINGS.followBirdGameActive),
     followBirdClickingEnabled: parseTaskEnabled(
       settings.followBirdClickingEnabled ??
         existing.followBirdClickingEnabled,

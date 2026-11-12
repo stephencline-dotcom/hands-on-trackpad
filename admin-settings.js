@@ -54,6 +54,7 @@ const chickenLittleLevelInputs = [1, 2, 3, 4].map((level) => ({
 const DEFAULT_CHICKEN_LITTLE_TIMES = [45, 45, 45, 45];
 const DEFAULT_CHICKEN_LITTLE_SPEEDS = [100, 100, 100, 100];
 const DEFAULT_CHICKEN_LITTLE_HITS = [3, 3, 3, 3];
+const followBirdGameActiveToggle = document.getElementById("followBirdGameActive");
 const followBirdClickingEnabledToggle = document.getElementById("followBirdClickingEnabled");
 const monsterLunchGameActiveToggle = document.getElementById("monsterLunchGameActive");
 const deerRunGameActiveToggle = document.getElementById("deerRunGameActive");
@@ -384,6 +385,7 @@ const TORTOISE_PUZZLE_GAME_ACTIVE_KEY = "tortoisePuzzleGameActive";
 const CLAMBAKE_ADVENTURE_GAME_ACTIVE_KEY = "clambakeAdventureGameActive";
 const SENSE_BUILDER_REQUIRE_CLICK_AND_DRAG_KEY = "senseBuilderRequireClickAndDrag";
 const FIREFLY_FOREST_GAME_ACTIVE_KEY = "fireflyForestGameActive";
+const FOLLOW_BIRD_GAME_ACTIVE_KEY = "followBirdGameActive";
 const FOLLOW_BIRD_CLICKING_ENABLED_KEY = "followBirdClickingEnabled";
 const MONSTER_LUNCH_GAME_ACTIVE_KEY = "monsterLunchGameActive";
 const DEER_RUN_GAME_ACTIVE_KEY = "deerRunGameActive";
@@ -2677,6 +2679,7 @@ async function loadTask1Settings() {
   let chickenLittleLevelHits =
     DEFAULT_CHICKEN_LITTLE_HITS.slice();
 
+  let followBirdGameActive = parseTaskEnabled(localStorage.getItem(FOLLOW_BIRD_GAME_ACTIVE_KEY), true);
   let followBirdClickingEnabled = parseTaskEnabled(
     localStorage.getItem(FOLLOW_BIRD_CLICKING_ENABLED_KEY),
     false
@@ -3225,6 +3228,7 @@ async function loadTask1Settings() {
           );
       }
 
+      followBirdGameActive = parseTaskEnabled(data.followBirdGameActive, followBirdGameActive);
       followBirdClickingEnabled = parseTaskEnabled(
         data.followBirdClickingEnabled,
         followBirdClickingEnabled
@@ -3361,6 +3365,7 @@ async function loadTask1Settings() {
       localStorage.setItem(MONSTER_LUNCH_GAME_ACTIVE_KEY, String(monsterLunchGameActive));
       localStorage.setItem(BUG_MEADOW_GAME_ACTIVE_KEY, String(bugMeadowGameActive));
       localStorage.setItem(DEER_RUN_GAME_ACTIVE_KEY, String(deerRunGameActive));
+      localStorage.setItem(FOLLOW_BIRD_GAME_ACTIVE_KEY, String(followBirdGameActive));
       localStorage.setItem(
         FOLLOW_BIRD_CLICKING_ENABLED_KEY,
         String(followBirdClickingEnabled)
@@ -3468,6 +3473,7 @@ async function loadTask1Settings() {
       fireflyForestGameActive;
   }
 
+  if (followBirdGameActiveToggle) followBirdGameActiveToggle.checked = followBirdGameActive;
   if (followBirdClickingEnabledToggle) {
     followBirdClickingEnabledToggle.checked =
       followBirdClickingEnabled;
@@ -3906,6 +3912,8 @@ async function saveTask1Settings() {
         : DEFAULT_CHICKEN_LITTLE_HITS[index];
     });
 
+  const followBirdGameActive = Boolean(followBirdGameActiveToggle?.checked);
+  localStorage.setItem(FOLLOW_BIRD_GAME_ACTIVE_KEY, String(followBirdGameActive));
   const followBirdClickingEnabled = Boolean(
     followBirdClickingEnabledToggle &&
     followBirdClickingEnabledToggle.checked
@@ -4544,6 +4552,7 @@ async function saveTask1Settings() {
         chickenLittleLevelSpeeds,
         chickenLittleLevelHits,
         fireflyForestLevels,
+        followBirdGameActive,
         followBirdClickingEnabled,
         monsterLunchGameActive,
         monsterLunchLevels,
@@ -4870,6 +4879,7 @@ const allToggles = [
   tortoisePuzzleVoiceToggle,
   tortoisePuzzleAdventureLengthSelect,
   chickenLittleRequireClickAndDragToggle,
+  followBirdGameActiveToggle,
   followBirdClickingEnabledToggle,
   monsterLunchGameActiveToggle,
   deerRunGameActiveToggle,
