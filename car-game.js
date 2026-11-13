@@ -1805,3 +1805,12 @@ window.addEventListener("beforeunload", () => {
   airplaneAudio.pause();
   stopGasFillAudio();
 });
+
+// Teacher-only demonstration: advance without recording a completed drive.
+window.trackpadTeacherSkipAdapter = { advance() {
+  const next = getNextEnabledLevelIndex(currentLevelIndex);
+  if (next < 0) return false;
+  stopDrivingAudio();
+  prepareNextCarLevel(next);
+  return true;
+} };

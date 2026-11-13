@@ -5678,5 +5678,88 @@ void (async () => {
   } else {
     initializeStudentNameFlow();
   }
-})();
 
+
+  // Teacher-only demonstration navigation for the five shared mini-games.
+  // This deliberately bypasses completion handlers and result persistence.
+  const teacherDemoScreens = [
+    { id: 'gameScreen', state: arenaState, result: () => lightTapLevelResult,
+      go: index => { pauseLightTapGameplayForResult(); runLightTapLevel(index); } },
+    { id: 'carGameScreen', state: carGameState, result: () => streetCarLevelResult,
+      go: index => { pauseStreetCarGameplayForResult(); resumeStreetCarLevel(index); } },
+    { id: 'dragonGameScreen', state: dragonGameState, result: () => dragonLevelResult,
+      go: index => { pauseDragonGameplayForResult(); resumeDragonLevel(index); } },
+    { id: 'fireGameScreen', state: fireGameState, result: () => fireLevelResult,
+      go: index => { pauseFireGameplayForResult(); resumeFireLevel(index); } },
+    { id: 'martianGameScreen', state: martianGameState, result: () => martianLevelResult,
+      go: index => { pauseMartianGameplayForResult(); resumeMartianLevel(index); } }
+  ];
+  let teacherDemoAllowed = false;
+  let teacherDemoBusy = false;
+  async function teacherDemoAuthorized() {
+    try {
+      const [sessionResponse, settingsResponse] = await Promise.all([
+        fetch('/api/teacher-session', { credentials: 'same-origin', cache: 'no-store' }),
+        fetch('/api/settings', { credentials: 'same-origin', cache: 'no-store' })
+      ]);
+      if (!sessionResponse.ok || !settingsResponse.ok) return false;
+      const [session, settings] = await Promise.all([sessionResponse.json(), settingsResponse.json()]);
+      return session.authenticated === true && settings.teacherSkipLevelEnabled === true;
+    } catch { return false; }
+  }
+  function syncTeacherDemoButtons() {
+    for (const entry of teacherDemoScreens) {
+      if (!entry.button) continue;
+      const screen = document.getElementById(entry.id);
+      const hasNext = entry.state.currentLevelIndex + 1 < entry.state.levels.length;
+      entry.button.hidden = !teacherDemoAllowed || !screen || screen.hidden || !hasNext;
+    }
+  }
+  async function refreshTeacherDemo() {
+    if (teacherDemoBusy || document.hidden) return;
+    teacherDemoBusy = true;
+    try { teacherDemoAllowed = await teacherDemoAuthorized(); }
+    finally { teacherDemoBusy = false; syncTeacherDemoButtons(); }
+  }
+  for (const entry of teacherDemoScreens) {
+    const screen = document.getElementById(entry.id);
+    const controls = screen?.querySelector('.game-header-controls');
+    if (!controls) continue;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = '⏭ Skip Level';
+    button.setAttribute('aria-label', 'Teacher: skip to next level');
+    button.className = 'game-header-button';
+    button.style.cssText = 'background:#ffe18a;color:#4b3018;border:2px solid #98652e;border-radius:18px;padding:7px 12px;font:bold 13px Arial,sans-serif;box-shadow:0 2px 3px #0002;cursor:pointer;white-space:nowrap;';
+    button.hidden = true;
+    controls.prepend(button);
+    entry.button = button;
+    button.addEventListener('click', async () => {
+      if (button.disabled || !teacherDemoAllowed || document.body.classList.contains('student-screen-frozen')) return;
+      button.disabled = true;
+      try {
+        if (!(await teacherDemoAuthorized())) { teacherDemoAllowed = false; return; }
+        if (screen.hidden) return;
+        const next = entry.state.currentLevelIndex + 1;
+        if (next >= entry.state.levels.length) return;
+        entry.result()?.hide?.();
+        entry.go(next);
+      } catch (error) {
+        console.warn('Teacher demo skip failed:', error);
+      } finally {
+        button.disabled = false;
+        syncTeacherDemoButtons();
+      }
+    });
+  }
+  refreshTeacherDemo();
+  const teacherDemoInterval = setInterval(refreshTeacherDemo, 10000);
+  window.addEventListener('pagehide', () => clearInterval(teacherDemoInterval), { once: true });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshTeacherDemo(); });
+  const teacherDemoObserver = new MutationObserver(syncTeacherDemoButtons);
+  for (const entry of teacherDemoScreens) {
+    const screen = document.getElementById(entry.id);
+    if (screen) teacherDemoObserver.observe(screen, { attributes: true, attributeFilter: ['hidden'] });
+  }
+
+})();

@@ -2147,3 +2147,11 @@ window.addEventListener("beforeunload", () => {
     window.cancelAnimationFrame(animationFrameId);
   }
 });
+
+// Teacher-only demonstration: prepare the next level, including the bonus stage.
+window.trackpadTeacherSkipAdapter = { advance() {
+  if (currentLevelIndex >= JACK_LEVELS.length - 1) return false;
+  pauseJackGameplayForResult();
+  prepareNextJackLevel();
+  return true;
+} };

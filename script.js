@@ -1179,3 +1179,11 @@ if (window.LevelResultController && mazeBoard) {
   });
 }
 
+
+// Teacher-only demonstration: prepare the next maze without recording a win.
+window.trackpadTeacherSkipAdapter = { advance() {
+  if (currentLevelIndex >= MAZE_LEVELS.length - 1) return false;
+  pauseMazeGameplayForResult();
+  prepareNextMazeLevel();
+  return true;
+} };
