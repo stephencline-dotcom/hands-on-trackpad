@@ -4906,6 +4906,9 @@
     resetLevel();
     window.requestAnimationFrame(frame);
   });
+
+  // TEACHER_SKIP_ADAPTER_V1
+  window.trackpadTeacherSkipAdapter = { advance() { const next = nextActiveLevel(currentLevel); if (next === null) return false; running = false; dragging = false; pendingLevel = next; currentLevel = next; resetLevel(); startPanel.hidden = false; startButton.textContent = next === 5 ? "Face Foxy Loxy" : `Start Level ${next}`; return true; } };
 })();
 
 /* ========================================

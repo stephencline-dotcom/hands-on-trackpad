@@ -1483,3 +1483,7 @@ if (
       },
     });
 }
+
+
+  // TEACHER_SKIP_ADAPTER_V1
+  window.trackpadTeacherSkipAdapter = { advance() { if (currentLevelIndex >= bugLevels.length - 1) return false; pauseBugGameplay(); bugLevelResult?.hide(); prepareNextBugLevel(); return true; } };

@@ -1806,3 +1806,7 @@ if (
       },
     });
 }
+
+
+  // TEACHER_SKIP_ADAPTER_V1
+  window.trackpadTeacherSkipAdapter = { advance() { if (currentLevelIndex >= deerLevels.length - 1) return false; pauseDeerGameplay(); deerLevelResult?.hide(); prepareNextDeerLevel(); return true; } };

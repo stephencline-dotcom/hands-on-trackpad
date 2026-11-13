@@ -3525,6 +3525,9 @@ window.setTimeout(() => {
   updateSoundButton();
   resetRound();
   configureCurrentRound();
+
+  // TEACHER_SKIP_ADAPTER_V1
+  window.trackpadTeacherSkipAdapter = { advance() { if (!senseBuilderLevelsReady) return false; const next = nextActiveSenseLevel(currentRoundIndex); if (next < 0) return false; gameRunning = false; resultController?.hide(); if (next === 3) { currentRoundIndex = next; startRescueRound(); } else { currentRoundIndex = next; resetRound(); configureCurrentRound(); } return true; } };
 })();
 
 

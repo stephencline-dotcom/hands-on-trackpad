@@ -1985,6 +1985,9 @@
 
   void loadSettings().then(resetLevel);
   requestAnimationFrame(frame);
+
+  // TEACHER_SKIP_ADAPTER_V1
+  window.trackpadTeacherSkipAdapter = { advance() { if (levelIndex >= LEVELS.length - 1) return false; running = false; nextLevel(); return true; } };
 })();
 
 

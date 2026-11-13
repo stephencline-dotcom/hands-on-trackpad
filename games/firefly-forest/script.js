@@ -1291,4 +1291,7 @@
   );
 
   prepareCurrentFireflyLevel();
+
+  // TEACHER_SKIP_ADAPTER_V1
+  window.trackpadTeacherSkipAdapter = { advance() { if (currentLevelIndex >= FIREFLY_LEVELS.length - 1) return false; pauseFireflyGameplay(); fireflyLevelResult?.hide(); prepareNextFireflyLevel(); return true; } };
 })();
