@@ -48,6 +48,7 @@ const freezeStateEpoch = require("crypto").randomUUID();
 const crypto = require("crypto");
 const FREEZE_TEACHER_PASSWORD = process.env.TRACKPAD_ADMIN_PASSWORD || "";
 const TEACHER_LEASE_MS = 30000;
+const TEACHER_LOGIN_MS = 8 * 60 * 60 * 1000;
 const TEACHER_COOKIE = "trackpad_teacher";
 const teacherSessions = new Map();
 let freezeOwner = null;
@@ -68,8 +69,7 @@ function clearTeacherCookie(res) {
 function checkTeacherLease() {
   if (freezeOwner) {
     const session = teacherSessions.get(freezeOwner);
-    if (!session || Date.now() > session.expiresAt) {
-      teacherSessions.delete(freezeOwner);
+    if (!session || Date.now() > session.expiresAt || Date.now() > session.freezeLeaseAt) {
       freezeOwner = null;
       setLiveFreeze(false);
     }
@@ -1652,7 +1652,7 @@ const server = http.createServer(async (req, res) => {
           sendJson(res, 401, { error: "Incorrect password." }); return;
         }
         const token = crypto.randomBytes(32).toString("hex");
-        teacherSessions.set(token, { expiresAt: Date.now() + TEACHER_LEASE_MS });
+        teacherSessions.set(token, { expiresAt: Date.now() + TEACHER_LOGIN_MS, freezeLeaseAt: Date.now() + TEACHER_LEASE_MS });
         const secure = req.headers['x-forwarded-proto'] === 'https' || req.socket.encrypted;
         res.setHeader("Set-Cookie", `${TEACHER_COOKIE}=${token}; HttpOnly; SameSite=Strict; Path=/; ${secure ? 'Secure; ' : ''}Max-Age=86400`);
         sendJson(res, 200, { authenticated: true });
@@ -1663,7 +1663,7 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET") { sendJson(res, token ? 200 : 401, { authenticated: Boolean(token) }); return; }
     if (req.method === "PUT") {
       if (!token) { sendJson(res, 401, { error: "Teacher session expired. Log in again." }); return; }
-      teacherSessions.get(token).expiresAt = Date.now() + TEACHER_LEASE_MS;
+      teacherSessions.get(token).freezeLeaseAt = Date.now() + TEACHER_LEASE_MS;
       sendJson(res, 200, { authenticated: true }); return;
     }
     if (req.method === "DELETE") {
@@ -1692,7 +1692,7 @@ const server = http.createServer(async (req, res) => {
       } else if (!liveClassroomState.freezeScreenFeatureEnabled) {
         sendJson(res, 409, { error: "Enable Freeze Screen in Teacher Settings first." });
       } else {
-        freezeOwner = freezeTeacher;
+        freezeOwner = freezeTeacher; teacherSessions.get(freezeOwner).freezeLeaseAt = Date.now() + TEACHER_LEASE_MS;
         startFreezeDeadline(command.durationSeconds);
         sendJson(res, 200, freezeSnapshot());
       }
@@ -1829,7 +1829,7 @@ const server = http.createServer(async (req, res) => {
          * waiting for permanent Supabase storage.
          */
         if (isFreezeOnlyRequest) {
-          freezeOwner = parsed.freezeScreenArmed ? validTeacher(req) : null;
+          freezeOwner = parsed.freezeScreenArmed ? validTeacher(req) : null; if (freezeOwner) teacherSessions.get(freezeOwner).freezeLeaseAt = Date.now() + TEACHER_LEASE_MS;
           setLiveFreeze(parsed.freezeScreenArmed);
 
           const currentSettings =
@@ -1872,7 +1872,7 @@ const server = http.createServer(async (req, res) => {
           typeof parsed.freezeScreenArmed ===
           "boolean"
         ) {
-          freezeOwner = parsed.freezeScreenArmed ? validTeacher(req) : null;
+          freezeOwner = parsed.freezeScreenArmed ? validTeacher(req) : null; if (freezeOwner) teacherSessions.get(freezeOwner).freezeLeaseAt = Date.now() + TEACHER_LEASE_MS;
           setLiveFreeze(parsed.freezeScreenArmed);
         }
 
@@ -1939,4 +1939,3 @@ server.listen(PORT, HOST, () => {
   // eslint-disable-next-line no-console
   console.log(`hands-on-trackpad running at http://${HOST}:${PORT}`);
 });
-

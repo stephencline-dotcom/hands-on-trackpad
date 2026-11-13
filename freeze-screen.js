@@ -88,8 +88,28 @@ function buildTeacherControls(){
 async function initialize(){
  teacher=teacherSession();
  if(teacher){
-  try{const r=await fetch('/api/teacher-session',{cache:'no-store'});if(!r.ok)throw Error('Expired');}
-  catch{teacher=false;sessionStorage.removeItem(TEACHER);sessionStorage.removeItem(ARMED);}
+  try{
+   const r=await fetch('/api/teacher-session',{cache:'no-store'});
+   if(r.status===401){
+    teacher=false;
+    sessionStorage.removeItem(TEACHER);
+    sessionStorage.removeItem(ARMED);
+   }else if(!r.ok){
+    teacher=false;
+   }else{
+    const status=await r.json();
+    teacher=status.authenticated===true;
+    if(!teacher){
+     sessionStorage.removeItem(TEACHER);
+     sessionStorage.removeItem(ARMED);
+    }
+   }
+  }
+  catch{
+   // A temporary connection failure is not a confirmed logout.
+   // Do not grant teacher controls without server verification.
+   teacher=false;
+  }
  }
  shared.freezeScreenFeatureEnabled=parse(localStorage.getItem(FEATURE));
  if(teacher){shared.freezeScreenArmed=parse(sessionStorage.getItem(ARMED));buildTeacherControls();}
