@@ -13,6 +13,7 @@ const turkeyTrotMazeDragToggle = document.getElementById("turkeyTrotMazeRequireC
 const carRequireClickAndDragToggle = document.getElementById("carRequireClickAndDragToggle");
 const jackRequireClickAndDragToggle = document.getElementById("jackRequireClickAndDragToggle");
 const freezeScreenFeatureToggle = document.getElementById("freezeScreenFeatureToggle");
+const teacherSkipLevelEnabledToggle = document.getElementById("teacherSkipLevelEnabled");
 const fullscreenGameActiveToggle = document.getElementById("fullscreenGameActiveToggle");
 const mazeGameActiveToggle = document.getElementById("mazeGameActiveToggle");
 const carGameActiveToggle = document.getElementById("carGameActiveToggle");
@@ -254,6 +255,7 @@ const FULLSCREEN_REQUIRE_CLICK_AND_DRAG_KEY = "fullscreenRequireClickAndDrag";
 const MAZE_REQUIRE_CLICK_AND_DRAG_KEY = "mazeRequireClickAndDrag";
 const CAR_REQUIRE_CLICK_AND_DRAG_KEY = "carRequireClickAndDrag";
 const JACK_REQUIRE_CLICK_AND_DRAG_KEY = "jackRequireClickAndDrag";
+const TEACHER_SKIP_LEVEL_ENABLED_KEY = "teacherSkipLevelEnabled";
 const FREEZE_SCREEN_FEATURE_KEY = "freezeScreenFeatureEnabled";
 const FULLSCREEN_GAME_ACTIVE_KEY = "fullscreenGameActive";
 const MAZE_GAME_ACTIVE_KEY = "mazeGameActive";
@@ -2567,6 +2569,7 @@ async function loadTask1Settings() {
   let mazeRequireClickAndDrag = parseTaskEnabled(localStorage.getItem(MAZE_REQUIRE_CLICK_AND_DRAG_KEY), false);
   let carRequireClickAndDrag = parseTaskEnabled(localStorage.getItem(CAR_REQUIRE_CLICK_AND_DRAG_KEY), false);
   let jackRequireClickAndDrag = parseTaskEnabled(localStorage.getItem(JACK_REQUIRE_CLICK_AND_DRAG_KEY), false);
+  let teacherSkipLevelEnabled = parseTaskEnabled(localStorage.getItem(TEACHER_SKIP_LEVEL_ENABLED_KEY), true);
   let freezeScreenFeatureEnabled = parseTaskEnabled(
     localStorage.getItem(FREEZE_SCREEN_FEATURE_KEY),
     false
@@ -3079,6 +3082,8 @@ async function loadTask1Settings() {
           });
       }
 
+      teacherSkipLevelEnabled = parseTaskEnabled(data.teacherSkipLevelEnabled, teacherSkipLevelEnabled);
+      localStorage.setItem(TEACHER_SKIP_LEVEL_ENABLED_KEY, String(teacherSkipLevelEnabled));
       freezeScreenFeatureEnabled = parseTaskEnabled(
         data.freezeScreenFeatureEnabled,
         freezeScreenFeatureEnabled
@@ -3433,6 +3438,7 @@ async function loadTask1Settings() {
   if (mazeRequireClickAndDragToggle) mazeRequireClickAndDragToggle.checked = mazeRequireClickAndDrag;
   if (carRequireClickAndDragToggle) carRequireClickAndDragToggle.checked = carRequireClickAndDrag;
   if (jackRequireClickAndDragToggle) jackRequireClickAndDragToggle.checked = jackRequireClickAndDrag;
+  if (teacherSkipLevelEnabledToggle) teacherSkipLevelEnabledToggle.checked = teacherSkipLevelEnabled;
   if (freezeScreenFeatureToggle) {
     freezeScreenFeatureToggle.checked = freezeScreenFeatureEnabled;
   }
@@ -3747,6 +3753,8 @@ async function saveTask1Settings() {
   const mazeRequireClickAndDrag = Boolean(mazeRequireClickAndDragToggle && mazeRequireClickAndDragToggle.checked);
   const carRequireClickAndDrag = Boolean(carRequireClickAndDragToggle && carRequireClickAndDragToggle.checked);
   const jackRequireClickAndDrag = Boolean(jackRequireClickAndDragToggle && jackRequireClickAndDragToggle.checked);
+  const teacherSkipLevelEnabled = Boolean(teacherSkipLevelEnabledToggle?.checked);
+  localStorage.setItem(TEACHER_SKIP_LEVEL_ENABLED_KEY, String(teacherSkipLevelEnabled));
   const freezeScreenFeatureEnabled = Boolean(
     freezeScreenFeatureToggle &&
     freezeScreenFeatureToggle.checked
@@ -4505,6 +4513,7 @@ async function saveTask1Settings() {
         carRequireClickAndDrag,
         jackRequireClickAndDrag,
         freezeScreenFeatureEnabled,
+        teacherSkipLevelEnabled,
         fullscreenGameActive,
         mazeGameActive,
         carGameActive,
@@ -4861,6 +4870,7 @@ const allToggles = [
   mazeRequireClickAndDragToggle,
   carRequireClickAndDragToggle,
   jackRequireClickAndDragToggle,
+  teacherSkipLevelEnabledToggle,
   fullscreenGameActiveToggle,
   mazeGameActiveToggle,
   carGameActiveToggle,

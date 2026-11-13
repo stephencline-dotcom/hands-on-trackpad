@@ -737,6 +737,7 @@ function loadSettings() {
         data.jackRequireClickAndDrag,
         DEFAULT_SETTINGS.jackRequireClickAndDrag
       ),
+      teacherSkipLevelEnabled: parseTaskEnabled(data.teacherSkipLevelEnabled, DEFAULT_SETTINGS.teacherSkipLevelEnabled),
       freezeScreenFeatureEnabled: parseTaskEnabled(
         data.freezeScreenFeatureEnabled,
         DEFAULT_SETTINGS.freezeScreenFeatureEnabled
@@ -1108,6 +1109,7 @@ function saveSettings(settings) {
       settings.jackRequireClickAndDrag ?? existing.jackRequireClickAndDrag,
       DEFAULT_SETTINGS.jackRequireClickAndDrag
     ),
+    teacherSkipLevelEnabled: parseTaskEnabled(settings.teacherSkipLevelEnabled ?? existing.teacherSkipLevelEnabled, DEFAULT_SETTINGS.teacherSkipLevelEnabled),
     freezeScreenFeatureEnabled: parseTaskEnabled(
       settings.freezeScreenFeatureEnabled ??
         existing.freezeScreenFeatureEnabled,
