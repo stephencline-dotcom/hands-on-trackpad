@@ -38,15 +38,17 @@
     const id=remaining.pop();try{localStorage.setItem(key,JSON.stringify(remaining));localStorage.setItem(key+'-last',id);}catch{}
     return P.bank[n].find(p=>p.id===id);
   }
+  let teacherSkipping=false;
   function load(n,puzzle){
     $('finaleScene').innerHTML='';$('finishFlag').setAttribute('visibility','visible');
     level=n;state=P.create(puzzle||choose(n));sceneSounds.reset(state);banner.dataset.lastMessage=state.message;resultShown=false;drag=null;results?.hide();$('startOverlay').hidden=true;started=true;
     $('tortoiseLevel').textContent=`${n+1} / ${P.bank.length}`;$('puzzleName').textContent=state.puzzle.title;
     banner.textContent=n<9?'Let’s learn one new way to help Tortoise!':'Look at the trail. What will help Tortoise cross?';
-    try{localStorage.setItem(P.journeyProgressKey(),String(n));}catch{}
+    if(!teacherSkipping)try{localStorage.setItem(P.journeyProgressKey(),String(n));}catch{}
     adventure.reset(state,level);render();
   }
   const nextEnabled=()=>level+1<P.bank.length?level+1:-1;
+  window.trackpadTeacherSkipAdapter={advance(){if(nextEnabled()<0)return false;window.speechSynthesis?.cancel();teacherSkipping=true;try{load(nextEnabled());}finally{teacherSkipping=false;}return true;}};
   const results=window.LevelResultController?new window.LevelResultController({
     host:$('resultHost'),pauseGame:()=>{},onNextLevel:()=>load(nextEnabled()),onRetry:()=>load(level,state.puzzle),onPlayAgain:()=>load(0),onHome:()=>location.href='../../index.html',canPlaySound:()=>sound&&!frozen()
   }):null;
