@@ -79,6 +79,7 @@
     updateClambakeContinueButtons();
   }
 
+  let teacherSkipCurrentLevel = 1;
   function launchLevel(level) {
     if (!state.ready) {
       return false;
@@ -105,6 +106,7 @@
     }
 
     starter();
+    teacherSkipCurrentLevel = level;
     return true;
   }
   window.clambakeInputMode = {
@@ -589,4 +591,13 @@ stage.appendChild(welcome);
   setupClambakeTrackpadGuide();
 
   load();
+
+  window.trackpadTeacherSkipAdapter = {
+    advance() {
+      if (!state.ready) return false;
+      const next = nextActiveLevel(teacherSkipCurrentLevel);
+      if (next === null) return false;
+      return launchLevel(next);
+    }
+  };
 })();

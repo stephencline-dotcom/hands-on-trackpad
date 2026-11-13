@@ -813,4 +813,6 @@ function journeyForeground(t){const j=journey;
 }
 
 document.getElementById('sound').textContent='🔇 Voice off';setupLevel();loadTractorLevels();requestAnimationFrame(frame);
+
+window.trackpadTeacherSkipAdapter={advance(){const next=nextTractorLevel(level);if(!next)return false;try{window.speechSynthesis?.cancel();}catch{}level=next;setupLevel();return true;}};
 })();

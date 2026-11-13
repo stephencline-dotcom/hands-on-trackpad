@@ -66,4 +66,6 @@ function frame(ms){const dt=last?Math.min(.05,(ms-last)/1000):0;last=ms;if(playi
  art.draw(state,ui,state.time);requestAnimationFrame(frame);}
 const pre=window.RiverArt.create($('preview').getContext('2d'));pre.tree(70,125,.8);pre.canoe(210,100,.14,0,['berry','wood'],false);
 loadSettings();requestAnimationFrame(frame);
+
+window.trackpadTeacherSkipAdapter={advance(){if(!loaded||!settings.active||state.level>=settings.levels)return false;prepare(state.level+1);return true;}};
 })();
