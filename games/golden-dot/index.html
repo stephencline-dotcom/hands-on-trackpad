@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Golden Dot | Hands-On Trackpad</title>
+<link rel="stylesheet" href="../../freeze-screen.css"><link rel="stylesheet" href="style.css?v=speed2"></head>
+<body class="golden-page" data-game-active-key="goldenDotGameActive">
+<main class="shell game-shell">
+<header class="game-header"><div class="game-heading"><p class="game-category">Timing &amp; patience</p><h1>Golden Dot</h1></div>
+<nav class="game-header-controls" aria-label="Game controls">
+<a class="game-header-button" href="../../index.html" aria-label="Home" title="Home"><img class="home-btn-icon" src="../../images/home-icon.svg" alt="" aria-hidden="true"></a>
+<button id="gdSound" class="game-header-button" type="button" aria-label="Sound on" title="Sound on" aria-pressed="true">🔊</button>
+<button id="gdPause" type="button" class="gd-small" disabled>Pause</button>
+<button id="gdLevels" type="button" class="gd-small">Levels</button>
+</nav></header>
+<p id="gdInstructions" class="game-instructions">Watch the moving barriers. Click once to send a spark through the opening!</p>
+<section class="gd-hud" aria-label="Game progress"><span>Level <strong id="gdLevel">1 / 30</strong></span><span>Hits <strong id="gdHits">0 / 50</strong></span></section>
+<section id="gdStage" class="game-stage" aria-label="Golden Dot play area">
+<canvas id="gdCanvas" width="480" height="720" tabindex="0" role="button" aria-label="Click or press Space to send a spark toward the golden target"></canvas>
+<section id="gdLevelBoard" class="gd-level-board" aria-labelledby="gdBoardTitle"><p class="gd-board-kicker">One good tap at a time</p><h2 id="gdBoardTitle">LEVELS</h2><div id="gdGrid" class="gd-grid" aria-label="Choose an unlocked level"></div><p id="gdBoardNote" class="gd-board-note">Complete a level to unlock the next.</p></section>
+<div id="gdOverlay" class="gd-overlay" hidden><section class="gd-dialog" role="dialog" aria-modal="true" aria-labelledby="gdHeading"><p id="gdEyebrow" class="gd-eyebrow">Golden Dot</p><h2 id="gdHeading">Find the opening</h2><p id="gdDescription"></p><div id="gdStars" class="gd-stars" aria-hidden="true"></div><div class="gd-actions"><button id="gdStart" class="gd-primary" type="button">Start</button><button id="gdSecondary" class="gd-secondary" type="button">Show me</button></div><p id="gdFootnote" class="gd-footnote"></p></section></div>
+</section>
+<p id="gdStatus" class="gd-sr" role="status" aria-live="polite"></p>
+</main>
+<script src="../../freeze-screen.js"></script><script src="../../input-device-guard.js"></script><script src="../../game-results-store.js"></script>
+<script src="model.js?v=speed2"></script><script src="game.js?v=sounds1"></script><script src="../../teacher-skip-shared.js"></script>
+</body></html>

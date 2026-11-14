@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zig Zag Trail | Hands-On Trackpad</title>
+<link rel="stylesheet" href="../../freeze-screen.css">
+<link rel="stylesheet" href="style.css?v=mixed5">
+</head>
+<body class="zigzag-page" data-game-active-key="zigZagGameActive">
+<main class="shell game-shell">
+<header class="panel game-header">
+<div class="copy game-heading"><p class="eyebrow game-category">Tap &amp; timing</p><h1 class="game-title">Zig Zag Trail</h1></div>
+<div class="game-header-controls">
+<a class="back-button game-header-button" href="../../index.html" aria-label="Home" title="Home"><img class="home-btn-icon" src="../../images/home-icon.svg" alt="" aria-hidden="true"></a>
+<button id="zigSound" class="sound-toggle-button game-header-button" type="button" aria-pressed="true" aria-label="Sound on" title="Sound on">🔊</button>
+<button id="zigPause" class="zig-small" type="button" aria-label="Pause game" title="Pause game">Ⅱ</button>
+<button id="zigLevels" class="zig-small" type="button">Trails</button>
+</div></header>
+<p class="description game-instructions">Tap or click anywhere on the trail to turn. Wait for the glowing corner!</p>
+<section class="hud game-stats"><div class="hud-main-stats game-stats-row" role="group" aria-label="Game stats">
+<div class="stat game-stat"><span class="label">Best</span><span class="value" id="zigLevel">0</span></div>
+<div class="stat game-stat"><span class="label">Score</span><span class="value" id="zigTurns">0</span></div>
+
+</div></section>
+<section class="arena-wrap game-stage-wrap"><div class="arena-frame game-stage" id="zigStage">
+<canvas id="zigCanvas" width="1000" height="480" tabindex="0" role="button" aria-label="Zig Zag Trail: click or press Space to turn at a glowing corner"></canvas>
+<div id="zigCue" aria-live="polite">Ready to roll?</div>
+
+<div id="zigOverlay" class="zig-overlay"><div class="zig-dialog">
+<p id="zigEyebrow" class="zig-eyebrow">A little tap. A big adventure.</p>
+<h2 id="zigHeading">Ready to roll?</h2>
+<p id="zigDescription">Your ball rolls by itself. Tap once at each glowing corner to turn. No dragging needed!</p>
+<div id="zigTrailChoices" class="zig-trail-choices" hidden></div>
+<div class="zig-dialog-actions"><button id="zigStart" class="zig-primary" type="button">Let's roll!</button><button id="zigDemo" class="zig-secondary" type="button">Show me</button></div>
+<p id="zigFootnote" class="zig-footnote">Endless trails · Fresh paths · Beat your best score</p>
+</div></div>
+</div></section>
+<p id="zigStatus" class="zig-sr" role="status" aria-live="polite"></p>
+</main>
+<script src="../../game-results-store.js"></script>
+<script src="../../freeze-screen.js"></script>
+<script src="../../input-device-guard.js"></script>
+<script src="model.js?v=mixed5"></script><script src="game.js?v=sounds1"></script>
+</body></html>

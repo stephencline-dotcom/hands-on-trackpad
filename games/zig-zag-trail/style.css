@@ -1,0 +1,36 @@
+body.zigzag-page{background:radial-gradient(ellipse at 50% 0,#193e58,#071625 82%);color:#e9f6ff;min-height:100vh;margin:0;display:block;padding:10px 8px;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+.zigzag-page *{box-sizing:border-box}
+.zigzag-page [hidden]{display:none!important}
+.zigzag-page .game-shell{margin:0 auto;display:grid;gap:7px;width:min(100%,1200px);padding:0;min-height:0}
+.zigzag-page .game-header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;background:linear-gradient(115deg,#173a50,#102739);border:1px solid #497083;border-radius:14px}
+.zigzag-page .game-heading{min-width:0}.zigzag-page .game-title{font-size:22px;color:#f2fcff;margin:0}.zigzag-page .game-category{color:#88dcd1;font-size:10px;margin:0 0 3px;letter-spacing:2px}
+.zigzag-page .game-header-controls{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.zigzag-page .game-header-button{display:inline-grid;place-items:center;min-width:42px;width:42px;height:36px;padding:0;border-radius:10px;background:#142432;border:1px solid #4f7189;font-size:20px;color:white;text-decoration:none}
+.zigzag-page .home-btn-icon{width:19px;height:19px;filter:brightness(0) invert(1);pointer-events:none}
+.zigzag-page .zig-small{height:36px;padding:0 12px;background:#142432;border:1px solid #4f7189;color:#ecfaff;border-radius:10px;font-weight:700;cursor:pointer}
+.zigzag-page .game-instructions{margin:0;max-width:none;text-align:center;font-size:13px;color:#c5e3ee}
+.zigzag-page .game-stats-row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}.zigzag-page .game-stat{border:1px solid #456b7f;border-radius:99px;background:#163447;display:flex;align-items:center;gap:7px;min-width:100px;justify-content:center;padding:4px 12px}.zigzag-page .game-stat .label{font-size:11px;color:#a5c9d8}.zigzag-page .game-stat .value{font-size:14px;color:#fff0a3}
+.zigzag-page .game-stage-wrap{width:100%}.zigzag-page .game-stage{position:relative;margin:auto;width:100%;height:clamp(280px,calc(100dvh - 150px),760px);max-height:none;aspect-ratio:auto;padding:0;overflow:hidden;border:2px solid #72bdc4;border-radius:19px;background:#88d5dc;box-shadow:0 14px 40px #0005}
+/* The canvas is explicitly positioned, so its intrinsic height cannot push
+   the lower play area beneath a clipped stage. JS fits the entire drawing. */
+#zigCanvas{position:absolute;inset:0;display:block;width:100%;height:100%;min-width:0;min-height:0;max-width:none;max-height:none;margin:0;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;outline-offset:-5px}
+
+#zigCue{position:absolute;top:14px;left:50%;transform:translateX(-50%);padding:7px 19px;border-radius:99px;background:#123849d9;border:1px solid #e4ffff55;box-shadow:0 3px 14px #10374733;font-size:14px;font-weight:800;letter-spacing:.2px;white-space:nowrap;color:white;pointer-events:none}
+#zigCue.turn-now{color:#133a35;background:#ffed8d;border:2px solid white;box-shadow:0 0 28px #ffeb83a0}
+.zig-progress{position:absolute;bottom:12px;left:25%;width:50%;height:6px;background:#07394544;border-radius:6px;overflow:hidden;pointer-events:none}#zigProgress{height:100%;width:0;background:#fff6a0;box-shadow:0 0 12px #fff;border-radius:6px;transition:width .2s}
+.zig-overlay{position:absolute;inset:0;display:grid;place-items:center;background:#082d3c45;backdrop-filter:blur(3px);padding:16px;overflow:auto}
+.zig-dialog{text-align:center;width:min(100%,500px);padding:26px 28px 18px;border-radius:24px;background:linear-gradient(150deg,#f4fff8f5,#e3fafff5);border:2px solid white;box-shadow:0 16px 45px #0a344b45;color:#133b4b}
+.zig-eyebrow{font-size:10px!important;letter-spacing:1.6px;text-transform:uppercase;font-weight:900;color:#377b7c;margin:0 0 7px!important}.zig-dialog h2{font-size:clamp(26px,4vw,40px);line-height:1.05;margin:0 0 12px;letter-spacing:-1.3px;color:#123f50}.zig-dialog p{font-size:15px;line-height:1.5;margin:10px 0 18px}.zig-dialog-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.zig-primary,.zig-secondary{cursor:pointer;border-radius:14px;font:800 16px system-ui;padding:12px 22px;min-height:46px}.zig-primary{background:linear-gradient(#ffde72,#ffbf4f);color:#493711;border:2px solid #fff3bd;box-shadow:0 4px 0 #b6802f,0 5px 12px #8a622b35}.zig-secondary{background:#fff;color:#216075;border:2px solid #a5d5db;box-shadow:0 3px 0 #91b5c1}.zig-primary:hover,.zig-secondary:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.zig-dialog .zig-footnote{font-size:10px;color:#537a83;margin:17px 0 0}.zigzag-page .game-guide{padding:3px;width:270px;max-width:100%}.zigzag-page .game-guide .imported-trackpad-scene{width:180px;max-width:100%}.zigzag-page .game-guide .imported-trackpad-guide-label{font-size:11px}
+.zig-trail-choices{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:15px 0}.zig-trail-choices button{border:2px solid #b2d5d8;color:#154759;background:#fff;border-radius:12px;padding:12px;font:700 13px system-ui;cursor:pointer}.zig-trail-choices button[aria-pressed=true]{background:#d3f5d9;border-color:#549b7b}.zig-trail-choices button small{display:block;font-size:10px;margin-top:3px;font-weight:400}.zig-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);margin:0}
+@media(max-height:650px){.zigzag-page .game-stage{height:calc(100dvh - 145px);min-height:260px}.zigzag-page .game-guide .imported-trackpad-scene{width:150px}.zigzag-page .zig-dialog{padding:18px 22px}.zig-dialog p{margin:8px 0 12px}}
+@media(max-width:520px){.zigzag-page .game-title{font-size:18px}.zigzag-page .game-category{font-size:8px}.zigzag-page .game-header{padding:7px}.zigzag-page .zig-small{padding:0 8px}.zigzag-page .game-instructions{font-size:11px}.zigzag-page .game-stat{min-width:85px;padding:4px 8px}.zig-dialog{padding:20px 15px}.zig-dialog p{font-size:13px}}
+@media(prefers-reduced-motion:reduce){#zigProgress{transition:none}.zig-primary:hover,.zig-secondary:hover{transform:none}}
+
+/* No Trackpad Guide on this game, regardless of the classroom guide setting. */
+.zigzag-page .imported-trackpad-guide{display:none!important}
+.zigzag-page button:focus-visible,.zigzag-page a:focus-visible{outline:3px solid #ffe78f;outline-offset:3px}
+.zigzag-page .zig-dialog{color-scheme:light}
+.zigzag-page .zig-small{font:700 13px system-ui}
+@media(max-width:520px){.zigzag-page .game-stage{height:clamp(300px,calc(100dvh - 170px),580px)}.zigzag-page .game-header-controls{gap:4px}}

@@ -186,6 +186,7 @@ function parseSheepRoundupExtraSheep(value) {
 }
 const DEFAULT_SETTINGS = {
   homeCardOrder: [],
+  studentHomeButtonEnabled: true,
   task1RequiredSeconds: 8,
   task1Enabled: true,
   task2RequiredClicks: 10,
@@ -289,6 +290,9 @@ const DEFAULT_SETTINGS = {
   pumpkinStudioGameActive: true,
   turkeyStudioGameActive: true,
   turkeyTrotGameActive: true,
+  goldenDotGameActive: true,
+  goldenDotHitsGoal: 50,
+  zigZagGameActive: true,
   turkeyTrotLevel4Enabled: true,
   turkeyTrotLevel3Enabled: true,
   turkeyTrotLevel2Enabled: true,
@@ -738,6 +742,7 @@ function loadSettings() {
         DEFAULT_SETTINGS.jackRequireClickAndDrag
       ),
       teacherSkipLevelEnabled: parseTaskEnabled(data.teacherSkipLevelEnabled, DEFAULT_SETTINGS.teacherSkipLevelEnabled),
+      studentHomeButtonEnabled: parseTaskEnabled(data.studentHomeButtonEnabled, true),
       freezeScreenFeatureEnabled: parseTaskEnabled(
         data.freezeScreenFeatureEnabled,
         DEFAULT_SETTINGS.freezeScreenFeatureEnabled
@@ -973,6 +978,9 @@ function loadSettings() {
       pumpkinStudioGameActive: parseTaskEnabled(data.pumpkinStudioGameActive, true),
       turkeyStudioGameActive: parseTaskEnabled(data.turkeyStudioGameActive, true),
       turkeyTrotGameActive: parseTaskEnabled(data.turkeyTrotGameActive, true),
+      goldenDotGameActive: parseTaskEnabled(data.goldenDotGameActive, true),
+      goldenDotHitsGoal: Math.min(50,Math.max(5,Math.round(Number(data.goldenDotHitsGoal)||50))),
+      zigZagGameActive: parseTaskEnabled(data.zigZagGameActive, true),
       turkeyTrotLevel4Enabled: parseTaskEnabled(data.turkeyTrotLevel4Enabled, true),
       turkeyTrotLevel3Enabled: parseTaskEnabled(data.turkeyTrotLevel3Enabled, true),
       turkeyTrotLevel2Enabled: parseTaskEnabled(data.turkeyTrotLevel2Enabled, true),
@@ -1110,6 +1118,7 @@ function saveSettings(settings) {
       DEFAULT_SETTINGS.jackRequireClickAndDrag
     ),
     teacherSkipLevelEnabled: parseTaskEnabled(settings.teacherSkipLevelEnabled ?? existing.teacherSkipLevelEnabled, DEFAULT_SETTINGS.teacherSkipLevelEnabled),
+    studentHomeButtonEnabled: parseTaskEnabled(settings.studentHomeButtonEnabled ?? existing.studentHomeButtonEnabled, true),
     freezeScreenFeatureEnabled: parseTaskEnabled(
       settings.freezeScreenFeatureEnabled ??
         existing.freezeScreenFeatureEnabled,
@@ -1397,6 +1406,9 @@ function saveSettings(settings) {
     pumpkinStudioGameActive: parseTaskEnabled(settings.pumpkinStudioGameActive ?? existing.pumpkinStudioGameActive, true),
     turkeyStudioGameActive: parseTaskEnabled(settings.turkeyStudioGameActive ?? existing.turkeyStudioGameActive, true),
     turkeyTrotGameActive: parseTaskEnabled(settings.turkeyTrotGameActive ?? existing.turkeyTrotGameActive, true),
+    goldenDotGameActive: parseTaskEnabled(settings.goldenDotGameActive ?? existing.goldenDotGameActive, true),
+    goldenDotHitsGoal: Math.min(50,Math.max(5,Math.round(Number(settings.goldenDotHitsGoal ?? existing.goldenDotHitsGoal)||50))),
+    zigZagGameActive: parseTaskEnabled(settings.zigZagGameActive ?? existing.zigZagGameActive, true),
     turkeyTrotLevel4Enabled: parseTaskEnabled(settings.turkeyTrotLevel4Enabled ?? existing.turkeyTrotLevel4Enabled, true),
     turkeyTrotLevel3Enabled: parseTaskEnabled(settings.turkeyTrotLevel3Enabled ?? existing.turkeyTrotLevel3Enabled, true),
     turkeyTrotLevel2Enabled: parseTaskEnabled(settings.turkeyTrotLevel2Enabled ?? existing.turkeyTrotLevel2Enabled, true),
@@ -1631,6 +1643,20 @@ function serveFile(reqPath, res) {
 
     const ext = path.extname(filePath).toLowerCase();
     const contentType = MIME_TYPES[ext] || "application/octet-stream";
+    if (ext === ".html") {
+      // A shared policy covers every activity, including nested game pages and
+      // controls created later by result dialogs. Stored HTML stays untouched.
+      fs.readFile(filePath, "utf8", (readErr, html) => {
+        if (readErr) { res.writeHead(500); res.end("Could not load page"); return; }
+        const script = '<script src="/student-home-setting.js?v=1" defer></script>';
+        const page = /<\/head\s*>/i.test(html)
+          ? html.replace(/<\/head\s*>/i, script + "</head>")
+          : html + script;
+        res.writeHead(200, { "Content-Type": contentType, "Cache-Control": "no-store", "Content-Length": Buffer.byteLength(page) });
+        res.end(page);
+      });
+      return;
+    }
     res.writeHead(200, { "Content-Type": contentType });
     fs.createReadStream(filePath).pipe(res);
   });
@@ -1809,6 +1835,11 @@ const server = http.createServer(async (req, res) => {
 
         const parsedKeys =
           Object.keys(parsed);
+
+        if (Object.prototype.hasOwnProperty.call(parsed, "studentHomeButtonEnabled") && !validTeacher(req)) {
+          sendJson(res, 401, { error: "Teacher login required to change student Home buttons." });
+          return;
+        }
 
         if (Object.prototype.hasOwnProperty.call(parsed, "freezeScreenArmed") && !validTeacher(req)) {
           sendJson(res, 401, { error: "Teacher login required for Freeze Screen." });

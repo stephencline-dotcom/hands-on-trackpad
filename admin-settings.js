@@ -1,3 +1,4 @@
+const goldenDotHitsGoalInput=document.getElementById("goldenDotHitsGoal");
 const task1DurationInput = document.getElementById("task1Duration");
 const task1EnabledToggle = document.getElementById("task1EnabledToggle");
 const task2ClicksInput = document.getElementById("task2Clicks");
@@ -14,6 +15,7 @@ const carRequireClickAndDragToggle = document.getElementById("carRequireClickAnd
 const jackRequireClickAndDragToggle = document.getElementById("jackRequireClickAndDragToggle");
 const freezeScreenFeatureToggle = document.getElementById("freezeScreenFeatureToggle");
 const teacherSkipLevelEnabledToggle = document.getElementById("teacherSkipLevelEnabled");
+const studentHomeButtonEnabledToggle = document.getElementById("studentHomeButtonEnabled");
 const fullscreenGameActiveToggle = document.getElementById("fullscreenGameActiveToggle");
 const mazeGameActiveToggle = document.getElementById("mazeGameActiveToggle");
 const carGameActiveToggle = document.getElementById("carGameActiveToggle");
@@ -27,6 +29,8 @@ const bugMeadowGameActiveToggle = document.getElementById("bugMeadowGameActive")
 const johnnyAppleseedGameActiveToggle = document.getElementById("johnnyAppleseedGameActive");
 const tractorJobCrewGameActiveToggle = document.getElementById("tractorJobCrewGameActive");
 const turkeyTrotGameActiveToggle = document.getElementById("turkeyTrotGameActive");
+const goldenDotGameActiveToggle = document.getElementById("goldenDotGameActive");
+const zigZagGameActiveToggle = document.getElementById("zigZagGameActive");
 const senseBuilderGameActiveToggle = document.getElementById("senseBuilderGameActive");
 const senseBuilderRequireClickAndDragToggle = document.getElementById("senseBuilderRequireClickAndDrag");
 const fireflyForestGameActiveToggle = document.getElementById("fireflyForestGameActive");
@@ -256,6 +260,7 @@ const MAZE_REQUIRE_CLICK_AND_DRAG_KEY = "mazeRequireClickAndDrag";
 const CAR_REQUIRE_CLICK_AND_DRAG_KEY = "carRequireClickAndDrag";
 const JACK_REQUIRE_CLICK_AND_DRAG_KEY = "jackRequireClickAndDrag";
 const TEACHER_SKIP_LEVEL_ENABLED_KEY = "teacherSkipLevelEnabled";
+const STUDENT_HOME_BUTTON_ENABLED_KEY = "studentHomeButtonEnabled";
 const FREEZE_SCREEN_FEATURE_KEY = "freezeScreenFeatureEnabled";
 const FULLSCREEN_GAME_ACTIVE_KEY = "fullscreenGameActive";
 const MAZE_GAME_ACTIVE_KEY = "mazeGameActive";
@@ -1837,6 +1842,8 @@ function applyProgressivePresets() {
   if (johnnyAppleseedGameActiveToggle) johnnyAppleseedGameActiveToggle.checked = true;
   if (tractorJobCrewGameActiveToggle) tractorJobCrewGameActiveToggle.checked = true;
   if (turkeyTrotGameActiveToggle) turkeyTrotGameActiveToggle.checked = true;
+  if (goldenDotGameActiveToggle) goldenDotGameActiveToggle.checked = true;
+  if (zigZagGameActiveToggle) zigZagGameActiveToggle.checked = true;
   if (fullscreenGameActiveToggle) fullscreenGameActiveToggle.checked = true;
   if (clambakeAdventureGameActiveToggle) clambakeAdventureGameActiveToggle.checked = true;
   if (mazeGameActiveToggle) mazeGameActiveToggle.checked = true;
@@ -2570,6 +2577,7 @@ async function loadTask1Settings() {
   let carRequireClickAndDrag = parseTaskEnabled(localStorage.getItem(CAR_REQUIRE_CLICK_AND_DRAG_KEY), false);
   let jackRequireClickAndDrag = parseTaskEnabled(localStorage.getItem(JACK_REQUIRE_CLICK_AND_DRAG_KEY), false);
   let teacherSkipLevelEnabled = parseTaskEnabled(localStorage.getItem(TEACHER_SKIP_LEVEL_ENABLED_KEY), true);
+  let studentHomeButtonEnabled = parseTaskEnabled(localStorage.getItem(STUDENT_HOME_BUTTON_ENABLED_KEY), true);
   let freezeScreenFeatureEnabled = parseTaskEnabled(
     localStorage.getItem(FREEZE_SCREEN_FEATURE_KEY),
     false
@@ -2629,6 +2637,8 @@ async function loadTask1Settings() {
   let johnnyAppleseedGameActive = parseTaskEnabled(localStorage.getItem("johnnyAppleseedGameActive"), true);
   let tractorJobCrewGameActive = parseTaskEnabled(localStorage.getItem("tractorJobCrewGameActive"), true);
   let turkeyTrotGameActive = parseTaskEnabled(localStorage.getItem("turkeyTrotGameActive"), true);
+  let goldenDotGameActive = parseTaskEnabled(localStorage.getItem("goldenDotGameActive"), true);
+  let zigZagGameActive = parseTaskEnabled(localStorage.getItem("zigZagGameActive"), true);
   let tractorJobCrewLevels = normalizeTractorLevelsAdmin(JSON.parse(localStorage.getItem("tractorJobCrewLevels") || "null"));
   let senseBuilderLevels = normalizeSenseBuilderLevels(
     JSON.parse(
@@ -2956,6 +2966,7 @@ async function loadTask1Settings() {
         fullscreenRequireClickAndDrag
       );
       mazeRequireClickAndDrag = parseTaskEnabled(data.mazeRequireClickAndDrag, mazeRequireClickAndDrag);
+      if(goldenDotHitsGoalInput)goldenDotHitsGoalInput.value=String(Math.min(50,Math.max(5,Math.round(Number(data.goldenDotHitsGoal)||50))));
       if(turkeyTrotMazeDragToggle) turkeyTrotMazeDragToggle.checked = data.turkeyTrotMazeRequireClickAndDrag === true;
       {const el=document.getElementById("turkeyTrotLevel1Enabled");if(el)el.checked=data.turkeyTrotLevel1Enabled!==false;}
       {const el=document.getElementById("turkeyTrotLevel2Enabled");if(el)el.checked=data.turkeyTrotLevel2Enabled!==false;}
@@ -3083,7 +3094,9 @@ async function loadTask1Settings() {
       }
 
       teacherSkipLevelEnabled = parseTaskEnabled(data.teacherSkipLevelEnabled, teacherSkipLevelEnabled);
+      studentHomeButtonEnabled = parseTaskEnabled(data.studentHomeButtonEnabled, studentHomeButtonEnabled);
       localStorage.setItem(TEACHER_SKIP_LEVEL_ENABLED_KEY, String(teacherSkipLevelEnabled));
+      localStorage.setItem(STUDENT_HOME_BUTTON_ENABLED_KEY, String(studentHomeButtonEnabled));
       freezeScreenFeatureEnabled = parseTaskEnabled(
         data.freezeScreenFeatureEnabled,
         freezeScreenFeatureEnabled
@@ -3104,7 +3117,11 @@ async function loadTask1Settings() {
       johnnyAppleseedGameActive = parseTaskEnabled(data.johnnyAppleseedGameActive, johnnyAppleseedGameActive);
       tractorJobCrewGameActive = parseTaskEnabled(data.tractorJobCrewGameActive, tractorJobCrewGameActive);
       turkeyTrotGameActive = parseTaskEnabled(data.turkeyTrotGameActive, turkeyTrotGameActive);
+      goldenDotGameActive = parseTaskEnabled(data.goldenDotGameActive, goldenDotGameActive);
+      zigZagGameActive = parseTaskEnabled(data.zigZagGameActive, zigZagGameActive);
       localStorage.setItem("turkeyTrotGameActive", String(turkeyTrotGameActive));
+      localStorage.setItem("goldenDotGameActive", String(goldenDotGameActive));
+      localStorage.setItem("zigZagGameActive", String(zigZagGameActive));
       localStorage.setItem("johnnyAppleseedGameActive", String(johnnyAppleseedGameActive));
       localStorage.setItem("tractorJobCrewGameActive", String(tractorJobCrewGameActive));
       johnnyDrag = parseTaskEnabled(data.johnnyAppleseedRequireClickAndDrag, johnnyDrag);
@@ -3439,6 +3456,7 @@ async function loadTask1Settings() {
   if (carRequireClickAndDragToggle) carRequireClickAndDragToggle.checked = carRequireClickAndDrag;
   if (jackRequireClickAndDragToggle) jackRequireClickAndDragToggle.checked = jackRequireClickAndDrag;
   if (teacherSkipLevelEnabledToggle) teacherSkipLevelEnabledToggle.checked = teacherSkipLevelEnabled;
+  if (studentHomeButtonEnabledToggle) studentHomeButtonEnabledToggle.checked = studentHomeButtonEnabled;
   if (freezeScreenFeatureToggle) {
     freezeScreenFeatureToggle.checked = freezeScreenFeatureEnabled;
   }
@@ -3457,6 +3475,8 @@ async function loadTask1Settings() {
   if (johnnyAppleseedGameActiveToggle) johnnyAppleseedGameActiveToggle.checked = johnnyAppleseedGameActive;
   if (tractorJobCrewGameActiveToggle) tractorJobCrewGameActiveToggle.checked = tractorJobCrewGameActive;
   if (turkeyTrotGameActiveToggle) turkeyTrotGameActiveToggle.checked = turkeyTrotGameActive;
+  if (goldenDotGameActiveToggle) goldenDotGameActiveToggle.checked = goldenDotGameActive;
+  if (zigZagGameActiveToggle) zigZagGameActiveToggle.checked = zigZagGameActive;
   displayTractorLevels(tractorJobCrewLevels);
   displaySenseBuilderLevels(senseBuilderLevels);
   if (senseBuilderRequireClickAndDragToggle) {
@@ -3754,7 +3774,9 @@ async function saveTask1Settings() {
   const carRequireClickAndDrag = Boolean(carRequireClickAndDragToggle && carRequireClickAndDragToggle.checked);
   const jackRequireClickAndDrag = Boolean(jackRequireClickAndDragToggle && jackRequireClickAndDragToggle.checked);
   const teacherSkipLevelEnabled = Boolean(teacherSkipLevelEnabledToggle?.checked);
+  const studentHomeButtonEnabled = Boolean(studentHomeButtonEnabledToggle?.checked);
   localStorage.setItem(TEACHER_SKIP_LEVEL_ENABLED_KEY, String(teacherSkipLevelEnabled));
+  localStorage.setItem(STUDENT_HOME_BUTTON_ENABLED_KEY, String(studentHomeButtonEnabled));
   const freezeScreenFeatureEnabled = Boolean(
     freezeScreenFeatureToggle &&
     freezeScreenFeatureToggle.checked
@@ -3775,7 +3797,11 @@ async function saveTask1Settings() {
   const johnnyAppleseedGameActive = Boolean(johnnyAppleseedGameActiveToggle?.checked);
   const tractorJobCrewGameActive = Boolean(tractorJobCrewGameActiveToggle?.checked);
   const turkeyTrotGameActive = Boolean(turkeyTrotGameActiveToggle?.checked);
+  const goldenDotGameActive = Boolean(goldenDotGameActiveToggle?.checked);
+  const zigZagGameActive = Boolean(zigZagGameActiveToggle?.checked);
   localStorage.setItem("turkeyTrotGameActive", String(turkeyTrotGameActive));
+  localStorage.setItem("goldenDotGameActive", String(goldenDotGameActive));
+  localStorage.setItem("zigZagGameActive", String(zigZagGameActive));
   localStorage.setItem("johnnyAppleseedGameActive", String(johnnyAppleseedGameActive));
   localStorage.setItem("tractorJobCrewGameActive", String(tractorJobCrewGameActive));
   const johnnyDragSaveInput = document.getElementById("johnnyAppleseedRequireClickAndDrag");
@@ -4514,6 +4540,7 @@ async function saveTask1Settings() {
         jackRequireClickAndDrag,
         freezeScreenFeatureEnabled,
         teacherSkipLevelEnabled,
+        studentHomeButtonEnabled,
         fullscreenGameActive,
         mazeGameActive,
         carGameActive,
@@ -4530,6 +4557,9 @@ async function saveTask1Settings() {
         tractorJobCrewLevels,
         tractorJobCrewGameActive,
         turkeyTrotGameActive,
+        goldenDotGameActive,
+        goldenDotHitsGoal: Math.min(50,Math.max(5,Math.round(Number(goldenDotHitsGoalInput?.value)||50))),
+        zigZagGameActive,
         johnnyAppleseedGameActive,
         johnnyAppleseedRequireClickAndDrag,
         johnnyAppleseedVoiceInstructions,
@@ -4811,6 +4841,7 @@ saveTask1Btn.addEventListener("click", () => {
 });
 
 const allInputs = [
+  goldenDotHitsGoalInput,
   task1DurationInput,
   task2ClicksInput,
   task3DragSecondsInput,
@@ -4871,6 +4902,9 @@ const allToggles = [
   carRequireClickAndDragToggle,
   jackRequireClickAndDragToggle,
   teacherSkipLevelEnabledToggle,
+  goldenDotGameActiveToggle,
+  studentHomeButtonEnabledToggle,
+  zigZagGameActiveToggle,
   fullscreenGameActiveToggle,
   mazeGameActiveToggle,
   carGameActiveToggle,
