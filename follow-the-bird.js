@@ -564,6 +564,7 @@
         ? getClickingScore()
         : getFinalScore();
 
+    window.classroomScores?.record(selectedFollowBirdMode === 'clicking' ? 'follow-bird-clicking' : 'follow-bird-moving', score);
     resultScore.textContent = String(score);
 
     let achievedLevel = "turtle";
@@ -935,6 +936,7 @@
   }
 
   function startRound() {
+    window.classroomScores?.activate(selectedFollowBirdMode === 'clicking' ? 'follow-bird-clicking' : 'follow-bird-moving');
     resetRound();
 
     startPanel.hidden = true;

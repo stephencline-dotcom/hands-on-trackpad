@@ -10,6 +10,7 @@ const HOST = process.env.HOST || "0.0.0.0";
 const ROOT_DIR = __dirname;
 const DATA_DIR = path.join(ROOT_DIR, "data");
 const SETTINGS_FILE = path.join(DATA_DIR, "settings.json");
+const { createHoopScoreStore, cleanName: cleanScoreName } = require("./hoop-score-store.js");
 
 const SUPABASE_URL =
   process.env.SUPABASE_URL || "";
@@ -187,6 +188,9 @@ function parseSheepRoundupExtraSheep(value) {
 const DEFAULT_SETTINGS = {
   homeCardOrder: [],
   studentHomeButtonEnabled: true,
+  hoopHopperShowTopScores: false,
+  hoopHopperShowScoreNames: false,
+  studentNameEntryEnabled: false,
   task1RequiredSeconds: 8,
   task1Enabled: true,
   task2RequiredClicks: 10,
@@ -290,6 +294,7 @@ const DEFAULT_SETTINGS = {
   pumpkinStudioGameActive: true,
   turkeyStudioGameActive: true,
   turkeyTrotGameActive: true,
+  hoopHopperGameActive: true,
   goldenDotGameActive: true,
   goldenDotHitsGoal: 50,
   zigZagGameActive: true,
@@ -743,6 +748,9 @@ function loadSettings() {
       ),
       teacherSkipLevelEnabled: parseTaskEnabled(data.teacherSkipLevelEnabled, DEFAULT_SETTINGS.teacherSkipLevelEnabled),
       studentHomeButtonEnabled: parseTaskEnabled(data.studentHomeButtonEnabled, true),
+      studentNameEntryEnabled: parseTaskEnabled(data.studentNameEntryEnabled, false),
+      hoopHopperShowScoreNames: parseTaskEnabled(data.hoopHopperShowScoreNames, false),
+      hoopHopperShowTopScores: parseTaskEnabled(data.hoopHopperShowTopScores, false),
       freezeScreenFeatureEnabled: parseTaskEnabled(
         data.freezeScreenFeatureEnabled,
         DEFAULT_SETTINGS.freezeScreenFeatureEnabled
@@ -978,6 +986,7 @@ function loadSettings() {
       pumpkinStudioGameActive: parseTaskEnabled(data.pumpkinStudioGameActive, true),
       turkeyStudioGameActive: parseTaskEnabled(data.turkeyStudioGameActive, true),
       turkeyTrotGameActive: parseTaskEnabled(data.turkeyTrotGameActive, true),
+      hoopHopperGameActive: parseTaskEnabled(data.hoopHopperGameActive, true),
       goldenDotGameActive: parseTaskEnabled(data.goldenDotGameActive, true),
       goldenDotHitsGoal: Math.min(50,Math.max(5,Math.round(Number(data.goldenDotHitsGoal)||50))),
       zigZagGameActive: parseTaskEnabled(data.zigZagGameActive, true),
@@ -1119,6 +1128,9 @@ function saveSettings(settings) {
     ),
     teacherSkipLevelEnabled: parseTaskEnabled(settings.teacherSkipLevelEnabled ?? existing.teacherSkipLevelEnabled, DEFAULT_SETTINGS.teacherSkipLevelEnabled),
     studentHomeButtonEnabled: parseTaskEnabled(settings.studentHomeButtonEnabled ?? existing.studentHomeButtonEnabled, true),
+    studentNameEntryEnabled: parseTaskEnabled(settings.studentNameEntryEnabled ?? existing.studentNameEntryEnabled, false),
+    hoopHopperShowScoreNames: parseTaskEnabled(settings.hoopHopperShowScoreNames ?? existing.hoopHopperShowScoreNames, false),
+    hoopHopperShowTopScores: parseTaskEnabled(settings.hoopHopperShowTopScores ?? existing.hoopHopperShowTopScores, false),
     freezeScreenFeatureEnabled: parseTaskEnabled(
       settings.freezeScreenFeatureEnabled ??
         existing.freezeScreenFeatureEnabled,
@@ -1406,6 +1418,7 @@ function saveSettings(settings) {
     pumpkinStudioGameActive: parseTaskEnabled(settings.pumpkinStudioGameActive ?? existing.pumpkinStudioGameActive, true),
     turkeyStudioGameActive: parseTaskEnabled(settings.turkeyStudioGameActive ?? existing.turkeyStudioGameActive, true),
     turkeyTrotGameActive: parseTaskEnabled(settings.turkeyTrotGameActive ?? existing.turkeyTrotGameActive, true),
+    hoopHopperGameActive: parseTaskEnabled(settings.hoopHopperGameActive ?? existing.hoopHopperGameActive, true),
     goldenDotGameActive: parseTaskEnabled(settings.goldenDotGameActive ?? existing.goldenDotGameActive, true),
     goldenDotHitsGoal: Math.min(50,Math.max(5,Math.round(Number(settings.goldenDotHitsGoal ?? existing.goldenDotHitsGoal)||50))),
     zigZagGameActive: parseTaskEnabled(settings.zigZagGameActive ?? existing.zigZagGameActive, true),
@@ -1628,6 +1641,9 @@ function serveFile(reqPath, res) {
   const normalizedPath = path.normalize(decodedPath).replace(/^\.+/, "");
   const filePath = path.join(ROOT_DIR, normalizedPath);
 
+  if (path.dirname(filePath) === DATA_DIR && (path.basename(filePath).startsWith("hoop-hopper-scores") || path.basename(filePath).startsWith("game-scores-"))) {
+    res.writeHead(403); res.end("Forbidden"); return;
+  }
   if (!filePath.startsWith(ROOT_DIR)) {
     res.writeHead(403);
     res.end("Forbidden");
@@ -1648,7 +1664,7 @@ function serveFile(reqPath, res) {
       // controls created later by result dialogs. Stored HTML stays untouched.
       fs.readFile(filePath, "utf8", (readErr, html) => {
         if (readErr) { res.writeHead(500); res.end("Could not load page"); return; }
-        const script = '<script src="/student-home-setting.js?v=1" defer></script>';
+        const script = '<script src="/student-home-setting.js?v=1" defer></script><script src="/classroom-scores.js?v=1" defer></script><script src="/student-profile.js?v=1" defer></script>';
         const page = /<\/head\s*>/i.test(html)
           ? html.replace(/<\/head\s*>/i, script + "</head>")
           : html + script;
@@ -1663,9 +1679,31 @@ function serveFile(reqPath, res) {
 }
 
 ensureSettingsFile();
+const hoopScoreStore = createHoopScoreStore({ supabase, dataDir: DATA_DIR });
 
+const classroomScoreStores = new Map([['hoop-hopper',hoopScoreStore]]);
+const scoredGames = new Set(['hoop-hopper','car-game','deer-run','bug-meadow','haunted-street','monster-lunch','firefly-forest','sense-rescue','follow-bird-clicking','follow-bird-moving','light-tap','street-car','dragon-dodge','firefighter-rescue','martian-madness','golden-dot',...Array.from({length:4},(_,i)=>'zig-zag-trail-'+i),...Array.from({length:30},(_,i)=>'golden-dot-'+(i+1))]);
 const server = http.createServer(async (req, res) => {
   const requestUrl = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+
+  if ((requestUrl.pathname === "/api/hoop-hopper-scores" || requestUrl.pathname === "/api/game-scores")) {
+    if (req.method !== "GET" && req.method !== "POST") { res.writeHead(405, { Allow: "GET, POST" }); res.end("Method not allowed"); return; }
+    try {
+      const gameKey=requestUrl.pathname==='/api/hoop-hopper-scores'?'hoop-hopper':requestUrl.searchParams.get('game');
+      if(!scoredGames.has(gameKey)){sendJson(res,400,{error:'Unknown scoring game.'});return;}
+      if(!classroomScoreStores.has(gameKey))classroomScoreStores.set(gameKey,createHoopScoreStore({supabase,dataDir:DATA_DIR,gameKey}));
+      const store=classroomScoreStores.get(gameKey);
+      let document;
+      if (req.method === "POST") {
+        const body = JSON.parse((await readRequestBody(req)) || "{}");
+        document = await store.submit({ runId: body.runId, score: body.score, name: cleanScoreName(body.name), studentId: body.studentId });
+      } else document = await store.read();
+      const options = supabase ? await loadSettingsFromSupabase() : loadSettings();
+      const show = options.hoopHopperShowTopScores === true, names = show && options.hoopHopperShowScoreNames === true;
+      sendJson(res, 200, { show, showNames: names, scores: (names?document.students.filter(entry=>entry.name):document.students).slice(0,3).map(entry => names ? { score: entry.score, name: entry.name } : { score: entry.score }) });
+    } catch (error) { sendJson(res, error.status === 400 || error instanceof SyntaxError ? 400 : 503, { error: error.status === 400 ? "Invalid score." : "Scores are temporarily unavailable." }); }
+    return;
+  }
 
   if (requestUrl.pathname === "/api/teacher-session") {
     if (req.method === "POST") {
@@ -1836,8 +1874,8 @@ const server = http.createServer(async (req, res) => {
         const parsedKeys =
           Object.keys(parsed);
 
-        if (Object.prototype.hasOwnProperty.call(parsed, "studentHomeButtonEnabled") && !validTeacher(req)) {
-          sendJson(res, 401, { error: "Teacher login required to change student Home buttons." });
+        if ((Object.prototype.hasOwnProperty.call(parsed, "studentHomeButtonEnabled") || Object.prototype.hasOwnProperty.call(parsed, "hoopHopperShowTopScores") || Object.prototype.hasOwnProperty.call(parsed, "hoopHopperShowScoreNames") || Object.prototype.hasOwnProperty.call(parsed, "studentNameEntryEnabled")) && !validTeacher(req)) {
+          sendJson(res, 401, { error: "Teacher login required to change classroom display settings." });
           return;
         }
 

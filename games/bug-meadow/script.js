@@ -726,7 +726,7 @@ function retryCurrentBugLevel() {
 
 function playBugMeadowAgain() {
   currentLevelIndex = 0;
-  bugScore = 0;
+  bugScore = 0; window.classroomScores?.begin('bug-meadow');
   savedBugResultLevels.clear();
   startBugLevel(0);
 }
@@ -858,7 +858,7 @@ function checkPlantCollision() {
 
       playBugSoundEffect(CORRECT_FLOWER_SOUND);
 
-      bugScore += 1;
+      bugScore += 1; window.classroomScores?.update('bug-meadow', bugScore);
       bugGoalHits += 1;
 
       // A successful match starts a fresh wrong-flower round.
@@ -1372,7 +1372,7 @@ bugStartButton.addEventListener('click', () => {
   bugChooser.hidden = true;
 
   if (currentLevelIndex === 0) {
-    bugScore = 0;
+    bugScore = 0; window.classroomScores?.begin('bug-meadow');
   }
 
   startBugLevel(currentLevelIndex);

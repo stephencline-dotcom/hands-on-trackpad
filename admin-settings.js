@@ -16,6 +16,9 @@ const jackRequireClickAndDragToggle = document.getElementById("jackRequireClickA
 const freezeScreenFeatureToggle = document.getElementById("freezeScreenFeatureToggle");
 const teacherSkipLevelEnabledToggle = document.getElementById("teacherSkipLevelEnabled");
 const studentHomeButtonEnabledToggle = document.getElementById("studentHomeButtonEnabled");
+const hoopHopperShowTopScoresToggle = document.getElementById("hoopHopperShowTopScores");
+const hoopHopperShowScoreNamesToggle = document.getElementById("hoopHopperShowScoreNames");
+const studentNameEntryEnabledToggle = document.getElementById("studentNameEntryEnabled");
 const fullscreenGameActiveToggle = document.getElementById("fullscreenGameActiveToggle");
 const mazeGameActiveToggle = document.getElementById("mazeGameActiveToggle");
 const carGameActiveToggle = document.getElementById("carGameActiveToggle");
@@ -29,6 +32,7 @@ const bugMeadowGameActiveToggle = document.getElementById("bugMeadowGameActive")
 const johnnyAppleseedGameActiveToggle = document.getElementById("johnnyAppleseedGameActive");
 const tractorJobCrewGameActiveToggle = document.getElementById("tractorJobCrewGameActive");
 const turkeyTrotGameActiveToggle = document.getElementById("turkeyTrotGameActive");
+const hoopHopperGameActiveToggle = document.getElementById("hoopHopperGameActive");
 const goldenDotGameActiveToggle = document.getElementById("goldenDotGameActive");
 const zigZagGameActiveToggle = document.getElementById("zigZagGameActive");
 const senseBuilderGameActiveToggle = document.getElementById("senseBuilderGameActive");
@@ -261,6 +265,9 @@ const CAR_REQUIRE_CLICK_AND_DRAG_KEY = "carRequireClickAndDrag";
 const JACK_REQUIRE_CLICK_AND_DRAG_KEY = "jackRequireClickAndDrag";
 const TEACHER_SKIP_LEVEL_ENABLED_KEY = "teacherSkipLevelEnabled";
 const STUDENT_HOME_BUTTON_ENABLED_KEY = "studentHomeButtonEnabled";
+const HOOP_SHOW_TOP_SCORES_KEY = "hoopHopperShowTopScores";
+const HOOP_SHOW_SCORE_NAMES_KEY = "hoopHopperShowScoreNames";
+const STUDENT_NAME_ENTRY_ENABLED_KEY = "studentNameEntryEnabled";
 const FREEZE_SCREEN_FEATURE_KEY = "freezeScreenFeatureEnabled";
 const FULLSCREEN_GAME_ACTIVE_KEY = "fullscreenGameActive";
 const MAZE_GAME_ACTIVE_KEY = "mazeGameActive";
@@ -1842,6 +1849,7 @@ function applyProgressivePresets() {
   if (johnnyAppleseedGameActiveToggle) johnnyAppleseedGameActiveToggle.checked = true;
   if (tractorJobCrewGameActiveToggle) tractorJobCrewGameActiveToggle.checked = true;
   if (turkeyTrotGameActiveToggle) turkeyTrotGameActiveToggle.checked = true;
+  if (hoopHopperGameActiveToggle) hoopHopperGameActiveToggle.checked = true;
   if (goldenDotGameActiveToggle) goldenDotGameActiveToggle.checked = true;
   if (zigZagGameActiveToggle) zigZagGameActiveToggle.checked = true;
   if (fullscreenGameActiveToggle) fullscreenGameActiveToggle.checked = true;
@@ -2578,6 +2586,9 @@ async function loadTask1Settings() {
   let jackRequireClickAndDrag = parseTaskEnabled(localStorage.getItem(JACK_REQUIRE_CLICK_AND_DRAG_KEY), false);
   let teacherSkipLevelEnabled = parseTaskEnabled(localStorage.getItem(TEACHER_SKIP_LEVEL_ENABLED_KEY), true);
   let studentHomeButtonEnabled = parseTaskEnabled(localStorage.getItem(STUDENT_HOME_BUTTON_ENABLED_KEY), true);
+  let hoopHopperShowTopScores = parseTaskEnabled(localStorage.getItem(HOOP_SHOW_TOP_SCORES_KEY), false);
+  let hoopHopperShowScoreNames = parseTaskEnabled(localStorage.getItem(HOOP_SHOW_SCORE_NAMES_KEY), false);
+  let studentNameEntryEnabled = parseTaskEnabled(localStorage.getItem(STUDENT_NAME_ENTRY_ENABLED_KEY), false);
   let freezeScreenFeatureEnabled = parseTaskEnabled(
     localStorage.getItem(FREEZE_SCREEN_FEATURE_KEY),
     false
@@ -2637,6 +2648,7 @@ async function loadTask1Settings() {
   let johnnyAppleseedGameActive = parseTaskEnabled(localStorage.getItem("johnnyAppleseedGameActive"), true);
   let tractorJobCrewGameActive = parseTaskEnabled(localStorage.getItem("tractorJobCrewGameActive"), true);
   let turkeyTrotGameActive = parseTaskEnabled(localStorage.getItem("turkeyTrotGameActive"), true);
+  let hoopHopperGameActive = parseTaskEnabled(localStorage.getItem("hoopHopperGameActive"), true);
   let goldenDotGameActive = parseTaskEnabled(localStorage.getItem("goldenDotGameActive"), true);
   let zigZagGameActive = parseTaskEnabled(localStorage.getItem("zigZagGameActive"), true);
   let tractorJobCrewLevels = normalizeTractorLevelsAdmin(JSON.parse(localStorage.getItem("tractorJobCrewLevels") || "null"));
@@ -3095,8 +3107,14 @@ async function loadTask1Settings() {
 
       teacherSkipLevelEnabled = parseTaskEnabled(data.teacherSkipLevelEnabled, teacherSkipLevelEnabled);
       studentHomeButtonEnabled = parseTaskEnabled(data.studentHomeButtonEnabled, studentHomeButtonEnabled);
+      hoopHopperShowTopScores = parseTaskEnabled(data.hoopHopperShowTopScores, hoopHopperShowTopScores);
+      hoopHopperShowScoreNames = parseTaskEnabled(data.hoopHopperShowScoreNames, hoopHopperShowScoreNames);
+      studentNameEntryEnabled = parseTaskEnabled(data.studentNameEntryEnabled, studentNameEntryEnabled);
       localStorage.setItem(TEACHER_SKIP_LEVEL_ENABLED_KEY, String(teacherSkipLevelEnabled));
       localStorage.setItem(STUDENT_HOME_BUTTON_ENABLED_KEY, String(studentHomeButtonEnabled));
+      localStorage.setItem(HOOP_SHOW_TOP_SCORES_KEY, String(hoopHopperShowTopScores));
+      localStorage.setItem(HOOP_SHOW_SCORE_NAMES_KEY, String(hoopHopperShowScoreNames));
+      localStorage.setItem(STUDENT_NAME_ENTRY_ENABLED_KEY, String(studentNameEntryEnabled));
       freezeScreenFeatureEnabled = parseTaskEnabled(
         data.freezeScreenFeatureEnabled,
         freezeScreenFeatureEnabled
@@ -3117,9 +3135,11 @@ async function loadTask1Settings() {
       johnnyAppleseedGameActive = parseTaskEnabled(data.johnnyAppleseedGameActive, johnnyAppleseedGameActive);
       tractorJobCrewGameActive = parseTaskEnabled(data.tractorJobCrewGameActive, tractorJobCrewGameActive);
       turkeyTrotGameActive = parseTaskEnabled(data.turkeyTrotGameActive, turkeyTrotGameActive);
+      hoopHopperGameActive = parseTaskEnabled(data.hoopHopperGameActive, hoopHopperGameActive);
       goldenDotGameActive = parseTaskEnabled(data.goldenDotGameActive, goldenDotGameActive);
       zigZagGameActive = parseTaskEnabled(data.zigZagGameActive, zigZagGameActive);
       localStorage.setItem("turkeyTrotGameActive", String(turkeyTrotGameActive));
+      localStorage.setItem("hoopHopperGameActive", String(hoopHopperGameActive));
       localStorage.setItem("goldenDotGameActive", String(goldenDotGameActive));
       localStorage.setItem("zigZagGameActive", String(zigZagGameActive));
       localStorage.setItem("johnnyAppleseedGameActive", String(johnnyAppleseedGameActive));
@@ -3457,6 +3477,9 @@ async function loadTask1Settings() {
   if (jackRequireClickAndDragToggle) jackRequireClickAndDragToggle.checked = jackRequireClickAndDrag;
   if (teacherSkipLevelEnabledToggle) teacherSkipLevelEnabledToggle.checked = teacherSkipLevelEnabled;
   if (studentHomeButtonEnabledToggle) studentHomeButtonEnabledToggle.checked = studentHomeButtonEnabled;
+  if (hoopHopperShowTopScoresToggle) hoopHopperShowTopScoresToggle.checked = hoopHopperShowTopScores;
+  if (hoopHopperShowScoreNamesToggle) hoopHopperShowScoreNamesToggle.checked = hoopHopperShowScoreNames;
+  if (studentNameEntryEnabledToggle) studentNameEntryEnabledToggle.checked = studentNameEntryEnabled;
   if (freezeScreenFeatureToggle) {
     freezeScreenFeatureToggle.checked = freezeScreenFeatureEnabled;
   }
@@ -3475,6 +3498,7 @@ async function loadTask1Settings() {
   if (johnnyAppleseedGameActiveToggle) johnnyAppleseedGameActiveToggle.checked = johnnyAppleseedGameActive;
   if (tractorJobCrewGameActiveToggle) tractorJobCrewGameActiveToggle.checked = tractorJobCrewGameActive;
   if (turkeyTrotGameActiveToggle) turkeyTrotGameActiveToggle.checked = turkeyTrotGameActive;
+  if (hoopHopperGameActiveToggle) hoopHopperGameActiveToggle.checked = hoopHopperGameActive;
   if (goldenDotGameActiveToggle) goldenDotGameActiveToggle.checked = goldenDotGameActive;
   if (zigZagGameActiveToggle) zigZagGameActiveToggle.checked = zigZagGameActive;
   displayTractorLevels(tractorJobCrewLevels);
@@ -3775,8 +3799,14 @@ async function saveTask1Settings() {
   const jackRequireClickAndDrag = Boolean(jackRequireClickAndDragToggle && jackRequireClickAndDragToggle.checked);
   const teacherSkipLevelEnabled = Boolean(teacherSkipLevelEnabledToggle?.checked);
   const studentHomeButtonEnabled = Boolean(studentHomeButtonEnabledToggle?.checked);
+  const hoopHopperShowTopScores = Boolean(hoopHopperShowTopScoresToggle?.checked);
+  const hoopHopperShowScoreNames = Boolean(hoopHopperShowScoreNamesToggle?.checked);
+  const studentNameEntryEnabled = Boolean(studentNameEntryEnabledToggle?.checked);
   localStorage.setItem(TEACHER_SKIP_LEVEL_ENABLED_KEY, String(teacherSkipLevelEnabled));
   localStorage.setItem(STUDENT_HOME_BUTTON_ENABLED_KEY, String(studentHomeButtonEnabled));
+  localStorage.setItem(HOOP_SHOW_TOP_SCORES_KEY, String(hoopHopperShowTopScores));
+  localStorage.setItem(HOOP_SHOW_SCORE_NAMES_KEY, String(hoopHopperShowScoreNames));
+  localStorage.setItem(STUDENT_NAME_ENTRY_ENABLED_KEY, String(studentNameEntryEnabled));
   const freezeScreenFeatureEnabled = Boolean(
     freezeScreenFeatureToggle &&
     freezeScreenFeatureToggle.checked
@@ -3797,9 +3827,11 @@ async function saveTask1Settings() {
   const johnnyAppleseedGameActive = Boolean(johnnyAppleseedGameActiveToggle?.checked);
   const tractorJobCrewGameActive = Boolean(tractorJobCrewGameActiveToggle?.checked);
   const turkeyTrotGameActive = Boolean(turkeyTrotGameActiveToggle?.checked);
+  const hoopHopperGameActive = Boolean(hoopHopperGameActiveToggle?.checked);
   const goldenDotGameActive = Boolean(goldenDotGameActiveToggle?.checked);
   const zigZagGameActive = Boolean(zigZagGameActiveToggle?.checked);
   localStorage.setItem("turkeyTrotGameActive", String(turkeyTrotGameActive));
+  localStorage.setItem("hoopHopperGameActive", String(hoopHopperGameActive));
   localStorage.setItem("goldenDotGameActive", String(goldenDotGameActive));
   localStorage.setItem("zigZagGameActive", String(zigZagGameActive));
   localStorage.setItem("johnnyAppleseedGameActive", String(johnnyAppleseedGameActive));
@@ -4541,6 +4573,9 @@ async function saveTask1Settings() {
         freezeScreenFeatureEnabled,
         teacherSkipLevelEnabled,
         studentHomeButtonEnabled,
+        hoopHopperShowTopScores,
+        hoopHopperShowScoreNames,
+        studentNameEntryEnabled,
         fullscreenGameActive,
         mazeGameActive,
         carGameActive,
@@ -4557,6 +4592,7 @@ async function saveTask1Settings() {
         tractorJobCrewLevels,
         tractorJobCrewGameActive,
         turkeyTrotGameActive,
+        hoopHopperGameActive,
         goldenDotGameActive,
         goldenDotHitsGoal: Math.min(50,Math.max(5,Math.round(Number(goldenDotHitsGoalInput?.value)||50))),
         zigZagGameActive,
@@ -4902,8 +4938,12 @@ const allToggles = [
   carRequireClickAndDragToggle,
   jackRequireClickAndDragToggle,
   teacherSkipLevelEnabledToggle,
+  hoopHopperGameActiveToggle,
   goldenDotGameActiveToggle,
   studentHomeButtonEnabledToggle,
+  hoopHopperShowTopScoresToggle,
+  hoopHopperShowScoreNamesToggle,
+  studentNameEntryEnabledToggle,
   zigZagGameActiveToggle,
   fullscreenGameActiveToggle,
   mazeGameActiveToggle,

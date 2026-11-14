@@ -55,7 +55,7 @@
     overlay.hidden=false;$('zigHeading').textContent=title;$('zigDescription').textContent=description;$('zigStart').textContent=label;$('zigStart').hidden=false;
     $('zigFootnote').textContent=footnote;$('zigDemo').hidden=!showDemo;$('zigTrailChoices').hidden=true;action=handler;
   }
-  function prepare(index){audioStop();s=M.create(index);runSaved=false;trail=[];particles=[];callout=null;camera={x:s.x,y:s.y};mode='ready';stats();
+  function prepare(index){window.classroomScores?.begin('zig-zag-trail-'+index);audioStop();s=M.create(index);runSaved=false;trail=[];particles=[];callout=null;camera={x:s.x,y:s.y};mode='ready';stats();
     $('zigEyebrow').textContent=`${s.level.name} · Endless run`;
     dialog(index===0?'Ready to roll?':s.level.name,'Your ball rolls by itself. Tap once at each glowing corner to turn. No dragging needed!',"Let's roll!",start,'A fresh path every run · Beat your best score',true);
     cue.hidden=false;cue.textContent='Ready to roll?';const instructions=document.querySelector('.game-instructions');if(instructions)instructions.textContent='Tap or click anywhere on the trail to turn. Wait for the glowing corner!';cue.classList.remove('turn-now');$('zigPause').textContent='Ⅱ';$('zigPause').setAttribute('aria-label','Pause game');
@@ -67,7 +67,7 @@
   }
   function beginDemo(){if(!settingsReady||!active)return;unlockAudio();s=M.create(s.index);stats();camera={x:0,y:0};trail=[];demoTurns=0;overlay.hidden=true;mode='demo';status('Watch: one tap at each glowing corner. This demonstration does not count toward your score.');}
   function burst(x,y,color,count=18){if(reduced)count=5;for(let i=0;i<count;i++){const a=Math.PI*2*i/count;particles.push({x,y,vx:Math.cos(a)*(25+Math.random()*65),vy:Math.sin(a)*(25+Math.random()*65)-45,t:0,life:.65+Math.random()*.4,color});}}
-  function turn(){if(mode!=='playing'||frozen()||!active)return;unlockAudio();const ok=M.turn(s);const p=project(s.x,s.y);if(ok){sfx(s.correct%10===0?'milestone':'turn',s.correct);burst(p.x,p.y-14,'#fff39c',s.correct%10===0?35:18);callout={text:s.correct%10===0?`${s.correct} TURNS!`:'+1',time:0};updateBest();status(`Score ${s.correct}.${s.correct%10===0?' Keep it going!':''}`);}else{sfx('miss');}stats();}
+  function turn(){if(mode!=='playing'||frozen()||!active)return;unlockAudio();const ok=M.turn(s);const p=project(s.x,s.y);if(ok){window.classroomScores?.update('zig-zag-trail-'+s.index,s.correct);sfx(s.correct%10===0?'milestone':'turn',s.correct);burst(p.x,p.y-14,'#fff39c',s.correct%10===0?35:18);callout={text:s.correct%10===0?`${s.correct} TURNS!`:'+1',time:0};updateBest();status(`Score ${s.correct}.${s.correct%10===0?' Keep it going!':''}`);}else{sfx('miss');}stats();}
   function fall(){const wasDemo=mode==='demo';mode=wasDemo?'demo-falling':'falling';s.fall=0;cue.hidden=true;trail=[];particles=[];callout=null;audioStop();sfx('fall');if(!wasDemo){updateBest();saveResult();}status('Run ended. Try again to beat your best score.');}
   function saveResult(){if(runSaved||!window.gameResultsStore)return;runSaved=true;let name='Student';try{name=(localStorage.getItem('moving-sound-student-name-v1')||'Student').trim().slice(0,60)||'Student';}catch{}
     const total=s.correct+s.misses;
@@ -154,6 +154,7 @@
   }
   canvas.addEventListener('click',e=>{if(e.button!==0)return;turn();});
   canvas.addEventListener('keydown',e=>{if((e.code==='Space'||e.code==='Enter')&&!e.repeat){e.preventDefault();turn();}});
+  window.addEventListener('trackpadStudentNamePromptOpen',()=>{audioStop();pause();});
   $('zigStart').onclick=()=>{if(frozen())return;unlockAudio();action?.();};$('zigDemo').onclick=beginDemo;$('zigPause').onclick=pause;$('zigLevels').onclick=showTrails;
   $('zigSound').onclick=()=>{soundOn=!(soundOn&&globalSound);if(soundOn){unlockAudio();sfx('toggle');}else audioStop();soundIcon();};
   window.addEventListener('blur',()=>{audioStop();pause();});

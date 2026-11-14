@@ -1524,7 +1524,7 @@ function updateObstacles(dtMs) {
     }
 
     if (obstacle.progress > 1.03) {
-      score += 1;
+      score += 1; window.classroomScores?.update('car-game', score);
       playHonk();
       removeObstacle(obstacle.id);
     }
@@ -1586,7 +1586,7 @@ function startLevel() {
   gameActive = true;
   lastHonkAtMs = -Infinity;
   updateStartButtonVisibility();
-  score = 0;
+  score = 0; window.classroomScores?.begin('car-game');
   levelElapsedMs = 0;
   spawnTimerMs = 0;
   birdSpawnTimerMs = 0;

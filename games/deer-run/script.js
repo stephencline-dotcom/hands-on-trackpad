@@ -1143,7 +1143,7 @@ function retryCurrentDeerLevel() {
 
 function playDeerRunAgain() {
   currentLevelIndex = 0;
-  deerScore = 0;
+  deerScore = 0; window.classroomScores?.begin('deer-run');
 
   savedDeerResultLevels.clear();
 
@@ -1265,7 +1265,7 @@ function checkForestObstacleResult(obstacle) {
     obstacle.resolved = true;
 
     deerGoalHits += 1;
-    deerScore += 1;
+    deerScore += 1; window.classroomScores?.update('deer-run', deerScore);
 
     deerStatus.textContent =
       obstacle.lane === 'air'
@@ -1600,7 +1600,7 @@ function startDeerLevel(index) {
     getCurrentDeerLevel().timeLimit;
 
   if (currentLevelIndex === 0) {
-    deerScore = 0;
+    deerScore = 0; window.classroomScores?.begin('deer-run');
   }
 
   deerGameRunning = true;

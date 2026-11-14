@@ -865,7 +865,7 @@
             )
           );
 
-          score += basePoints * multiplier;
+          score += basePoints * multiplier; window.classroomScores?.update('haunted-street', score);
 
           if (multiplier >= 2) {
             showFeedback(
@@ -1875,7 +1875,7 @@
 
   function playAgain() {
     levelIndex = 0;
-    score = 0;
+    score = 0; window.classroomScores?.begin('haunted-street');
     resetLevel();
   }
 

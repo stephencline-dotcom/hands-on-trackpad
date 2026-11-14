@@ -43,6 +43,7 @@
  function soundIcon(){const on=soundOn&&globalSound,b=$('gdSound');b.textContent=on?'🔊':'🔇';b.setAttribute('aria-pressed',String(on));b.setAttribute('aria-label',on?'Sound on':'Sound off');b.title=on?'Sound on':'Sound off';}
  function status(text){$('gdStatus').textContent=text;}
  function stats(){$('gdLevel').textContent=`${state.level+1} / 30`;$('gdHits').textContent=`${state.hits} / ${state.goal}`;}
+ function publishLeaderboard(){const stars=progress.stars.reduce((sum,value)=>sum+value,0);if(stars>0)window.classroomScores?.record('golden-dot',progress.unlocked*100+stars);}
  function saveProgress(){try{localStorage.setItem(PROGRESS_KEY,JSON.stringify({stars:progress.stars}));}catch{status('Level complete. This browser could not save progress.');}}
  function renderGrid(){const grid=$('gdGrid');grid.replaceChildren();M.levels.forEach((level,index)=>{
   const number=index+1,unlocked=number<=progress.unlocked,b=document.createElement('button');b.type='button';b.className='gd-level'+(unlocked?' available':'')+(progress.stars[index]?' completed':'');b.disabled=!unlocked||!settingsReady;b.setAttribute('aria-label',unlocked?`Level ${number}: ${level.name}${progress.stars[index]?`, ${progress.stars[index]} stars`:''}`:`Level ${number} locked`);
@@ -54,7 +55,7 @@
  function dialog(title,description,label,handler,otherLabel,otherHandler,footnote=''){
   overlay.hidden=false;$('gdHeading').textContent=title;$('gdDescription').textContent=description;$('gdStart').textContent=label;primary=handler;$('gdStart').focus({preventScroll:true});$('gdSecondary').textContent=otherLabel||'';$('gdSecondary').hidden=!otherLabel;secondary=otherHandler;$('gdFootnote').textContent=footnote;
  }
- function prepare(index,teacherPreview=false){stopAudio();state=M.create(index,goal);preview=teacherPreview;runSaved=false;particles=[];hitPulse=0;shotPulse=0;shake=0;mode='ready';board.hidden=true;$('gdStars').textContent='';stats();$('gdPause').disabled=true;$('gdEyebrow').textContent=`Level ${index+1} · ${M.levels[index].name}${preview?' · Teacher preview':''}`;
+ function prepare(index,teacherPreview=false){window.classroomScores?.activate('golden-dot');stopAudio();state=M.create(index,goal);preview=teacherPreview;runSaved=false;particles=[];hitPulse=0;shotPulse=0;shake=0;mode='ready';board.hidden=true;$('gdStars').textContent='';stats();$('gdPause').disabled=true;$('gdEyebrow').textContent=`Level ${index+1} · ${M.levels[index].name}${preview?' · Teacher preview':''}`;
   dialog('Find the opening',`Click once to send a spark. Hit the golden dot ${state.goal} times and avoid the white barriers. You have three lives.`,'Start level',start,'Show me',beginDemo,preview?'Teacher preview does not unlock levels or save results.':'No timer. Watch, wait, then tap.');
  }
  function start(){if(!settingsReady||!active)return;unlockAudio();mode='playing';sfx('start');overlay.hidden=true;$('gdPause').disabled=false;canvas.focus({preventScroll:true});status(`Level ${state.level+1}. Wait for a clear opening, then click.`);}
@@ -66,7 +67,7 @@
   window.gameResultsStore.saveResult({gameName:'Golden Dot',studentName:name,levelCompleted:state.level+1,correctClicks:state.hits,missedClicks:state.misses,totalClicks:state.hits+state.misses,playedAtMs:Date.now()}).catch(()=>status('Level complete. Result could not be saved.'));
  }
  function finish(){mode='won';stopAudio();sfx('win');$('gdPause').disabled=true;const stars=state.lives;$('gdStars').textContent='★'.repeat(stars)+'☆'.repeat(3-stars);
-  if(!preview){progress=M.complete(progress,state.level,state.lives);saveProgress();recordResult();}
+  if(!preview){progress=M.complete(progress,state.level,state.lives);saveProgress();publishLeaderboard();recordResult();}
   burst(M.C.x,M.C.y,'#ffe78f',55);$('gdEyebrow').textContent=preview?'Teacher preview complete':'Beautiful timing!';
   dialog(state.level===29?'All thirty levels!':'Level complete!',preview?'This preview did not change student progress.':`${state.hits} golden hits! ${stars===3?'Perfect timing—three stars!':'Try again anytime to earn more stars.'}`,state.level===29?'Choose a level':'Next level',()=>state.level===29?showLevels():prepare(state.level+1,preview),'Play again',()=>prepare(state.level,preview),preview?'Teacher skips never unlock student levels.':'Each new level brings a different moving pattern.');status(`Level ${state.level+1} complete.`);
  }
@@ -117,11 +118,13 @@
   finally{settingsBusy=false;settingsReady=true;if(mode==='levels')renderGrid();}
  }
  canvas.addEventListener('click',e=>{if(e.button===0)shoot();});canvas.addEventListener('keydown',e=>{if((e.code==='Space'||e.code==='Enter')&&!e.repeat){e.preventDefault();shoot();}});
+ window.addEventListener('classroomScoresReady',publishLeaderboard);window.addEventListener('trackpadStudentNameChanged',publishLeaderboard);
+ window.addEventListener('trackpadStudentNamePromptOpen',()=>{stopAudio();pause();});
  $('gdStart').onclick=()=>{if(frozen())return;unlockAudio();primary?.();};$('gdSecondary').onclick=()=>{if(frozen())return;unlockAudio();secondary?.();};$('gdLevels').onclick=showLevels;$('gdPause').onclick=pause;
  $('gdSound').onclick=()=>{soundOn=!(soundOn&&globalSound);if(soundOn){unlockAudio();sfx('toggle');}else stopAudio();soundIcon();};
  window.addEventListener('blur',()=>{stopAudio();pause();});document.addEventListener('visibilitychange',()=>{if(document.hidden){stopAudio();pause();}});
  window.trackpadTeacherSkipAdapter={advance(){if(state.level===29)return false;prepare(state.level+1,true);return true;}};
  window.addEventListener('resize',fitCanvas);if(window.ResizeObserver)new ResizeObserver(fitCanvas).observe($('gdStage'));
  const poll=setInterval(readSettings,5000);window.addEventListener('pagehide',()=>{stopAudio();clearInterval(poll);audio?.close();},{once:true});
- fitCanvas();soundIcon();showLevels();readSettings();requestAnimationFrame(animate);
+ fitCanvas();soundIcon();showLevels();publishLeaderboard();readSettings();requestAnimationFrame(animate);
 })();

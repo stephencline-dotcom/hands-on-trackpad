@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Trackpad Admin Settings</title>
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="admin-layout.css?v=1" />
     <link rel="stylesheet" href="freeze-screen.css?v=timer-1" />
     <link rel="stylesheet" href="home-card-order.css?v=1" />
   </head>
@@ -24,188 +25,193 @@
           </header>
 
           <section class="admin-availability-section" id="adminAvailabilitySection" aria-label="Activity availability">
-<a id="homeOrderAdminLink" class="home-order-admin-link" href="index.html?arrange=1">Arrange homepage cards</a><p class="admin-panel-note">Opens the homepage editor. Drag cards into place and choose Save order there.</p>
-            <article class="admin-mini-card admin-mini-card--wide admin-mini-card--availability">
-              <h3>Activity Availability</h3>
-              <p class="admin-panel-note">Choose which activities appear to students on the home screen.</p>
-              <div class="admin-inline-toggles admin-inline-toggles--availability">
+<article class="admin-mini-card admin-mini-card--wide admin-mini-card--availability">
+<h3>Activity Availability</h3><p class="admin-panel-note">Choose which games appear on student home screens.</p>
+<div class="admin-inline-toggles admin-inline-toggles--availability classroom-game-grid">
+<label class="admin-toggle-row" for="bugMeadowGameActive">
+                  <input id="bugMeadowGameActive" type="checkbox" checked />
+                  <span>Bug Meadow</span>
+                </label>
+<label class="admin-toggle-row" for="carGameActiveToggle">
+                  <input id="carGameActiveToggle" type="checkbox" checked />
+                  <span>Car Game</span>
+                </label>
+<label class="admin-toggle-row" for="chickenLittleGameActive">
+                  <input id="chickenLittleGameActive" type="checkbox" checked />
+                  <span>Chicken Little</span>
+                </label>
+<label class="admin-toggle-row" for="clambakeAdventureGameActive">
+                  <input id="clambakeAdventureGameActive" type="checkbox" checked />
+                  <span>Clambake Adventure</span>
+                </label>
+<label class="admin-toggle-row" for="deerRunGameActive">
+                  <input id="deerRunGameActive" type="checkbox" checked />
+                  <span>Deer Run</span>
+                </label>
+<label class="admin-toggle-row" for="dragonDodgeGameActive">
+                  <input id="dragonDodgeGameActive" type="checkbox" checked />
+                  <span>Dragon Dodge</span>
+                </label>
+<label class="admin-toggle-row" for="farmyardHelpersGameActive"><input id="farmyardHelpersGameActive" type="checkbox" checked><span>Farmyard Helpers</span></label>
+<label class="admin-toggle-row" for="firefighterRescueGameActive">
+                  <input id="firefighterRescueGameActive" type="checkbox" checked />
+                  <span>Firefighter Rescue</span>
+                </label>
+<label class="admin-toggle-row" for="fireflyForestGameActive">
+                  <input id="fireflyForestGameActive" type="checkbox" checked />
+                  <span>Firefly Forest</span>
+                </label>
+<label class="admin-toggle-row" for="followBirdGameActive"><input id="followBirdGameActive" type="checkbox" checked><span>Follow the Bird</span></label>
+<label class="admin-toggle-row" for="fullscreenGameActiveToggle">
+                  <input id="fullscreenGameActiveToggle" type="checkbox" checked />
+                  <span>Fullscreen Trackpad</span>
+                </label>
+<label class="admin-toggle-row" for="goldenDotGameActive"><input id="goldenDotGameActive" type="checkbox" checked><span>Golden Dot</span></label>
+<label class="admin-toggle-row" for="harvestHeroesGameActive"><input id="harvestHeroesGameActive" type="checkbox" checked><span>Harvest Heroes</span></label>
+<label class="admin-toggle-row" for="hauntedStreetGameActive">
+                  <input id="hauntedStreetGameActive" type="checkbox" checked />
+                  <span>Haunted Street</span>
+                </label>
+<label class="admin-toggle-row" for="hoopHopperGameActive"><input id="hoopHopperGameActive" type="checkbox" checked><span>Hoop Hopper</span></label>
+<label class="admin-toggle-row" for="johnnyAppleseedGameActive"><input id="johnnyAppleseedGameActive" type="checkbox" checked><span>Johnny’s Apple Orchard</span></label>
+<label class="admin-toggle-row" for="jackGameActiveToggle">
+                  <input id="jackGameActiveToggle" type="checkbox" checked />
+                  <span>Jumping Jack</span>
+                </label>
+<label class="admin-toggle-row" for="lightGameActive">
+                  <input id="lightGameActive" type="checkbox" checked />
+                  <span>Light Tap Game</span>
+                </label>
+<label class="admin-toggle-row" for="martianMadnessGameActive">
+                  <input id="martianMadnessGameActive" type="checkbox" checked />
+                  <span>Martian Madness</span>
+                </label>
+<label class="admin-toggle-row" for="mazeGameActiveToggle">
+                  <input id="mazeGameActiveToggle" type="checkbox" checked />
+                  <span>Maze Game</span>
+                </label>
+<label class="admin-toggle-row" for="monsterLunchGameActive">
+                  <input id="monsterLunchGameActive" type="checkbox" checked />
+                  <span>Monster Lunch</span>
+                </label>
+<label class="admin-toggle-row" for="pumpkinStudioGameActive"><input id="pumpkinStudioGameActive" type="checkbox" checked><span>Pumpkin Patch Studio</span></label>
+<label class="admin-toggle-row" for="riverTrailGameActive"><input id="riverTrailGameActive" type="checkbox" checked><span>River Trail Adventure</span></label>
+<label class="admin-toggle-row" for="senseBuilderGameActive">
+                  <input id="senseBuilderGameActive" type="checkbox" checked />
+                  <span>Sense Builder</span>
+                </label>
+<label class="admin-toggle-row" for="sheepRoundupGameActive"><input id="sheepRoundupGameActive" type="checkbox" checked><span>Sheep Roundup</span></label>
+<label class="admin-toggle-row" for="tortoisePuzzleGameActive">
+                  <input id="tortoisePuzzleGameActive" type="checkbox" checked />
+                  <span>Slow and Steady</span>
+                </label>
+<label class="admin-toggle-row" for="streetCarGameActive">
+                  <input id="streetCarGameActive" type="checkbox" checked />
+                  <span>Street Car Game</span>
+                </label>
+<label class="admin-toggle-row" for="threeLittlePigsGameActive"><input id="threeLittlePigsGameActive" type="checkbox" checked><span>Three Little Pigs</span></label>
+<label class="admin-toggle-row" for="tractorJobCrewGameActive"><input id="tractorJobCrewGameActive" type="checkbox" checked><span>Tractor Job Crew</span></label>
+<label class="admin-toggle-row" for="turkeyStudioGameActive"><input id="turkeyStudioGameActive" type="checkbox" checked><span>Turkey Design Studio</span></label>
+<label class="admin-toggle-row" for="turkeyTrotGameActive"><input id="turkeyTrotGameActive" type="checkbox" checked><span>Turkey Trot</span></label>
+<label class="admin-toggle-row" for="zigZagGameActive"><input id="zigZagGameActive" type="checkbox" checked><span>Zig Zag Trail</span></label></div></article>
+<details class="classroom-shared-settings" open><summary>Classroom Controls</summary><p class="admin-panel-note">Shared settings for all games. Each leaderboard shows three different students and each student's best score. Use a unique name for each student, such as a first name and last initial.</p>
+<div class="classroom-control-grid"><label class="admin-toggle-row" for="soundEnabledToggle">
+                  <input id="soundEnabledToggle" type="checkbox" checked />
+                  <span>Enable fullscreen sounds</span>
+                </label>
 <label class="admin-toggle-row" for="teacherSkipLevelEnabled"><input id="teacherSkipLevelEnabled" type="checkbox" checked><span>Enable Teacher Skip Level Button</span></label>
 <label class="admin-toggle-row" for="studentHomeButtonEnabled"><input id="studentHomeButtonEnabled" type="checkbox" checked><span>Show Home buttons on student computers (admins always keep theirs)</span></label>
-              <label class="admin-toggle-row" for="trackpadGuideEnabledToggle">
+<label class="admin-toggle-row" for="studentNameEntryEnabled"><input id="studentNameEntryEnabled" type="checkbox"><span>Offer student name entry (remembered in this browser)</span></label>
+<label class="admin-toggle-row" for="hoopHopperShowTopScores"><input id="hoopHopperShowTopScores" type="checkbox"><span>Show classroom Top 3 scores in all scoring games</span></label>
+<label class="admin-toggle-row" for="hoopHopperShowScoreNames"><input id="hoopHopperShowScoreNames" type="checkbox"><span>Show student names on classroom leaderboards</span></label>
+<label class="admin-toggle-row" for="trackpadGuideEnabledToggle">
                 <input id="trackpadGuideEnabledToggle" type="checkbox" checked />
                 <span>Show Trackpad Guide in games</span>
               </label>
-
-                <label class="admin-toggle-row" for="freezeScreenFeatureToggle">
+<label class="admin-toggle-row" for="freezeScreenFeatureToggle">
                   <input id="freezeScreenFeatureToggle" type="checkbox" />
                   <span>Enable Freeze Screen feature</span>
-                </label>
-                <label class="admin-toggle-row" for="fullscreenGameActiveToggle">
-                  <input id="fullscreenGameActiveToggle" type="checkbox" checked />
-                  <span>Fullscreen Trackpad is active</span>
-                </label>
-                <label class="admin-toggle-row" for="mazeGameActiveToggle">
-                  <input id="mazeGameActiveToggle" type="checkbox" checked />
-                  <span>Maze Game is active</span>
-                </label>
-                <label class="admin-toggle-row" for="carGameActiveToggle">
-                  <input id="carGameActiveToggle" type="checkbox" checked />
-                  <span>Car Game is active</span>
-                </label>
-                <label class="admin-toggle-row" for="jackGameActiveToggle">
-                  <input id="jackGameActiveToggle" type="checkbox" checked />
-                  <span>Jumping Jack is active</span>
-                </label>
-                <label class="admin-toggle-row" for="lightGameActive">
-                  <input id="lightGameActive" type="checkbox" checked />
-                  <span>Light Tap Game is active</span>
-                </label>
-                <label class="admin-toggle-row" for="streetCarGameActive">
-                  <input id="streetCarGameActive" type="checkbox" checked />
-                  <span>Street Car Game is active</span>
-                </label>
-                <label class="admin-toggle-row" for="dragonDodgeGameActive">
-                  <input id="dragonDodgeGameActive" type="checkbox" checked />
-                  <span>Dragon Dodge is active</span>
-                </label>
-                <label class="admin-toggle-row" for="firefighterRescueGameActive">
-                  <input id="firefighterRescueGameActive" type="checkbox" checked />
-                  <span>Firefighter Rescue is active</span>
-                </label>
-                <label class="admin-toggle-row" for="martianMadnessGameActive">
-                  <input id="martianMadnessGameActive" type="checkbox" checked />
-                  <span>Martian Madness is active</span>
-                </label>
-                <label class="admin-toggle-row" for="bugMeadowGameActive">
-                  <input id="bugMeadowGameActive" type="checkbox" checked />
-                  <span>Bug Meadow is active</span>
-                </label>
-                <label class="admin-toggle-row" for="senseBuilderGameActive">
-                  <input id="senseBuilderGameActive" type="checkbox" checked />
-                  <span>Sense Builder is active</span>
-                </label>
-
-                <label class="admin-toggle-row" for="chickenLittleGameActive">
-                  <input id="chickenLittleGameActive" type="checkbox" checked />
-                  <span>Chicken Little is active</span>
-                </label>
-                <label class="admin-toggle-row" for="tortoisePuzzleGameActive">
-                  <input id="tortoisePuzzleGameActive" type="checkbox" checked />
-                  <span>Slow and Steady is active</span>
-                </label>
-                <label class="admin-toggle-row" for="sheepRoundupGameActive"><input id="sheepRoundupGameActive" type="checkbox" checked><span>Sheep Roundup is active</span></label>
-<label class="admin-toggle-row" for="threeLittlePigsGameActive"><input id="threeLittlePigsGameActive" type="checkbox" checked><span>Three Little Pigs is active</span></label>
-<label class="admin-toggle-row" for="harvestHeroesGameActive"><input id="harvestHeroesGameActive" type="checkbox" checked><span>Harvest Heroes is active</span></label>
-<label class="admin-toggle-row" for="riverTrailGameActive"><input id="riverTrailGameActive" type="checkbox" checked><span>River Trail Adventure is active</span></label>
-<label class="admin-toggle-row" for="farmyardHelpersGameActive"><input id="farmyardHelpersGameActive" type="checkbox" checked><span>Farmyard Helpers is active</span></label>
-<label class="admin-toggle-row" for="johnnyAppleseedGameActive"><input id="johnnyAppleseedGameActive" type="checkbox" checked><span>Johnny’s Apple Orchard is active</span></label>
-<label class="admin-toggle-row" for="tractorJobCrewGameActive"><input id="tractorJobCrewGameActive" type="checkbox" checked><span>Tractor Job Crew is active</span></label>
-<label class="admin-toggle-row" for="zigZagGameActive"><input id="zigZagGameActive" type="checkbox" checked><span>Zig Zag Trail is active</span></label>
-<label class="admin-toggle-row" for="goldenDotGameActive"><input id="goldenDotGameActive" type="checkbox" checked><span>Golden Dot is active</span></label>
-<label class="admin-toggle-row" for="goldenDotHitsGoal"><span>Golden Dot — hits per level (5–50)</span><input id="goldenDotHitsGoal" class="admin-task-input" type="number" min="5" max="50" step="1" value="50" style="width:85px"></label>
-<label class="admin-toggle-row" for="turkeyTrotGameActive"><input id="turkeyTrotGameActive" type="checkbox" checked><span>Turkey Trot is active</span></label>
-<label class="admin-toggle-row" for="turkeyStudioGameActive"><input id="turkeyStudioGameActive" type="checkbox" checked><span>Turkey Design Studio is active</span></label>
-<label class="admin-toggle-row" for="pumpkinStudioGameActive"><input id="pumpkinStudioGameActive" type="checkbox" checked><span>Pumpkin Patch Studio is active</span></label>
-<label class="admin-toggle-row" for="clambakeAdventureGameActive">
-                  <input id="clambakeAdventureGameActive" type="checkbox" checked />
-                  <span>Clambake Adventure is active</span>
-                </label>
-                <label class="admin-toggle-row" for="fireflyForestGameActive">
-                  <input id="fireflyForestGameActive" type="checkbox" checked />
-                  <span>Firefly Forest is active</span>
-                </label>
-                <label class="admin-toggle-row" for="followBirdGameActive"><input id="followBirdGameActive" type="checkbox" checked><span>Follow the Bird is active</span></label>
-                <label class="admin-toggle-row" for="followBirdClickingEnabled">
-                  <input id="followBirdClickingEnabled" type="checkbox" />
-                  <span>Enable Follow the Bird Clicking Mode</span>
-                </label>
-                <label class="admin-toggle-row" for="monsterLunchGameActive">
-                  <input id="monsterLunchGameActive" type="checkbox" checked />
-                  <span>Monster Lunch is active</span>
-                </label>
-                <label class="admin-toggle-row" for="deerRunGameActive">
-                  <input id="deerRunGameActive" type="checkbox" checked />
-                  <span>Deer Run is active</span>
-                </label>
-                <label class="admin-toggle-row" for="hauntedStreetGameActive">
-                  <input id="hauntedStreetGameActive" type="checkbox" checked />
-                  <span>Haunted Street is active</span>
-                </label>
-              </div>
-            </article>
-          </section>
+                </label></div><div class="classroom-arrange"><a id="homeOrderAdminLink" class="home-order-admin-link" href="index.html?arrange=1">Arrange homepage cards</a></div></details></section>
 
           <nav class="admin-tabs" aria-label="Settings sections">
             <h3 class="admin-games-title">Games</h3>
             <div class="admin-tab-group-buttons" role="tablist" aria-label="Game settings">
-<button class="admin-tab-button" type="button" role="tab" id="tabSheepRoundup" aria-controls="panelSheepRoundup" aria-selected="false" data-tab="sheeproundup">Sheep Roundup</button>
-<button class="admin-tab-button" type="button" role="tab" id="tabThreeLittlePigs" aria-controls="panelThreeLittlePigs" aria-selected="false" data-tab="threelittlepigs">Three Little Pigs</button>
-<button class="admin-tab-button" type="button" role="tab" id="tabHarvestHeroes" aria-controls="panelHarvestHeroes" aria-selected="false" data-tab="harvestheroes">Harvest Heroes</button>
-<button class="admin-tab-button" type="button" role="tab" id="tabRiverTrail" aria-controls="panelRiverTrail" aria-selected="false" data-tab="rivertrail">River Trail Adventure</button>
-<button class="admin-tab-button" type="button" role="tab" id="tabJohnnyAppleseed" aria-controls="panelJohnnyAppleseed" aria-selected="false" data-tab="johnnyappleseed">Johnny Appleseed</button>
-<button class="admin-tab-button" type="button" role="tab" id="tabFarmyardHelpers" aria-controls="panelFarmyardHelpers" aria-selected="false" data-tab="farmyardhelpers">Farmyard Helpers</button>
-<button class="admin-tab-button" type="button" role="tab" id="tabTurkeyTrot" aria-controls="panelTurkeyTrot" aria-selected="false" data-tab="turkeytrot">Turkey Trot</button>
-<button class="admin-tab-button" type="button" role="tab" id="tabTurkeyStudio" aria-controls="panelTurkeyStudio" aria-selected="false" data-tab="turkeystudio">Turkey Design Studio</button><button class="admin-tab-button" type="button" role="tab" id="tabPumpkinStudio" aria-controls="panelPumpkinStudio" aria-selected="false" data-tab="pumpkinstudio">Pumpkin Patch Studio</button>
-              <button class="admin-tab-button" type="button" role="tab" id="tabQuick" aria-controls="panelQuick" aria-selected="false" data-tab="quick">
-                Fullscreen Trackpad
-              </button>
-              <button class="admin-tab-button" type="button" role="tab" id="tabMaze" aria-controls="panelMaze" aria-selected="false" data-tab="maze">
-                Maze
-              </button>
-              <button class="admin-tab-button" type="button" role="tab" id="tabCar" aria-controls="panelCar" aria-selected="false" data-tab="car">
-                Car Game
-              </button>
-              <button class="admin-tab-button" type="button" role="tab" id="tabAdvanced" aria-controls="panelAdvanced" aria-selected="false" data-tab="advanced">
-                Jumping Jack
-              </button>
-              <button class="admin-tab-button" type="button" role="tab" id="tabLightTap" aria-controls="panelLightTap" aria-selected="false" data-tab="lighttap">
-                Light Tap Game
-              </button>
-              <button class="admin-tab-button" type="button" role="tab" id="tabStreetCar" aria-controls="panelStreetCar" aria-selected="false" data-tab="streetcar">
-                Street Car Game
-              </button>
-              <button class="admin-tab-button" type="button" role="tab" id="tabDragon" aria-controls="panelDragon" aria-selected="false" data-tab="dragon">
-                Dragon Dodge
-              </button>
-              <button class="admin-tab-button" type="button" role="tab" id="tabFire" aria-controls="panelFire" aria-selected="false" data-tab="fire">
-                Firefighter Rescue
-              </button>
-              <button class="admin-tab-button" type="button" role="tab" id="tabMartian" aria-controls="panelMartian" aria-selected="false" data-tab="martian">
-                Martian Madness
-              </button>
-              <button class="admin-tab-button" type="button" role="tab" id="tabBugMeadow" aria-controls="panelBugMeadow" aria-selected="false" data-tab="bugmeadow">
+<button class="admin-tab-button" type="button" role="tab" id="tabBugMeadow" aria-controls="panelBugMeadow" aria-selected="false" data-tab="bugmeadow">
                 Bug Meadow
               </button>
-              <button class="admin-tab-button" type="button" role="tab" id="tabFireflyForest" aria-controls="panelFireflyForest" aria-selected="false" data-tab="fireflyforest">
-                Firefly Forest
+<button class="admin-tab-button" type="button" role="tab" id="tabCar" aria-controls="panelCar" aria-selected="false" data-tab="car">
+                Car Game
               </button>
-              <button class="admin-tab-button" type="button" role="tab" id="tabMonsterLunch" aria-controls="panelMonsterLunch" aria-selected="false" data-tab="monsterlunch">
-                Monster Lunch
-              </button>
-              <button class="admin-tab-button" type="button" role="tab" id="tabDeerRun" aria-controls="panelDeerRun" aria-selected="false" data-tab="deerrun">
-                Deer Run
-              </button>
-              <button class="admin-tab-button" type="button" role="tab" id="tabTractorJobCrew" aria-controls="panelTractorJobCrew" aria-selected="false" data-tab="tractorjobcrew">Tractor Job Crew</button>
-              <button class="admin-tab-button" type="button" role="tab" id="tabSenseBuilder" aria-controls="panelSenseBuilder" aria-selected="false" data-tab="sensebuilder">
-                Sense Builder
-              </button>
-              <button class="admin-tab-button" type="button" role="tab" id="tabChickenLittle" aria-controls="panelChickenLittle" aria-selected="false" data-tab="chickenlittle">
+<button class="admin-tab-button" type="button" role="tab" id="tabChickenLittle" aria-controls="panelChickenLittle" aria-selected="false" data-tab="chickenlittle">
                 Chicken Little
               </button>
-              <button class="admin-tab-button" type="button" role="tab" id="tabTortoisePuzzle" aria-controls="panelTortoisePuzzle" aria-selected="false" data-tab="tortoisepuzzle">
-                Slow and Steady
-              </button>
-              <button class="admin-tab-button" type="button" role="tab" id="tabClambakeAdventure" aria-controls="panelClambakeAdventure" aria-selected="false" data-tab="clambakeadventure">
+<button class="admin-tab-button" type="button" role="tab" id="tabClambakeAdventure" aria-controls="panelClambakeAdventure" aria-selected="false" data-tab="clambakeadventure">
                 Clambake Adventure
               </button>
-              <button class="admin-tab-button" type="button" role="tab" id="tabHauntedStreet" aria-controls="panelHauntedStreet" aria-selected="false" data-tab="hauntedstreet">
+<button class="admin-tab-button" type="button" role="tab" id="tabDeerRun" aria-controls="panelDeerRun" aria-selected="false" data-tab="deerrun">
+                Deer Run
+              </button>
+<button class="admin-tab-button" type="button" role="tab" id="tabDragon" aria-controls="panelDragon" aria-selected="false" data-tab="dragon">
+                Dragon Dodge
+              </button>
+<button class="admin-tab-button" type="button" role="tab" id="tabFarmyardHelpers" aria-controls="panelFarmyardHelpers" aria-selected="false" data-tab="farmyardhelpers">Farmyard Helpers</button>
+<button class="admin-tab-button" type="button" role="tab" id="tabFire" aria-controls="panelFire" aria-selected="false" data-tab="fire">
+                Firefighter Rescue
+              </button>
+<button class="admin-tab-button" type="button" role="tab" id="tabFireflyForest" aria-controls="panelFireflyForest" aria-selected="false" data-tab="fireflyforest">
+                Firefly Forest
+              </button>
+<button class="admin-tab-button" type="button" role="tab" id="tabFollowBird" aria-controls="panelFollowBird" aria-selected="false" data-tab="followbird">Follow the Bird</button>
+<button class="admin-tab-button" type="button" role="tab" id="tabQuick" aria-controls="panelQuick" aria-selected="false" data-tab="quick">
+                Fullscreen Trackpad
+              </button>
+<button class="admin-tab-button" type="button" role="tab" id="tabGoldenDot" aria-controls="panelGoldenDot" aria-selected="false" data-tab="goldendot">Golden Dot</button>
+<button class="admin-tab-button" type="button" role="tab" id="tabHarvestHeroes" aria-controls="panelHarvestHeroes" aria-selected="false" data-tab="harvestheroes">Harvest Heroes</button>
+<button class="admin-tab-button" type="button" role="tab" id="tabHauntedStreet" aria-controls="panelHauntedStreet" aria-selected="false" data-tab="hauntedstreet">
                 Haunted Street
               </button>
-            </div>
+<button class="admin-tab-button" type="button" role="tab" id="tabJohnnyAppleseed" aria-controls="panelJohnnyAppleseed" aria-selected="false" data-tab="johnnyappleseed">Johnny Appleseed</button>
+<button class="admin-tab-button" type="button" role="tab" id="tabAdvanced" aria-controls="panelAdvanced" aria-selected="false" data-tab="advanced">
+                Jumping Jack
+              </button>
+<button class="admin-tab-button" type="button" role="tab" id="tabLightTap" aria-controls="panelLightTap" aria-selected="false" data-tab="lighttap">
+                Light Tap Game
+              </button>
+<button class="admin-tab-button" type="button" role="tab" id="tabMartian" aria-controls="panelMartian" aria-selected="false" data-tab="martian">
+                Martian Madness
+              </button>
+<button class="admin-tab-button" type="button" role="tab" id="tabMaze" aria-controls="panelMaze" aria-selected="false" data-tab="maze">
+                Maze
+              </button>
+<button class="admin-tab-button" type="button" role="tab" id="tabMonsterLunch" aria-controls="panelMonsterLunch" aria-selected="false" data-tab="monsterlunch">
+                Monster Lunch
+              </button>
+<button class="admin-tab-button" type="button" role="tab" id="tabPumpkinStudio" aria-controls="panelPumpkinStudio" aria-selected="false" data-tab="pumpkinstudio">Pumpkin Patch Studio</button>
+<button class="admin-tab-button" type="button" role="tab" id="tabRiverTrail" aria-controls="panelRiverTrail" aria-selected="false" data-tab="rivertrail">River Trail Adventure</button>
+<button class="admin-tab-button" type="button" role="tab" id="tabSenseBuilder" aria-controls="panelSenseBuilder" aria-selected="false" data-tab="sensebuilder">
+                Sense Builder
+              </button>
+<button class="admin-tab-button" type="button" role="tab" id="tabSheepRoundup" aria-controls="panelSheepRoundup" aria-selected="false" data-tab="sheeproundup">Sheep Roundup</button>
+<button class="admin-tab-button" type="button" role="tab" id="tabTortoisePuzzle" aria-controls="panelTortoisePuzzle" aria-selected="false" data-tab="tortoisepuzzle">
+                Slow and Steady
+              </button>
+<button class="admin-tab-button" type="button" role="tab" id="tabStreetCar" aria-controls="panelStreetCar" aria-selected="false" data-tab="streetcar">
+                Street Car Game
+              </button>
+<button class="admin-tab-button" type="button" role="tab" id="tabThreeLittlePigs" aria-controls="panelThreeLittlePigs" aria-selected="false" data-tab="threelittlepigs">Three Little Pigs</button>
+<button class="admin-tab-button" type="button" role="tab" id="tabTractorJobCrew" aria-controls="panelTractorJobCrew" aria-selected="false" data-tab="tractorjobcrew">Tractor Job Crew</button>
+<button class="admin-tab-button" type="button" role="tab" id="tabTurkeyStudio" aria-controls="panelTurkeyStudio" aria-selected="false" data-tab="turkeystudio">Turkey Design Studio</button>
+<button class="admin-tab-button" type="button" role="tab" id="tabTurkeyTrot" aria-controls="panelTurkeyTrot" aria-selected="false" data-tab="turkeytrot">Turkey Trot</button>
+</div>
           </nav>
 
           <button id="backToAvailabilityBtn" class="admin-back-availability" type="button" hidden>Back to Activity Availability</button>
 
+<section class="admin-tab-content" id="panelGoldenDot" role="tabpanel" aria-labelledby="tabGoldenDot" aria-hidden="true"><section class="admin-task-card"><h2>Golden Dot</h2><label class="admin-toggle-row" for="goldenDotHitsGoal"><span>Golden Dot — hits per level (5–50)</span><input id="goldenDotHitsGoal" class="admin-task-input" type="number" min="5" max="50" step="1" value="50" style="width:85px"></label></section></section>
+<section class="admin-tab-content" id="panelFollowBird" role="tabpanel" aria-labelledby="tabFollowBird" aria-hidden="true"><section class="admin-task-card"><h2>Follow the Bird</h2><label class="admin-toggle-row" for="followBirdClickingEnabled">
+                  <input id="followBirdClickingEnabled" type="checkbox" />
+                  <span>Enable Follow the Bird Clicking Mode</span>
+                </label></section></section>
 <section class="admin-tab-content" id="panelThreeLittlePigs" role="tabpanel" aria-labelledby="tabThreeLittlePigs" aria-hidden="true"><section class="admin-task-card" id="threeLittlePigsSettings"><h2>Three Little Pigs — Straw and Sticks</h2><p>Six levels: learn to build with straw, meet Big Brother, assemble a stick house, then build independently and help both pigs escape. No countdown timer.</p>
 <p class="admin-task-help">Enable or disable this game in Activity Availability. Use Back to Activity Availability above to return.</p>
 <label class="admin-toggle-row"><input id="threeLittlePigsVoiceInstructions" type="checkbox" checked>Voice instructions</label>
@@ -348,10 +354,7 @@
                   <input id="fullscreenRequireClickAndDragToggle" type="checkbox" />
                   <span>Require click and drag</span>
                 </label>
-                <label class="admin-toggle-row" for="soundEnabledToggle">
-                  <input id="soundEnabledToggle" type="checkbox" checked />
-                  <span>Enable fullscreen sounds</span>
-                </label>
+                
                 <label class="admin-toggle-row" for="trainingPausedToggle">
                   <input id="trainingPausedToggle" type="checkbox" />
                   <span>Disable fullscreen movement and sounds (pause training)</span>

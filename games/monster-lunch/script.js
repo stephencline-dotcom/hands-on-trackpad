@@ -1067,7 +1067,7 @@
     }, 360);
 
     window.setTimeout(() => {
-      score += 1;
+      score += 1; window.classroomScores?.update('monster-lunch', score);
       updateHud();
 
       if (monsterCharacter) {
@@ -1356,7 +1356,7 @@
       monsterLevelResult.hide();
     }
 
-    score = 0;
+    score = 0; window.classroomScores?.begin('monster-lunch');
     missesRemaining =
       getCurrentLevel().missesAllowed;
     roundActive = true;
@@ -1388,7 +1388,7 @@
       monsterLevelResult.hide();
     }
 
-    score = 0;
+    score = 0; window.classroomScores?.begin('monster-lunch');
     missesRemaining =
       getCurrentLevel().missesAllowed;
     roundActive = false;

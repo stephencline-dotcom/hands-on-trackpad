@@ -1,0 +1,14 @@
+/* Compact classroom settings; existing IDs and save behavior are retained. */
+.admin-settings-page #adminAvailabilitySection .classroom-game-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px 15px!important;align-items:start}
+.admin-settings-page #adminAvailabilitySection .classroom-game-grid .admin-toggle-row{display:flex!important;align-items:center;gap:8px;min-height:32px;margin:0!important;padding:4px 7px!important;border-radius:7px;font-size:13px;line-height:1.3}
+.admin-settings-page #adminAvailabilitySection .classroom-game-grid .admin-toggle-row:hover{background:#e9f5ff}
+.admin-settings-page #adminAvailabilitySection .admin-toggle-row input[type=checkbox]{flex:0 0 auto;width:16px;height:16px;margin:0}
+.admin-settings-page .classroom-shared-settings{margin-top:12px;border:1px solid #bfd6e9;border-radius:12px;background:#f6fbff;padding:13px 16px}
+.admin-settings-page .classroom-shared-settings summary{cursor:pointer;font-size:16px;font-weight:800;color:#214e70}
+.admin-settings-page .classroom-control-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 20px;margin-top:12px}
+.admin-settings-page .classroom-control-grid .admin-toggle-row{display:flex;align-items:center;gap:8px;margin:0;padding:5px 0;font-size:13px;line-height:1.4}
+.admin-settings-page .classroom-arrange{margin-top:13px}
+.admin-settings-page .admin-tab-group-buttons{display:flex;gap:6px!important;flex-wrap:wrap}
+.admin-settings-page .admin-tab-group-buttons .admin-tab-button{padding:7px 11px!important;font-size:12px!important;min-height:32px}
+@media(max-width:850px){.admin-settings-page #adminAvailabilitySection .classroom-game-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.admin-settings-page #adminAvailabilitySection .classroom-game-grid,.admin-settings-page .classroom-control-grid{grid-template-columns:1fr}}

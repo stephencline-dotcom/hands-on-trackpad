@@ -3121,7 +3121,7 @@
     }
 if (isCorrect) {
       rescueChallengeLocked = true;
-      rescueScore += 1;
+      rescueScore += 1; window.classroomScores?.update('sense-rescue', rescueScore);
 
             playSound(correctSound);
       celebrateRescueSuccess();
@@ -3328,7 +3328,7 @@ window.setTimeout(() => {
   }
 
   function beginRescueGame() {
-    rescueScore = 0;
+    rescueScore = 0; window.classroomScores?.begin('sense-rescue');
     rescueLives = RESCUE_STARTING_LIVES;
     rescueActiveSense = null;
     rescueSenseBag = [];

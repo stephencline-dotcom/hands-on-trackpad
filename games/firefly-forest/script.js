@@ -437,7 +437,7 @@
     clearAllFireflies();
 
     fireflyGameRunning = false;
-    firefliesCollected = 0;
+    firefliesCollected = 0; window.classroomScores?.begin('firefly-forest');
     fireflyMissesRemaining =
       getCurrentLevel().missesAllowed;
     fireflyTimeLeft =
@@ -776,7 +776,7 @@
       return;
     }
 
-    firefliesCollected += 1;
+    firefliesCollected += 1; window.classroomScores?.update('firefly-forest', firefliesCollected);
     updateProgress();
 
     playFireflyZap();
@@ -828,7 +828,7 @@
   }
 
   function handleFireflyCollected() {
-    firefliesCollected += 1;
+    firefliesCollected += 1; window.classroomScores?.update('firefly-forest', firefliesCollected);
     updateProgress();
 
     playFireflyZap();

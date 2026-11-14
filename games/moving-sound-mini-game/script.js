@@ -613,6 +613,7 @@ function loadSoundPreference() {
 }
 
 function updateScore(value) {
+  if(value === 0) window.classroomScores?.begin('light-tap'); else window.classroomScores?.update('light-tap', value);
   arenaState.score = value;
   scoreElement.textContent = String(value);
 }
@@ -628,21 +629,25 @@ function updateTime(value) {
 }
 
 function updateCarScore(value) {
+  if(value === 0) window.classroomScores?.begin('street-car'); else window.classroomScores?.update('street-car', value);
   carGameState.score = value;
   carScoreElement.textContent = String(value);
 }
 
 function updateDragonScore(value) {
+  if(value === 0) window.classroomScores?.begin('dragon-dodge'); else window.classroomScores?.update('dragon-dodge', value);
   dragonGameState.score = value;
   dragonScoreElement.textContent = String(value);
 }
 
 function updateFireScore(value) {
+  if(value === 0) window.classroomScores?.begin('firefighter-rescue'); else window.classroomScores?.update('firefighter-rescue', value);
   fireGameState.score = value;
   fireScoreElement.textContent = String(value);
 }
 
 function updateMartianScore(value) {
+  if(value === 0) window.classroomScores?.begin('martian-madness'); else window.classroomScores?.update('martian-madness', value);
   martianGameState.score = value;
   martianScoreElement.textContent = String(value);
 }
