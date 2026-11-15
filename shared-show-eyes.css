@@ -1,0 +1,72 @@
+.trackpad-animated-eyes {
+  width: 82px !important;
+  min-width: 72px;
+  height: 53px !important;
+  padding: 3px 7px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  border: 3px solid #628ba2 !important;
+  border-radius: 17px !important;
+  background: #e4f5ff !important;
+  box-shadow: 0 3px 0 #9cbcc7 !important;
+  cursor: pointer;
+}
+
+.trackpad-animated-eyes:hover:not(:disabled) {
+  background: #b9eeff !important;
+  border-color: #167c9c !important;
+}
+
+.trackpad-animated-eyes svg {
+  width: 65px;
+  height: 43px;
+  display: block;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.trackpad-animated-eyes .eye-blink {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: trackpad-eye-blink 5.6s ease-in-out infinite;
+}
+
+.trackpad-animated-eyes .eye-look {
+  animation: trackpad-eye-look 7s ease-in-out infinite;
+}
+
+@keyframes trackpad-eye-blink {
+  0%, 42%, 48%, 100% { transform: scaleY(1); }
+  45% { transform: scaleY(.08); }
+}
+
+@keyframes trackpad-eye-look {
+  0%, 10%, 100% { transform: translateX(0); }
+  22%, 35% { transform: translateX(-5px); }
+  48%, 65% { transform: translateX(5px); }
+  78% { transform: translateX(0); }
+}
+
+.trackpad-animated-eyes:focus-visible {
+  outline: 4px solid #ecad37 !important;
+  outline-offset: 3px;
+}
+
+.trackpad-animated-eyes:disabled {
+  cursor: default;
+  opacity: .55;
+}
+
+.student-screen-frozen .trackpad-animated-eyes *,
+.student-screen-frozen .trackpad-animated-eyes {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trackpad-animated-eyes,
+  .trackpad-animated-eyes * {
+    animation: none !important;
+  }
+}
