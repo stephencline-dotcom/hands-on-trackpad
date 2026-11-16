@@ -11,6 +11,8 @@ const ROOT_DIR = __dirname;
 const DATA_DIR = path.join(ROOT_DIR, "data");
 const SETTINGS_FILE = path.join(DATA_DIR, "settings.json");
 const { createHoopScoreStore, cleanName: cleanScoreName } = require("./hoop-score-store.js");
+const { createBalloonMazeScoreStore } = require("./balloon-maze-score-store.js");
+const { createGlobalClassSession } = require("./global-class-session.js");
 
 const SUPABASE_URL =
   process.env.SUPABASE_URL || "";
@@ -295,6 +297,9 @@ const DEFAULT_SETTINGS = {
   turkeyStudioGameActive: true,
   turkeyTrotGameActive: true,
   hoopHopperGameActive: true,
+  balloonMazeGameActive: true,
+  balloonMazeShowTopScores: true,
+  balloonMazeShowScoreNames: true,
   goldenDotGameActive: true,
   goldenDotHitsGoal: 50,
   zigZagGameActive: true,
@@ -987,6 +992,9 @@ function loadSettings() {
       turkeyStudioGameActive: parseTaskEnabled(data.turkeyStudioGameActive, true),
       turkeyTrotGameActive: parseTaskEnabled(data.turkeyTrotGameActive, true),
       hoopHopperGameActive: parseTaskEnabled(data.hoopHopperGameActive, true),
+      balloonMazeGameActive: parseTaskEnabled(data.balloonMazeGameActive, true),
+      balloonMazeShowTopScores: parseTaskEnabled(data.balloonMazeShowTopScores, true),
+      balloonMazeShowScoreNames: parseTaskEnabled(data.balloonMazeShowScoreNames, true),
       goldenDotGameActive: parseTaskEnabled(data.goldenDotGameActive, true),
       goldenDotHitsGoal: Math.min(50,Math.max(5,Math.round(Number(data.goldenDotHitsGoal)||50))),
       zigZagGameActive: parseTaskEnabled(data.zigZagGameActive, true),
@@ -1419,6 +1427,9 @@ function saveSettings(settings) {
     turkeyStudioGameActive: parseTaskEnabled(settings.turkeyStudioGameActive ?? existing.turkeyStudioGameActive, true),
     turkeyTrotGameActive: parseTaskEnabled(settings.turkeyTrotGameActive ?? existing.turkeyTrotGameActive, true),
     hoopHopperGameActive: parseTaskEnabled(settings.hoopHopperGameActive ?? existing.hoopHopperGameActive, true),
+    balloonMazeGameActive: parseTaskEnabled(settings.balloonMazeGameActive ?? existing.balloonMazeGameActive, true),
+    balloonMazeShowTopScores: parseTaskEnabled(settings.balloonMazeShowTopScores ?? existing.balloonMazeShowTopScores, true),
+    balloonMazeShowScoreNames: parseTaskEnabled(settings.balloonMazeShowScoreNames ?? existing.balloonMazeShowScoreNames, true),
     goldenDotGameActive: parseTaskEnabled(settings.goldenDotGameActive ?? existing.goldenDotGameActive, true),
     goldenDotHitsGoal: Math.min(50,Math.max(5,Math.round(Number(settings.goldenDotHitsGoal ?? existing.goldenDotHitsGoal)||50))),
     zigZagGameActive: parseTaskEnabled(settings.zigZagGameActive ?? existing.zigZagGameActive, true),
@@ -1679,28 +1690,74 @@ function serveFile(reqPath, res) {
 }
 
 ensureSettingsFile();
-const hoopScoreStore = createHoopScoreStore({ supabase, dataDir: DATA_DIR });
-
-const classroomScoreStores = new Map([['hoop-hopper',hoopScoreStore]]);
+const globalClassSession = createGlobalClassSession({supabase,dataDir:DATA_DIR});
+const classroomScoreStores = new Map();
+const balloonStores = new Map();
+function sharedStore(gameKey,sessionId){
+ const key=sessionId+'|'+gameKey;
+ if(!classroomScoreStores.has(key))classroomScoreStores.set(key,createHoopScoreStore({supabase,dataDir:DATA_DIR,gameKey,classSession:sessionId}));
+ return classroomScoreStores.get(key);
+}
+function balloonStore(sessionId){
+ if(!balloonStores.has(sessionId))balloonStores.set(sessionId,createBalloonMazeScoreStore({supabase,dataDir:DATA_DIR,classSession:sessionId}));
+ return balloonStores.get(sessionId);
+}
 const scoredGames = new Set(['hoop-hopper','car-game','deer-run','bug-meadow','haunted-street','monster-lunch','firefly-forest','sense-rescue','follow-bird-clicking','follow-bird-moving','light-tap','street-car','dragon-dodge','firefighter-rescue','martian-madness','golden-dot',...Array.from({length:4},(_,i)=>'zig-zag-trail-'+i),...Array.from({length:30},(_,i)=>'golden-dot-'+(i+1))]);
 const server = http.createServer(async (req, res) => {
   const requestUrl = new URL(req.url, `http://${req.headers.host || "localhost"}`);
 
+  if (requestUrl.pathname === "/api/classroom-leaderboard-session") {
+    if(req.method === "POST"){
+      if(!validTeacher(req)){sendJson(res,401,{error:"Teacher login required."});return;}
+      try{const doc=await globalClassSession.start();sendJson(res,200,{sessionId:doc.sessionId,started:true});}
+      catch(error){sendJson(res,503,{error:"Unable to start class."});}
+      return;
+    }
+    if(req.method !== "GET"){sendJson(res,405,{error:"Method not allowed"});return;}
+    try{const doc=await globalClassSession.read();sendJson(res,200,{sessionId:doc.sessionId});}
+    catch(error){sendJson(res,503,{error:"Class session unavailable."});}
+    return;
+  }
+
+  if (requestUrl.pathname === "/api/balloon-maze-scores") {
+    let classSession;try{classSession=(await globalClassSession.read()).sessionId;}catch{sendJson(res,503,{error:"Class session unavailable."});return;}
+    const balloonMazeScoreStore=balloonStore(classSession);
+    if (req.method === "DELETE") {
+      if(!validTeacher(req)){sendJson(res,401,{error:"Teacher login required."});return;}
+      try {const doc=await balloonMazeScoreStore.reset();sendJson(res,200,{reset:true,sessionId:doc.sessionId});}
+      catch(error){sendJson(res,503,{error:"Score reset unavailable."});}
+      return;
+    }
+    if (req.method !== "GET" && req.method !== "POST") { res.writeHead(405, {Allow:"GET, POST, DELETE"}); res.end("Method not allowed"); return; }
+    try {
+      const body=req.method === "POST"?JSON.parse((await readRequestBody(req)) || "{}"):null;
+      if(body&&body.classSession!==classSession){sendJson(res,409,{error:"Class session changed."});return;}
+      const doc = body ? await balloonMazeScoreStore.submit(body) : await balloonMazeScoreStore.read();
+      const options = supabase ? await loadSettingsFromSupabase() : loadSettings();
+      const show = options.hoopHopperShowTopScores === true;
+      const showNames = show && options.hoopHopperShowScoreNames === true;
+      const scores = show ? balloonMazeScoreStore.leaderboard(doc).map(v=>showNames?v:{levels:v.levels,totalMs:v.totalMs}) : [];
+      sendJson(res,200,{show,showNames,scores,sessionId:doc.sessionId,classSession});
+    } catch(error) { sendJson(res,error.status===409?409:error.status===400||error instanceof SyntaxError?400:503,{error:error.status===400?"Invalid result.":"Scores temporarily unavailable."}); }
+    return;
+  }
+
   if ((requestUrl.pathname === "/api/hoop-hopper-scores" || requestUrl.pathname === "/api/game-scores")) {
+    let classSession;try{classSession=(await globalClassSession.read()).sessionId;}catch{sendJson(res,503,{error:"Class session unavailable."});return;}
     if (req.method !== "GET" && req.method !== "POST") { res.writeHead(405, { Allow: "GET, POST" }); res.end("Method not allowed"); return; }
     try {
       const gameKey=requestUrl.pathname==='/api/hoop-hopper-scores'?'hoop-hopper':requestUrl.searchParams.get('game');
       if(!scoredGames.has(gameKey)){sendJson(res,400,{error:'Unknown scoring game.'});return;}
-      if(!classroomScoreStores.has(gameKey))classroomScoreStores.set(gameKey,createHoopScoreStore({supabase,dataDir:DATA_DIR,gameKey}));
-      const store=classroomScoreStores.get(gameKey);
+      const store=sharedStore(gameKey,classSession);
       let document;
       if (req.method === "POST") {
         const body = JSON.parse((await readRequestBody(req)) || "{}");
+        if(body.classSession!==classSession){sendJson(res,409,{error:"Class session changed."});return;}
         document = await store.submit({ runId: body.runId, score: body.score, name: cleanScoreName(body.name), studentId: body.studentId });
       } else document = await store.read();
       const options = supabase ? await loadSettingsFromSupabase() : loadSettings();
       const show = options.hoopHopperShowTopScores === true, names = show && options.hoopHopperShowScoreNames === true;
-      sendJson(res, 200, { show, showNames: names, scores: (names?document.students.filter(entry=>entry.name):document.students).slice(0,3).map(entry => names ? { score: entry.score, name: entry.name } : { score: entry.score }) });
+      sendJson(res, 200, { classSession, show, showNames: names, scores: (names?document.students.filter(entry=>entry.name):document.students).slice(0,3).map(entry => names ? { score: entry.score, name: entry.name } : { score: entry.score }) });
     } catch (error) { sendJson(res, error.status === 400 || error instanceof SyntaxError ? 400 : 503, { error: error.status === 400 ? "Invalid score." : "Scores are temporarily unavailable." }); }
     return;
   }
@@ -1874,7 +1931,7 @@ const server = http.createServer(async (req, res) => {
         const parsedKeys =
           Object.keys(parsed);
 
-        if ((Object.prototype.hasOwnProperty.call(parsed, "studentHomeButtonEnabled") || Object.prototype.hasOwnProperty.call(parsed, "hoopHopperShowTopScores") || Object.prototype.hasOwnProperty.call(parsed, "hoopHopperShowScoreNames") || Object.prototype.hasOwnProperty.call(parsed, "studentNameEntryEnabled")) && !validTeacher(req)) {
+        if ((Object.prototype.hasOwnProperty.call(parsed, "studentHomeButtonEnabled") || Object.prototype.hasOwnProperty.call(parsed, "hoopHopperShowTopScores") || Object.prototype.hasOwnProperty.call(parsed, "hoopHopperShowScoreNames") || Object.prototype.hasOwnProperty.call(parsed, "balloonMazeShowTopScores") || Object.prototype.hasOwnProperty.call(parsed, "balloonMazeShowScoreNames") || Object.prototype.hasOwnProperty.call(parsed, "studentNameEntryEnabled")) && !validTeacher(req)) {
           sendJson(res, 401, { error: "Teacher login required to change classroom display settings." });
           return;
         }

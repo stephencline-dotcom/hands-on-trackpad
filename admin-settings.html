@@ -8,6 +8,24 @@
     <link rel="stylesheet" href="admin-layout.css?v=1" />
     <link rel="stylesheet" href="freeze-screen.css?v=timer-1" />
     <link rel="stylesheet" href="home-card-order.css?v=1" />
+  <style id="cc-polish-v1">
+.classroom-shared-settings .cc-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px 0}
+.classroom-shared-settings .cc-group{min-width:0;border:1px solid #c9d9ef;background:#fff;border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:14px}
+.classroom-shared-settings .cc-group h3{margin:0 0 3px;font-size:19px;color:#15375d}
+.classroom-shared-settings .cc-group .admin-toggle-row{margin:0;display:flex;align-items:flex-start;gap:10px;line-height:1.45}
+.classroom-shared-settings .cc-group .admin-toggle-row input{flex:0 0 auto;margin-top:4px}
+.classroom-shared-settings .cc-group--leaderboard{grid-column:1/-1;background:#f7faff}
+.classroom-shared-settings .cc-new-class{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-top:4px;padding:15px 17px;background:#eaf2ff;border:1px solid #b5cbea;border-radius:13px}
+.classroom-shared-settings .cc-new-class>div{flex:1 1 270px}
+.classroom-shared-settings .cc-new-class strong{color:#123b70;font-size:17px}
+.classroom-shared-settings .cc-new-class p{margin:5px 0 0;font-size:14px;line-height:1.5;color:#3e5b7b}
+.classroom-shared-settings #globalStartNewClass{background:linear-gradient(180deg,#ffe788,#ffd35b);color:#18365b;border:2px solid #c89c2b;border-radius:12px;padding:11px 18px;font-weight:800;box-shadow:0 3px 0 #a67d21;cursor:pointer;white-space:normal}
+.classroom-shared-settings #globalStartNewClass:hover{filter:brightness(1.04)}
+.classroom-shared-settings #globalStartNewClass:focus-visible{outline:3px solid #2563eb;outline-offset:3px}
+.classroom-shared-settings #globalClassStatus{flex-basis:100%;margin:0;min-height:0}
+.classroom-shared-settings #globalClassStatus:empty{display:none}
+@media(max-width:760px){.classroom-shared-settings .cc-groups{grid-template-columns:1fr}.classroom-shared-settings .cc-group--leaderboard{grid-column:auto}.classroom-shared-settings .cc-group{padding:15px}}
+</style>
   </head>
   <body class="home-page admin-settings-page">
     <main class="home-shell">
@@ -28,6 +46,7 @@
 <article class="admin-mini-card admin-mini-card--wide admin-mini-card--availability">
 <h3>Activity Availability</h3><p class="admin-panel-note">Choose which games appear on student home screens.</p>
 <div class="admin-inline-toggles admin-inline-toggles--availability classroom-game-grid">
+<label class="admin-toggle-row" for="balloonMazeGameActive"><input id="balloonMazeGameActive" type="checkbox" checked><span>Balloon Maze</span></label>
 <label class="admin-toggle-row" for="bugMeadowGameActive">
                   <input id="bugMeadowGameActive" type="checkbox" checked />
                   <span>Bug Meadow</span>
@@ -114,24 +133,24 @@
 <label class="admin-toggle-row" for="turkeyStudioGameActive"><input id="turkeyStudioGameActive" type="checkbox" checked><span>Turkey Design Studio</span></label>
 <label class="admin-toggle-row" for="turkeyTrotGameActive"><input id="turkeyTrotGameActive" type="checkbox" checked><span>Turkey Trot</span></label>
 <label class="admin-toggle-row" for="zigZagGameActive"><input id="zigZagGameActive" type="checkbox" checked><span>Zig Zag Trail</span></label></div></article>
-<details class="classroom-shared-settings" open><summary>Classroom Controls</summary><p class="admin-panel-note">Shared settings for all games. Each leaderboard shows three different students and each student's best score. Use a unique name for each student, such as a first name and last initial.</p>
-<div class="classroom-control-grid"><label class="admin-toggle-row" for="soundEnabledToggle">
-                  <input id="soundEnabledToggle" type="checkbox" checked />
-                  <span>Enable fullscreen sounds</span>
-                </label>
+<details class="classroom-shared-settings" open><summary>Classroom Controls</summary>
+<p class="admin-panel-note">Shared settings for every game. For student rankings, use a unique name such as a first name and last initial.</p>
+<div class="cc-groups">
+<section class="cc-group" aria-label="Game and display controls"><h3>Game &amp; Display</h3>
+<label class="admin-toggle-row" for="soundEnabledToggle"><input id="soundEnabledToggle" type="checkbox" checked><span>Enable fullscreen sounds</span></label>
+<label class="admin-toggle-row" for="studentHomeButtonEnabled"><input id="studentHomeButtonEnabled" type="checkbox" checked><span>Show Home buttons on student computers</span></label>
+<label class="admin-toggle-row" for="trackpadGuideEnabledToggle"><input id="trackpadGuideEnabledToggle" type="checkbox" checked><span>Show Trackpad Guide in games</span></label></section>
+<section class="cc-group" aria-label="Teacher and student controls"><h3>Teacher &amp; Students</h3>
 <label class="admin-toggle-row" for="teacherSkipLevelEnabled"><input id="teacherSkipLevelEnabled" type="checkbox" checked><span>Enable Teacher Skip Level Button</span></label>
-<label class="admin-toggle-row" for="studentHomeButtonEnabled"><input id="studentHomeButtonEnabled" type="checkbox" checked><span>Show Home buttons on student computers (admins always keep theirs)</span></label>
 <label class="admin-toggle-row" for="studentNameEntryEnabled"><input id="studentNameEntryEnabled" type="checkbox"><span>Offer student name entry (remembered in this browser)</span></label>
-<label class="admin-toggle-row" for="hoopHopperShowTopScores"><input id="hoopHopperShowTopScores" type="checkbox"><span>Show classroom Top 3 scores in all scoring games</span></label>
-<label class="admin-toggle-row" for="hoopHopperShowScoreNames"><input id="hoopHopperShowScoreNames" type="checkbox"><span>Show student names on classroom leaderboards</span></label>
-<label class="admin-toggle-row" for="trackpadGuideEnabledToggle">
-                <input id="trackpadGuideEnabledToggle" type="checkbox" checked />
-                <span>Show Trackpad Guide in games</span>
-              </label>
-<label class="admin-toggle-row" for="freezeScreenFeatureToggle">
-                  <input id="freezeScreenFeatureToggle" type="checkbox" />
-                  <span>Enable Freeze Screen feature</span>
-                </label></div><div class="classroom-arrange"><a id="homeOrderAdminLink" class="home-order-admin-link" href="index.html?arrange=1">Arrange homepage cards</a></div></details></section>
+<label class="admin-toggle-row" for="freezeScreenFeatureToggle"><input id="freezeScreenFeatureToggle" type="checkbox"><span>Enable Freeze Screen feature</span></label></section>
+<section class="cc-group cc-group--leaderboard" aria-label="Classroom leaderboards"><h3>Classroom Leaderboards</h3>
+<label class="admin-toggle-row" for="hoopHopperShowTopScores"><input id="hoopHopperShowTopScores" type="checkbox"><span>Show Top 3 scores in all scoring games</span></label>
+<label class="admin-toggle-row" for="hoopHopperShowScoreNames"><input id="hoopHopperShowScoreNames" type="checkbox"><span>Show student names on leaderboards</span></label>
+<div class="cc-new-class" id="globalClassLeaderboardControls"><div><strong>Start a New Class</strong><p>Fresh leaderboards for all scoring games. Student progress and unlocked levels stay saved.</p></div>
+<button type="button" id="globalStartNewClass">Start New Class</button>
+<p id="globalClassStatus" role="status" aria-live="polite"></p></div></section></div>
+<div class="classroom-arrange"><a id="homeOrderAdminLink" class="home-order-admin-link" href="index.html?arrange=1">Arrange homepage cards</a></div></details></section>
 
           <nav class="admin-tabs" aria-label="Settings sections">
             <h3 class="admin-games-title">Games</h3>

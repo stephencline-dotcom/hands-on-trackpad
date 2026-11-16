@@ -16,6 +16,8 @@ const jackRequireClickAndDragToggle = document.getElementById("jackRequireClickA
 const freezeScreenFeatureToggle = document.getElementById("freezeScreenFeatureToggle");
 const teacherSkipLevelEnabledToggle = document.getElementById("teacherSkipLevelEnabled");
 const studentHomeButtonEnabledToggle = document.getElementById("studentHomeButtonEnabled");
+const balloonMazeShowTopScoresToggle = document.getElementById("balloonMazeShowTopScores");
+const balloonMazeShowScoreNamesToggle = document.getElementById("balloonMazeShowScoreNames");
 const hoopHopperShowTopScoresToggle = document.getElementById("hoopHopperShowTopScores");
 const hoopHopperShowScoreNamesToggle = document.getElementById("hoopHopperShowScoreNames");
 const studentNameEntryEnabledToggle = document.getElementById("studentNameEntryEnabled");
@@ -33,6 +35,7 @@ const johnnyAppleseedGameActiveToggle = document.getElementById("johnnyAppleseed
 const tractorJobCrewGameActiveToggle = document.getElementById("tractorJobCrewGameActive");
 const turkeyTrotGameActiveToggle = document.getElementById("turkeyTrotGameActive");
 const hoopHopperGameActiveToggle = document.getElementById("hoopHopperGameActive");
+const balloonMazeGameActiveToggle = document.getElementById("balloonMazeGameActive");
 const goldenDotGameActiveToggle = document.getElementById("goldenDotGameActive");
 const zigZagGameActiveToggle = document.getElementById("zigZagGameActive");
 const senseBuilderGameActiveToggle = document.getElementById("senseBuilderGameActive");
@@ -1850,6 +1853,7 @@ function applyProgressivePresets() {
   if (tractorJobCrewGameActiveToggle) tractorJobCrewGameActiveToggle.checked = true;
   if (turkeyTrotGameActiveToggle) turkeyTrotGameActiveToggle.checked = true;
   if (hoopHopperGameActiveToggle) hoopHopperGameActiveToggle.checked = true;
+  if (balloonMazeGameActiveToggle) balloonMazeGameActiveToggle.checked = true;
   if (goldenDotGameActiveToggle) goldenDotGameActiveToggle.checked = true;
   if (zigZagGameActiveToggle) zigZagGameActiveToggle.checked = true;
   if (fullscreenGameActiveToggle) fullscreenGameActiveToggle.checked = true;
@@ -2586,6 +2590,8 @@ async function loadTask1Settings() {
   let jackRequireClickAndDrag = parseTaskEnabled(localStorage.getItem(JACK_REQUIRE_CLICK_AND_DRAG_KEY), false);
   let teacherSkipLevelEnabled = parseTaskEnabled(localStorage.getItem(TEACHER_SKIP_LEVEL_ENABLED_KEY), true);
   let studentHomeButtonEnabled = parseTaskEnabled(localStorage.getItem(STUDENT_HOME_BUTTON_ENABLED_KEY), true);
+  let balloonMazeShowTopScores = parseTaskEnabled(localStorage.getItem("balloonMazeShowTopScores"), true);
+  let balloonMazeShowScoreNames = parseTaskEnabled(localStorage.getItem("balloonMazeShowScoreNames"), true);
   let hoopHopperShowTopScores = parseTaskEnabled(localStorage.getItem(HOOP_SHOW_TOP_SCORES_KEY), false);
   let hoopHopperShowScoreNames = parseTaskEnabled(localStorage.getItem(HOOP_SHOW_SCORE_NAMES_KEY), false);
   let studentNameEntryEnabled = parseTaskEnabled(localStorage.getItem(STUDENT_NAME_ENTRY_ENABLED_KEY), false);
@@ -2649,7 +2655,8 @@ async function loadTask1Settings() {
   let tractorJobCrewGameActive = parseTaskEnabled(localStorage.getItem("tractorJobCrewGameActive"), true);
   let turkeyTrotGameActive = parseTaskEnabled(localStorage.getItem("turkeyTrotGameActive"), true);
   let hoopHopperGameActive = parseTaskEnabled(localStorage.getItem("hoopHopperGameActive"), true);
-  let goldenDotGameActive = parseTaskEnabled(localStorage.getItem("goldenDotGameActive"), true);
+  let balloonMazeGameActive = parseTaskEnabled(localStorage.getItem("balloonMazeGameActive"), true);
+let goldenDotGameActive = parseTaskEnabled(localStorage.getItem("goldenDotGameActive"), true);
   let zigZagGameActive = parseTaskEnabled(localStorage.getItem("zigZagGameActive"), true);
   let tractorJobCrewLevels = normalizeTractorLevelsAdmin(JSON.parse(localStorage.getItem("tractorJobCrewLevels") || "null"));
   let senseBuilderLevels = normalizeSenseBuilderLevels(
@@ -3107,6 +3114,10 @@ async function loadTask1Settings() {
 
       teacherSkipLevelEnabled = parseTaskEnabled(data.teacherSkipLevelEnabled, teacherSkipLevelEnabled);
       studentHomeButtonEnabled = parseTaskEnabled(data.studentHomeButtonEnabled, studentHomeButtonEnabled);
+      balloonMazeShowTopScores = parseTaskEnabled(data.balloonMazeShowTopScores, balloonMazeShowTopScores);
+      balloonMazeShowScoreNames = parseTaskEnabled(data.balloonMazeShowScoreNames, balloonMazeShowScoreNames);
+      localStorage.setItem("balloonMazeShowTopScores", String(balloonMazeShowTopScores));
+      localStorage.setItem("balloonMazeShowScoreNames", String(balloonMazeShowScoreNames));
       hoopHopperShowTopScores = parseTaskEnabled(data.hoopHopperShowTopScores, hoopHopperShowTopScores);
       hoopHopperShowScoreNames = parseTaskEnabled(data.hoopHopperShowScoreNames, hoopHopperShowScoreNames);
       studentNameEntryEnabled = parseTaskEnabled(data.studentNameEntryEnabled, studentNameEntryEnabled);
@@ -3136,11 +3147,13 @@ async function loadTask1Settings() {
       tractorJobCrewGameActive = parseTaskEnabled(data.tractorJobCrewGameActive, tractorJobCrewGameActive);
       turkeyTrotGameActive = parseTaskEnabled(data.turkeyTrotGameActive, turkeyTrotGameActive);
       hoopHopperGameActive = parseTaskEnabled(data.hoopHopperGameActive, hoopHopperGameActive);
-      goldenDotGameActive = parseTaskEnabled(data.goldenDotGameActive, goldenDotGameActive);
+      balloonMazeGameActive = parseTaskEnabled(data.balloonMazeGameActive, balloonMazeGameActive);
+  goldenDotGameActive = parseTaskEnabled(data.goldenDotGameActive, goldenDotGameActive);
       zigZagGameActive = parseTaskEnabled(data.zigZagGameActive, zigZagGameActive);
       localStorage.setItem("turkeyTrotGameActive", String(turkeyTrotGameActive));
       localStorage.setItem("hoopHopperGameActive", String(hoopHopperGameActive));
-      localStorage.setItem("goldenDotGameActive", String(goldenDotGameActive));
+      localStorage.setItem("balloonMazeGameActive", String(balloonMazeGameActive));
+  localStorage.setItem("goldenDotGameActive", String(goldenDotGameActive));
       localStorage.setItem("zigZagGameActive", String(zigZagGameActive));
       localStorage.setItem("johnnyAppleseedGameActive", String(johnnyAppleseedGameActive));
       localStorage.setItem("tractorJobCrewGameActive", String(tractorJobCrewGameActive));
@@ -3477,6 +3490,8 @@ async function loadTask1Settings() {
   if (jackRequireClickAndDragToggle) jackRequireClickAndDragToggle.checked = jackRequireClickAndDrag;
   if (teacherSkipLevelEnabledToggle) teacherSkipLevelEnabledToggle.checked = teacherSkipLevelEnabled;
   if (studentHomeButtonEnabledToggle) studentHomeButtonEnabledToggle.checked = studentHomeButtonEnabled;
+  if (balloonMazeShowTopScoresToggle) balloonMazeShowTopScoresToggle.checked = balloonMazeShowTopScores;
+  if (balloonMazeShowScoreNamesToggle) balloonMazeShowScoreNamesToggle.checked = balloonMazeShowScoreNames;
   if (hoopHopperShowTopScoresToggle) hoopHopperShowTopScoresToggle.checked = hoopHopperShowTopScores;
   if (hoopHopperShowScoreNamesToggle) hoopHopperShowScoreNamesToggle.checked = hoopHopperShowScoreNames;
   if (studentNameEntryEnabledToggle) studentNameEntryEnabledToggle.checked = studentNameEntryEnabled;
@@ -3499,6 +3514,7 @@ async function loadTask1Settings() {
   if (tractorJobCrewGameActiveToggle) tractorJobCrewGameActiveToggle.checked = tractorJobCrewGameActive;
   if (turkeyTrotGameActiveToggle) turkeyTrotGameActiveToggle.checked = turkeyTrotGameActive;
   if (hoopHopperGameActiveToggle) hoopHopperGameActiveToggle.checked = hoopHopperGameActive;
+  if (balloonMazeGameActiveToggle) balloonMazeGameActiveToggle.checked = balloonMazeGameActive;
   if (goldenDotGameActiveToggle) goldenDotGameActiveToggle.checked = goldenDotGameActive;
   if (zigZagGameActiveToggle) zigZagGameActiveToggle.checked = zigZagGameActive;
   displayTractorLevels(tractorJobCrewLevels);
@@ -3799,6 +3815,10 @@ async function saveTask1Settings() {
   const jackRequireClickAndDrag = Boolean(jackRequireClickAndDragToggle && jackRequireClickAndDragToggle.checked);
   const teacherSkipLevelEnabled = Boolean(teacherSkipLevelEnabledToggle?.checked);
   const studentHomeButtonEnabled = Boolean(studentHomeButtonEnabledToggle?.checked);
+  const balloonMazeShowTopScores = Boolean(balloonMazeShowTopScoresToggle?.checked);
+  const balloonMazeShowScoreNames = Boolean(balloonMazeShowScoreNamesToggle?.checked);
+  localStorage.setItem("balloonMazeShowTopScores", String(balloonMazeShowTopScores));
+  localStorage.setItem("balloonMazeShowScoreNames", String(balloonMazeShowScoreNames));
   const hoopHopperShowTopScores = Boolean(hoopHopperShowTopScoresToggle?.checked);
   const hoopHopperShowScoreNames = Boolean(hoopHopperShowScoreNamesToggle?.checked);
   const studentNameEntryEnabled = Boolean(studentNameEntryEnabledToggle?.checked);
@@ -3828,10 +3848,12 @@ async function saveTask1Settings() {
   const tractorJobCrewGameActive = Boolean(tractorJobCrewGameActiveToggle?.checked);
   const turkeyTrotGameActive = Boolean(turkeyTrotGameActiveToggle?.checked);
   const hoopHopperGameActive = Boolean(hoopHopperGameActiveToggle?.checked);
+  const balloonMazeGameActive = Boolean(balloonMazeGameActiveToggle?.checked);
   const goldenDotGameActive = Boolean(goldenDotGameActiveToggle?.checked);
   const zigZagGameActive = Boolean(zigZagGameActiveToggle?.checked);
   localStorage.setItem("turkeyTrotGameActive", String(turkeyTrotGameActive));
   localStorage.setItem("hoopHopperGameActive", String(hoopHopperGameActive));
+  localStorage.setItem("balloonMazeGameActive", String(balloonMazeGameActive));
   localStorage.setItem("goldenDotGameActive", String(goldenDotGameActive));
   localStorage.setItem("zigZagGameActive", String(zigZagGameActive));
   localStorage.setItem("johnnyAppleseedGameActive", String(johnnyAppleseedGameActive));
@@ -4573,6 +4595,8 @@ async function saveTask1Settings() {
         freezeScreenFeatureEnabled,
         teacherSkipLevelEnabled,
         studentHomeButtonEnabled,
+        balloonMazeShowTopScores,
+        balloonMazeShowScoreNames,
         hoopHopperShowTopScores,
         hoopHopperShowScoreNames,
         studentNameEntryEnabled,
@@ -4593,6 +4617,7 @@ async function saveTask1Settings() {
         tractorJobCrewGameActive,
         turkeyTrotGameActive,
         hoopHopperGameActive,
+        balloonMazeGameActive,
         goldenDotGameActive,
         goldenDotHitsGoal: Math.min(50,Math.max(5,Math.round(Number(goldenDotHitsGoalInput?.value)||50))),
         zigZagGameActive,
@@ -4939,8 +4964,11 @@ const allToggles = [
   jackRequireClickAndDragToggle,
   teacherSkipLevelEnabledToggle,
   hoopHopperGameActiveToggle,
+  balloonMazeGameActiveToggle,
   goldenDotGameActiveToggle,
   studentHomeButtonEnabledToggle,
+  balloonMazeShowTopScoresToggle,
+  balloonMazeShowScoreNamesToggle,
   hoopHopperShowTopScoresToggle,
   hoopHopperShowScoreNamesToggle,
   studentNameEntryEnabledToggle,
@@ -5323,3 +5351,23 @@ for(const n of [1,2,3,4]){
   if(!boxes.some(box=>box.checked)){input.checked=true;}
  });
 }
+
+// Shared classroom leaderboard session control; independent of settings Save.
+(() => {
+  const button=document.getElementById('globalStartNewClass');
+  const status=document.getElementById('globalClassStatus');
+  if(!button||!status)return;
+  button.addEventListener('click',async()=>{
+    if(!confirm('Start a NEW CLASS across ALL scoring games? Current class leaderboards will become archived and the new Top 3 boards will start empty. Student progress stays unchanged.'))return;
+    if(prompt('Type NEW CLASS to confirm:')!=='NEW CLASS')return;
+    button.disabled=true;
+    try{
+      const response=await fetch('/api/classroom-leaderboard-session',{method:'POST',credentials:'same-origin'});
+      if(!response.ok)throw Error(response.status===401?'Teacher login required.':'New class could not be started.');
+      const data=await response.json();
+      if(!data.started||!data.sessionId)throw Error('Missing new class confirmation.');
+      status.textContent='New class started. All competitive leaderboards will refresh; student progress remains intact.';
+    }catch(error){status.textContent='New class NOT started: '+error.message;}
+    finally{button.disabled=false;}
+  });
+})();

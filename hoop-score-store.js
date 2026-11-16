@@ -21,10 +21,13 @@ function merge(doc,record){
  const students=rank([...doc.students.filter(v=>studentKey(v)!==key),record]);
  return {revision:crypto.randomUUID(),students,top:students.slice(0,3),recent:[]};
 }
-function createHoopScoreStore({supabase=null,dataDir,gameKey="hoop-hopper"}){
+function createHoopScoreStore({supabase=null,dataDir,gameKey="hoop-hopper",classSession="legacy"}){
  if(!/^[a-z0-9-]{1,70}$/.test(gameKey))throw new Error('Invalid game');
- const rowId=gameKey==='hoop-hopper'?ROW_ID:'hands-on-trackpad-scores-'+gameKey+'-v1';
- const file=path.join(dataDir,gameKey==='hoop-hopper'?'hoop-hopper-scores.json':'game-scores-'+gameKey+'.json');let queue=Promise.resolve();
+ const baseRowId=gameKey==='hoop-hopper'?ROW_ID:'hands-on-trackpad-scores-'+gameKey+'-v1';
+ if(classSession!=='legacy'&&!/^[A-Za-z0-9_-]{16,100}$/.test(classSession))throw Error('Invalid class session');
+ const rowId=classSession==='legacy'?baseRowId:baseRowId+'-class-'+classSession;
+ const baseFile=gameKey==='hoop-hopper'?'hoop-hopper-scores.json':'game-scores-'+gameKey+'.json';
+ const file=path.join(dataDir,classSession==='legacy'?baseFile:baseFile.replace(/\.json$/,'-class-'+classSession+'.json'));let queue=Promise.resolve();
  const serial=fn=>{const next=queue.then(fn,fn);queue=next.catch(()=>{});return next;};
  async function readRemote(){const {data,error}=await supabase.from('app_settings').select('settings').eq('id',rowId).maybeSingle();if(error)throw error;return data?normalized(data.settings):null;}
  async function remote(record){for(let attempt=0;attempt<16;attempt++){
