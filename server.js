@@ -4,6 +4,7 @@ const path = require("path");
 const { normalize: normalizeHomeCardOrder } = require("./home-card-order-model.js");
 const { normalize: normalizeRiverVisitorLevels, normalizeCamp: normalizeRiverCampChance } = require("./games/river-trail/visitor-settings.js");
 const { createClient } = require("@supabase/supabase-js");
+const { createTeacherSessionStore } = require("./teacher-session-store.js");
 
 const PORT = Number.parseInt(process.env.PORT || "8000", 10);
 const HOST = process.env.HOST || "0.0.0.0";
@@ -54,17 +55,62 @@ const TEACHER_LEASE_MS = 30000;
 const TEACHER_LOGIN_MS = 8 * 60 * 60 * 1000;
 const TEACHER_COOKIE = "trackpad_teacher";
 const teacherSessions = new Map();
+const teacherSessionStore = supabase
+  ? createTeacherSessionStore({ supabase })
+  : null;
 let freezeOwner = null;
 function cookieToken(req) {
   const raw = (req.headers.cookie || "").split(";").map(x => x.trim()).find(x => x.startsWith(TEACHER_COOKIE + "="));
   return raw ? raw.slice(TEACHER_COOKIE.length + 1) : "";
 }
-function validTeacher(req) {
-  const token = cookieToken(req);
-  const session = teacherSessions.get(token);
-  if (!session) return null;
-  if (Date.now() > session.expiresAt) { teacherSessions.delete(token); return null; }
-  return token;
+async function validTeacher(req) {
+  if (!teacherSessionStore) {
+    throw new Error("Persistent teacher authentication unavailable.");
+  }
+
+  if (!req.teacherVerification) {
+    req.teacherVerification = (async () => {
+      const token = cookieToken(req);
+      const result = await teacherSessionStore.verify(token);
+      if (!result.authenticated) return null;
+      if (!Number.isFinite(result.expiresAt) ||
+          result.expiresAt <= Date.now()) return null;
+      req.teacherSessionExpiresAt = result.expiresAt;
+      return token;
+    })();
+  }
+
+  return await req.teacherVerification;
+}
+
+async function requireTeacher(req, res) {
+  try {
+    if (await validTeacher(req)) return true;
+    sendJson(res, 401, { error: "Teacher login required." });
+  } catch {
+    sendJson(res, 503, {
+      error: "Teacher authentication temporarily unavailable."
+    });
+  }
+  return false;
+}
+
+function renewFreezeLease(token, req) {
+  if (!token || !req ||
+      !Number.isFinite(req.teacherSessionExpiresAt) ||
+      req.teacherSessionExpiresAt <= Date.now()) {
+    throw new Error("Verified teacher session required.");
+  }
+
+  const now = Date.now();
+
+  teacherSessions.set(token, {
+    expiresAt: req.teacherSessionExpiresAt,
+    freezeLeaseAt: Math.min(
+      now + TEACHER_LEASE_MS,
+      req.teacherSessionExpiresAt
+    )
+  });
 }
 function clearTeacherCookie(res) {
   res.setHeader("Set-Cookie", `${TEACHER_COOKIE}=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0`);
@@ -298,6 +344,7 @@ const DEFAULT_SETTINGS = {
   turkeyTrotGameActive: true,
   hoopHopperGameActive: true,
   balloonMazeGameActive: true,
+  colorPumpGameActive: true,
   balloonMazeShowTopScores: true,
   balloonMazeShowScoreNames: true,
   goldenDotGameActive: true,
@@ -993,6 +1040,7 @@ function loadSettings() {
       turkeyTrotGameActive: parseTaskEnabled(data.turkeyTrotGameActive, true),
       hoopHopperGameActive: parseTaskEnabled(data.hoopHopperGameActive, true),
       balloonMazeGameActive: parseTaskEnabled(data.balloonMazeGameActive, true),
+      colorPumpGameActive: parseTaskEnabled(data.colorPumpGameActive, true),
       balloonMazeShowTopScores: parseTaskEnabled(data.balloonMazeShowTopScores, true),
       balloonMazeShowScoreNames: parseTaskEnabled(data.balloonMazeShowScoreNames, true),
       goldenDotGameActive: parseTaskEnabled(data.goldenDotGameActive, true),
@@ -1428,6 +1476,7 @@ function saveSettings(settings) {
     turkeyTrotGameActive: parseTaskEnabled(settings.turkeyTrotGameActive ?? existing.turkeyTrotGameActive, true),
     hoopHopperGameActive: parseTaskEnabled(settings.hoopHopperGameActive ?? existing.hoopHopperGameActive, true),
     balloonMazeGameActive: parseTaskEnabled(settings.balloonMazeGameActive ?? existing.balloonMazeGameActive, true),
+    colorPumpGameActive: parseTaskEnabled(settings.colorPumpGameActive ?? existing.colorPumpGameActive, true),
     balloonMazeShowTopScores: parseTaskEnabled(settings.balloonMazeShowTopScores ?? existing.balloonMazeShowTopScores, true),
     balloonMazeShowScoreNames: parseTaskEnabled(settings.balloonMazeShowScoreNames ?? existing.balloonMazeShowScoreNames, true),
     goldenDotGameActive: parseTaskEnabled(settings.goldenDotGameActive ?? existing.goldenDotGameActive, true),
@@ -1702,13 +1751,13 @@ function balloonStore(sessionId){
  if(!balloonStores.has(sessionId))balloonStores.set(sessionId,createBalloonMazeScoreStore({supabase,dataDir:DATA_DIR,classSession:sessionId}));
  return balloonStores.get(sessionId);
 }
-const scoredGames = new Set(['hoop-hopper','car-game','deer-run','bug-meadow','haunted-street','monster-lunch','firefly-forest','sense-rescue','follow-bird-clicking','follow-bird-moving','light-tap','street-car','dragon-dodge','firefighter-rescue','martian-madness','golden-dot',...Array.from({length:4},(_,i)=>'zig-zag-trail-'+i),...Array.from({length:30},(_,i)=>'golden-dot-'+(i+1))]);
+const scoredGames = new Set(['color-pump','hoop-hopper','car-game','deer-run','bug-meadow','haunted-street','monster-lunch','firefly-forest','sense-rescue','follow-bird-clicking','follow-bird-moving','light-tap','street-car','dragon-dodge','firefighter-rescue','martian-madness','golden-dot',...Array.from({length:4},(_,i)=>'zig-zag-trail-'+i),...Array.from({length:30},(_,i)=>'golden-dot-'+(i+1))]);
 const server = http.createServer(async (req, res) => {
   const requestUrl = new URL(req.url, `http://${req.headers.host || "localhost"}`);
 
   if (requestUrl.pathname === "/api/classroom-leaderboard-session") {
     if(req.method === "POST"){
-      if(!validTeacher(req)){sendJson(res,401,{error:"Teacher login required."});return;}
+      if(!(await requireTeacher(req,res)))return;
       try{const doc=await globalClassSession.start();sendJson(res,200,{sessionId:doc.sessionId,started:true});}
       catch(error){sendJson(res,503,{error:"Unable to start class."});}
       return;
@@ -1723,7 +1772,7 @@ const server = http.createServer(async (req, res) => {
     let classSession;try{classSession=(await globalClassSession.read()).sessionId;}catch{sendJson(res,503,{error:"Class session unavailable."});return;}
     const balloonMazeScoreStore=balloonStore(classSession);
     if (req.method === "DELETE") {
-      if(!validTeacher(req)){sendJson(res,401,{error:"Teacher login required."});return;}
+      if(!(await requireTeacher(req,res)))return;
       try {const doc=await balloonMazeScoreStore.reset();sendJson(res,200,{reset:true,sessionId:doc.sessionId});}
       catch(error){sendJson(res,503,{error:"Score reset unavailable."});}
       return;
@@ -1772,32 +1821,71 @@ const server = http.createServer(async (req, res) => {
         if (a.length !== b.length || !crypto.timingSafeEqual(a,b)) {
           sendJson(res, 401, { error: "Incorrect password." }); return;
         }
-        const token = crypto.randomBytes(32).toString("hex");
-        teacherSessions.set(token, { expiresAt: Date.now() + TEACHER_LOGIN_MS, freezeLeaseAt: Date.now() + TEACHER_LEASE_MS });
+        if (!teacherSessionStore) {
+          sendJson(res, 503, { error: "Teacher session storage unavailable." });
+          return;
+        }
+        let session;
+        try {
+          session = await teacherSessionStore.create();
+        } catch {
+          sendJson(res, 503, { error: "Could not save teacher login. Try again." });
+          return;
+        }
+        const token = session.token;
+        // Persistent login is stored in Supabase.
         const secure = req.headers['x-forwarded-proto'] === 'https' || req.socket.encrypted;
-        res.setHeader("Set-Cookie", `${TEACHER_COOKIE}=${token}; HttpOnly; SameSite=Strict; Path=/; ${secure ? 'Secure; ' : ''}Max-Age=86400`);
+        res.setHeader("Set-Cookie", `${TEACHER_COOKIE}=${token}; HttpOnly; SameSite=Strict; Path=/; ${secure ? 'Secure; ' : ''}Max-Age=28800`);
         sendJson(res, 200, { authenticated: true });
       } catch { sendJson(res, 400, { error: "Invalid login request." }); }
       return;
     }
-    const token = validTeacher(req);
-    if (req.method === "GET") { sendJson(res, token ? 200 : 401, { authenticated: Boolean(token) }); return; }
+    let token;
+    try {
+      token = await validTeacher(req);
+    } catch {
+      sendJson(res, 503, { error: "Teacher authentication temporarily unavailable." });
+      return;
+    }
+    if (req.method === "GET") {
+      sendJson(res, token ? 200 : 401, { authenticated: Boolean(token) });
+      return;
+    }
     if (req.method === "PUT") {
-      if (!token) { sendJson(res, 401, { error: "Teacher session expired. Log in again." }); return; }
-      teacherSessions.get(token).freezeLeaseAt = Date.now() + TEACHER_LEASE_MS;
-      sendJson(res, 200, { authenticated: true }); return;
+      if (!token) {
+        sendJson(res, 401, { error: "Teacher session expired. Log in again." });
+        return;
+      }
+      renewFreezeLease(token, req);
+      sendJson(res, 200, { authenticated: true });
+      return;
     }
     if (req.method === "DELETE") {
-      if (token) { teacherSessions.delete(token); if (freezeOwner === token) { freezeOwner = null; setLiveFreeze(false); } }
-      clearTeacherCookie(res); sendJson(res, 200, { authenticated: false }); return;
+      if (token) {
+        try {
+          await teacherSessionStore.revoke(token);
+        } catch {
+          sendJson(res, 503, { error: "Could not complete logout. Try again." });
+          return;
+        }
+        teacherSessions.delete(token);
+        if (freezeOwner === token) {
+          freezeOwner = null;
+          setLiveFreeze(false);
+        }
+      }
+      clearTeacherCookie(res);
+      sendJson(res, 200, { authenticated: false });
+      return;
     }
     sendJson(res, 405, { error: "Method not allowed" }); return;
   }
 
   if (requestUrl.pathname === "/api/freeze-timer") {
     checkTeacherLease();
-    const freezeTeacher = validTeacher(req);
-    if (!freezeTeacher) { sendJson(res, 401, { error: "Teacher login required." }); return; }
+    if (!(await requireTeacher(req, res))) return;
+    const freezeTeacher = await validTeacher(req);
+    // Teacher authorization verified above.
     if (req.method !== "PUT") {
       sendJson(res, 405, { error: "Method not allowed" });
       return;
@@ -1813,7 +1901,7 @@ const server = http.createServer(async (req, res) => {
       } else if (!liveClassroomState.freezeScreenFeatureEnabled) {
         sendJson(res, 409, { error: "Enable Freeze Screen in Teacher Settings first." });
       } else {
-        freezeOwner = freezeTeacher; teacherSessions.get(freezeOwner).freezeLeaseAt = Date.now() + TEACHER_LEASE_MS;
+        freezeOwner = freezeTeacher; renewFreezeLease(freezeOwner, req);
         startFreezeDeadline(command.durationSeconds);
         sendJson(res, 200, freezeSnapshot());
       }
@@ -1919,6 +2007,9 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === "PUT") {
+      // Every teacher settings write requires verified authentication.
+      // Public GET requests remain available to student games.
+      if (!(await requireTeacher(req, res))) return;
       try {
         const body =
           await readRequestBody(req);
@@ -1931,13 +2022,13 @@ const server = http.createServer(async (req, res) => {
         const parsedKeys =
           Object.keys(parsed);
 
-        if ((Object.prototype.hasOwnProperty.call(parsed, "studentHomeButtonEnabled") || Object.prototype.hasOwnProperty.call(parsed, "hoopHopperShowTopScores") || Object.prototype.hasOwnProperty.call(parsed, "hoopHopperShowScoreNames") || Object.prototype.hasOwnProperty.call(parsed, "balloonMazeShowTopScores") || Object.prototype.hasOwnProperty.call(parsed, "balloonMazeShowScoreNames") || Object.prototype.hasOwnProperty.call(parsed, "studentNameEntryEnabled")) && !validTeacher(req)) {
-          sendJson(res, 401, { error: "Teacher login required to change classroom display settings." });
+        if ((Object.prototype.hasOwnProperty.call(parsed, "studentHomeButtonEnabled") || Object.prototype.hasOwnProperty.call(parsed, "hoopHopperShowTopScores") || Object.prototype.hasOwnProperty.call(parsed, "hoopHopperShowScoreNames") || Object.prototype.hasOwnProperty.call(parsed, "balloonMazeShowTopScores") || Object.prototype.hasOwnProperty.call(parsed, "balloonMazeShowScoreNames") || Object.prototype.hasOwnProperty.call(parsed, "studentNameEntryEnabled")) && !(await requireTeacher(req,res))) {
+          // Authorization response already sent.
           return;
         }
 
-        if (Object.prototype.hasOwnProperty.call(parsed, "freezeScreenArmed") && !validTeacher(req)) {
-          sendJson(res, 401, { error: "Teacher login required for Freeze Screen." });
+        if (Object.prototype.hasOwnProperty.call(parsed, "freezeScreenArmed") && !(await requireTeacher(req,res))) {
+          // Authorization response already sent.
           return;
         }
 
@@ -1955,7 +2046,8 @@ const server = http.createServer(async (req, res) => {
          * waiting for permanent Supabase storage.
          */
         if (isFreezeOnlyRequest) {
-          freezeOwner = parsed.freezeScreenArmed ? validTeacher(req) : null; if (freezeOwner) teacherSessions.get(freezeOwner).freezeLeaseAt = Date.now() + TEACHER_LEASE_MS;
+          freezeOwner = parsed.freezeScreenArmed ? await validTeacher(req) : null;
+          if (freezeOwner) renewFreezeLease(freezeOwner, req);
           setLiveFreeze(parsed.freezeScreenArmed);
 
           const currentSettings =
@@ -1998,7 +2090,8 @@ const server = http.createServer(async (req, res) => {
           typeof parsed.freezeScreenArmed ===
           "boolean"
         ) {
-          freezeOwner = parsed.freezeScreenArmed ? validTeacher(req) : null; if (freezeOwner) teacherSessions.get(freezeOwner).freezeLeaseAt = Date.now() + TEACHER_LEASE_MS;
+          freezeOwner = parsed.freezeScreenArmed ? await validTeacher(req) : null;
+          if (freezeOwner) renewFreezeLease(freezeOwner, req);
           setLiveFreeze(parsed.freezeScreenArmed);
         }
 

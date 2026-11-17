@@ -26,7 +26,7 @@
       ]);
       const status = session.ok ? await session.json() : null;
       const options = settings.ok ? await settings.json() : null;
-      allowed = status?.authenticated === true && options?.teacherSkipLevelEnabled !== false;
+      allowed = status?.authenticated === true && options?.teacherSkipLevelEnabled === true;
     } catch { allowed = false; }
     button.hidden = !allowed;
     checking = false;
@@ -40,7 +40,7 @@
       const response = await fetch("/api/settings", { cache: "no-store" });
       if (!response.ok) throw Error("Settings unavailable");
       const settings = await response.json();
-      if (settings.teacherSkipLevelEnabled === false) throw Error("Teacher skip disabled");
+      if (settings.teacherSkipLevelEnabled !== true) throw Error("Teacher skip disabled");
       for (let i = current + 1; i < pages.length; i++) {
         if (settings[`turkeyTrotLevel${i + 1}Enabled`] !== false) {
           location.assign(pages[i]);
