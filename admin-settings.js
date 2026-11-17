@@ -36,6 +36,7 @@ const tractorJobCrewGameActiveToggle = document.getElementById("tractorJobCrewGa
 const turkeyTrotGameActiveToggle = document.getElementById("turkeyTrotGameActive");
 const hoopHopperGameActiveToggle = document.getElementById("hoopHopperGameActive");
 const balloonMazeGameActiveToggle = document.getElementById("balloonMazeGameActive");
+const colorPumpGameActiveToggle = document.getElementById("colorPumpGameActive");
 const goldenDotGameActiveToggle = document.getElementById("goldenDotGameActive");
 const zigZagGameActiveToggle = document.getElementById("zigZagGameActive");
 const senseBuilderGameActiveToggle = document.getElementById("senseBuilderGameActive");
@@ -2656,6 +2657,7 @@ async function loadTask1Settings() {
   let turkeyTrotGameActive = parseTaskEnabled(localStorage.getItem("turkeyTrotGameActive"), true);
   let hoopHopperGameActive = parseTaskEnabled(localStorage.getItem("hoopHopperGameActive"), true);
   let balloonMazeGameActive = parseTaskEnabled(localStorage.getItem("balloonMazeGameActive"), true);
+  let colorPumpGameActive = parseTaskEnabled(localStorage.getItem("colorPumpGameActive"), true);
 let goldenDotGameActive = parseTaskEnabled(localStorage.getItem("goldenDotGameActive"), true);
   let zigZagGameActive = parseTaskEnabled(localStorage.getItem("zigZagGameActive"), true);
   let tractorJobCrewLevels = normalizeTractorLevelsAdmin(JSON.parse(localStorage.getItem("tractorJobCrewLevels") || "null"));
@@ -3148,11 +3150,14 @@ let goldenDotGameActive = parseTaskEnabled(localStorage.getItem("goldenDotGameAc
       turkeyTrotGameActive = parseTaskEnabled(data.turkeyTrotGameActive, turkeyTrotGameActive);
       hoopHopperGameActive = parseTaskEnabled(data.hoopHopperGameActive, hoopHopperGameActive);
       balloonMazeGameActive = parseTaskEnabled(data.balloonMazeGameActive, balloonMazeGameActive);
+      colorPumpGameActive = parseTaskEnabled(data.colorPumpGameActive, colorPumpGameActive);
   goldenDotGameActive = parseTaskEnabled(data.goldenDotGameActive, goldenDotGameActive);
       zigZagGameActive = parseTaskEnabled(data.zigZagGameActive, zigZagGameActive);
       localStorage.setItem("turkeyTrotGameActive", String(turkeyTrotGameActive));
       localStorage.setItem("hoopHopperGameActive", String(hoopHopperGameActive));
       localStorage.setItem("balloonMazeGameActive", String(balloonMazeGameActive));
+  localStorage.setItem("colorPumpGameActive", String(colorPumpGameActive));
+      localStorage.setItem("colorPumpGameActive", String(colorPumpGameActive));
   localStorage.setItem("goldenDotGameActive", String(goldenDotGameActive));
       localStorage.setItem("zigZagGameActive", String(zigZagGameActive));
       localStorage.setItem("johnnyAppleseedGameActive", String(johnnyAppleseedGameActive));
@@ -3515,6 +3520,7 @@ let goldenDotGameActive = parseTaskEnabled(localStorage.getItem("goldenDotGameAc
   if (turkeyTrotGameActiveToggle) turkeyTrotGameActiveToggle.checked = turkeyTrotGameActive;
   if (hoopHopperGameActiveToggle) hoopHopperGameActiveToggle.checked = hoopHopperGameActive;
   if (balloonMazeGameActiveToggle) balloonMazeGameActiveToggle.checked = balloonMazeGameActive;
+  if (colorPumpGameActiveToggle) colorPumpGameActiveToggle.checked = colorPumpGameActive;
   if (goldenDotGameActiveToggle) goldenDotGameActiveToggle.checked = goldenDotGameActive;
   if (zigZagGameActiveToggle) zigZagGameActiveToggle.checked = zigZagGameActive;
   displayTractorLevels(tractorJobCrewLevels);
@@ -3849,11 +3855,13 @@ async function saveTask1Settings() {
   const turkeyTrotGameActive = Boolean(turkeyTrotGameActiveToggle?.checked);
   const hoopHopperGameActive = Boolean(hoopHopperGameActiveToggle?.checked);
   const balloonMazeGameActive = Boolean(balloonMazeGameActiveToggle?.checked);
+  const colorPumpGameActive = Boolean(colorPumpGameActiveToggle?.checked);
   const goldenDotGameActive = Boolean(goldenDotGameActiveToggle?.checked);
   const zigZagGameActive = Boolean(zigZagGameActiveToggle?.checked);
   localStorage.setItem("turkeyTrotGameActive", String(turkeyTrotGameActive));
   localStorage.setItem("hoopHopperGameActive", String(hoopHopperGameActive));
   localStorage.setItem("balloonMazeGameActive", String(balloonMazeGameActive));
+  localStorage.setItem("colorPumpGameActive", String(colorPumpGameActive));
   localStorage.setItem("goldenDotGameActive", String(goldenDotGameActive));
   localStorage.setItem("zigZagGameActive", String(zigZagGameActive));
   localStorage.setItem("johnnyAppleseedGameActive", String(johnnyAppleseedGameActive));
@@ -4618,6 +4626,7 @@ async function saveTask1Settings() {
         turkeyTrotGameActive,
         hoopHopperGameActive,
         balloonMazeGameActive,
+        colorPumpGameActive,
         goldenDotGameActive,
         goldenDotHitsGoal: Math.min(50,Math.max(5,Math.round(Number(goldenDotHitsGoalInput?.value)||50))),
         zigZagGameActive,
@@ -4965,6 +4974,7 @@ const allToggles = [
   teacherSkipLevelEnabledToggle,
   hoopHopperGameActiveToggle,
   balloonMazeGameActiveToggle,
+  colorPumpGameActiveToggle,
   goldenDotGameActiveToggle,
   studentHomeButtonEnabledToggle,
   balloonMazeShowTopScoresToggle,
