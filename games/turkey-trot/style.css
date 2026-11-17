@@ -42,3 +42,72 @@ header{flex:0 0 auto;min-height:45px}h1{font-size:clamp(22px,2.2vw,31px);margin:
 @media(max-height:700px){#stage #finaleJump{width:95px;height:95px;font-size:19px}}
 
 .trot-next-level:not([hidden]){display:inline-block;margin:12px 8px;padding:12px 18px;background:#a9ed86;border:3px solid #365d32;border-radius:16px;color:#21431e;font:bold 21px system-ui;text-decoration:none}.trot-next-level[hidden]{display:none!important}.trot-level-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:950px;margin:32px auto}.trot-level-picker a{background:#fff3cf;border:4px solid #a5763e;border-radius:24px;min-height:150px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;font-size:35px;text-decoration:none;color:#51391e}.trot-level-picker strong{font-size:23px}.trot-level-picker span{font-size:17px}@media(max-width:600px){.trot-level-picker{grid-template-columns:1fr}}
+
+/* Clear, single-action level completion for young students. */
+.trot-next-level,
+.trot-next-pulse {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 62px;
+  padding: 15px 27px;
+  margin-top: 16px;
+  border: 4px solid #246a35;
+  border-radius: 20px;
+  background: #32a852;
+  color: #ffffff;
+  font: 900 clamp(20px, 3vw, 28px)/1.2 system-ui, sans-serif;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: 0 6px 0 #19532a, 0 10px 22px #0003;
+  animation: trotNextPulse 1.6s ease-in-out infinite;
+}
+
+.trot-next-level[hidden],
+.trot-next-pulse[hidden],
+#start[hidden] {
+  display: none !important;
+}
+
+@keyframes trotNextPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.055); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trot-next-level,
+  .trot-next-pulse {
+    animation: none;
+  }
+}
+/* Final priority for successful level completion. */
+#overlay .trot-next-level:not([hidden]),
+#overlay .trot-next-pulse:not([hidden]) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 62px;
+  padding: 15px 27px;
+  border: 4px solid #246a35;
+  border-radius: 20px;
+  background: #32a852;
+  color: #ffffff;
+  font: 900 clamp(20px, 3vw, 28px)/1.2 system-ui, sans-serif;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: 0 6px 0 #19532a, 0 10px 22px #0003;
+  animation: trotNextPulse 1.6s ease-in-out infinite;
+}
+
+#overlay .trot-next-level[hidden],
+#overlay .trot-next-pulse[hidden] {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #overlay .trot-next-level:not([hidden]),
+  #overlay .trot-next-pulse:not([hidden]) {
+    animation: none;
+  }
+}
