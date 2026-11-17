@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Black Hole • Cosmic Courses</title>
+<link rel="stylesheet" href="../../freeze-screen.css">
+<style>
+/* Hands-On Trackpad controls v2; classroom availability v1; resume fix v1; loading polish v1; custom sounds v1 */
+.availability-shade{z-index:20}
+[hidden]{display:none!important}
+
+:root{color-scheme:dark;--ink:#e9f7ff;--muted:#a0b4d0;--cyan:#62edff;--gold:#ffdc79}*{box-sizing:border-box}body{margin:0;background:#080e20;color:var(--ink);font:16px system-ui,Segoe UI,sans-serif;overflow:hidden}button{font:inherit;color:inherit;cursor:pointer;border:1px solid #647b9c66;background:#1a2944;border-radius:14px;padding:12px 18px;font-weight:750;transition:transform .15s,background .15s}button:hover{background:#29415f;transform:translateY(-1px)}button:focus-visible{outline:3px solid var(--gold);outline-offset:4px}button:disabled{opacity:.4;cursor:default;transform:none}.primary{background:var(--cyan);color:#082130;border:0;box-shadow:0 4px 22px #62edff25}.primary:hover{background:#a0f5ff}.gold{color:#121b32;background:var(--gold);border:0}.gold:hover{background:#ffedba}.layout{height:100dvh;display:grid;grid-template-columns:minmax(240px,1fr) minmax(300px,520px) minmax(210px,1fr);gap:26px;max-width:1420px;margin:auto;padding:22px 32px;background:radial-gradient(ellipse at 50% 45%,#18295688,transparent 65%)}.left,.right{display:flex;flex-direction:column;justify-content:center;gap:24px}.eyebrow{font-size:11px;letter-spacing:.22em;color:var(--cyan);font-weight:850;text-transform:uppercase}h1{font-size:clamp(34px,4vw,58px);line-height:.95;letter-spacing:-.06em;margin:12px 0 16px}h1 span{color:var(--cyan)}.intro{color:var(--muted);line-height:1.65;max-width:290px;margin:0}.stats{display:flex;gap:8px}.stat{padding:12px 15px;border:1px solid #809cc82b;border-radius:16px;background:#13213a80;flex:1}.stat span{display:block;color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}.stat strong{display:block;font-size:24px;margin-top:2px;font-variant-numeric:tabular-nums}.controls{display:flex;flex-wrap:wrap;gap:8px}.controls button{padding:10px 13px;font-size:13px}.board{position:relative;align-self:center;height:min(calc(100dvh - 110px),760px);aspect-ratio:480/740;max-width:100%;justify-self:center;filter:drop-shadow(0 18px 45px #0006)}canvas{display:block;width:100%;height:100%;touch-action:none;border-radius:28px;background:#0b1730;border:1px solid #96cfff33}.caption{position:absolute;left:12px;right:12px;bottom:-32px;text-align:center;font-size:12px;color:var(--muted);white-space:nowrap}.panel-label{font-size:11px;font-weight:850;letter-spacing:.15em;color:var(--muted);text-transform:uppercase}.level-title{font-size:24px;letter-spacing:-.03em;margin:9px 0}.level-desc{color:var(--muted);font-size:14px;line-height:1.6;margin:0}.stars{font-size:28px;color:var(--gold);letter-spacing:7px}.power-track{height:8px;background:#1b304c;border-radius:12px;overflow:hidden;margin:10px 0 6px}.power-fill{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--gold));transition:width .06s;border-radius:12px}.tip{font-size:12px;color:var(--muted);line-height:1.6}.legend{display:grid;gap:10px;font-size:13px;color:#bacbe0}.legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:9px}.blue{background:#62edff}.red{background:#ff6e8c}.yellow{background:#ffdc79}.small-title{font-size:15px;font-weight:800;margin:0 0 6px}.run-score{font-size:13px;color:var(--muted);line-height:1.8}.status{font-size:13px;color:var(--cyan);min-height:38px;line-height:1.5}.overlay{position:fixed;inset:0;background:#040918b8;backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:20px;z-index:5}.overlay[hidden]{display:none}.modal{width:min(570px,100%);max-height:90dvh;overflow:auto;background:linear-gradient(150deg,#1a2c48,#0d162a);border:1px solid #91cfff3b;border-radius:28px;padding:30px;box-shadow:0 25px 120px #0009}.modal h2{font-size:32px;letter-spacing:-.045em;margin:8px 0 12px}.modal p{color:#b2c4dd;line-height:1.6}.modal .buttons{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.medal{font-size:48px}.level-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-top:20px}.level-grid button{padding:10px 3px}.level-grid small{display:block;color:var(--gold);font-size:10px;margin-top:3px}.level-grid .current{border-color:var(--cyan)}.summary{display:flex;gap:10px;margin:20px 0}.summary .stat{text-align:center}kbd{border:1px solid #95bad066;border-radius:5px;padding:1px 5px;font-family:inherit}#mobileHead{display:none}.help-list{padding-left:22px;color:#c4d5e9;line-height:1.9}.best-entry{border-bottom:1px solid #fff1;padding:10px 0;font-size:14px;color:#c4d5e9}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#243a50;color:white;border:1px solid #83dcff66;border-radius:12px;padding:10px 18px;z-index:10;max-width:90vw;font-size:13px}.toast[hidden]{display:none}@media(max-width:1050px){.layout{grid-template-columns:minmax(170px,1fr) minmax(280px,480px);padding:18px 24px;gap:20px}.right{display:none}.intro{font-size:14px}.left{gap:18px}h1{font-size:42px}}@media(max-width:620px){body{overflow:auto}.layout{height:auto;min-height:100dvh;display:flex;flex-direction:column;padding:10px 12px 40px;gap:12px}.left{display:contents}.brand,.intro,.left .stats,.left .tip{display:none}.controls{order:0;justify-content:center}.controls button{padding:9px 12px}.board{order:2;height:min(calc(100dvh - 145px),740px);min-height:310px}.caption{bottom:-25px;font-size:11px}#mobileHead{display:flex;justify-content:space-between;align-items:center;order:1;font-size:12px;max-width:450px;width:100%;margin:auto;color:#b2c4dd}#mobileHead strong{color:white}.modal{padding:24px}.modal h2{font-size:28px}.level-grid{gap:6px}.summary .stat{padding:10px 6px}.summary .stat strong{font-size:20px}}@media(prefers-reduced-motion:reduce){button{transition:none}.power-fill{transition:none}}
+
+.topbar{min-height:72px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:18px;padding:10px 24px;background:#0d172c;border-bottom:1px solid #91cfff33}.home-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;white-space:nowrap;font-size:14px;font-weight:800;color:var(--ink);padding:10px 15px;border:1px solid #7abfe355;border-radius:12px;background:#182b45}.home-link:hover{background:#29415f}.home-link:focus-visible{outline:3px solid var(--gold);outline-offset:3px}.header-brand{text-align:center}.header-brand span{display:block;font-size:9px;letter-spacing:.22em;color:var(--cyan);font-weight:800}.header-brand h1{font-size:24px;line-height:1.1;letter-spacing:-.04em;margin:3px 0 0}.game-header-controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:7px}.game-header-controls button{font-size:13px;padding:9px 12px;border-radius:12px}.layout{height:calc(100dvh - 72px)}.board{height:min(calc(100dvh - 182px),760px)}.preview-banner{padding:7px 14px;background:#ffdc79;color:#18233b;text-align:center;font-weight:800;font-size:12px}body.teacher-preview .layout{height:calc(100dvh - 104px)}body.teacher-preview .board{height:min(calc(100dvh - 214px),760px)}#exitPreviewBtn{border-color:var(--gold);color:var(--gold)}
+@media(max-width:1050px){.topbar{padding:10px 14px;gap:10px}.game-header-controls{max-width:440px}.header-brand h1{font-size:20px}.game-header-controls button{font-size:12px;padding:9px 10px}}
+@media(max-width:760px){.topbar{grid-template-columns:auto 1fr;gap:9px}.header-brand{text-align:right}.game-header-controls{grid-column:1/-1;justify-content:center;max-width:none}.topbar{min-height:114px}.layout{height:calc(100dvh - 114px)}.board{height:min(calc(100dvh - 224px),740px)}}
+@media(max-width:620px){.layout{height:auto;min-height:calc(100dvh - 114px)}.board{height:min(calc(100dvh - 205px),740px);min-height:300px}body.teacher-preview .layout{height:auto;min-height:calc(100dvh - 151px)}body.teacher-preview .board{height:min(calc(100dvh - 242px),740px)}.caption{white-space:normal}.game-header-controls button{font-size:12px;padding:9px}.preview-banner{font-size:11px}.header-brand h1{font-size:21px}}
+
+</style>
+</head>
+<body data-game-active-key="blackHoleGameActive">
+<header class="topbar"><a id="homeLink" class="home-link" href="../../index.html">⌂ Home</a><div class="header-brand"><span>COSMIC COURSES</span><h1>Black Hole</h1></div><div class="game-header-controls"><button id="levelsBtn">Levels</button><button id="retryBtn">Retry</button><button id="pauseBtn">Pause</button><button id="soundBtn" aria-pressed="false">Sound: off</button><button id="helpBtn" aria-label="How to play">?</button><button id="exitPreviewBtn" hidden>Exit teacher preview</button></div></header>
+<div id="previewBanner" class="preview-banner" hidden role="status">Teacher preview · Practice only · Student scores and progress are not saved</div>
+<main class="layout">
+<section class="left" aria-label="Game controls">
+<div class="brand"><div class="eyebrow">Cosmic Courses / 20 levels</div><h1>BLACK<br><span>HOLE.</span></h1><p class="intro">One little planet.<br>A universe of tricky shots.</p></div>
+<div class="stats"><div class="stat"><span>Level</span><strong id="levelStat">01 / 20</strong></div><div class="stat"><span>Shots</span><strong id="shotStat">0</strong></div></div>
+
+<div class="tip">Hold the planet. Drag <strong>toward your target</strong>. Release to launch. Longer drag = stronger shot.<br><br><kbd>←</kbd> <kbd>→</kbd> aim · <kbd>↑</kbd> <kbd>↓</kbd> power · <kbd>Space</kbd> shoot · <kbd>Esc</kbd> pause</div>
+</section>
+<div id="mobileHead"><span id="mobileLevel">01 · First Contact</span><strong id="mobileShots">0 shots</strong></div>
+<div class="board"><canvas id="game" width="960" height="1480" tabindex="0" aria-label="Black Hole game. Drag forward from the planet and release to shoot. Arrow keys aim and set power; Space shoots."></canvas><div class="caption" id="caption" role="status" aria-live="polite">Drag from the planet toward the hole.</div></div>
+<aside class="right" aria-label="Course information">
+<div><div class="panel-label" id="courseNumber">Course 01</div><h2 class="level-title" id="courseTitle">First Contact</h2><p class="level-desc" id="courseDesc"></p></div>
+<div><div class="panel-label">Star collection</div><div class="stars" id="starStat">☆☆☆</div><div class="tip">Optional stars reward an adventurous route.</div></div>
+<div><div class="panel-label">Launch power</div><div class="power-track"><div class="power-fill" id="powerFill"></div></div><div class="tip" id="powerText">Drag farther for more power.</div></div>
+<div class="legend"><span><i class="blue"></i>Cyan walls bounce</span><span><i class="red"></i>Red zones reset your planet</span><span><i class="yellow"></i>Gold stars are a bonus</span></div>
+<div><h3 class="small-title">Your expedition</h3><div class="run-score" id="runScore">0 courses · 0 shots · 0:00</div><div class="status" id="status"></div><button id="scoresBtn">Your best runs</button></div>
+</aside>
+</main>
+<div class="overlay availability-shade" id="availabilityOverlay" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="availabilityTitle"><div class="eyebrow">Hands-On Trackpad</div><h2 id="availabilityTitle">Checking classroom settings…</h2><p id="availabilityText">Your teacher controls which games are available.</p><div class="buttons"><a class="home-link" href="../../index.html">⌂ Home</a><button class="primary" id="accessRetryBtn" hidden>Check again</button></div></section></div>
+<div class="overlay" id="overlay" hidden><section class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"></section></div>
+<div class="toast" id="toast" hidden role="status"></div>
+<script src="../../freeze-screen.js"></script>
+<script src="../../input-device-guard.js"></script>
+<script>
+'use strict';
+(()=>{
+const $=id=>document.getElementById(id), canvas=$('game'), ctx=canvas.getContext('2d');
+const W=480,H=740,R=11,TAU=Math.PI*2,STORAGE='cosmic-courses-v1';
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const rect=(x,y,w,h)=>({x,y,w,h}), star=(x,y)=>({x,y}), pt=(x,y)=>({x,y});
+const outer=[pt(28,28),pt(452,28),pt(452,712),pt(28,712)];
+const L=(name,desc,start,hole,walls=[],hazards=[],stars=[],bumpers=[],outline=outer)=>({name,desc,start:pt(...start),hole:pt(...hole),walls,hazards,stars:stars.map(p=>star(...p)),bumpers,outline});
+const levels=[
+L('First Contact','A gentle launch. Try collecting a star on the way.',[240,615],[240,120],[],[],[[240,470],[240,340],[240,215]]),
+L('Cosmic Corner','Bank off an angled wall to turn the corner.',[125,620],[125,130],[],[],[[260,510],[365,370],[260,235]],[],[pt(125,35),pt(445,245),pt(445,560),pt(250,710),pt(70,710),pt(70,525),pt(265,340),pt(55,150)]),
+L('Split Decision','Choose a side of the divider. Rebounds can help.',[240,100],[240,640],[rect(220,250,40,235)],[],[[125,260],[355,420],[240,560]]),
+L('The Narrow Gate','Thread the opening. Red tips send you back to the start.',[240,100],[240,640],[rect(28,425,125,25),rect(327,425,125,25)],[rect(133,425,20,60),rect(327,425,20,60)],[[240,280],[240,470],[240,560]]),
+L('Satellite Alley','Weave between the floating walls.',[95,640],[385,95],[rect(28,470,275,25),rect(180,250,272,25)],[],[[370,525],[110,365],[320,150]]),
+L('Gravity Garden','Golden satellites bounce your planet. Find a clear route.',[240,640],[240,95],[],[],[[100,490],[380,340],[140,180]],[{x:240,y:420,r:42},{x:155,y:280,r:34},{x:330,y:215,r:30}]),
+L('Solar Crossing','Pass beside the red field, then line up the finish.',[85,635],[395,100],[rect(28,350,100,22),rect(352,350,100,22)],[rect(185,275,110,185)],[[95,450],[380,280],[250,140]]),
+L('Three Bridges','Cross each opening. A quiet, short shot can be useful.',[240,650],[240,90],[rect(28,520,245,22),rect(190,345,262,22),rect(28,180,245,22)],[],[[350,570],[100,410],[350,235]]),
+L('Diamond Drift','Aim around the four satellites.',[240,650],[240,85],[],[rect(218,335,44,70)],[[110,470],[370,275],[240,170]],[{x:140,y:340,r:32},{x:340,y:340,r:32},{x:240,y:230,r:28},{x:240,y:490,r:28}]),
+L('Halfway Home','A longer route around a central island.',[100,630],[375,110],[rect(185,180,110,355)],[],[[95,300],[240,100],[375,480]]),
+L('Twin Portals','The walls leave two routes. Pick your favorite.',[240,650],[240,95],[rect(180,200,24,340),rect(276,200,24,340)],[],[[100,390],[240,360],[380,390]]),
+L('Meteor Slalom','Switch sides between the red meteor fields.',[95,650],[385,90],[],[rect(28,490,240,35),rect(212,300,240,35),rect(28,155,240,35)],[[355,550],[120,385],[355,225]]),
+L('Bumper Parade','Use the satellites or sneak along an edge.',[240,650],[240,90],[],[],[[85,500],[395,320],[85,160]],[{x:180,y:530,r:34},{x:300,y:410,r:34},{x:180,y:290,r:34},{x:300,y:170,r:34}]),
+L('The Switchback','Each shelf needs a new angle.',[100,650],[380,90],[rect(28,530,270,24),rect(182,360,270,24),rect(28,190,270,24)],[rect(278,530,20,48),rect(182,336,20,24)],[[370,580],[100,440],[370,260]]),
+L('Nebula Window','A central window leads toward the black hole.',[240,650],[240,90],[rect(28,340,150,26),rect(302,340,150,26)], [rect(178,300,18,66),rect(284,340,18,66)],[[110,510],[240,340],[365,180]],[{x:350,y:510,r:30},{x:120,y:200,r:30}]),
+L('Outer Orbit','Move around the big satellite. Look before launching.',[240,650],[240,90],[],[rect(200,316,80,108)],[[100,500],[380,370],[100,175]],[{x:240,y:370,r:91}]),
+L('Comet Corridor','Work through the wide gaps, one careful shot at a time.',[85,650],[395,90],[rect(28,530,280,22),rect(172,355,280,22),rect(28,180,280,22)],[],[[370,600],[105,440],[375,250]],[{x:355,y:455,r:24},{x:125,y:270,r:24}]),
+L('Red Giant','Travel around the red giant. Cyan corners are safe to bounce.',[240,650],[240,90],[rect(28,210,80,24),rect(372,510,80,24)],[rect(165,240,150,260)],[[95,420],[385,330],[240,155]]),
+L('Star Circuit','An expedition through the satellite field.',[90,650],[390,90],[rect(190,475,100,22),rect(190,240,100,22)],[],[[370,570],[100,365],[370,180]],[{x:130,y:520,r:33},{x:350,y:365,r:38},{x:130,y:210,r:33}]),
+L('Event Horizon','Your final course. Plan the route and bring your planet home.',[240,660],[240,80],[rect(28,530,260,22),rect(192,365,260,22),rect(28,200,260,22)],[rect(268,530,20,48),rect(192,340,20,25),rect(268,200,20,48)],[[365,580],[105,440],[365,270]],[{x:350,y:440,r:23},{x:130,y:280,r:23}])
+];
+function fresh(){return {version:1,unlocked:0,bests:{},runs:[],run:null,sound:false};}
+let data=fresh(),storageOK=true,teacherPreview=false,studentSnapshot=null;
+let gameAccessAllowed=false,accessBusy=false,accessKnown=false,accessStarted=false;
+try{const d=JSON.parse(localStorage.getItem(STORAGE));if(d&&d.version===1){data={...fresh(),...d};data.unlocked=Math.max(0,Math.min(19,Number(data.unlocked)||0));if(!data.bests||typeof data.bests!=='object')data.bests={};if(!Array.isArray(data.runs))data.runs=[];}}catch{storageOK=false;}
+function save(){if(teacherPreview)return;try{localStorage.setItem(STORAGE,JSON.stringify(data));}catch{storageOK=false;$('status').textContent='Browser storage is unavailable. Progress lasts for this visit.';}}
+let index=0,level,ball,holesink=0,shotCount=0,starCount=0,collected=[],particles=[],trail=[],aim=null,mode='ready',modalType='',paused=false,wasPaused=false,last=0,elapsed=0,levelTime=0,resetTimer=0,keyAngle=-Math.PI/2,keyPower=.55,keysAiming=false,toastTimer,focusBefore=null;
+let run={completed:0,shots:0,time:0,stars:0,level:0,levelShots:0,levelTime:0,collected:[]};
+if(data.run&&Number.isInteger(data.run.level)&&data.run.level>=0&&data.run.level<20&&data.run.level<=data.unlocked&&Number.isFinite(data.run.shots)&&data.run.shots>=0){run={...run,...data.run};index=run.level;}
+function syncRun(){if(teacherPreview)return;run.level=index;run.levelShots=shotCount;run.levelTime=levelTime;run.collected=collected.map(Boolean);data.run={...run};}
+let audioCtx=null,musicTimer=0,noteIndex=0,effectEpoch=0;
+const soundEffects={shot:new Audio('audio/spacesling.mp3'),hole:new Audio('audio/planethit.mp3'),star:new Audio('audio/boingmiss.mp3')};
+for(const effect of Object.values(soundEffects)){effect.preload='auto';effect.loop=false;effect.volume=.65;}
+function stopEffects(){effectEpoch++;for(const effect of Object.values(soundEffects)){effect.requestId=(effect.requestId||0)+1;effect.pause();try{effect.currentTime=0;}catch{}}}
+function playEffect(name){
+ if(!data.sound||classroomBlocked()||paused)return;
+ const effect=soundEffects[name];if(!effect)return;
+ const epoch=effectEpoch,request=effect.requestId=(effect.requestId||0)+1;try{effect.currentTime=0;Promise.resolve(effect.play()).then(()=>{if(effect.requestId!==request)return;if(epoch!==effectEpoch||!data.sound||classroomBlocked()){effect.pause();try{effect.currentTime=0;}catch{}}}).catch(()=>{});}catch{}
+}
+
+function initAudio(){if(!data.sound||classroomBlocked())return;try{audioCtx??=new (window.AudioContext||window.webkitAudioContext)();audioCtx.resume().catch(()=>{});}catch{}}
+function tone(freq,duration=.12,type='sine',vol=.05,slide=0){if(!data.sound||!audioCtx||audioCtx.state!=='running')return;const t=audioCtx.currentTime,o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+duration);g.gain.setValueAtTime(.001,t);g.gain.linearRampToValueAtTime(vol,t+.012);g.gain.exponentialRampToValueAtTime(.001,t+duration);o.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+duration+.02);}
+function sound(kind){if(kind==='shot')playEffect('shot');if(kind==='wall')tone(180,.07,'triangle',.025,95);if(kind==='star')playEffect('star');if(kind==='fail')tone(230,.4,'sawtooth',.025,45);if(kind==='win'){stopAudio();playEffect('hole');}}
+function stopAudio(stopClips=true){if(stopClips)stopEffects();if(audioCtx&&audioCtx.state==='running')audioCtx.suspend().catch(()=>{});}
+function fmt(t){t=Math.max(0,Math.floor(t||0));return Math.floor(t/60)+':'+String(t%60).padStart(2,'0');}
+function toast(t){$('toast').textContent=t;$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,3500);}
+function segments(poly){return poly.map((a,i)=>[a,poly[(i+1)%poly.length]]);}
+let boundaries=[];
+function loadLevel(n,resume=false){stopEffects();index=n;level=levels[n];boundaries=segments(level.outline);shotCount=resume?run.levelShots||0:0;levelTime=resume?run.levelTime||0:0;collected=resume&&Array.isArray(run.collected)?level.stars.map((_,i)=>!!run.collected[i]):level.stars.map(()=>false);starCount=collected.filter(Boolean).length;ball={x:level.start.x,y:level.start.y,vx:0,vy:0};mode='ready';holesink=0;resetTimer=0;aim=null;keysAiming=false;trail=[];particles=[];keyAngle=Math.atan2(level.hole.y-ball.y,level.hole.x-ball.x);keyPower=.55;syncRun();save();hud();caption('Drag from the planet toward your target.');}
+function hud(){$('levelStat').textContent=String(index+1).padStart(2,'0')+' / 20';$('shotStat').textContent=shotCount;$('mobileLevel').textContent=String(index+1).padStart(2,'0')+' · '+level.name;$('mobileShots').textContent=shotCount+' shot'+(shotCount===1?'':'s');$('courseNumber').textContent='Course '+String(index+1).padStart(2,'0');$('courseTitle').textContent=level.name;$('courseDesc').textContent=level.desc;$('starStat').textContent='★'.repeat(starCount)+'☆'.repeat(3-starCount);$('runScore').textContent=teacherPreview?'Practice only — no score saved':run.completed+' courses · '+run.shots+' shots · '+fmt(run.time);$('soundBtn').textContent='Sound: '+(data.sound?'on':'off');$('soundBtn').setAttribute('aria-pressed',String(data.sound));$('retryBtn').disabled=mode==='won';if(!storageOK)$('status').textContent='Progress lasts for this visit only.';}
+function caption(s){if($('caption').textContent!==s)$('caption').textContent=s;}
+function power(v){$('powerFill').style.width=Math.round(v*100)+'%';$('powerText').textContent=v?Math.round(v*100)+'% launch power':'Drag farther for more power.';}
+function pos(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height};}
+function cancelAim(){if(aim){const id=aim.id;aim=null;if(canvas.hasPointerCapture(id))canvas.releasePointerCapture(id);}keysAiming=false;power(0);}
+canvas.addEventListener('pointerdown',e=>{if(classroomBlocked()||e.button!==0||paused||modalType||mode!=='ready')return;const p=pos(e);if(Math.hypot(p.x-ball.x,p.y-ball.y)>42){toast('Start your drag on the glowing planet.');return;}e.preventDefault();initAudio();canvas.focus({preventScroll:true});canvas.setPointerCapture(e.pointerId);aim={id:e.pointerId,x:ball.x,y:ball.y};keysAiming=false;});
+canvas.addEventListener('pointermove',e=>{if(classroomBlocked()){cancelAim();return;}if(!aim||aim.id!==e.pointerId)return;e.preventDefault();Object.assign(aim,pos(e));power(Math.min(1,Math.hypot(aim.x-ball.x,aim.y-ball.y)/180));});
+canvas.addEventListener('pointerup',e=>{if(!aim||aim.id!==e.pointerId)return;const p=pos(e),dx=p.x-ball.x,dy=p.y-ball.y,d=Math.hypot(dx,dy);cancelAim();if(d>10&&!classroomBlocked()&&!paused&&!modalType)launch(Math.atan2(dy,dx),Math.min(1,d/180));});
+canvas.addEventListener('pointercancel',cancelAim);canvas.addEventListener('lostpointercapture',()=>{if(aim)cancelAim();});
+function launch(angle,p){if(classroomBlocked()||mode!=='ready'||paused||modalType)return;const v=120+Math.max(.04,p)*780;ball.vx=Math.cos(angle)*v;ball.vy=Math.sin(angle)*v;mode='moving';shotCount++;if(!teacherPreview)run.shots++;keysAiming=false;power(0);sound('shot');syncRun();save();hud();caption('Watch the rebounds…');}
+function retry(){if(classroomBlocked()||mode==='won')return;cancelAim();ball={x:level.start.x,y:level.start.y,vx:0,vy:0};mode='ready';trail=[];resetTimer=0;holesink=0;caption('Back at the start. Your shots still count.');syncRun();save();hud();}
+function burst(x,y,color,n=20){if(reduced)n=Math.min(n,6);for(let i=0;i<n;i++){const a=Math.random()*TAU,s=40+Math.random()*180;particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:.5+Math.random()*.6,max:1.1,color,size:2+Math.random()*3});}}
+function fail(){mode='reset';resetTimer=.65;burst(ball.x,ball.y,'#ff749b',30);sound('fail');ball.vx=ball.vy=0;caption('Red zone! Try a different angle.');}
+function complete(){if(classroomBlocked()||mode==='won')return;mode='won';holesink=1;ball.vx=ball.vy=0;cancelAim();burst(level.hole.x,level.hole.y,'#81f2ff',65);sound('win');if(teacherPreview){hud();caption('Teacher preview complete. No student score saved.');setTimeout(()=>{if(mode==='won')showWin();},650);return;}const old=data.bests[index];if(!old||shotCount<old.shots||(shotCount===old.shots&&levelTime<old.time))data.bests[index]={shots:shotCount,time:levelTime,stars:Math.max(starCount,old?.stars||0)};else old.stars=Math.max(old.stars||0,starCount);
+run.completed++;run.stars+=starCount;data.unlocked=Math.max(data.unlocked,Math.min(19,index+1));
+if(index===19){if(!run.fromLevel){const result={completed:20,shots:run.shots,time:run.time,stars:run.stars,date:new Date().toISOString()};data.runs.push(result);data.runs.sort((a,b)=>a.shots-b.shots||a.time-b.time);data.runs=data.runs.slice(0,10);}data.run=null;}else{data.run={...run,level:index+1,levelShots:0,levelTime:0,collected:[]};}save();hud();caption('Course complete!');setTimeout(()=>{if(mode==='won')showWin();},650);}
+function circleRect(x,y,r,b){const nx=Math.max(b.x,Math.min(x,b.x+b.w)),ny=Math.max(b.y,Math.min(y,b.y+b.h));return (x-nx)**2+(y-ny)**2<r*r;}
+let hitCooldown=0;
+function bounce(nx,ny){const v=ball.vx*nx+ball.vy*ny;if(v<0){ball.vx-=1.82*v*nx;ball.vy-=1.82*v*ny;if(hitCooldown<=0){sound('wall');hitCooldown=.075;}}}
+function wall(a,b){const dx=b.x-a.x,dy=b.y-a.y,len=dx*dx+dy*dy,t=Math.max(0,Math.min(1,((ball.x-a.x)*dx+(ball.y-a.y)*dy)/len)),x=a.x+t*dx,y=a.y+t*dy;let nx=ball.x-x,ny=ball.y-y,d=Math.hypot(nx,ny);if(d<R){if(d<.0001){nx=-dy;ny=dx;const nl=Math.hypot(nx,ny);nx/=nl;ny/=nl;d=0;}else{nx/=d;ny/=d;}const push=R-d+.05;ball.x+=nx*push;ball.y+=ny*push;bounce(nx,ny);}}
+function solid(b){if(!circleRect(ball.x,ball.y,R,b))return;let x=Math.max(b.x,Math.min(ball.x,b.x+b.w)),y=Math.max(b.y,Math.min(ball.y,b.y+b.h)),dx=ball.x-x,dy=ball.y-y,d=Math.hypot(dx,dy);if(d>0){ball.x+=dx/d*(R-d+.05);ball.y+=dy/d*(R-d+.05);bounce(dx/d,dy/d);}else{const sides=[{d:ball.x-b.x,nx:-1,ny:0},{d:b.x+b.w-ball.x,nx:1,ny:0},{d:ball.y-b.y,nx:0,ny:-1},{d:b.y+b.h-ball.y,nx:0,ny:1}].sort((a,b)=>a.d-b.d),s=sides[0];ball.x+=s.nx*(s.d+R+.05);ball.y+=s.ny*(s.d+R+.05);bounce(s.nx,s.ny);}}
+function update(dt){if(classroomBlocked()){cancelAim();stopAudio();if(gameAccessAllowed&&!paused&&!modalType&&mode!=='won')showPause();return;}hitCooldown-=dt;elapsed+=dt;if(!paused&&!modalType&&mode!=='won'){if(!teacherPreview)run.time+=dt;levelTime+=dt;}
+if(!paused&&!modalType){if(mode==='moving'){const count=Math.max(1,Math.ceil(Math.hypot(ball.vx,ball.vy)*dt/4)),step=dt/count;for(let i=0;i<count;i++){ball.x+=ball.vx*step;ball.y+=ball.vy*step;if(level.hazards.some(b=>circleRect(ball.x,ball.y,R*.7,b))){fail();break;}for(const [a,b]of boundaries)wall(a,b);for(const b of level.walls)solid(b);for(const b of level.bumpers){let dx=ball.x-b.x,dy=ball.y-b.y,d=Math.hypot(dx,dy);if(d<b.r+R){if(d<.001){dx=1;dy=0;d=1;}const nx=dx/d,ny=dy/d;ball.x=b.x+nx*(b.r+R+.1);ball.y=b.y+ny*(b.r+R+.1);bounce(nx,ny);}}
+if(level.hazards.some(b=>circleRect(ball.x,ball.y,R*.7,b))){fail();break;}
+for(let j=0;j<level.stars.length;j++)if(!collected[j]&&Math.hypot(ball.x-level.stars[j].x,ball.y-level.stars[j].y)<26){collected[j]=true;starCount++;burst(level.stars[j].x,level.stars[j].y,'#ffdc79');sound('star');hud();}
+const d=Math.hypot(ball.x-level.hole.x,ball.y-level.hole.y);if(d<23){complete();break;}
+const friction=Math.exp(-.9*step);ball.vx*=friction;ball.vy*=friction;}
+if(mode==='moving'&&Math.hypot(ball.vx,ball.vy)<16){ball.vx=ball.vy=0;mode='ready';keyAngle=Math.atan2(level.hole.y-ball.y,level.hole.x-ball.x);syncRun();save();caption('Ready for another shot. Drag from the planet.');}
+if(mode==='moving'&&!reduced){trail.push({x:ball.x,y:ball.y,life:.3});if(trail.length>26)trail.shift();}}
+if(mode==='reset'){resetTimer-=dt;if(resetTimer<=0)retry();}}
+for(const p of particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=Math.exp(-2*dt);p.vy*=Math.exp(-2*dt);p.life-=dt;}particles=particles.filter(p=>p.life>0);for(const p of trail)p.life-=dt;trail=trail.filter(p=>p.life>0);
+}
+function path(poly){ctx.beginPath();ctx.moveTo(poly[0].x,poly[0].y);for(const p of poly.slice(1))ctx.lineTo(p.x,p.y);ctx.closePath();}
+function round(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);}
+function drawStar(x,y,r,color){ctx.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.45:r;ctx.lineTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr);}ctx.closePath();ctx.fillStyle=color;ctx.fill();}
+const sky=Array.from({length:65},(_,i)=>({x:(i*137.23)%W,y:(i*91.71)%H,r:i%5===0?1.5:.7}));
+function draw(t){ctx.setTransform(2,0,0,2,0,0);ctx.clearRect(0,0,W,H);const bg=ctx.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#101e38');bg.addColorStop(1,'#071025');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+for(const s of sky){ctx.globalAlpha=.25+(reduced?.15:Math.sin(t*.65+s.x)*.12);ctx.fillStyle='#c5e4ff';ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,TAU);ctx.fill();}ctx.globalAlpha=1;
+ctx.save();path(level.outline);ctx.shadowColor='#24bfed';ctx.shadowBlur=13;ctx.fillStyle='#122c41';ctx.fill();ctx.shadowBlur=0;ctx.clip();const g=ctx.createRadialGradient(240,350,40,240,350,550);g.addColorStop(0,'#20424d');g.addColorStop(1,'#11263a');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);ctx.strokeStyle='#91c8d00a';ctx.lineWidth=1;for(let x=0;x<W;x+=32){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}for(let y=0;y<H;y+=32){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+ctx.fillStyle='#b8f4ff06';ctx.font='900 180px system-ui';ctx.textAlign='center';ctx.fillText(String(index+1).padStart(2,'0'),240,425);ctx.restore();
+path(level.outline);ctx.strokeStyle='#62edff';ctx.lineWidth=3;ctx.stroke();path(level.outline);ctx.strokeStyle='#62edff22';ctx.lineWidth=12;ctx.stroke();
+for(const b of level.walls){ctx.shadowColor='#62edff44';ctx.shadowBlur=10;round(b.x,b.y,b.w,b.h,5);ctx.fillStyle='#193e58';ctx.fill();ctx.strokeStyle='#66d9f2';ctx.lineWidth=2;ctx.stroke();ctx.shadowBlur=0;}
+for(const b of level.hazards){ctx.save();round(b.x,b.y,b.w,b.h,5);ctx.fillStyle='#7b2446';ctx.fill();ctx.clip();ctx.strokeStyle='#ff829a44';ctx.lineWidth=5;for(let x=b.x-b.h;x<b.x+b.w+b.h;x+=16){ctx.beginPath();ctx.moveTo(x,b.y);ctx.lineTo(x+b.h,b.y+b.h);ctx.stroke();}ctx.restore();round(b.x,b.y,b.w,b.h,5);ctx.strokeStyle='#ff7394';ctx.lineWidth=2;ctx.stroke();}
+for(const b of level.bumpers){ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,TAU);const g=ctx.createRadialGradient(b.x-10,b.y-12,0,b.x,b.y,b.r);g.addColorStop(0,'#fff1b5');g.addColorStop(.6,'#a97a3e');g.addColorStop(1,'#503c3e');ctx.fillStyle=g;ctx.fill();ctx.strokeStyle='#ffdc79';ctx.lineWidth=3;ctx.stroke();ctx.beginPath();ctx.ellipse(b.x,b.y,b.r*1.25,b.r*.28,-.35,0,TAU);ctx.strokeStyle='#ffe5a177';ctx.lineWidth=3;ctx.stroke();}
+for(let i=0;i<level.stars.length;i++)if(!collected[i]){const s=level.stars[i];ctx.shadowBlur=15;ctx.shadowColor='#ffdc79';drawStar(s.x,s.y+(reduced?0:Math.sin(t*2+i)*3),10,'#ffdc79');ctx.shadowBlur=0;}
+const hx=level.hole.x,hy=level.hole.y;ctx.save();ctx.translate(hx,hy);ctx.rotate(reduced?0:t*.6);for(let i=3;i>=0;i--){ctx.beginPath();ctx.ellipse(0,0,26+i*4,22+i*3,i*.35,0,TAU);ctx.strokeStyle=['#ffecb3','#b99fff','#8d74ff55','#62edff22'][i];ctx.lineWidth=i===0?3:2;ctx.stroke();}ctx.beginPath();ctx.arc(0,0,19,0,TAU);ctx.fillStyle='#030513';ctx.fill();ctx.shadowBlur=14;ctx.shadowColor='#ad89ff';ctx.strokeStyle='#bba2ff';ctx.lineWidth=2;ctx.stroke();ctx.restore();
+for(const p of trail){ctx.globalAlpha=p.life*.85;ctx.beginPath();ctx.arc(p.x,p.y,R*p.life*2,0,TAU);ctx.fillStyle='#92edff';ctx.fill();}ctx.globalAlpha=1;
+if(mode!=='reset'){let x=ball.x,y=ball.y,r=R;if(mode==='won'){const progress=Math.min(1,(1-holesink)*2);x=hx+(ball.x-hx)*progress;y=hy+(ball.y-hy)*progress;r=R*Math.max(0,holesink);holesink=Math.max(0,holesink-.025);}if(r>.2){ctx.save();ctx.translate(x,y);ctx.shadowBlur=mode==='ready'?20:12;ctx.shadowColor='#72dfff';const p=ctx.createRadialGradient(-4,-5,1,0,0,r);p.addColorStop(0,'#efffff');p.addColorStop(.35,'#7ee6ff');p.addColorStop(1,'#5275d7');ctx.fillStyle=p;ctx.beginPath();ctx.arc(0,0,r,0,TAU);ctx.fill();ctx.shadowBlur=0;ctx.save();ctx.beginPath();ctx.arc(0,0,r,0,TAU);ctx.clip();ctx.rotate(t*.7);ctx.strokeStyle='#e7f8ff88';ctx.lineWidth=2;for(let y=-8;y<=8;y+=6){ctx.beginPath();ctx.ellipse(0,y,13,3,0,0,TAU);ctx.stroke();}ctx.restore();ctx.restore();if(mode==='ready'){ctx.strokeStyle='#b5efff55';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(ball.x,ball.y,20+(reduced?0:Math.sin(t*3)*2),0,TAU);ctx.stroke();}}}
+if((aim||keysAiming)&&mode==='ready'){let dx,dy,p;if(aim){dx=aim.x-ball.x;dy=aim.y-ball.y;p=Math.min(1,Math.hypot(dx,dy)/180);}else{p=keyPower;dx=Math.cos(keyAngle)*180*p;dy=Math.sin(keyAngle)*180*p;}const d=Math.hypot(dx,dy);if(d>5){const nx=dx/d,ny=dy/d,len=35+p*140;ctx.strokeStyle=p>.8?'#ffdc79':'#a7f4ff';ctx.lineWidth=3;ctx.setLineDash([4,8]);ctx.beginPath();ctx.moveTo(ball.x+nx*24,ball.y+ny*24);ctx.lineTo(ball.x+nx*len,ball.y+ny*len);ctx.stroke();ctx.setLineDash([]);ctx.beginPath();const ax=ball.x+nx*len,ay=ball.y+ny*len;ctx.moveTo(ax-nx*11-ny*7,ay-ny*11+nx*7);ctx.lineTo(ax,ay);ctx.lineTo(ax-nx*11+ny*7,ay-ny*11-nx*7);ctx.stroke();}}
+for(const p of particles){ctx.globalAlpha=Math.min(1,p.life*2);ctx.fillStyle=p.color;ctx.fillRect(p.x,p.y,p.size,p.size);}ctx.globalAlpha=1;
+}
+let frameCounter=0;function frame(ms){const dt=Math.min(.035,(ms-last)/1000||0);last=ms;update(dt);draw(ms/1000);if(++frameCounter%20===0)hud();requestAnimationFrame(frame);}requestAnimationFrame(frame);
+function closeModal(){
+ const reason=classroomBlockReason();
+ if(reason){explainResumeBlock(reason);return false;}
+ // Focus leaves the dialog while its state is still marked open. This avoids
+ // re-entering the pause handler during the browser's focus transition.
+ canvas.focus({preventScroll:true});
+ $('overlay').hidden=true;
+ $('modal').replaceChildren();
+ modalType='';paused=false;last=performance.now();
+ if(mode!=='won')initAudio();
+ return true;
+}
+function explainResumeBlock(reason){
+ if(reason==='availability'){checkBlackHoleAccess();return;}
+ if(reason==='name'){const prompt=$('trackpadNameOverlay');prompt?.querySelector('input')?.focus();return;}
+ if(reason==='freeze'){const message=$('resumeMessage');if(message)message.textContent='Your teacher has frozen the screen. You can resume when it is released.';return;}
+}
+
+function showModal(type,html){focusBefore=document.activeElement;wasPaused=paused;paused=true;cancelAim();modalType=type;stopAudio(type!=='win');$('modal').innerHTML=html;$('overlay').hidden=false;if(!classroomBlocked())$('modal').querySelector('button')?.focus();}
+function showWin(){if(teacherPreview){showPreviewWin();return;}const final=index===19;showModal('win',`<div class="eyebrow">${final?'Expedition complete':'Course '+String(index+1).padStart(2,'0')+' complete'}</div><div class="medal">${final?'🏆':'✦'}</div><h2 id="modalTitle">${final?'You crossed the cosmos!':'Beautiful landing.'}</h2><p>${final?(!run.fromLevel?'All 20 courses complete. Your expedition is saved in Your best runs.':'Final course complete! Start a new expedition from Level 1 to set a full-run record.'):level.name+' complete. Ready for the next course?'}</p><div class="stars">${'★'.repeat(starCount)+'☆'.repeat(3-starCount)}</div><div class="summary"><div class="stat"><span>${final?'Total shots':'Shots'}</span><strong>${final?run.shots:shotCount}</strong></div><div class="stat"><span>${final?'Total time':'Course time'}</span><strong>${fmt(final?run.time:levelTime)}</strong></div><div class="stat"><span>Courses</span><strong>${index+1} / 20</strong></div></div><div class="buttons"><button class="primary" id="nextBtn">${final?'New expedition':'Next course →'}</button><button id="winLevels">Choose a level</button></div>`);$('nextBtn').onclick=()=>{closeModal();paused=false;if(final)newRun();else loadLevel(index+1);initAudio();};$('winLevels').onclick=showLevels;}
+function showPause(){if(modalType)return;showModal('pause','<div class="eyebrow">Take a breath</div><h2 id="modalTitle">Expedition paused.</h2><p>Your timer and planet are paused. Pick up right where you left off.</p><div class="buttons"><button type="button" class="primary" id="resumeBtn">Resume</button><button type="button" id="pauseLevels">Choose a level</button></div><p id="resumeMessage" role="status" aria-live="polite"></p>');$('resumeBtn').onclick=closeModal;$('pauseLevels').onclick=showLevels;syncRun();save();}
+function showHelp(){if(classroomBlocked())return;showModal('help','<div class="eyebrow">Flight school</div><h2 id="modalTitle">A little aim. A little adventure.</h2><ol class="help-list"><li>Press and hold the glowing planet.</li><li>Drag <strong>toward</strong> where you want it to go.</li><li>Drag farther for a stronger launch. Release to shoot.</li><li>Bounce off cyan walls and golden satellites.</li><li>Avoid red zones. They return you to the start.</li><li>Land in the black hole. Stars are optional!</li></ol><p>Wait for the planet to stop before shooting again. Your shots still count after a retry. For keyboard play, focus the game, aim with Left/Right, change power with Up/Down, and press Space.</p><div class="buttons"><button class="primary" id="helpClose">Let’s play</button></div>');$('helpClose').onclick=closeModal;}
+function showLevels(){if(classroomBlocked())return;showModal('levels',`<div class="eyebrow">Course map</div><h2 id="modalTitle">Choose your next adventure.</h2><p>Finish a course to unlock the next. Choosing an earlier course starts a new expedition from that course.</p><div class="level-grid">${levels.map((l,i)=>`<button ${i>data.unlocked?'disabled':''} class="${i===index?'current':''}" data-level="${i}" aria-label="Level ${i+1}: ${l.name}${i>data.unlocked?', locked':''}">${i>data.unlocked?'🔒':String(i+1).padStart(2,'0')}<small>${data.bests[i]?'★'.repeat(data.bests[i].stars||0)||'✓':' '}</small></button>`).join('')}</div><div class="buttons"><button id="levelsClose">Back</button><button id="newRunBtn">New expedition from 1</button><button id="mapScores">Your best runs</button></div>`);for(const b of $('modal').querySelectorAll('[data-level]'))b.onclick=()=>{const n=Number(b.dataset.level);exitTeacherPreview(false);closeModal();paused=false;run={completed:0,shots:0,time:0,stars:0,level:n,levelShots:0,levelTime:0,collected:[],fromLevel:n};loadLevel(n);initAudio();};$('levelsClose').onclick=()=>{closeModal();if(mode==='won')showWin();};$('mapScores').onclick=showScores;$('newRunBtn').onclick=()=>{closeModal();paused=false;newRun();};}
+function showScores(){if(classroomBlocked())return;showModal('scores',`<div class="eyebrow">Saved on this browser</div><h2 id="modalTitle">Your best runs.</h2><p>Complete expeditions are ranked by fewest shots, then fastest time. These are personal records on this device.</p>${data.runs.length?data.runs.map((r,i)=>`<div class="best-entry">${i+1}. <strong>${r.shots} shots</strong> · ${fmt(r.time)} · ${r.stars} stars</div>`).join(''):'<p>Finish all 20 courses from Level 1 to record your first full expedition.</p>'}<div class="buttons"><button class="primary" id="scoresClose">Back to the course</button></div>`);$('scoresClose').onclick=()=>{closeModal();if(mode==='won')showWin();};}
+function newRun(){if(classroomBlocked())return;exitTeacherPreview(false);run={completed:0,shots:0,time:0,stars:0,level:0,levelShots:0,levelTime:0,collected:[],fromLevel:0};loadLevel(0);initAudio();}
+$('retryBtn').onclick=retry;$('pauseBtn').onclick=showPause;$('helpBtn').onclick=showHelp;$('levelsBtn').onclick=showLevels;$('scoresBtn').onclick=showScores;
+$('soundBtn').onclick=()=>{if(classroomBlocked())return;data.sound=!data.sound;if(data.sound){initAudio();tone(660,.2);}else stopAudio();save();hud();};
+document.addEventListener('keydown',e=>{if(classroomBlocked())return;if(e.key==='Tab'&&modalType){const focusable=[...$('modal').querySelectorAll('button:not(:disabled)')];const a=focusable[0],b=focusable.at(-1);if(e.shiftKey&&document.activeElement===a){e.preventDefault();b.focus();}else if(!e.shiftKey&&document.activeElement===b){e.preventDefault();a.focus();}return;}if(e.key==='Escape'){e.preventDefault();if(aim){cancelAim();return;}if(modalType==='win')return;if(modalType){closeModal();if(mode==='won')showWin();}else showPause();return;}if(modalType||paused||mode!=='ready'||document.activeElement!==canvas)return;if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(e.key)){e.preventDefault();initAudio();keysAiming=true;if(e.key==='ArrowLeft')keyAngle-=.075;if(e.key==='ArrowRight')keyAngle+=.075;if(e.key==='ArrowUp')keyPower=Math.min(1,keyPower+.05);if(e.key==='ArrowDown')keyPower=Math.max(.05,keyPower-.05);power(keyPower);if(e.key===' '&&!e.repeat)launch(keyAngle,keyPower);}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){stopAudio();if(!modalType&&mode!=='won')showPause();}});window.addEventListener('pagehide',()=>{stopAudio();if(mode!=='won'){syncRun();save();}});
+setInterval(()=>{if(!paused&&!modalType&&mode!=='won'){syncRun();save();}},4000);
+setInterval(()=>{if(data.sound&&!paused&&!modalType&&mode!=='won'){initAudio();const notes=[130.81,164.81,196,261.63,196,164.81];tone(notes[noteIndex++%notes.length],1.2,'sine',.014);}},1500);
+
+
+function applyBlackHoleAccess(enabled){
+ if(!enabled){cancelAim();stopAudio();if(!paused&&!modalType&&mode!=='won')showPause();}
+ gameAccessAllowed=enabled;accessKnown=true;
+ $('availabilityOverlay').hidden=enabled;
+ if(!enabled){$('availabilityTitle').textContent='Black Hole is turned off';$('availabilityText').textContent='Your teacher can turn Black Hole on in Activity Availability. You can return Home or check again.';$('accessRetryBtn').hidden=false;}
+ else if(!accessStarted){accessStarted=true;if(!data.bests[0]&&!data.run?.shots)showHelp();}
+}
+async function checkBlackHoleAccess(){
+ if(accessBusy)return;accessBusy=true;$('accessRetryBtn').disabled=true;
+ const loadingNotice=setTimeout(()=>{if(accessBusy&&!accessKnown)$('availabilityOverlay').hidden=false;},450);
+ try{
+  const response=await fetch('/api/settings',{cache:'no-store',credentials:'same-origin'});
+  if(!response.ok)throw Error('Classroom settings are unavailable.');
+  const settings=await response.json();
+  if(!Object.prototype.hasOwnProperty.call(settings,'blackHoleGameActive'))throw Error('Restart the Hands-On Trackpad server to load the Black Hole setting.');
+  const enabled=settings.blackHoleGameActive!==false&&settings.blackHoleGameActive!=='false';
+  try{localStorage.setItem('blackHoleGameActive',String(enabled));}catch{}
+  applyBlackHoleAccess(enabled);
+ }catch(error){
+  if(!accessKnown){gameAccessAllowed=false;$('availabilityOverlay').hidden=false;$('availabilityTitle').textContent='Let’s check the classroom';$('availabilityText').textContent=error.message||'Check your connection and try again.';$('accessRetryBtn').hidden=false;}
+ }finally{clearTimeout(loadingNotice);accessBusy=false;$('accessRetryBtn').disabled=false;}
+}
+$('accessRetryBtn').onclick=checkBlackHoleAccess;
+
+function sharedOverlayVisible(id){
+ const element=$(id);
+ if(!element||element.hidden||element.getAttribute('aria-hidden')==='true')return false;
+ const style=getComputedStyle(element);
+ return style.display!=='none'&&style.visibility!=='hidden'&&style.visibility!=='collapse'&&element.getClientRects().length>0;
+}
+function classroomBlockReason(){
+ if(!gameAccessAllowed)return 'availability';
+ if(document.body.classList.contains('student-screen-frozen')||sharedOverlayVisible('studentFreezeOverlay'))return 'freeze';
+ if(sharedOverlayVisible('trackpadNameOverlay'))return 'name';
+ if(document.hidden)return 'hidden';
+ return '';
+}
+function classroomBlocked(){return classroomBlockReason()!=='';}
+function clone(value){return JSON.parse(JSON.stringify(value));}
+function previewUI(){document.body.classList.toggle('teacher-preview',teacherPreview);$('previewBanner').hidden=!teacherPreview;$('exitPreviewBtn').hidden=!teacherPreview;}
+function exitTeacherPreview(resume=true){if(!teacherPreview||!studentSnapshot)return;cancelAim();stopAudio();const s=studentSnapshot;teacherPreview=false;studentSnapshot=null;data=s.data;run=s.run;index=s.index;level=levels[index];boundaries=segments(level.outline);ball=s.ball;shotCount=s.shotCount;starCount=s.starCount;collected=s.collected;mode=s.mode;levelTime=s.levelTime;resetTimer=s.resetTimer;holesink=s.holesink;keyAngle=s.keyAngle;keyPower=s.keyPower;particles=[];trail=[];modalType='';$('overlay').hidden=true;paused=false;previewUI();hud();caption('Your student course has been restored.');if(resume){if(mode==='won')showWin();else showPause();}}
+function advanceTeacherPreview(){if(classroomBlocked()||index>=levels.length-1)return false;cancelAim();stopAudio();if(!teacherPreview){studentSnapshot={data:clone(data),run:clone(run),index,ball:{...ball},shotCount,starCount,collected:[...collected],mode,levelTime,resetTimer,holesink,keyAngle,keyPower};teacherPreview=true;}modalType='';$('overlay').hidden=true;paused=false;loadLevel(index+1);previewUI();caption('Teacher preview. Practice only; student progress is protected.');return true;}
+function showPreviewWin(){showModal('win',`<div class="eyebrow">Teacher exploration · No student score saved</div><h2 id="modalTitle">Practice course complete.</h2><p>This preview does not unlock student courses or change saved scores.</p><div class="buttons">${index<levels.length-1?'<button class="primary" id="previewNext">Next practice course →</button>':''}<button id="previewExit">Return to student course</button></div>`);if($('previewNext'))$('previewNext').onclick=advanceTeacherPreview;$('previewExit').onclick=()=>exitTeacherPreview(true);}
+$('exitPreviewBtn').onclick=()=>{if(!classroomBlocked())exitTeacherPreview(true);};
+window.trackpadTeacherSkipAdapter=Object.freeze({advance:advanceTeacherPreview});
+window.addEventListener('trackpadStudentNamePromptOpen',()=>{cancelAim();showPause();});
+window.addEventListener('trackpadStudentNameChanged',()=>{cancelAim();exitTeacherPreview(false);showPause();});
+$('homeLink')?.addEventListener('click',()=>{cancelAim();stopAudio();if(!teacherPreview){syncRun();save();}});
+
+loadLevel(index,true);
+checkBlackHoleAccess();
+setInterval(()=>{if(!document.hidden)checkBlackHoleAccess();},8000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkBlackHoleAccess();});
+window.addEventListener('storage',event=>{if(event.key==='blackHoleGameActive'){if(event.newValue==='false')applyBlackHoleAccess(false);checkBlackHoleAccess();}});
+})();
+</script>
+<script src="../../teacher-skip-shared.js"></script>
+</body>
+</html>
