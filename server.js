@@ -13,6 +13,7 @@ const DATA_DIR = path.join(ROOT_DIR, "data");
 const SETTINGS_FILE = path.join(DATA_DIR, "settings.json");
 const { createHoopScoreStore, cleanName: cleanScoreName } = require("./hoop-score-store.js");
 const { createBalloonMazeScoreStore } = require("./balloon-maze-score-store.js");
+const { createFrogPathScoreStore } = require("./frog-path-score-store.js");
 const { createGlobalClassSession } = require("./global-class-session.js");
 
 const SUPABASE_URL =
@@ -344,6 +345,7 @@ const DEFAULT_SETTINGS = {
   turkeyTrotGameActive: true,
   hoopHopperGameActive: true,
   balloonMazeGameActive: true,
+  frogsFindThePathGameActive: true,
   colorPumpGameActive: true,
   balloonMazeShowTopScores: true,
   balloonMazeShowScoreNames: true,
@@ -1040,6 +1042,7 @@ function loadSettings() {
       turkeyTrotGameActive: parseTaskEnabled(data.turkeyTrotGameActive, true),
       hoopHopperGameActive: parseTaskEnabled(data.hoopHopperGameActive, true),
       balloonMazeGameActive: parseTaskEnabled(data.balloonMazeGameActive, true),
+      frogsFindThePathGameActive: parseTaskEnabled(data.frogsFindThePathGameActive, true),
       colorPumpGameActive: parseTaskEnabled(data.colorPumpGameActive, true),
       balloonMazeShowTopScores: parseTaskEnabled(data.balloonMazeShowTopScores, true),
       balloonMazeShowScoreNames: parseTaskEnabled(data.balloonMazeShowScoreNames, true),
@@ -1476,6 +1479,7 @@ function saveSettings(settings) {
     turkeyTrotGameActive: parseTaskEnabled(settings.turkeyTrotGameActive ?? existing.turkeyTrotGameActive, true),
     hoopHopperGameActive: parseTaskEnabled(settings.hoopHopperGameActive ?? existing.hoopHopperGameActive, true),
     balloonMazeGameActive: parseTaskEnabled(settings.balloonMazeGameActive ?? existing.balloonMazeGameActive, true),
+    frogsFindThePathGameActive: parseTaskEnabled(settings.frogsFindThePathGameActive ?? existing.frogsFindThePathGameActive, true),
     colorPumpGameActive: parseTaskEnabled(settings.colorPumpGameActive ?? existing.colorPumpGameActive, true),
     balloonMazeShowTopScores: parseTaskEnabled(settings.balloonMazeShowTopScores ?? existing.balloonMazeShowTopScores, true),
     balloonMazeShowScoreNames: parseTaskEnabled(settings.balloonMazeShowScoreNames ?? existing.balloonMazeShowScoreNames, true),
@@ -1701,6 +1705,9 @@ function serveFile(reqPath, res) {
   const normalizedPath = path.normalize(decodedPath).replace(/^\.+/, "");
   const filePath = path.join(ROOT_DIR, normalizedPath);
 
+  if (path.dirname(filePath) === DATA_DIR && path.basename(filePath).startsWith("frog-path-results")) {
+    res.writeHead(403); res.end("Forbidden"); return;
+  }
   if (path.dirname(filePath) === DATA_DIR && (path.basename(filePath).startsWith("hoop-hopper-scores") || path.basename(filePath).startsWith("game-scores-"))) {
     res.writeHead(403); res.end("Forbidden"); return;
   }
@@ -1742,6 +1749,11 @@ ensureSettingsFile();
 const globalClassSession = createGlobalClassSession({supabase,dataDir:DATA_DIR});
 const classroomScoreStores = new Map();
 const balloonStores = new Map();
+const frogStores = new Map();
+function frogStore(sessionId){
+ if(!frogStores.has(sessionId))frogStores.set(sessionId,createFrogPathScoreStore({supabase,dataDir:DATA_DIR,classSession:sessionId}));
+ return frogStores.get(sessionId);
+}
 function sharedStore(gameKey,sessionId){
  const key=sessionId+'|'+gameKey;
  if(!classroomScoreStores.has(key))classroomScoreStores.set(key,createHoopScoreStore({supabase,dataDir:DATA_DIR,gameKey,classSession:sessionId}));
@@ -1768,6 +1780,31 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (requestUrl.pathname === "/api/frog-path-scores") {
+    let classSession;try{classSession=(await globalClassSession.read()).sessionId;}catch{sendJson(res,503,{error:"Class session unavailable."});return;}
+    const frogPathScoreStore=frogStore(classSession);
+    if (req.method === "DELETE") {
+      if(!(await requireTeacher(req,res)))return;
+      try {const doc=await frogPathScoreStore.reset();sendJson(res,200,{reset:true,sessionId:doc.sessionId});}
+      catch(error){sendJson(res,503,{error:"Score reset unavailable."});}
+      return;
+    }
+    if (req.method !== "GET" && req.method !== "POST") { res.writeHead(405, {Allow:"GET, POST, DELETE"}); res.end("Method not allowed"); return; }
+    try {
+      const body=req.method === "POST"?JSON.parse((await readRequestBody(req)) || "{}"):null;
+      if(body&&body.classSession!==classSession){sendJson(res,409,{error:"Class session changed."});return;}
+      const accessOptions = supabase ? await loadSettingsFromSupabase() : loadSettings();
+      if (body && accessOptions.frogsFindThePathGameActive === false) {sendJson(res,403,{error:"This game is disabled."});return;}
+      const doc = body ? await frogPathScoreStore.submit(body) : await frogPathScoreStore.read();
+      const options = supabase ? await loadSettingsFromSupabase() : loadSettings();
+      const show = options.hoopHopperShowTopScores === true;
+      const showNames = show && options.hoopHopperShowScoreNames === true;
+      const scores = show ? frogPathScoreStore.leaderboard(doc).map(v=>showNames?v:{levels:v.levels,attempts:v.attempts,totalMs:v.totalMs}) : [];
+      sendJson(res,200,{show,showNames,scores,sessionId:doc.sessionId,classSession});
+    } catch(error) { sendJson(res,error.status===409?409:error.status===400||error instanceof SyntaxError?400:503,{error:error.status===400?"Invalid result.":"Scores temporarily unavailable."}); }
+    return;
+  }
+
   if (requestUrl.pathname === "/api/balloon-maze-scores") {
     let classSession;try{classSession=(await globalClassSession.read()).sessionId;}catch{sendJson(res,503,{error:"Class session unavailable."});return;}
     const balloonMazeScoreStore=balloonStore(classSession);
@@ -1785,7 +1822,7 @@ const server = http.createServer(async (req, res) => {
       const options = supabase ? await loadSettingsFromSupabase() : loadSettings();
       const show = options.hoopHopperShowTopScores === true;
       const showNames = show && options.hoopHopperShowScoreNames === true;
-      const scores = show ? balloonMazeScoreStore.leaderboard(doc).map(v=>showNames?v:{levels:v.levels,totalMs:v.totalMs}) : [];
+      const scores = show ? balloonMazeScoreStore.leaderboard(doc).map(v=>showNames?v:{levels:v.levels,attempts:v.attempts,totalMs:v.totalMs}) : [];
       sendJson(res,200,{show,showNames,scores,sessionId:doc.sessionId,classSession});
     } catch(error) { sendJson(res,error.status===409?409:error.status===400||error instanceof SyntaxError?400:503,{error:error.status===400?"Invalid result.":"Scores temporarily unavailable."}); }
     return;

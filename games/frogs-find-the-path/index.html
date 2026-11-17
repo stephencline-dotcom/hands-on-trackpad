@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Frogs Find the Path</title><link rel="stylesheet" href="../../freeze-screen.css"><link rel="stylesheet" href="style.css?v=1"></head>
+<body data-game-active-key="frogsFindThePathGameActive">
+<header class="topbar"><a class="home-link" href="../../index.html">⌂ Home</a><div class="brand"><span>THE MEMORY POND</span><h1>Frogs Find the Path</h1></div><div class="game-header-controls"><button id="sound" aria-label="Turn sound off" aria-pressed="true">Sound on</button><button id="levels">Levels</button><button id="pause">Pause</button></div></header>
+<main>
+<div class="trail-hud"><div><span class="eyebrow">YOUR JOURNEY</span><strong id="levelLabel">Pond 1 / 45</strong></div><div class="instruction"><strong id="instruction">A little frog. A big adventure.</strong><span id="hint">Watch the path. Remember. Hop home!</span></div><div class="attempt"><span class="eyebrow" id="attemptTitle">THIS POND</span><strong id="attemptLabel">Ready to hop</strong></div></div>
+<div class="pond-layout"><section class="pond-stage" aria-label="Memory pond game">
+<canvas id="pond" width="1000" height="800" role="img" aria-label="Pond with a frog, a hidden path, and a home"></canvas>
+<div id="targets" role="group" aria-label="Pond squares"></div>
+<div class="preview-clock" id="previewClock" hidden><span id="previewText">Remember the path</span><div><i id="previewFill"></i></div></div>
+<div class="modal-shade" id="shade"><section class="pond-dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle"><span class="dialog-icon" id="dialogIcon" aria-hidden="true">🐸</span><p class="eyebrow" id="dialogTag">WELCOME TO THE MEMORY POND</p><h2 id="dialogTitle">Let's hop home!</h2><p id="dialogText">Watch the safe path, then click each next square to help your frog get home.</p><div class="dialog-actions"><button id="primary" class="primary">Start playing</button><button id="secondary" hidden>Choose a pond</button></div></section></div>
+<section id="levelPanel" class="level-panel" hidden aria-label="Choose a pond"><div><h2>Choose your pond</h2><button id="closeLevels" aria-label="Close pond selection">✕</button></div><p>Finish a pond to unlock the next one.</p><div id="levelGrid"></div></section>
+</section>
+<aside id="leaderboard" hidden aria-label="Classroom top three"><span class="eyebrow">THE POND PODIUM</span><h2>Classroom Top 3</h2><p>Highest level, then fastest total time</p><ol id="leaders"></ol><small>Total time adds up your best successful time for each completed pond.</small></aside></div>
+<footer><span id="progressLabel">45 ponds to explore</span><span>Look closely · Remember the turns · Click to hop</span></footer><p class="sr-only" role="status" aria-live="polite" id="announcement"></p>
+</main>
+<script src="../../freeze-screen.js"></script><script src="../../input-device-guard.js"></script><script src="../../game-results-store.js"></script><script src="core.js?v=1"></script><script src="score-client.js?v=2-time"></script><script src="frog-audio.js?v=1"></script><script src="game.js?v=3-audio"></script><script src="../../teacher-skip-shared.js"></script>
+</body></html>

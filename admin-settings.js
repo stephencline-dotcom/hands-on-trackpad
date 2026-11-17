@@ -36,6 +36,7 @@ const tractorJobCrewGameActiveToggle = document.getElementById("tractorJobCrewGa
 const turkeyTrotGameActiveToggle = document.getElementById("turkeyTrotGameActive");
 const hoopHopperGameActiveToggle = document.getElementById("hoopHopperGameActive");
 const balloonMazeGameActiveToggle = document.getElementById("balloonMazeGameActive");
+const frogsFindThePathGameActiveToggle = document.getElementById("frogsFindThePathGameActive");
 const colorPumpGameActiveToggle = document.getElementById("colorPumpGameActive");
 const goldenDotGameActiveToggle = document.getElementById("goldenDotGameActive");
 const zigZagGameActiveToggle = document.getElementById("zigZagGameActive");
@@ -1855,6 +1856,7 @@ function applyProgressivePresets() {
   if (turkeyTrotGameActiveToggle) turkeyTrotGameActiveToggle.checked = true;
   if (hoopHopperGameActiveToggle) hoopHopperGameActiveToggle.checked = true;
   if (balloonMazeGameActiveToggle) balloonMazeGameActiveToggle.checked = true;
+  if (frogsFindThePathGameActiveToggle) frogsFindThePathGameActiveToggle.checked = true;
   if (goldenDotGameActiveToggle) goldenDotGameActiveToggle.checked = true;
   if (zigZagGameActiveToggle) zigZagGameActiveToggle.checked = true;
   if (fullscreenGameActiveToggle) fullscreenGameActiveToggle.checked = true;
@@ -2657,6 +2659,7 @@ async function loadTask1Settings() {
   let turkeyTrotGameActive = parseTaskEnabled(localStorage.getItem("turkeyTrotGameActive"), true);
   let hoopHopperGameActive = parseTaskEnabled(localStorage.getItem("hoopHopperGameActive"), true);
   let balloonMazeGameActive = parseTaskEnabled(localStorage.getItem("balloonMazeGameActive"), true);
+  let frogsFindThePathGameActive = parseTaskEnabled(localStorage.getItem("frogsFindThePathGameActive"), true);
   let colorPumpGameActive = parseTaskEnabled(localStorage.getItem("colorPumpGameActive"), true);
 let goldenDotGameActive = parseTaskEnabled(localStorage.getItem("goldenDotGameActive"), true);
   let zigZagGameActive = parseTaskEnabled(localStorage.getItem("zigZagGameActive"), true);
@@ -3150,12 +3153,14 @@ let goldenDotGameActive = parseTaskEnabled(localStorage.getItem("goldenDotGameAc
       turkeyTrotGameActive = parseTaskEnabled(data.turkeyTrotGameActive, turkeyTrotGameActive);
       hoopHopperGameActive = parseTaskEnabled(data.hoopHopperGameActive, hoopHopperGameActive);
       balloonMazeGameActive = parseTaskEnabled(data.balloonMazeGameActive, balloonMazeGameActive);
+      frogsFindThePathGameActive = parseTaskEnabled(data.frogsFindThePathGameActive, frogsFindThePathGameActive);
       colorPumpGameActive = parseTaskEnabled(data.colorPumpGameActive, colorPumpGameActive);
   goldenDotGameActive = parseTaskEnabled(data.goldenDotGameActive, goldenDotGameActive);
       zigZagGameActive = parseTaskEnabled(data.zigZagGameActive, zigZagGameActive);
       localStorage.setItem("turkeyTrotGameActive", String(turkeyTrotGameActive));
       localStorage.setItem("hoopHopperGameActive", String(hoopHopperGameActive));
       localStorage.setItem("balloonMazeGameActive", String(balloonMazeGameActive));
+      localStorage.setItem("frogsFindThePathGameActive", String(frogsFindThePathGameActive));
   localStorage.setItem("colorPumpGameActive", String(colorPumpGameActive));
       localStorage.setItem("colorPumpGameActive", String(colorPumpGameActive));
   localStorage.setItem("goldenDotGameActive", String(goldenDotGameActive));
@@ -3520,6 +3525,7 @@ let goldenDotGameActive = parseTaskEnabled(localStorage.getItem("goldenDotGameAc
   if (turkeyTrotGameActiveToggle) turkeyTrotGameActiveToggle.checked = turkeyTrotGameActive;
   if (hoopHopperGameActiveToggle) hoopHopperGameActiveToggle.checked = hoopHopperGameActive;
   if (balloonMazeGameActiveToggle) balloonMazeGameActiveToggle.checked = balloonMazeGameActive;
+  if (frogsFindThePathGameActiveToggle) frogsFindThePathGameActiveToggle.checked = frogsFindThePathGameActive;
   if (colorPumpGameActiveToggle) colorPumpGameActiveToggle.checked = colorPumpGameActive;
   if (goldenDotGameActiveToggle) goldenDotGameActiveToggle.checked = goldenDotGameActive;
   if (zigZagGameActiveToggle) zigZagGameActiveToggle.checked = zigZagGameActive;
@@ -3855,12 +3861,14 @@ async function saveTask1Settings() {
   const turkeyTrotGameActive = Boolean(turkeyTrotGameActiveToggle?.checked);
   const hoopHopperGameActive = Boolean(hoopHopperGameActiveToggle?.checked);
   const balloonMazeGameActive = Boolean(balloonMazeGameActiveToggle?.checked);
+  const frogsFindThePathGameActive = Boolean(frogsFindThePathGameActiveToggle?.checked);
   const colorPumpGameActive = Boolean(colorPumpGameActiveToggle?.checked);
   const goldenDotGameActive = Boolean(goldenDotGameActiveToggle?.checked);
   const zigZagGameActive = Boolean(zigZagGameActiveToggle?.checked);
   localStorage.setItem("turkeyTrotGameActive", String(turkeyTrotGameActive));
   localStorage.setItem("hoopHopperGameActive", String(hoopHopperGameActive));
   localStorage.setItem("balloonMazeGameActive", String(balloonMazeGameActive));
+  localStorage.setItem("frogsFindThePathGameActive", String(frogsFindThePathGameActive));
   localStorage.setItem("colorPumpGameActive", String(colorPumpGameActive));
   localStorage.setItem("goldenDotGameActive", String(goldenDotGameActive));
   localStorage.setItem("zigZagGameActive", String(zigZagGameActive));
@@ -4626,6 +4634,7 @@ async function saveTask1Settings() {
         turkeyTrotGameActive,
         hoopHopperGameActive,
         balloonMazeGameActive,
+        frogsFindThePathGameActive,
         colorPumpGameActive,
         goldenDotGameActive,
         goldenDotHitsGoal: Math.min(50,Math.max(5,Math.round(Number(goldenDotHitsGoalInput?.value)||50))),
@@ -4974,6 +4983,7 @@ const allToggles = [
   teacherSkipLevelEnabledToggle,
   hoopHopperGameActiveToggle,
   balloonMazeGameActiveToggle,
+  frogsFindThePathGameActiveToggle,
   colorPumpGameActiveToggle,
   goldenDotGameActiveToggle,
   studentHomeButtonEnabledToggle,
