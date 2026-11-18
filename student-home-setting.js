@@ -61,17 +61,20 @@
         fetch('/api/teacher-session',{credentials:'same-origin',cache:'no-store'})
       ]);
       if(settingsResult.status==='fulfilled'&&settingsResult.value.ok){
-        const settings=await settingsResult.value.json();enabled=settings[KEY]!==false;
-        try{localStorage.setItem(KEY,String(enabled));}catch{}
+        try{const settings=await settingsResult.value.json();if(typeof settings?.[KEY]==='boolean'){enabled=settings[KEY];try{localStorage.setItem(KEY,String(enabled));}catch{}}}catch{/* Preserve the last confirmed Home policy. */}
       }
-      teacher=false;
-      if(sessionResult.status==='fulfilled'&&sessionResult.value.ok){
-        const session=await sessionResult.value.json();teacher=session.authenticated===true;
+      if(sessionResult.status==='fulfilled'){
+        const response=sessionResult.value,type=response.headers.get('content-type')||'';
+        if(!response.redirected&&type.toLowerCase().includes('application/json')){
+          const session=await response.json();
+          if(response.ok&&session?.authenticated===true)teacher=true;
+          else if(response.status===401&&session?.authenticated===false)teacher=false;
+        }
       }
-    }catch{teacher=false;}
+    }catch{/* A failed check does not change the last confirmed identity. */}
     finally{pending=false;busy=false;apply();}
   }
-  const interval=setInterval(refresh,3000);
+  const interval=setInterval(refresh,15000+Math.floor(Math.random()*1500));
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
   window.addEventListener('pageshow',refresh);
   window.addEventListener('pagehide',event=>{if(!event.persisted){stopped=true;clearInterval(interval);observer.disconnect();}},{once:true});

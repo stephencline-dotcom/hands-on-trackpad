@@ -32,7 +32,7 @@ function blockInput(e){
  if(!locked&&shared.freezeScreenFeatureEnabled&&shared.freezeScreenArmed&&e.pointerType!=='touch'&&performance.now()-armedAt>=650&&(e.type==='pointermove'||e.type==='pointerdown'))lock();
  if(locked){e.preventDefault();e.stopImmediatePropagation();}
 }
-async function read(url){const id=++issued,response=await fetch(url,{cache:'no-store'});if(!response.ok)throw Error('Could not read Freeze controls.');const data=await response.json();applyShared(data,id);return data;}
+async function read(url){const id=++issued,controller=new AbortController(),timeout=window.setTimeout(()=>controller.abort(),7000);try{const response=await fetch(url,{cache:'no-store',signal:controller.signal});if(!response.ok||response.redirected)throw Error('Could not read Freeze controls.');const data=await response.json();if(typeof data?.freezeScreenFeatureEnabled!=='boolean'||typeof data?.freezeScreenArmed!=='boolean')throw Error('Unconfirmed classroom state.');applyShared(data,id);return data;}finally{window.clearTimeout(timeout);}}
 async function poll(){if(stopped||inFlight||busy||document.hidden)return;inFlight=true;try{await read(STATE);}catch{/* Keep the last confirmed classroom state while offline. */}finally{inFlight=false;}}
 async function change(url,body){
  if(busy||stopped||!teacher)return false;
@@ -44,11 +44,11 @@ async function change(url,body){
 function timeText(){const seconds=Math.max(0,Math.ceil((remainingAt-performance.now())/1000));return Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0');}
 function render(){
  if(!ui)return;
- const enabled=shared.freezeScreenFeatureEnabled,armed=shared.freezeScreenArmed,running=shared.freezeTimerEndsAt!==null;
+ const enabled=shared.freezeScreenFeatureEnabled&&authHealthy,armed=shared.freezeScreenArmed,running=shared.freezeTimerEndsAt!==null;
  ui.freeze.disabled=busy||!enabled;ui.freeze.classList.toggle('is-armed',armed);ui.freeze.classList.toggle('is-off',!armed);ui.freeze.setAttribute('aria-pressed',String(armed));ui.freeze.setAttribute('aria-label',armed?'Release class':'Arm Freeze Screen');ui.freeze.title=armed?'Release class':'Arm Freeze Screen';
  ui.clock.classList.toggle('has-countdown',running);ui.readout.hidden=!running;ui.readout.textContent=running?timeText():'';ui.clock.title=running?'Freeze in '+timeText()+' — timer controls':'Freeze timer';ui.clock.setAttribute('aria-label',ui.clock.title);
  ui.display.textContent=running?timeText():shared.freezeScreenImmediate?'Class frozen':armed?'Freeze armed':'Ready';
- ui.start.disabled=busy||!enabled||!timerSupported;ui.cancel.disabled=busy||!running;ui.release.disabled=busy||(!armed&&!running);ui.logout.disabled=busy;ui.minutes.disabled=ui.seconds.disabled=busy;
+ ui.start.disabled=busy||!enabled||!timerSupported;ui.cancel.disabled=busy||!authHealthy||!running;ui.release.disabled=busy||!authHealthy||(!armed&&!running);ui.logout.disabled=busy||!authHealthy;ui.minutes.disabled=ui.seconds.disabled=busy;
  ui.status.classList.toggle('is-error',!!errorText);
  ui.status.textContent=errorText||(!timerSupported?'Restart the Node server, then refresh to use the timer.':!enabled?'Enable Freeze Screen in Teacher Settings first.':shared.freezeScreenImmediate?'Time is up. Student screens are frozen.':running?'The class will freeze automatically when this reaches zero.':armed?'Freeze is armed. Use Release class when you are ready.':'Set working time, then start. Starting a timer releases the class until time is up.');
 }
@@ -80,12 +80,12 @@ function buildTeacherControls(){
   if(!teacher||busy)return false;
   // Keep the teacher session if release fails; never redirect a teacher into a locked student screen.
   if(!await change(SETTINGS,{freezeScreenArmed:false}))return false;
-  try { const r=await fetch("/api/teacher-session",{method:"DELETE"});if(!r.ok)throw Error("Logout failed"); } catch { errorText="Could not complete logout. Try again.";render();return false; }
+  try { const r=await fetch("/api/teacher-session",{method:"DELETE",credentials:"same-origin",headers:{Accept:"application/json"}});if(!r.ok||r.redirected||!(r.headers.get("content-type")||"").toLowerCase().includes("application/json"))throw Error("Logout failed");const result=await r.json();if(result?.authenticated!==false)throw Error("Logout failed"); } catch { errorText="Could not complete logout. Try again.";render();return false; }
   stopped=true;window.clearInterval(pollHandle);window.clearInterval(drawHandle);window.clearInterval(heartbeatHandle);sessionStorage.removeItem(TEACHER);sessionStorage.removeItem(ARMED);unlock();window.location.assign(homeURL);return true;
  }
  window.handsOnTrackpadTeacherLogout=logoutTeacher;logout.addEventListener('click',logoutTeacher);render();
 }
-let authCheckBusy=false;
+let authCheckBusy=false,heartbeatBusy=false,authHealthy=false;
 let authRetryHandle=null;
 let inputBlockerInstalled=false;
 let authGeneration=0;
@@ -135,45 +135,44 @@ function expireTeacher(){
  errorText='';
 }
 
+// Only the application's JSON authentication response can invalidate a login.
+async function requestAuth(method='GET'){
+ const controller=new AbortController(),timeout=window.setTimeout(()=>controller.abort(),7000);
+ try{
+  const response=await fetch('/api/teacher-session',{method,credentials:'same-origin',cache:'no-store',headers:{Accept:'application/json'},signal:controller.signal});
+  const type=response.headers.get('content-type')||'';
+  if(response.redirected||response.headers.get('cf-mitigated')==='challenge'||!type.toLowerCase().includes('application/json'))throw Error('Authentication check temporarily unavailable');
+  const data=await response.json();
+  if(response.ok&&data?.authenticated===true)return true;
+  if(response.status===401&&(data?.authenticated===false||method==='PUT'&&data?.error==='Teacher session expired. Log in again.'))return false;
+  throw Error('Authentication check temporarily unavailable');
+ }finally{window.clearTimeout(timeout);}
+}
+function connectionInterrupted(){
+ authHealthy=false;
+ errorText='Connection interrupted. Your login is kept; retrying…';
+ render();
+}
+async function heartbeatTick(){
+ if(stopped||!teacher||document.hidden||heartbeatBusy)return;
+ heartbeatBusy=true;const generation=authGeneration;
+ try{
+  const valid=await requestAuth('PUT');
+  if(stopped||generation!==authGeneration)return;
+  if(!valid){expireTeacher();return;}
+  authHealthy=true;errorText='';render();
+ }catch{if(!stopped&&generation===authGeneration)connectionInterrupted();}
+ finally{heartbeatBusy=false;}
+}
 function startTeacherHeartbeat(){
- if(heartbeatHandle!==null)return;
-
- heartbeatHandle=window.setInterval(async()=>{
-  if(stopped||!teacher||document.hidden)return;
-
-  const generation=authGeneration;
-
-  try{
-   const response=await fetch('/api/teacher-session',{
-    method:'PUT',
-    cache:'no-store'
-   });
-
-   if(stopped||generation!==authGeneration)return;
-
-   if(response.status===401){
-    expireTeacher();
-    return;
-   }
-
-   if(!response.ok){
-    deactivateTeacher();
-    return;
-   }
-
-   errorText='';
-   render();
-  }catch{
-   if(stopped||generation!==authGeneration)return;
-   deactivateTeacher();
-  }
- },5000);
+ if(heartbeatHandle===null)heartbeatHandle=window.setInterval(heartbeatTick,5000);
 }
 
 function activateTeacher(){
  if(stopped||teacher)return;
 
  teacher=true;
+ authHealthy=true;
  authGeneration++;
  errorText='';
  unlock();
@@ -195,24 +194,9 @@ async function verifyTeacher(){
  authCheckBusy=true;
 
  try{
-  const response=await fetch('/api/teacher-session',{
-   cache:'no-store'
-  });
-
+  const valid=await requestAuth();
   if(stopped)return;
-
-  if(response.status===401){
-   expireTeacher();
-   return;
-  }
-
-  if(!response.ok)return;
-
-  const result=await response.json();
-
-  if(stopped)return;
-
-  if(result.authenticated===true){
+  if(valid){
    activateTeacher();
    try{
     await read(SETTINGS);
@@ -252,7 +236,7 @@ async function initialize(){
   }
  }
 
- pollHandle=window.setInterval(poll,500);
+ pollHandle=window.setInterval(poll,1000);
 
  function startAuthRetry(){
   if(authRetryHandle!==null)return;

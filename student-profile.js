@@ -27,7 +27,9 @@
   if(button){button.hidden=!enabled||teacher!==false;button.textContent=getName()?`Name: ${getName()}`:'Name';button.title=getName()?'Change your saved name':'Enter your name';}
  }
  function configure(settings){enabled=settings?.studentNameEntryEnabled===true;syncButton();if(!enabled){if(prompt&&!prompt.hidden)close();return;}if(teacher===false&&!getName()&&(!prompt||prompt.hidden)&&!document.getElementById('studentNameInput'))edit();}
- async function refresh(){try{const [s,t]=await Promise.allSettled([fetch('/api/settings',{cache:'no-store',credentials:'same-origin'}),fetch('/api/teacher-session',{cache:'no-store',credentials:'same-origin'})]);if(t.status==='fulfilled'){teacher=t.value.ok&&(await t.value.json()).authenticated===true;}else{teacher=null;}if(s.status==='fulfilled'&&s.value.ok)configure(await s.value.json());else syncButton();}catch{teacher=null;syncButton();}}
+ let refreshBusy=false;
+ async function refresh(){if(refreshBusy)return;refreshBusy=true;try{const [s,t]=await Promise.allSettled([fetch('/api/settings',{cache:'no-store',credentials:'same-origin'}),fetch('/api/teacher-session',{cache:'no-store',credentials:'same-origin'})]);if(t.status==='fulfilled'){const response=t.value,type=response.headers.get('content-type')||'';if(!response.redirected&&type.toLowerCase().includes('application/json')){const result=await response.json();if(response.ok&&result?.authenticated===true)teacher=true;else if(response.status===401&&result?.authenticated===false)teacher=false;}}if(s.status==='fulfilled'&&s.value.ok)configure(await s.value.json());else syncButton();}catch{syncButton();}finally{refreshBusy=false;}}
+
  window.trackpadStudentProfile=Object.freeze({getName,getStudentId,edit,configure,refresh});
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
  window.addEventListener('storage',event=>{if(event.key===KEY)syncButton();});
