@@ -4714,6 +4714,7 @@ async function saveTask1Settings() {
         ...window.HarvestHeroesSettings.snapshot(),
         ...window.PumpkinStudioSettings.snapshot(),
         ...window.TurkeyStudioSettings.snapshot(),
+        ...window.HouseStudioSettings.snapshot(),
         ...window.ThreeLittlePigsSettings.snapshot(),
         ...window.SheepRoundupSettings.snapshot(),
         ...window.GameInputSettings.snapshot(),
