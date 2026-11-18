@@ -5,7 +5,7 @@ const toolbar=document.createElement('div');toolbar.className='playground-tools'
 document.querySelector('.finish-tools').insertBefore(toolbar, document.getElementById('save'));
 const panel=document.createElement('section');panel.className='playground-panel';panel.hidden=true;panel.setAttribute('aria-label','Creative playground');$('stage').parentElement.append(panel);
 let boothStyle=0,boothOpen=false;
-function closePanel(){if(typeof stopBooth==='function')stopBooth();panel.classList.remove('boardwalk-active','boardwalk-shooting','boardwalk-finished');panel.hidden=true;panel.innerHTML='';boothOpen=false;document.body.classList.remove('booth-open');boothLastFocus?.focus?.();}
+function closePanel(){if(typeof stopBooth==='function')stopBooth();panel.classList.remove('boardwalk-active','boardwalk-shooting','boardwalk-finished');panel.hidden=true;panel.innerHTML='';boothOpen=false;if(document.body.classList.contains('booth-open'))document.body.classList.remove('booth-open');boothLastFocus?.focus?.();}
 function showPanel(html){panel.innerHTML=html;panel.hidden=false;document.body.classList.add('booth-open');panel.querySelector('[data-close]')?.addEventListener('click',closePanel);}
 panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-label','Turkey Photo Booth');
 const shade=document.createElement('div');shade.className='playground-shade';shade.addEventListener('click',closePanel);document.body.append(shade);
