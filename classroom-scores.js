@@ -3,7 +3,7 @@
  'use strict';
  if(window.classroomScores||/\/(?:admin(?:-settings)?|teacher)\.html$/i.test(location.pathname))return;
  const STORE='classroom-score-outbox-v1',NAME='moving-sound-student-name-v1';
- const titles={'car-game':'Car Game','deer-run':'Deer Run','bug-meadow':'Bug Meadow','haunted-street':'Haunted Street','monster-lunch':'Monster Lunch','firefly-forest':'Firefly Forest','sense-rescue':'Sense Rescue','follow-bird-moving':'Follow the Bird · Moving','follow-bird-clicking':'Follow the Bird · Clicking','light-tap':'Light Tap','street-car':'Street Car','dragon-dodge':'Dragon Dodge','firefighter-rescue':'Firefighter Rescue','martian-madness':'Martian Madness'};
+ const titles={'in-orbit':'In Orbit','car-game':'Car Game','deer-run':'Deer Run','bug-meadow':'Bug Meadow','haunted-street':'Haunted Street','monster-lunch':'Monster Lunch','firefly-forest':'Firefly Forest','sense-rescue':'Sense Rescue','follow-bird-moving':'Follow the Bird · Moving','follow-bird-clicking':'Follow the Bird · Clicking','light-tap':'Light Tap','street-car':'Street Car','dragon-dodge':'Dragon Dodge','firefighter-rescue':'Firefighter Rescue','martian-madness':'Martian Madness'};
  for(let i=0;i<4;i++)titles['zig-zag-trail-'+i]='Zig Zag Trail · Trail '+(i+1);
  titles['golden-dot']='Golden Dot · Level & stars';
  const screens={'light-tap':'#gameScreen','street-car':'#carGameScreen','dragon-dodge':'#dragonGameScreen','firefighter-rescue':'#fireGameScreen','martian-madness':'#martianGameScreen'};
@@ -35,6 +35,7 @@
  const style=document.createElement('style');style.textContent='.classroom-score-board[hidden]{display:none!important}.classroom-score-board{position:absolute;top:8px;right:8px;z-index:25;pointer-events:none;width:min(290px,calc(100% - 16px));box-sizing:border-box;padding:8px 11px;border:1px solid #a5deedaa;border-radius:12px;background:#09253dec;color:white;box-shadow:0 3px 14px #0004;font-family:system-ui;line-height:1.25}.classroom-score-title{font-size:9px;font-weight:750;color:#a6dfef;letter-spacing:.5px;margin-bottom:5px}.classroom-score-board ol{list-style:none;margin:0;padding:0;display:grid;gap:3px}.classroom-score-board li{display:grid;grid-template-columns:16px minmax(0,1fr) auto;align-items:center;gap:7px}.classroom-score-rank{font-size:11px;color:#a9ccdf}.classroom-score-name{font-size:16px;font-weight:850;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.classroom-score-number{font-size:16px;font-weight:800;color:#ffe395;font-variant-numeric:tabular-nums}';document.head.append(style);
  const path=location.pathname;
  if(path.includes('moving-sound-mini-game'))active=({light:'light-tap',car:'street-car',dragon:'dragon-dodge',fire:'firefighter-rescue',martian:'martian-madness'})[new URLSearchParams(location.search).get('game')]||'light-tap';
+ else if(path.includes('/games/in-orbit/'))active='in-orbit';
  else if(path.endsWith('/car.html'))active='car-game';
  else if(path.endsWith('/follow-the-bird.html'))active='follow-bird-moving';
  else for(const key of ['deer-run','bug-meadow','haunted-street','monster-lunch','firefly-forest','sense-builder','zig-zag-trail','golden-dot'])if(path.includes('/games/'+key+'/'))active=key==='sense-builder'?'sense-rescue':key==='zig-zag-trail'?'zig-zag-trail-0':key==='golden-dot'?'golden-dot':key;

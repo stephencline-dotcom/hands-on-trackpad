@@ -347,6 +347,7 @@ const DEFAULT_SETTINGS = {
   balloonMazeGameActive: true,
   frogsFindThePathGameActive: true,
   blackHoleGameActive: true,
+  inOrbitGameActive: true,
   colorPumpGameActive: true,
   balloonMazeShowTopScores: true,
   balloonMazeShowScoreNames: true,
@@ -1045,6 +1046,7 @@ function loadSettings() {
       balloonMazeGameActive: parseTaskEnabled(data.balloonMazeGameActive, true),
       frogsFindThePathGameActive: parseTaskEnabled(data.frogsFindThePathGameActive, true),
       blackHoleGameActive: parseTaskEnabled(data.blackHoleGameActive, true),
+      inOrbitGameActive: parseTaskEnabled(data.inOrbitGameActive, true),
       colorPumpGameActive: parseTaskEnabled(data.colorPumpGameActive, true),
       balloonMazeShowTopScores: parseTaskEnabled(data.balloonMazeShowTopScores, true),
       balloonMazeShowScoreNames: parseTaskEnabled(data.balloonMazeShowScoreNames, true),
@@ -1483,6 +1485,7 @@ function saveSettings(settings) {
     balloonMazeGameActive: parseTaskEnabled(settings.balloonMazeGameActive ?? existing.balloonMazeGameActive, true),
     frogsFindThePathGameActive: parseTaskEnabled(settings.frogsFindThePathGameActive ?? existing.frogsFindThePathGameActive, true),
     blackHoleGameActive: parseTaskEnabled(settings.blackHoleGameActive ?? existing.blackHoleGameActive, true),
+    inOrbitGameActive: parseTaskEnabled(settings.inOrbitGameActive ?? existing.inOrbitGameActive, true),
     colorPumpGameActive: parseTaskEnabled(settings.colorPumpGameActive ?? existing.colorPumpGameActive, true),
     balloonMazeShowTopScores: parseTaskEnabled(settings.balloonMazeShowTopScores ?? existing.balloonMazeShowTopScores, true),
     balloonMazeShowScoreNames: parseTaskEnabled(settings.balloonMazeShowScoreNames ?? existing.balloonMazeShowScoreNames, true),
@@ -1766,7 +1769,7 @@ function balloonStore(sessionId){
  if(!balloonStores.has(sessionId))balloonStores.set(sessionId,createBalloonMazeScoreStore({supabase,dataDir:DATA_DIR,classSession:sessionId}));
  return balloonStores.get(sessionId);
 }
-const scoredGames = new Set(['color-pump','hoop-hopper','car-game','deer-run','bug-meadow','haunted-street','monster-lunch','firefly-forest','sense-rescue','follow-bird-clicking','follow-bird-moving','light-tap','street-car','dragon-dodge','firefighter-rescue','martian-madness','golden-dot',...Array.from({length:4},(_,i)=>'zig-zag-trail-'+i),...Array.from({length:30},(_,i)=>'golden-dot-'+(i+1))]);
+const scoredGames = new Set(['in-orbit','color-pump','hoop-hopper','car-game','deer-run','bug-meadow','haunted-street','monster-lunch','firefly-forest','sense-rescue','follow-bird-clicking','follow-bird-moving','light-tap','street-car','dragon-dodge','firefighter-rescue','martian-madness','golden-dot',...Array.from({length:4},(_,i)=>'zig-zag-trail-'+i),...Array.from({length:30},(_,i)=>'golden-dot-'+(i+1))]);
 const server = http.createServer(async (req, res) => {
   const requestUrl = new URL(req.url, `http://${req.headers.host || "localhost"}`);
 
@@ -1842,6 +1845,11 @@ const server = http.createServer(async (req, res) => {
       if (req.method === "POST") {
         const body = JSON.parse((await readRequestBody(req)) || "{}");
         if(body.classSession!==classSession){sendJson(res,409,{error:"Class session changed."});return;}
+        /* In Orbit score availability */
+        if (gameKey === 'in-orbit') {
+          const accessSettings = supabase ? await loadSettingsFromSupabase() : loadSettings();
+          if (!parseTaskEnabled(accessSettings.inOrbitGameActive, true)) { sendJson(res, 403, {error:'This game is disabled.'}); return; }
+        }
         document = await store.submit({ runId: body.runId, score: body.score, name: cleanScoreName(body.name), studentId: body.studentId });
       } else document = await store.read();
       const options = supabase ? await loadSettingsFromSupabase() : loadSettings();
