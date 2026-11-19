@@ -343,6 +343,7 @@ const DEFAULT_SETTINGS = {
   pumpkinStudioGameActive: true,
   turkeyStudioGameActive: true,
   houseStudioGameActive: true,
+  penguinDropGameActive: true,
   cookieStudioGameActive: true,
   melonHeistGameActive: true,
   turkeyTrotGameActive: true,
@@ -369,11 +370,13 @@ const DEFAULT_SETTINGS = {
   pumpkinStudioVoiceInstructions: true,
   turkeyStudioVoiceInstructions: false,
   houseStudioVoiceInstructions: false,
+  penguinDropVoiceInstructions: false,
   cookieStudioVoiceInstructions: false,
   melonHeistVoiceInstructions: false,
   pumpkinStudioRequireClickAndDrag: false,
   turkeyStudioRequireClickAndDrag: false,
   houseStudioRequireClickAndDrag: false,
+  penguinDropHoldToFire: false,
   cookieStudioRequireClickAndDrag: false,
   turkeyTrotMazeRequireClickAndDrag: false,
   turkeyTrotMazeDifficulty: "easy",
@@ -1052,6 +1055,7 @@ function loadSettings() {
       pumpkinStudioGameActive: parseTaskEnabled(data.pumpkinStudioGameActive, true),
       turkeyStudioGameActive: parseTaskEnabled(data.turkeyStudioGameActive, true),
       houseStudioGameActive: parseTaskEnabled(data.houseStudioGameActive, true),
+      penguinDropGameActive: parseTaskEnabled(data.penguinDropGameActive, true),
       cookieStudioGameActive: parseTaskEnabled(data.cookieStudioGameActive, true),
       melonHeistGameActive: parseTaskEnabled(data.melonHeistGameActive, true),
       turkeyTrotGameActive: parseTaskEnabled(data.turkeyTrotGameActive, true),
@@ -1077,11 +1081,13 @@ function loadSettings() {
       pumpkinStudioVoiceInstructions: parseTaskEnabled(data.pumpkinStudioVoiceInstructions, true),
       turkeyStudioVoiceInstructions: parseTaskEnabled(data.turkeyStudioVoiceInstructions, false),
       houseStudioVoiceInstructions: parseTaskEnabled(data.houseStudioVoiceInstructions, false),
+      penguinDropVoiceInstructions: parseTaskEnabled(data.penguinDropVoiceInstructions, false),
       cookieStudioVoiceInstructions: parseTaskEnabled(data.cookieStudioVoiceInstructions, false),
       melonHeistVoiceInstructions: parseTaskEnabled(data.melonHeistVoiceInstructions, false),
       pumpkinStudioRequireClickAndDrag: parseTaskEnabled(data.pumpkinStudioRequireClickAndDrag, false),
       turkeyStudioRequireClickAndDrag: parseTaskEnabled(data.turkeyStudioRequireClickAndDrag, false),
       houseStudioRequireClickAndDrag: parseTaskEnabled(data.houseStudioRequireClickAndDrag, false),
+      penguinDropHoldToFire: parseTaskEnabled(data.penguinDropHoldToFire, false),
       cookieStudioRequireClickAndDrag: parseTaskEnabled(data.cookieStudioRequireClickAndDrag, false),
       turkeyTrotMazeRequireClickAndDrag: parseTaskEnabled(data.turkeyTrotMazeRequireClickAndDrag, false),
       turkeyTrotMazeDifficulty: ["easy","normal","hard","expert"].includes(data.turkeyTrotMazeDifficulty) ? data.turkeyTrotMazeDifficulty : "easy",
@@ -1501,6 +1507,7 @@ function saveSettings(settings) {
     pumpkinStudioGameActive: parseTaskEnabled(settings.pumpkinStudioGameActive ?? existing.pumpkinStudioGameActive, true),
     turkeyStudioGameActive: parseTaskEnabled(settings.turkeyStudioGameActive ?? existing.turkeyStudioGameActive, true),
     houseStudioGameActive: parseTaskEnabled(settings.houseStudioGameActive ?? existing.houseStudioGameActive, true),
+    penguinDropGameActive: parseTaskEnabled(settings.penguinDropGameActive ?? existing.penguinDropGameActive, true),
     cookieStudioGameActive: parseTaskEnabled(settings.cookieStudioGameActive ?? existing.cookieStudioGameActive, true),
     melonHeistGameActive: parseTaskEnabled(settings.melonHeistGameActive ?? existing.melonHeistGameActive, true),
     turkeyTrotGameActive: parseTaskEnabled(settings.turkeyTrotGameActive ?? existing.turkeyTrotGameActive, true),
@@ -1527,11 +1534,13 @@ function saveSettings(settings) {
     pumpkinStudioVoiceInstructions: parseTaskEnabled(settings.pumpkinStudioVoiceInstructions ?? existing.pumpkinStudioVoiceInstructions, true),
     turkeyStudioVoiceInstructions: parseTaskEnabled(settings.turkeyStudioVoiceInstructions ?? existing.turkeyStudioVoiceInstructions, false),
     houseStudioVoiceInstructions: parseTaskEnabled(settings.houseStudioVoiceInstructions ?? existing.houseStudioVoiceInstructions, false),
+    penguinDropVoiceInstructions: parseTaskEnabled(settings.penguinDropVoiceInstructions ?? existing.penguinDropVoiceInstructions, false),
     cookieStudioVoiceInstructions: parseTaskEnabled(settings.cookieStudioVoiceInstructions ?? existing.cookieStudioVoiceInstructions, false),
     melonHeistVoiceInstructions: parseTaskEnabled(settings.melonHeistVoiceInstructions ?? existing.melonHeistVoiceInstructions, false),
     pumpkinStudioRequireClickAndDrag: parseTaskEnabled(settings.pumpkinStudioRequireClickAndDrag ?? existing.pumpkinStudioRequireClickAndDrag, false),
     turkeyStudioRequireClickAndDrag: parseTaskEnabled(settings.turkeyStudioRequireClickAndDrag ?? existing.turkeyStudioRequireClickAndDrag, false),
     houseStudioRequireClickAndDrag: parseTaskEnabled(settings.houseStudioRequireClickAndDrag ?? existing.houseStudioRequireClickAndDrag, false),
+    penguinDropHoldToFire: parseTaskEnabled(settings.penguinDropHoldToFire ?? existing.penguinDropHoldToFire, false),
     cookieStudioRequireClickAndDrag: parseTaskEnabled(settings.cookieStudioRequireClickAndDrag ?? existing.cookieStudioRequireClickAndDrag, false),
     turkeyTrotMazeRequireClickAndDrag: parseTaskEnabled(settings.turkeyTrotMazeRequireClickAndDrag ?? existing.turkeyTrotMazeRequireClickAndDrag, false),
     turkeyTrotMazeDifficulty: ["easy","normal","hard","expert"].includes(settings.turkeyTrotMazeDifficulty ?? existing.turkeyTrotMazeDifficulty) ? (settings.turkeyTrotMazeDifficulty ?? existing.turkeyTrotMazeDifficulty) : "easy",
@@ -1799,7 +1808,7 @@ function balloonStore(sessionId){
  if(!balloonStores.has(sessionId))balloonStores.set(sessionId,createBalloonMazeScoreStore({supabase,dataDir:DATA_DIR,classSession:sessionId}));
  return balloonStores.get(sessionId);
 }
-const scoredGames = new Set(['melon-heist','in-orbit','color-pump','hoop-hopper','car-game','deer-run','bug-meadow','haunted-street','monster-lunch','firefly-forest','sense-rescue','follow-bird-clicking','follow-bird-moving','light-tap','street-car','dragon-dodge','firefighter-rescue','martian-madness','golden-dot',...Array.from({length:4},(_,i)=>'zig-zag-trail-'+i),...Array.from({length:30},(_,i)=>'golden-dot-'+(i+1))]);
+const scoredGames = new Set(['penguin-drop','melon-heist','in-orbit','color-pump','hoop-hopper','car-game','deer-run','bug-meadow','haunted-street','monster-lunch','firefly-forest','sense-rescue','follow-bird-clicking','follow-bird-moving','light-tap','street-car','dragon-dodge','firefighter-rescue','martian-madness','golden-dot',...Array.from({length:4},(_,i)=>'zig-zag-trail-'+i),...Array.from({length:30},(_,i)=>'golden-dot-'+(i+1))]);
 const server = http.createServer(async (req, res) => {
   const requestUrl = new URL(req.url, `http://${req.headers.host || "localhost"}`);
 
@@ -1886,6 +1895,12 @@ const server = http.createServer(async (req, res) => {
           if (!parseTaskEnabled(accessSettings.melonHeistGameActive, true)) { sendJson(res,403,{error:'This game is disabled.'}); return; }
           const solved = Math.floor(body.score / 25000), moves = 24999 - body.score % 25000;
           if (!Number.isInteger(body.score) || solved < 1 || solved > 20 || moves < solved || moves > solved * 999) { sendJson(res,400,{error:'Invalid Melon Heist score.'}); return; }
+        }
+        /* Penguin Drop score availability */
+        if (gameKey === 'penguin-drop') {
+          const accessSettings = supabase ? await loadSettingsFromSupabase() : loadSettings();
+          if (!parseTaskEnabled(accessSettings.penguinDropGameActive, true)) { sendJson(res,403,{error:'This game is disabled.'}); return; }
+          if (!Number.isInteger(body.score) || body.score < 1 || body.score > 86400) { sendJson(res,400,{error:'Invalid Penguin Drop time.'}); return; }
         }
         document = await store.submit({ runId: body.runId, score: body.score, name: cleanScoreName(body.name), studentId: body.studentId });
       } else document = await store.read();

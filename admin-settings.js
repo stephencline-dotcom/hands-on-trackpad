@@ -4715,6 +4715,7 @@ async function saveTask1Settings() {
         ...window.PumpkinStudioSettings.snapshot(),
         ...window.TurkeyStudioSettings.snapshot(),
         ...window.HouseStudioSettings.snapshot(),
+        ...window.PenguinDropSettings.snapshot(),
         ...window.CookieStudioSettings.snapshot(),
         ...window.MelonHeistSettings.snapshot(),
         ...window.ThreeLittlePigsSettings.snapshot(),
