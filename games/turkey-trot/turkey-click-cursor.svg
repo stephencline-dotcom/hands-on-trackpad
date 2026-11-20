@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+<!-- Gold turkey; beak tip (42,19) marks the exact click location. -->
+<g stroke-linejoin="round" stroke-linecap="round">
+<path d="M19 34C2 36 2 27 8 24C-1 18 5 9 13 15C9 4 19 2 23 13C27 2 36 9 29 21L31 33Z" fill="#ffe538" stroke="#fff7a0" stroke-width="7"/>
+<path d="M19 34C2 36 2 27 8 24C-1 18 5 9 13 15C9 4 19 2 23 13C27 2 36 9 29 21L31 33Z" fill="#ffdc35" stroke="#b47b13" stroke-width="1.5"/>
+<path d="M12 19L23 28M9 27L23 30M19 12L25 26" stroke="#fff3a0" stroke-width="2"/>
+<ellipse cx="24" cy="30" rx="11" ry="10" fill="#ffd342" stroke="#855114" stroke-width="1.5"/>
+<path d="M20 29Q21 36 28 33" fill="#fff08a" stroke="#c68b20"/>
+<path d="M29 22Q32 26 30 29" fill="none" stroke="#ee7946" stroke-width="4"/>
+<circle cx="30" cy="17" r="7" fill="#fff088" stroke="#855114" stroke-width="1.5"/>
+<path d="M36 17L42 19L36 21" fill="#f39b24" stroke="#855114" stroke-width="1.2"/>
+<circle cx="31" cy="15" r="1.6" fill="#35200b"/>
+<path d="M21 39L19 43M28 39L30 43M17 43H22M28 43H33" stroke="#945914" stroke-width="2"/>
+</g></svg>

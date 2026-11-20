@@ -111,3 +111,25 @@ header{flex:0 0 auto;min-height:45px}h1{font-size:clamp(22px,2.2vw,31px);margin:
     animation: none;
   }
 }
+/* Clear kindergarten lane targets; smaller than the central Jump circle. */
+#stage .trot-side-click {
+ position:absolute; top:64%; transform:translate(-50%,-50%);
+ width:clamp(54px,6vw,74px); height:clamp(54px,6vw,74px);
+ padding:3px; border:4px solid #fffce5; border-radius:50%;
+ background:linear-gradient(#fff38b,#ffd02e); color:#58370b;
+ box-shadow:0 0 0 5px #ffd74188,0 0 18px #fff47d,0 4px 0 #b4801b;
+ display:flex; flex-direction:column; align-items:center; justify-content:center;
+ font:900 27px/1 system-ui; z-index:7; touch-action:manipulation;
+ animation:trot-click-glow 1.1s ease-in-out infinite alternate;
+}
+#stage .trot-side-left {left:23%}
+#stage .trot-side-right {left:77%}
+#stage .trot-side-click small {font:900 11px/1.2 system-ui; margin-top:3px}
+#stage .trot-side-click[hidden] {display:none!important}
+#stage .trot-side-click:active {transform:translate(-50%,-50%) scale(.94)}
+#stage .trot-side-click:focus-visible {outline:4px solid #235b9c;outline-offset:7px}
+#stage #game, #stage .trot-side-click, #stage #jump, #stage #finaleJump {
+ cursor:url("turkey-click-cursor.svg?v=1") 42 19,pointer;
+}
+@keyframes trot-click-glow {to {box-shadow:0 0 0 8px #ffd74155,0 0 25px #fff47d,0 4px 0 #b4801b}}
+@media(prefers-reduced-motion:reduce){#stage .trot-side-click{animation:none}}
