@@ -3,7 +3,7 @@
  'use strict';
  if(window.classroomScores||/\/(?:admin(?:-settings)?|teacher)\.html$/i.test(location.pathname))return;
  const STORE='classroom-score-outbox-v1',NAME='moving-sound-student-name-v1';
- const titles={'melon-heist':'Melon Heist','penguin-drop':'Penguin Drop','in-orbit':'In Orbit','car-game':'Car Game','deer-run':'Deer Run','bug-meadow':'Bug Meadow','haunted-street':'Haunted Street','monster-lunch':'Monster Lunch','firefly-forest':'Firefly Forest','sense-rescue':'Sense Rescue','follow-bird-moving':'Follow the Bird · Moving','follow-bird-clicking':'Follow the Bird · Clicking','light-tap':'Light Tap','street-car':'Street Car','dragon-dodge':'Dragon Dodge','firefighter-rescue':'Firefighter Rescue','martian-madness':'Martian Madness'};
+ const titles={'melon-heist':'Melon Heist','penguin-drop':'Penguin Drop','worm-dig':'Worm Dig','worm-dig-treasure':'Worm Dig','in-orbit':'In Orbit','car-game':'Car Game','deer-run':'Deer Run','bug-meadow':'Bug Meadow','haunted-street':'Haunted Street','monster-lunch':'Monster Lunch','firefly-forest':'Firefly Forest','sense-rescue':'Sense Rescue','follow-bird-moving':'Follow the Bird · Moving','follow-bird-clicking':'Follow the Bird · Clicking','light-tap':'Light Tap','street-car':'Street Car','dragon-dodge':'Dragon Dodge','firefighter-rescue':'Firefighter Rescue','martian-madness':'Martian Madness'};
  for(let i=0;i<4;i++)titles['zig-zag-trail-'+i]='Zig Zag Trail · Trail '+(i+1);
  titles['golden-dot']='Golden Dot · Level & stars';
  const screens={'light-tap':'#gameScreen','street-car':'#carGameScreen','dragon-dodge':'#dragonGameScreen','firefighter-rescue':'#fireGameScreen','martian-madness':'#martianGameScreen'};
@@ -15,7 +15,7 @@
  function persist(){try{localStorage.setItem(STORE,JSON.stringify(pending));}catch{}}
  function melonScoreText(score){const levels=Math.floor(score/25000),moves=24999-score%25000;return levels+' level'+(levels===1?'':'s')+' · '+moves+' move'+(moves===1?'':'s');}
  function penguinTimeText(score){return Math.floor(score/60)+':'+String(score%60).padStart(2,'0');}
- function hostFor(key){if(key==='penguin-drop')return document.querySelector('#penguinScoreDock');if(key==='melon-heist')return document.querySelector('#scoreDock');if(key==='sense-rescue')return document.querySelector('#senseRescuePlayfield');const root=screens[key]?document.querySelector(screens[key]):document;return root?.querySelector('.game-stage')||root?.querySelector('#senseRescuePlayfield');}
+ function hostFor(key){if(key==='worm-dig-treasure')return document.querySelector('#wormScoreDock');if(key==='worm-dig')return document.querySelector('#wormScoreDock');if(key==='penguin-drop')return document.querySelector('#penguinScoreDock');if(key==='melon-heist')return document.querySelector('#scoreDock');if(key==='sense-rescue')return document.querySelector('#senseRescuePlayfield');const root=screens[key]?document.querySelector(screens[key]):document;return root?.querySelector('.game-stage')||root?.querySelector('#senseRescuePlayfield');}
  function activate(key){if(!titles[key]||active===key)return;active=key;shown=[];render();sync();}
  function begin(key){if(!titles[key])return;const old=runs.get(key);if(old?.score>0)enqueue(key,old);runs.set(key,{runId:uuid(),score:0,name:name(),studentId:studentId()});const host=hostFor(key);if(host&&!host.closest('[hidden]'))activate(key);}
  function enqueue(key,run){if(run.score<1||!classSession)return;const record={game:key,runId:run.runId,score:run.score,studentId:run.studentId,classSession,...(run.name?{name:run.name}:{})};const old=pending.find(v=>v.game===key&&v.runId===run.runId);if(old)Object.assign(old,record);else pending.push(record);pending=pending.slice(-100);persist();}
@@ -39,6 +39,7 @@
  if(path.includes('moving-sound-mini-game'))active=({light:'light-tap',car:'street-car',dragon:'dragon-dodge',fire:'firefighter-rescue',martian:'martian-madness'})[new URLSearchParams(location.search).get('game')]||'light-tap';
  else if(path.includes('/games/melon-heist/'))active='melon-heist';
  else if(path.includes('/games/penguin-drop/'))active='penguin-drop';
+ else if(path.includes('/games/worm-dig/'))active='worm-dig-treasure';
  else if(path.includes('/games/in-orbit/'))active='in-orbit';
  else if(path.endsWith('/car.html'))active='car-game';
  else if(path.endsWith('/follow-the-bird.html'))active='follow-bird-moving';
